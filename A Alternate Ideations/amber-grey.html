@@ -1,0 +1,1147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Amber Grey — UX Researcher</title>
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bg:      #f4f0e8;
+  --surface: #ece8e0;
+  --text:    #2a2720;
+  --muted:   #7d7870;
+  --border:  #d6cfc5;
+  --ease:    cubic-bezier(.25,.46,.45,.94);
+}
+
+body {
+  font-family: 'Georgia', 'Times New Roman', serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  overflow: hidden;
+}
+
+/* ── PAGES ── */
+.page {
+  position: fixed;
+  inset: 0;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 380ms var(--ease);
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+.page.active {
+  opacity: 1;
+  pointer-events: all;
+}
+
+/* ══════════════════════════════════
+   LEVEL 1 — TERRAIN LANDSCAPE
+   ══════════════════════════════════ */
+#landscape {
+  position: fixed;
+  inset: 0;
+  overflow: hidden;
+}
+
+/* Map title card — top left */
+.map-title-card {
+  position: absolute;
+  top: 44px;
+  left: 52px;
+  z-index: 20;
+  animation: cardIn 1s var(--ease) 0.15s both;
+}
+@keyframes cardIn {
+  from { opacity: 0; transform: translateY(-5px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.mtc-name {
+  font-size: 27px;
+  font-weight: normal;
+  letter-spacing: 0.03em;
+  color: var(--text);
+  line-height: 1.1;
+}
+.mtc-rule {
+  width: 44px;
+  height: 1px;
+  background: var(--border);
+  margin: 10px 0;
+}
+.mtc-tagline {
+  font-size: 11px;
+  color: var(--muted);
+  line-height: 1.75;
+  max-width: 195px;
+  font-style: italic;
+  letter-spacing: 0.01em;
+}
+.mtc-nav {
+  display: flex;
+  gap: 18px;
+  margin-top: 18px;
+}
+.mtc-nav a {
+  font-size: 10px;
+  letter-spacing: 0.13em;
+  text-transform: uppercase;
+  color: var(--muted);
+  text-decoration: none;
+  transition: color 150ms;
+}
+.mtc-nav a:hover { color: var(--text); }
+
+/* Terrain SVG fills the viewport */
+.terrain-wrap {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+.terrain-wrap svg {
+  width: 100%;
+  height: 100%;
+}
+
+/* Territory interactions */
+.territory {
+  cursor: pointer;
+}
+.territory .zone-fill {
+  transition: filter 220ms ease;
+}
+.territory:hover .zone-fill {
+  filter: brightness(1.06) saturate(1.14);
+}
+.zone-arrow-hint {
+  opacity: 0;
+  transition: opacity 180ms ease;
+}
+.territory:hover .zone-arrow-hint {
+  opacity: 1;
+}
+
+/* Staggered entrance */
+.territory { animation: zoneIn 1s var(--ease) both; }
+.territory:nth-of-type(1) { animation-delay: 0.05s; }
+.territory:nth-of-type(2) { animation-delay: 0.13s; }
+.territory:nth-of-type(3) { animation-delay: 0.21s; }
+.territory:nth-of-type(4) { animation-delay: 0.29s; }
+.territory:nth-of-type(5) { animation-delay: 0.37s; }
+@keyframes zoneIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+/* ══════════════════════════════════
+   LEVEL 2 — SECTION VIEW
+   ══════════════════════════════════ */
+#section-view { min-height: 100vh; background: var(--bg); }
+
+.bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20px 40px;
+}
+.bar-logo {
+  font-size: 12px;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+.back-btn {
+  font-family: inherit;
+  font-size: 12px;
+  letter-spacing: .07em;
+  background: none;
+  border: 1px solid var(--border);
+  color: var(--muted);
+  padding: 5px 14px;
+  cursor: pointer;
+  transition: color 160ms, border-color 160ms;
+}
+.back-btn:hover { color: var(--text); border-color: var(--text); }
+
+.s2-head {
+  padding: 36px 52px 24px;
+  max-width: 640px;
+}
+.s2-eyebrow {
+  font-size: 11px;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 11px;
+}
+.s2-title {
+  font-size: 30px;
+  font-weight: normal;
+  margin-bottom: 10px;
+}
+.s2-desc {
+  font-size: 14px;
+  color: var(--muted);
+  line-height: 1.75;
+}
+
+.s2-items {
+  padding: 4px 52px 56px;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px;
+  max-width: 860px;
+}
+
+.item-card {
+  background: #fff;
+  border: 1px solid var(--border);
+  border-radius: 3px;
+  padding: 22px 26px;
+  cursor: pointer;
+  transition: border-color 160ms, transform 160ms, box-shadow 160ms;
+}
+.item-card:hover {
+  border-color: var(--muted);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 18px rgba(0,0,0,.06);
+}
+.ic-title { font-size: 15px; margin-bottom: 7px; }
+.ic-desc  { font-size: 12px; color: var(--muted); line-height: 1.6; }
+.ic-badge {
+  display: inline-block;
+  margin-top: 13px;
+  font-size: 10px;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  color: var(--muted);
+  border-bottom: 1px solid var(--border);
+  padding-bottom: 2px;
+}
+
+/* ══════════════════════════════════
+   LEVEL 3 — PANEL
+   ══════════════════════════════════ */
+.overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(39,36,31,.38);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 320ms;
+  z-index: 100;
+}
+.overlay.on { opacity: 1; pointer-events: all; }
+
+.panel {
+  position: fixed;
+  right: 0; top: 0; bottom: 0;
+  width: min(660px, 93vw);
+  background: var(--bg);
+  z-index: 101;
+  transform: translateX(100%);
+  transition: transform 400ms var(--ease);
+  overflow-y: auto;
+  padding: 36px 40px;
+}
+.panel.on { transform: translateX(0); }
+
+.panel-x {
+  font-family: inherit;
+  font-size: 22px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--muted);
+  padding: 0;
+  margin-bottom: 28px;
+  display: block;
+  transition: color 150ms;
+}
+.panel-x:hover { color: var(--text); }
+
+.p-eyebrow {
+  font-size: 11px;
+  letter-spacing: .11em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 9px;
+}
+.p-title {
+  font-size: 22px;
+  font-weight: normal;
+  margin-bottom: 11px;
+  line-height: 1.3;
+}
+.p-context {
+  font-size: 13px;
+  color: var(--muted);
+  line-height: 1.8;
+  margin-bottom: 24px;
+  max-width: 500px;
+}
+.p-interact {
+  background: #fff;
+  border: 1px solid var(--border);
+  border-radius: 3px;
+  padding: 22px;
+  margin-bottom: 22px;
+  min-height: 210px;
+}
+.transform-block {
+  border-top: 1px solid var(--border);
+  padding-top: 18px;
+  margin-bottom: 22px;
+}
+.transform-label {
+  font-size: 10px;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 10px;
+}
+.transform-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  font-size: 12px;
+  line-height: 1.65;
+}
+.t-before {
+  flex: 1;
+  padding: 9px 13px;
+  background: var(--surface);
+  border-radius: 2px;
+  color: var(--muted);
+}
+.t-arrow { color: var(--muted); font-size: 14px; margin-top: 9px; }
+.t-after {
+  flex: 1;
+  padding: 9px 13px;
+  background: #fff;
+  border: 1px solid var(--border);
+  border-radius: 2px;
+}
+.view-btn {
+  font-family: inherit;
+  font-size: 12px;
+  letter-spacing: .06em;
+  background: var(--text);
+  color: var(--bg);
+  border: none;
+  padding: 11px 26px;
+  cursor: pointer;
+  border-radius: 2px;
+  transition: opacity 160ms;
+}
+.view-btn:hover { opacity: .78; }
+
+/* ── Zoo map ── */
+.zoo-toggle { display: flex; margin-bottom: 14px; }
+.zoo-toggle button {
+  font-family: inherit;
+  font-size: 11px;
+  letter-spacing: .05em;
+  padding: 5px 13px;
+  cursor: pointer;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  color: var(--muted);
+  transition: all 140ms;
+}
+.zoo-toggle button:first-child { border-radius: 2px 0 0 2px; }
+.zoo-toggle button:last-child  { border-radius: 0 2px 2px 0; border-left: none; }
+.zoo-toggle button.on { background: var(--text); color: var(--bg); border-color: var(--text); }
+
+#zoo-stage { position: relative; height: 158px; }
+#zoo-stage svg {
+  position: absolute; inset: 0;
+  width: 100%; height: 100%;
+  pointer-events: none;
+}
+.zn {
+  position: absolute;
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  text-align: center;
+  font-size: 9px; line-height: 1.3;
+  cursor: pointer; white-space: pre-line;
+  border: 2px solid transparent;
+  transition: transform 160ms, border-color 160ms;
+}
+.zn:hover { transform: scale(1.12); }
+.zn.lit   { border-color: var(--text); }
+
+/* ── GPT panel ── */
+.gpt-wrap { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; height: 100%; min-height: 168px; }
+.gpt-col  { display: flex; flex-direction: column; gap: 7px; }
+.gpt-lbl  { font-size: 10px; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); }
+.gpt-transcript {
+  flex: 1; background: var(--surface); border-radius: 2px;
+  padding: 10px 12px; font-size: 11px; line-height: 1.75;
+  color: var(--muted); font-style: italic;
+}
+.gpt-output-area {
+  flex: 1; background: #fff; border: 1px solid var(--border);
+  border-radius: 2px; padding: 10px 12px; min-height: 100px; font-size: 11px;
+}
+.gpt-hint { color: var(--muted); font-style: italic; font-size: 11px; }
+.insight-row {
+  padding: 5px 0; border-bottom: 1px solid var(--surface);
+  color: var(--text); opacity: 0; transform: translateY(5px);
+  transition: opacity 260ms, transform 260ms;
+  display: flex; gap: 6px; align-items: baseline; font-style: normal;
+}
+.insight-row.vis { opacity: 1; transform: translateY(0); }
+.insight-tag { font-size: 9px; text-transform: uppercase; letter-spacing: .08em; color: var(--muted); white-space: nowrap; }
+.analyze-btn {
+  font-family: inherit; font-size: 11px; letter-spacing: .05em;
+  background: var(--text); color: var(--bg); border: none;
+  padding: 6px 16px; cursor: pointer; border-radius: 2px;
+  align-self: flex-end; transition: opacity 140ms;
+}
+.analyze-btn:hover     { opacity: .8; }
+.analyze-btn:disabled  { opacity: .35; cursor: default; }
+
+/* ── Contradiction mode ── */
+.contra-row  { display: flex; justify-content: flex-end; margin-bottom: 12px; }
+.contra-switch {
+  display: flex; align-items: center; gap: 7px;
+  font-size: 11px; cursor: pointer; color: var(--muted); user-select: none;
+}
+.contra-switch input { display: none; }
+.sw-track {
+  width: 30px; height: 17px; border-radius: 9px; background: var(--border);
+  position: relative; transition: background 200ms;
+}
+.sw-track::after {
+  content: ''; position: absolute; top: 3px; left: 3px;
+  width: 11px; height: 11px; border-radius: 50%;
+  background: #fff; transition: transform 200ms;
+}
+.contra-switch.on .sw-track             { background: #7d7870; }
+.contra-switch.on .sw-track::after      { transform: translateX(13px); }
+.surface-box { padding: 14px; background: var(--surface); border-radius: 3px; }
+.surface-box .slbl { font-size: 9px; text-transform: uppercase; letter-spacing: .1em; color: var(--muted); margin-bottom: 7px; }
+.surface-box .stxt { font-size: 13px; line-height: 1.65; font-style: italic; }
+.tension-layer {
+  overflow: hidden; max-height: 0; opacity: 0;
+  transition: max-height 420ms var(--ease), opacity 380ms;
+  margin-top: 8px;
+}
+.tension-layer.open { max-height: 260px; opacity: 1; }
+.tension-item {
+  display: flex; gap: 9px; padding: 9px 13px; margin-bottom: 5px;
+  background: #fff; border: 1px solid var(--border);
+  border-left: 3px solid #b8a870;
+  border-radius: 0 2px 2px 0; font-size: 12px; line-height: 1.6;
+}
+.ti-lbl { font-size: 9px; text-transform: uppercase; letter-spacing: .08em; color: #b8a870; white-space: nowrap; margin-top: 1px; }
+.placeholder-zone {
+  display: flex; align-items: center; justify-content: center;
+  height: 100%; min-height: 130px;
+  color: var(--muted); font-size: 12px; font-style: italic;
+  text-align: center; line-height: 1.7;
+}
+
+/* ── RESPONSIVE ── */
+@media (max-width: 680px) {
+  .map-title-card { top: 24px; left: 24px; }
+  .mtc-name       { font-size: 21px; }
+  .s2-items       { grid-template-columns: 1fr; padding: 4px 24px 48px; }
+  .s2-head        { padding: 28px 24px 18px; }
+  .panel          { padding: 28px 22px; }
+  .gpt-wrap       { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+
+<!-- ══ LEVEL 1: TERRAIN LANDSCAPE ══ -->
+<div class="page active" id="landscape">
+
+  <div class="map-title-card">
+    <div class="mtc-name">Amber Grey</div>
+    <div class="mtc-rule"></div>
+    <div class="mtc-tagline">UX Researcher noticing what<br>others miss, guided by dissonance</div>
+    <nav class="mtc-nav">
+      <a href="#">About</a>
+      <a href="#">Contact</a>
+    </nav>
+  </div>
+
+  <div class="terrain-wrap">
+    <svg viewBox="0 0 1200 720" preserveAspectRatio="xMidYMid meet"
+         xmlns="http://www.w3.org/2000/svg">
+
+      <defs>
+        <filter id="zshadow" x="-12%" y="-12%" width="124%" height="124%">
+          <feDropShadow dx="0" dy="2" stdDeviation="5" flood-color="#2a2720" flood-opacity="0.07"/>
+        </filter>
+        <pattern id="dotgrid" x="0" y="0" width="40" height="40" patternUnits="userSpaceOnUse">
+          <circle cx="20" cy="20" r="0.85" fill="#2a2720" opacity="0.07"/>
+        </pattern>
+      </defs>
+
+      <!-- Paper dot grid -->
+      <rect width="1200" height="720" fill="url(#dotgrid)"/>
+
+      <!-- Wandering trail connecting all territories -->
+      <path d="M 482,340 C 550,305 612,258 700,230
+               C 770,230 870,252 940,272
+               C 970,330 962,408 938,480
+               C 905,538 820,572 712,584
+               C 700,586 692,587 686,588"
+            fill="none" stroke="#2a2720" stroke-width="1.1"
+            stroke-dasharray="4 7" opacity="0.10"/>
+
+      <!-- ── SENSEMAKING — Wetland (left, dominant) ── -->
+      <!-- Organic blob, center ~(285, 360) -->
+      <g class="territory" data-zone="sensemaking" onclick="openSection('sensemaking')" filter="url(#zshadow)">
+        <path class="zone-fill" fill="#c5d1cb"
+          d="M 105,225 C 128,140 235,110 368,132
+             C 452,148 488,192 486,268
+             C 484,338 468,418 442,476
+             C 415,530 354,565 276,568
+             C 198,572 128,542 92,490
+             C 58,440 62,375 76,310
+             C 90,252 86,295 105,225 Z"/>
+        <!-- contour 1 -->
+        <path fill="none" stroke="#9ab4ac" stroke-width="1" opacity="0.5"
+          d="M 138,248 C 156,180 245,154 358,173
+             C 430,186 462,224 460,288
+             C 458,348 444,416 421,466
+             C 397,512 345,542 278,545
+             C 211,548 152,521 121,476
+             C 92,434 95,378 108,320
+             C 120,270 122,308 138,248 Z"/>
+        <!-- contour 2 -->
+        <path fill="none" stroke="#9ab4ac" stroke-width="0.7" opacity="0.32"
+          d="M 170,270 C 184,218 252,196 348,212
+             C 408,224 436,256 434,308
+             C 432,358 420,414 400,455
+             C 378,494 335,520 279,522
+             C 223,524 175,500 149,461
+             C 125,425 127,378 138,326
+             C 149,284 156,315 170,270 Z"/>
+        <!-- number -->
+        <text x="282" y="308" font-family="Georgia,serif" font-size="10"
+              letter-spacing="2.5" fill="#2a2720" opacity="0.28" text-anchor="middle">01</text>
+        <!-- name -->
+        <text x="282" y="333" font-family="Georgia,serif" font-size="19"
+              fill="#2a2720" opacity="0.80" text-anchor="middle">Sensemaking</text>
+        <!-- terrain type -->
+        <text x="282" y="354" font-family="Georgia,serif" font-size="10"
+              font-style="italic" fill="#4e6b62" opacity="0.62" text-anchor="middle">wetland</text>
+        <!-- hover hint -->
+        <text class="zone-arrow-hint" x="282" y="382"
+              font-family="Georgia,serif" font-size="11"
+              fill="#2a2720" text-anchor="middle">explore ↗</text>
+      </g>
+
+      <!-- ── SYSTEMS — Forest (upper right) ── -->
+      <!-- center ~(838, 218) -->
+      <g class="territory" data-zone="systems" onclick="openSection('systems')" filter="url(#zshadow)">
+        <path class="zone-fill" fill="#cac7d8"
+          d="M 698,80 C 738,46 842,52 924,80
+             C 984,104 1006,156 990,230
+             C 974,298 928,344 860,358
+             C 796,370 724,352 684,308
+             C 645,264 648,210 660,164
+             C 670,126 666,108 698,80 Z"/>
+        <path fill="none" stroke="#aeaac8" stroke-width="1" opacity="0.5"
+          d="M 716,100 C 750,72 838,76 910,100
+             C 963,120 982,164 967,228
+             C 952,287 912,328 851,340
+             C 793,351 727,335 692,297
+             C 658,260 660,213 671,173
+             C 680,140 685,122 716,100 Z"/>
+        <path fill="none" stroke="#aeaac8" stroke-width="0.7" opacity="0.32"
+          d="M 733,120 C 762,98 834,100 896,120
+             C 942,136 958,172 944,226
+             C 930,276 895,312 842,322
+             C 790,332 730,318 700,285
+             C 671,255 672,215 681,180
+             C 690,152 706,136 733,120 Z"/>
+        <text x="842" y="195" font-family="Georgia,serif" font-size="10"
+              letter-spacing="2.5" fill="#2a2720" opacity="0.28" text-anchor="middle">02</text>
+        <text x="842" y="220" font-family="Georgia,serif" font-size="19"
+              fill="#2a2720" opacity="0.80" text-anchor="middle">Systems</text>
+        <text x="842" y="241" font-family="Georgia,serif" font-size="10"
+              font-style="italic" fill="#48446a" opacity="0.62" text-anchor="middle">forest</text>
+        <text class="zone-arrow-hint" x="842" y="268"
+              font-family="Georgia,serif" font-size="11"
+              fill="#2a2720" text-anchor="middle">explore ↗</text>
+      </g>
+
+      <!-- ── INTERACTION — Crossing (right side) ── -->
+      <!-- center ~(1058, 422) -->
+      <g class="territory" data-zone="interaction" onclick="openSection('interaction')" filter="url(#zshadow)">
+        <path class="zone-fill" fill="#c3cfd8"
+          d="M 978,262 C 1018,224 1100,230 1150,266
+             C 1192,296 1202,354 1192,430
+             C 1182,500 1148,554 1090,572
+             C 1034,590 972,568 942,522
+             C 912,478 916,416 928,360
+             C 938,314 946,294 978,262 Z"/>
+        <path fill="none" stroke="#a4bece" stroke-width="1" opacity="0.5"
+          d="M 993,280 C 1028,248 1098,254 1140,284
+             C 1177,310 1185,360 1176,426
+             C 1167,486 1136,535 1084,551
+             C 1034,567 978,548 952,507
+             C 926,467 930,412 941,362
+             C 950,320 960,304 993,280 Z"/>
+        <path fill="none" stroke="#a4bece" stroke-width="0.7" opacity="0.32"
+          d="M 1008,298 C 1038,272 1096,278 1130,304
+             C 1162,328 1168,370 1160,426
+             C 1152,474 1124,518 1078,532
+             C 1035,545 984,528 960,490
+             C 938,454 941,406 950,362
+             C 958,326 977,316 1008,298 Z"/>
+        <text x="1060" y="388" font-family="Georgia,serif" font-size="10"
+              letter-spacing="2.5" fill="#2a2720" opacity="0.28" text-anchor="middle">04</text>
+        <text x="1060" y="413" font-family="Georgia,serif" font-size="19"
+              fill="#2a2720" opacity="0.80" text-anchor="middle">Interaction</text>
+        <text x="1060" y="434" font-family="Georgia,serif" font-size="10"
+              font-style="italic" fill="#385060" opacity="0.62" text-anchor="middle">crossing</text>
+        <text class="zone-arrow-hint" x="1060" y="460"
+              font-family="Georgia,serif" font-size="11"
+              fill="#2a2720" text-anchor="middle">explore ↗</text>
+      </g>
+
+      <!-- ── EXPERIMENTS — Clearing (lower center) ── -->
+      <!-- center ~(500, 596) -->
+      <g class="territory" data-zone="experiments" onclick="openSection('experiments')" filter="url(#zshadow)">
+        <path class="zone-fill" fill="#ddd4be"
+          d="M 340,538 C 376,498 462,484 564,494
+             C 640,502 694,534 697,582
+             C 700,628 668,667 596,680
+             C 535,692 460,686 400,664
+             C 344,644 318,610 326,572
+             C 330,555 335,550 340,538 Z"/>
+        <path fill="none" stroke="#c5b99e" stroke-width="1" opacity="0.5"
+          d="M 358,552 C 390,518 466,506 556,516
+             C 624,523 672,550 674,591
+             C 677,630 648,664 583,675
+             C 525,685 455,679 400,659
+             C 350,641 327,612 334,578
+             C 338,562 344,558 358,552 Z"/>
+        <path fill="none" stroke="#c5b99e" stroke-width="0.7" opacity="0.32"
+          d="M 376,566 C 404,538 469,528 548,537
+             C 608,544 650,566 652,600
+             C 654,632 629,660 571,669
+             C 517,678 452,673 401,655
+             C 356,639 336,615 342,584
+             C 346,568 358,563 376,566 Z"/>
+        <text x="502" y="575" font-family="Georgia,serif" font-size="10"
+              letter-spacing="2.5" fill="#2a2720" opacity="0.28" text-anchor="middle">03</text>
+        <text x="502" y="600" font-family="Georgia,serif" font-size="19"
+              fill="#2a2720" opacity="0.80" text-anchor="middle">Experiments</text>
+        <text x="502" y="621" font-family="Georgia,serif" font-size="10"
+              font-style="italic" fill="#5a5438" opacity="0.62" text-anchor="middle">clearing</text>
+        <text class="zone-arrow-hint" x="502" y="648"
+              font-family="Georgia,serif" font-size="11"
+              fill="#2a2720" text-anchor="middle">explore ↗</text>
+      </g>
+
+      <!-- ── PERSPECTIVE — Highland (lower right center) ── -->
+      <!-- center ~(782, 590) -->
+      <g class="territory" data-zone="perspective" onclick="openSection('perspective')" filter="url(#zshadow)">
+        <path class="zone-fill" fill="#d3cec5"
+          d="M 702,532 C 732,496 800,488 860,510
+             C 907,525 929,562 921,606
+             C 912,646 878,670 828,674
+             C 778,678 726,660 700,626
+             C 675,595 672,560 702,532 Z"/>
+        <path fill="none" stroke="#bbb5ab" stroke-width="1" opacity="0.5"
+          d="M 714,545 C 740,514 800,508 852,526
+             C 893,540 912,570 904,607
+             C 897,640 867,661 822,664
+             C 777,668 730,652 707,622
+             C 685,596 682,564 714,545 Z"/>
+        <path fill="none" stroke="#bbb5ab" stroke-width="0.7" opacity="0.32"
+          d="M 726,558 C 748,533 800,528 844,544
+             C 879,556 895,578 888,608
+             C 882,634 856,651 816,654
+             C 776,657 735,643 714,618
+             C 694,596 691,568 726,558 Z"/>
+        <text x="814" y="570" font-family="Georgia,serif" font-size="10"
+              letter-spacing="2.5" fill="#2a2720" opacity="0.28" text-anchor="middle">05</text>
+        <text x="814" y="595" font-family="Georgia,serif" font-size="19"
+              fill="#2a2720" opacity="0.80" text-anchor="middle">Perspective</text>
+        <text x="814" y="616" font-family="Georgia,serif" font-size="10"
+              font-style="italic" fill="#4c4844" opacity="0.62" text-anchor="middle">highland</text>
+        <text class="zone-arrow-hint" x="814" y="642"
+              font-family="Georgia,serif" font-size="11"
+              fill="#2a2720" text-anchor="middle">explore ↗</text>
+      </g>
+
+      <!-- ── MAP DECORATIONS ── -->
+
+      <!-- Compass rose — bottom left -->
+      <g transform="translate(62,672)" opacity="0.40">
+        <circle cx="0" cy="0" r="14" fill="none" stroke="#2a2720" stroke-width="0.7"/>
+        <line x1="0" y1="-11" x2="0" y2="11" stroke="#2a2720" stroke-width="0.7"/>
+        <line x1="-11" y1="0" x2="11" y2="0" stroke="#2a2720" stroke-width="0.7"/>
+        <polygon points="0,-11 -2.5,-3.5 2.5,-3.5" fill="#2a2720"/>
+        <text x="0" y="-15" font-family="Georgia,serif" font-size="7"
+              text-anchor="middle" fill="#2a2720">N</text>
+      </g>
+
+      <!-- Territory legend label -->
+      <g transform="translate(52, 625)" opacity="0.36">
+        <text font-family="Georgia,serif" font-size="8" fill="#2a2720" letter-spacing="2">TERRITORY MAP</text>
+        <line x1="0" y1="7" x2="80" y2="7" stroke="#2a2720" stroke-width="0.5"/>
+      </g>
+
+      <!-- Scale bar — bottom right -->
+      <g transform="translate(1108,704)" opacity="0.34">
+        <line x1="-38" y1="0" x2="38" y2="0" stroke="#2a2720" stroke-width="0.7"/>
+        <line x1="-38" y1="-3" x2="-38" y2="3" stroke="#2a2720" stroke-width="0.7"/>
+        <line x1="0"   y1="-2" x2="0"   y2="2" stroke="#2a2720" stroke-width="0.7"/>
+        <line x1="38"  y1="-3" x2="38"  y2="3" stroke="#2a2720" stroke-width="0.7"/>
+        <text x="0" y="-7" font-family="Georgia,serif" font-size="7"
+              text-anchor="middle" fill="#2a2720" letter-spacing="1">research scale</text>
+      </g>
+
+    </svg>
+  </div>
+</div><!-- end #landscape -->
+
+<!-- ══ LEVEL 2: SECTION VIEW ══ -->
+<div class="page" id="section-view">
+  <div class="bar">
+    <span class="bar-logo">Amber Grey</span>
+    <button class="back-btn" id="back-to-l1">← Landscape</button>
+  </div>
+  <div class="s2-head">
+    <div class="s2-eyebrow" id="s2-eyebrow"></div>
+    <h2 class="s2-title"  id="s2-title"></h2>
+    <p  class="s2-desc"   id="s2-desc"></p>
+  </div>
+  <div class="s2-items" id="s2-items"></div>
+</div>
+
+<!-- ══ LEVEL 3: PANEL ══ -->
+<div class="overlay" id="overlay"></div>
+<div class="panel"   id="panel">
+  <button class="panel-x" id="panel-x">×</button>
+  <div class="p-eyebrow" id="p-eyebrow"></div>
+  <h3  class="p-title"   id="p-title"></h3>
+  <p   class="p-context" id="p-context"></p>
+  <div class="p-interact" id="p-interact"></div>
+  <div class="transform-block">
+    <div class="transform-label">Transformation</div>
+    <div class="transform-row">
+      <div class="t-before" id="t-before"></div>
+      <div class="t-arrow">→</div>
+      <div class="t-after"  id="t-after"></div>
+    </div>
+  </div>
+  <button class="view-btn">View full project</button>
+</div>
+
+<script>
+/* ═══════════════════════════════════
+   DATA
+   ═══════════════════════════════════ */
+const DATA = {
+  sensemaking: {
+    title: "Sensemaking",
+    desc: "Uncovering patterns in messy human behavior — translating observation, signal, and noise into something actionable.",
+    items: [
+      { id:"zoo-econ", title:"Zoo Economy Map",
+        desc:"Visualizing how money flows through conservation systems",
+        badge:"System Mapping", interact:"zoo",
+        ctx:"Conservation zoos occupy a paradox: publicly positioned as wildlife protectors, operationally dependent on entertainment revenue. This project made that tension navigable.",
+        before:"A complex, opaque financial ecosystem with no clear entry point",
+        after:"A legible flow map revealing where stated mission and actual money diverge" },
+      { id:"dissonance", title:"Dissonance as Signal",
+        desc:"Turning emotional tension into insight",
+        badge:"Research Method", interact:"none",
+        ctx:"When a research participant contradicts themselves, most analysts flag it as noise. This framework treats it as the most important data point.",
+        before:"Participant contradiction treated as an interview flaw",
+        after:"Contradiction reframed as a direct signal about unmet needs or systemic pressure" },
+      { id:"field-synth", title:"Field Observation Synthesis",
+        desc:"From raw notes to structured patterns",
+        badge:"Analysis", interact:"none",
+        ctx:"A methodology for converting unstructured field notes — collected across different contexts, observers, and moments — into coherent pattern maps.",
+        before:"Hundreds of fragmented observations with no organizing structure",
+        after:"A tiered pattern framework that preserves context while enabling comparison" },
+      { id:"survey-sig", title:"Survey Signal Extraction",
+        desc:"Finding meaning in perception and trust data",
+        badge:"Data Analysis", interact:"none",
+        ctx:"Surveys often measure what people are willing to say, not what they believe. This approach isolates the gap between expressed perception and behavioral signal.",
+        before:"Survey responses read as straightforward self-report",
+        after:"Response patterns decoded as proxies for trust, ambiguity, and systemic friction" }
+    ]
+  },
+  systems: {
+    title: "Systems",
+    desc: "Making complexity usable — building structures that help people navigate what would otherwise be overwhelming.",
+    items: [
+      { id:"research-gpt", title:"Research Analyst GPT",
+        desc:"Turning transcripts into structured insight systems",
+        badge:"Tool Design", interact:"gpt",
+        ctx:"Qualitative research produces enormous amounts of raw text. This tool transforms interview transcripts into structured, searchable, comparative insight — without losing human texture.",
+        before:"Hours of transcript content with no searchable structure",
+        after:"A layered insight system where themes, tensions, and quotes are immediately navigable" },
+      { id:"irx", title:"Interaction Record Framework",
+        desc:"Standardizing qualitative analysis",
+        badge:"Framework", interact:"none",
+        ctx:"When multiple researchers analyze the same data, results diverge unpredictably. This framework standardizes how observations are recorded without forcing false consensus.",
+        before:"Inconsistent field logs across a research team",
+        after:"A shared record structure that allows comparison without collapsing nuance" },
+      { id:"blv", title:"BLV Ecosystem Map",
+        desc:"Making invisible user groups visible",
+        badge:"Ecosystem Mapping", interact:"none",
+        ctx:"Blind and low-vision users navigate digital ecosystems that were never designed with their actual behaviors in mind. This map made those behaviors — and gaps — visible to a product team.",
+        before:"BLV user behavior described in abstraction and stereotype",
+        after:"A behavioral ecosystem map that grounded design decisions in observed reality" },
+      { id:"adl", title:"ADL Breakdown System",
+        desc:"Translating daily life into actionable categories",
+        badge:"Taxonomy Design", interact:"none",
+        ctx:"Activities of Daily Living are typically catalogued in clinical terms. This system translated them into experiential categories — the way people actually think about their days.",
+        before:"Clinical ADL categories misaligned with how users experience daily limitation",
+        after:"An experiential taxonomy that bridges clinical language and lived reality" }
+    ]
+  },
+  experiments: {
+    title: "Experiments",
+    desc: "Testing ideas in the real world — low-cost interventions that reveal unexpected truths about behavior and context.",
+    items: [
+      { id:"dry-erase", title:"Dry Erase Marker Intervention",
+        desc:"Small change, massive engagement shift",
+        badge:"Field Experiment", interact:"none",
+        ctx:"A single design decision — giving visitors a dry-erase marker — fundamentally changed how they interacted with a zoo exhibit. This documents the intervention and what it revealed.",
+        before:"Passive observation behavior at a static exhibit",
+        after:"Active, comparative, discussion-generating engagement from a single tactile addition" },
+      { id:"zootique", title:"Zoo-tique Concepts",
+        desc:"Reimagining conservation through experience",
+        badge:"Concept Design", interact:"none",
+        ctx:"What if zoo merchandise was designed to extend conservation behavior beyond the visit? These concept experiments tested the boundaries of where mission can live.",
+        before:"Gift shop as revenue mechanism disconnected from conservation identity",
+        after:"A concept space where merchandise becomes an extension of the conservation promise" },
+      { id:"dotcalm", title:"dotCALM",
+        desc:"Haptic feedback for emotional regulation",
+        badge:"Interaction Experiment", interact:"none",
+        ctx:"A wearable prototype exploring whether subtle tactile feedback can interrupt anxiety spirals before conscious awareness kicks in. Designed for people who dissociate during stress.",
+        before:"Emotional regulation relying entirely on cognitive intervention after the fact",
+        after:"A sensory trigger that operates below the anxiety threshold, offering earlier interruption" },
+      { id:"prompt-trials", title:"Prompt Engineering Trials",
+        desc:"Exploring how inputs shape outcomes",
+        badge:"AI Research", interact:"none",
+        ctx:"A structured exploration of how framing, role assignment, and sequencing in prompts changes AI outputs — not just in quality but in the type of thinking produced.",
+        before:"Prompt writing as intuitive guesswork",
+        after:"A documented framework for prompt structure that predicts output behavior" }
+    ]
+  },
+  interaction: {
+    title: "Interaction",
+    desc: "Shaping how people engage — designing the moment of contact between a person and a system, idea, or experience.",
+    items: [
+      { id:"zoo-interactive", title:"Zoo Economy Interactive Map",
+        desc:"Explorable system, not static diagram",
+        badge:"Interactive Design", interact:"none",
+        ctx:"The same data as the Zoo Economy Map, but designed for a user who needs to find their own entry point. Interaction replaces argument.",
+        before:"A conclusion presented as a diagram",
+        after:"An explorable system where the conclusion is something the user discovers" },
+      { id:"daily-labs", title:"Daily Living Labs Interface",
+        desc:"ADL as interactive entry points",
+        badge:"Interface Design", interact:"none",
+        ctx:"A prototype interface that turns ADL assessments into navigable, self-directed entry points instead of forms to fill out.",
+        before:"A linear assessment form that positions the user as a subject",
+        after:"An interactive interface that positions the user as the expert on their own life" },
+      { id:"contra-mode", title:"Contradiction Mode",
+        desc:"Reveal hidden system tension through interaction",
+        badge:"Concept Prototype", interact:"contradiction",
+        ctx:"A design interaction pattern where a polished surface statement can be toggled to reveal what sits underneath — the tension, the assumption, the thing not being said.",
+        before:"Design presentations that smooth over tension to appear coherent",
+        after:"A mode that makes the unresolved visible — and treats it as information, not failure" },
+      { id:"portfolio-sys", title:"Portfolio Playground System",
+        desc:"Designing navigation as experience",
+        badge:"Meta-Design", interact:"none",
+        ctx:"This portfolio itself is a design experiment. The navigation you are using right now is the prototype being tested. You are inside the work.",
+        before:"A portfolio as a project archive",
+        after:"A portfolio as a navigable experience that demonstrates a way of thinking, not just outputs" }
+    ]
+  },
+  perspective: {
+    title: "Perspective",
+    desc: "How I see and question systems — the frameworks and lenses that shape every piece of work I do.",
+    items: [
+      { id:"dissonance-design", title:"Designing with Dissonance",
+        desc:"Discomfort as a design signal",
+        badge:"Design Philosophy", interact:"none",
+        ctx:"Most design processes try to resolve tension quickly. This perspective argues that dissonance — when held carefully — is where the most honest insight lives.",
+        before:"Tension treated as a problem to eliminate",
+        after:"Tension reframed as a diagnostic signal worth following before resolving" },
+      { id:"rewilded", title:"Rewilded Thesis",
+        desc:"Non-anthropocentric design approach",
+        badge:"Thesis Research", interact:"none",
+        ctx:"A graduate research project that asked: what would conservation design look like if humans were not assumed to be the primary stakeholder?",
+        before:"Conservation design optimized for human legibility and emotional comfort",
+        after:"A design framework centered on ecological function, with human experience as one layer among many" },
+      { id:"transparency", title:"Transparency Matrix",
+        desc:"Trust, visibility, and perception",
+        badge:"Framework", interact:"none",
+        ctx:"A tool for auditing how much of a system's actual behavior is visible to its users — and whether visibility and trust are being conflated when they shouldn't be.",
+        before:"Transparency used as a synonym for trustworthiness",
+        after:"A matrix that separates what is visible, what is legible, and what is actually trusted" },
+      { id:"field-notes", title:"Field Notes Practice",
+        desc:"Observation as a way of thinking",
+        badge:"Method", interact:"none",
+        ctx:"A reflective practice built over years of fieldwork. The belief that careful noticing is its own form of analysis.",
+        before:"Field notes as data collection waiting to be processed later",
+        after:"Field notes as active thinking — where the act of writing is already the beginning of insight" }
+    ]
+  }
+};
+
+const SECTION_NUMS = {
+  sensemaking:"01", systems:"02", experiments:"03", interaction:"04", perspective:"05"
+};
+
+/* ═══════════════════════════════════
+   NAVIGATION
+   ═══════════════════════════════════ */
+function showPage(id) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+}
+
+function openSection(key) {
+  const d = DATA[key];
+  document.getElementById('s2-eyebrow').textContent =
+    `${SECTION_NUMS[key]} / ${key.toUpperCase()}`;
+  document.getElementById('s2-title').textContent = d.title;
+  document.getElementById('s2-desc').textContent  = d.desc;
+
+  const container = document.getElementById('s2-items');
+  container.innerHTML = '';
+  d.items.forEach(item => {
+    const card = document.createElement('div');
+    card.className = 'item-card';
+    card.innerHTML = `
+      <div class="ic-title">${item.title}</div>
+      <div class="ic-desc">${item.desc}</div>
+      <span class="ic-badge">${item.badge}</span>`;
+    card.addEventListener('click', () => openPanel(key, item.id));
+    container.appendChild(card);
+  });
+
+  showPage('section-view');
+}
+
+function openPanel(sectionKey, itemId) {
+  const item    = DATA[sectionKey].items.find(i => i.id === itemId);
+  const section = DATA[sectionKey];
+
+  document.getElementById('p-eyebrow').textContent = `${section.title}  /  ${item.badge}`;
+  document.getElementById('p-title').textContent   = item.title;
+  document.getElementById('p-context').textContent = item.ctx;
+  document.getElementById('t-before').textContent  = item.before;
+  document.getElementById('t-after').textContent   = item.after;
+
+  const el = document.getElementById('p-interact');
+  el.innerHTML = buildInteract(item);
+
+  if (item.interact === 'zoo')           initZoo();
+  if (item.interact === 'gpt')           { /* ready */ }
+  if (item.interact === 'contradiction') { /* ready */ }
+
+  document.getElementById('overlay').classList.add('on');
+  document.getElementById('panel').classList.add('on');
+  document.getElementById('panel').scrollTop = 0;
+}
+
+function closePanel() {
+  document.getElementById('overlay').classList.remove('on');
+  document.getElementById('panel').classList.remove('on');
+}
+
+/* ═══════════════════════════════════
+   INTERACTION BUILDERS
+   ═══════════════════════════════════ */
+function buildInteract(item) {
+  if (item.interact === 'zoo')           return buildZoo();
+  if (item.interact === 'gpt')           return buildGPT();
+  if (item.interact === 'contradiction') return buildContradiction();
+  return `<div class="placeholder-zone">Interactive prototype for<br><em>${item.title}</em><br>would appear here</div>`;
+}
+
+/* ── ZOO MAP ── */
+const MODES = {
+  official: {
+    nodes: [
+      { id:'mission',  px:.50, py:.12, r:30, bg:'#cfd9d2', lbl:'Conservation\nMission' },
+      { id:'edu',      px:.18, py:.58, r:24, bg:'#cfd9d2', lbl:'Education' },
+      { id:'research', px:.78, py:.42, r:22, bg:'#cfd9d2', lbl:'Research' },
+      { id:'breed',    px:.55, py:.80, r:24, bg:'#cfd9d2', lbl:'Breeding\nPrograms' },
+      { id:'visitors', px:.25, py:.22, r:18, bg:'#e3ddd4', lbl:'Visitors' }
+    ],
+    links:[['visitors','mission'],['mission','edu'],['mission','research'],['mission','breed']]
+  },
+  money: {
+    nodes: [
+      { id:'tickets', px:.22, py:.15, r:30, bg:'#e4d9cb', lbl:'Ticket\nRevenue' },
+      { id:'food',    px:.74, py:.20, r:26, bg:'#e4d9cb', lbl:'Food &\nMerch' },
+      { id:'ops',     px:.48, py:.50, r:28, bg:'#d4d0e6', lbl:'Operations\n& Staff' },
+      { id:'cons',    px:.20, py:.82, r:16, bg:'#cfd9d2', lbl:'Conservation\n~3–5%' },
+      { id:'capital', px:.76, py:.78, r:20, bg:'#d4d0e6', lbl:'Capital\nProjects' }
+    ],
+    links:[['tickets','ops'],['food','ops'],['ops','cons'],['ops','capital']]
+  }
+};
+
+let zMode = 'official';
+
+function buildZoo() {
+  return `
+    <div class="zoo-toggle">
+      <button class="on" data-zmode="official" onclick="zToggle('official')">What Zoos Say</button>
+      <button data-zmode="money" onclick="zToggle('money')">Where Money Goes</button>
+    </div>
+    <div id="zoo-stage"><svg id="zoo-svg"></svg></div>`;
+}
+
+function initZoo() { renderZoo('official'); }
+
+function zToggle(mode) {
+  zMode = mode;
+  document.querySelectorAll('.zoo-toggle button').forEach(b =>
+    b.classList.toggle('on', b.dataset.zmode === mode));
+  renderZoo(mode);
+}
+
+function renderZoo(mode) {
+  const stage = document.getElementById('zoo-stage');
+  const svg   = document.getElementById('zoo-svg');
+  if (!stage || !svg) return;
+
+  const W = stage.offsetWidth  || 320;
+  const H = stage.offsetHeight || 158;
+
+  stage.querySelectorAll('.zn').forEach(n => n.remove());
+  svg.innerHTML = '';
+
+  const mdata = MODES[mode];
+
+  mdata.links.forEach(([a,b]) => {
+    const na = mdata.nodes.find(n => n.id===a);
+    const nb = mdata.nodes.find(n => n.id===b);
+    const x1 = na.px*W, y1 = na.py*H, x2 = nb.px*W, y2 = nb.py*H;
+    const line = document.createElementNS('http://www.w3.org/2000/svg','line');
+    line.setAttribute('x1',x1); line.setAttribute('y1',y1);
+    line.setAttribute('x2',x2); line.setAttribute('y2',y2);
+    line.setAttribute('stroke','#c4bcb0');
+    line.setAttribute('stroke-width','1.5');
+    if (mode==='money') line.setAttribute('stroke-dasharray','4 3');
+    svg.appendChild(line);
+  });
+
+  mdata.nodes.forEach(node => {
+    const el  = document.createElement('div');
+    el.className = 'zn';
+    const d = node.r * 2;
+    el.style.cssText = `width:${d}px;height:${d}px;
+      left:${node.px*W - node.r}px;top:${node.py*H - node.r}px;
+      background:${node.bg};font-size:${node.r>24?10:9}px;`;
+    el.textContent = node.lbl;
+    el.addEventListener('click', () => el.classList.toggle('lit'));
+    stage.appendChild(el);
+  });
+}
+
+/* ── GPT PANEL ── */
+const INSIGHTS = [
+  { tag:'Behavior', text:'Daily active use despite unresolved trust' },
+  { tag:'Tension',  text:'Functional satisfaction ≠ psychological safety' },
+  { tag:'Signal',   text:'Ambient anxiety about potential failure' },
+  { tag:'Social',   text:'External comparison triggered by unresolved doubt' }
+];
+
+function buildGPT() {
+  return `
+    <div class="gpt-wrap">
+      <div class="gpt-col">
+        <div class="gpt-lbl">Transcript</div>
+        <div class="gpt-transcript">"I use the app every day but I don't really… I don't know if I trust it? It does what I want but I always feel like something could go wrong. It's fine, it works, but—"<br><br>"My neighbor uses a different one and says it's more reliable."</div>
+      </div>
+      <div class="gpt-col">
+        <div class="gpt-lbl">Structured Insight</div>
+        <div class="gpt-output-area" id="gpt-out"><div class="gpt-hint">Press Analyze to extract insights</div></div>
+        <button class="analyze-btn" id="analyze-btn" onclick="runAnalysis()">Analyze →</button>
+      </div>
+    </div>`;
+}
+
+function runAnalysis() {
+  const btn = document.getElementById('analyze-btn');
+  const out  = document.getElementById('gpt-out');
+  if (!btn || !out) return;
+  btn.disabled = true;
+  out.innerHTML = '';
+  INSIGHTS.forEach((ins, i) => {
+    const row = document.createElement('div');
+    row.className = 'insight-row';
+    row.innerHTML = `<span class="insight-tag">${ins.tag}</span>${ins.text}`;
+    out.appendChild(row);
+    setTimeout(() => row.classList.add('vis'), 180 + i * 200);
+  });
+}
+
+/* ── CONTRADICTION MODE ── */
+function buildContradiction() {
+  return `
+    <div>
+      <div class="contra-row">
+        <label class="contra-switch" id="contra-sw" onclick="toggleContra()">
+          <input type="checkbox" id="contra-check">
+          <span class="sw-track"></span>
+          <span>Contradiction Mode</span>
+        </label>
+      </div>
+      <div class="surface-box">
+        <div class="slbl">Surface Statement</div>
+        <div class="stxt">"Our zoo is committed to conservation. Every visit supports wildlife protection and funds critical research that saves endangered species."</div>
+      </div>
+      <div class="tension-layer" id="tension-layer">
+        <div class="tension-item">
+          <div class="ti-lbl">Gap</div>
+          <div>~3–5% of zoo revenue is allocated to direct conservation programs.</div>
+        </div>
+        <div class="tension-item">
+          <div class="ti-lbl">Assumption</div>
+          <div>Visitors equate ticket purchase with conservation impact.</div>
+        </div>
+        <div class="tension-item">
+          <div class="ti-lbl">Pressure</div>
+          <div>Entertainment revenue is structurally required to fund any conservation at all.</div>
+        </div>
+      </div>
+    </div>`;
+}
+
+function toggleContra() {
+  const sw  = document.getElementById('contra-sw');
+  const lay = document.getElementById('tension-layer');
+  if (!sw || !lay) return;
+  sw.classList.toggle('on');
+  lay.classList.toggle('open');
+}
+
+/* ═══════════════════════════════════
+   EVENT LISTENERS
+   ═══════════════════════════════════ */
+document.getElementById('back-to-l1').addEventListener('click', () => showPage('landscape'));
+document.getElementById('panel-x').addEventListener('click', closePanel);
+document.getElementById('overlay').addEventListener('click', closePanel);
+</script>
+</body>
+</html>

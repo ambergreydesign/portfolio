@@ -1,0 +1,1133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Studio Box — Influences & Interests</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400&family=DM+Sans:wght@300;400&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html, body {
+  width: 100%; height: 100%;
+  overflow: hidden;
+  background: #0b1c26;
+  font-family: 'DM Sans', sans-serif;
+  color: rgba(224,212,192,0.85);
+}
+
+/* ── SCENE ── */
+#scene {
+  position: relative;
+  width: 100vw; height: 100vh;
+  overflow: hidden;
+}
+
+/* ── PHOTO BASE ── */
+#cabinet-photo {
+  position: absolute;
+  inset: 0;
+  width: 100%; height: 100%;
+  object-fit: cover;
+  object-position: center center;
+  display: block;
+  pointer-events: none;
+  user-select: none;
+}
+
+/* ── VIGNETTE ── */
+#vignette {
+  position: absolute; inset: 0;
+  background: radial-gradient(ellipse 110% 100% at 50% 50%, transparent 35%, rgba(6,12,18,0.6) 100%);
+  pointer-events: none; z-index: 1;
+}
+
+/* ── SVG OVERLAY ── */
+#overlay {
+  position: absolute; inset: 0;
+  width: 100%; height: 100%;
+  z-index: 2;
+}
+
+/* ── ZONE INTERACTION ── */
+.zone-group { cursor: pointer; }
+
+.zone-hit {
+  fill: transparent;
+  stroke: none;
+}
+
+.zone-glow {
+  fill: rgba(190,155,90,0);
+  stroke: rgba(190,155,90,0);
+  stroke-width: 1;
+  pointer-events: none;
+  transition: fill 0.45s ease, stroke 0.45s ease;
+}
+
+.zone-group:hover .zone-glow {
+  fill: rgba(190,155,90,0.06);
+  stroke: rgba(190,155,90,0.22);
+}
+.zone-group.active .zone-glow {
+  fill: rgba(190,155,90,0.1);
+  stroke: rgba(190,155,90,0.35);
+}
+
+/* Zone labels: hidden on desktop (frosted pills take over), visible on mobile */
+.zone-lbl {
+  fill: rgba(218,206,186,0);
+  font-family: 'DM Sans', sans-serif;
+  font-size: 11px;
+  font-weight: 400;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  pointer-events: none;
+  display: none; /* hidden on desktop — frosted pills replace them */
+}
+
+/* ── FROSTED LABEL PILLS (HTML overlay) ── */
+.zone-label-pill {
+  position: absolute;
+  pointer-events: none;
+  opacity: 0;
+  transform: translateY(4px);
+  transition: opacity 0.35s ease, transform 0.35s ease;
+  z-index: 4;
+  white-space: nowrap;
+}
+.zone-group:hover + .zone-label-pill,
+.zone-label-pill.show {
+  /* activated via JS */
+}
+.zone-label-pill .pill-inner {
+  display: inline-flex;
+  align-items: center;
+  background: rgba(255,255,255,0.07);
+  backdrop-filter: blur(14px) saturate(1.2);
+  -webkit-backdrop-filter: blur(14px) saturate(1.2);
+  border: 1px solid rgba(255,255,255,0.12);
+  border-radius: 100px;
+  padding: 7px 16px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 10px;
+  font-weight: 400;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: rgba(228,218,200,0.9);
+  text-shadow: 0 1px 4px rgba(0,0,0,0.5);
+}
+.zone-label-pill.show {
+  opacity: 1;
+  transform: translateY(0);
+}
+.zone-label-pill.active .pill-inner {
+  background: rgba(190,155,90,0.12);
+  border-color: rgba(190,155,90,0.25);
+  color: rgba(228,218,200,1);
+}
+
+/* ── SPARKLE DOTS on hover ── */
+.zone-sparkle {
+  fill: rgba(220,200,160,0);
+  pointer-events: none;
+  transition: fill 0.6s ease;
+}
+.zone-group:hover .zone-sparkle {
+  fill: rgba(220,200,160,0.7);
+  animation: sparkle-blink 1.8s ease-in-out infinite;
+}
+@keyframes sparkle-blink {
+  0%, 100% { opacity: 0.3; }
+  50% { opacity: 1; }
+}
+
+/* ── DETAIL PANEL (right slide) ── */
+#detail-overlay {
+  position: fixed; inset: 0;
+  z-index: 300;
+  opacity: 0; pointer-events: none;
+  transition: opacity 0.4s ease;
+}
+#detail-overlay.open { opacity: 1; pointer-events: all; }
+
+#detail-scrim {
+  position: absolute; inset: 0;
+  background: rgba(4,10,16,0.5);
+  backdrop-filter: blur(3px);
+  cursor: pointer;
+}
+
+#detail-panel {
+  position: absolute; top: 0; right: 0; bottom: 0;
+  width: 460px; max-width: 92%;
+  background: rgba(11,28,38,0.97);
+  border-left: 1px solid rgba(180,160,130,0.09);
+  overflow-y: auto;
+  padding: 48px 40px 60px;
+  transform: translateX(32px);
+  transition: transform 0.4s cubic-bezier(0.25,0.46,0.45,0.94);
+}
+#detail-overlay.open #detail-panel { transform: translateX(0); }
+#detail-panel::-webkit-scrollbar { width: 2px; }
+#detail-panel::-webkit-scrollbar-thumb { background: rgba(160,140,110,0.2); }
+
+.detail-close {
+  position: absolute; top: 22px; right: 22px;
+  width: 26px; height: 26px; cursor: pointer;
+  opacity: 0.3; transition: opacity 0.2s;
+  display: flex; align-items: center; justify-content: center;
+}
+.detail-close:hover { opacity: 1; }
+.detail-close::before, .detail-close::after {
+  content: ''; position: absolute;
+  width: 14px; height: 1px;
+  background: rgba(224,212,192,0.9);
+}
+.detail-close::before { transform: rotate(45deg); }
+.detail-close::after  { transform: rotate(-45deg); }
+
+.detail-shelf-label {
+  font-size: 8.5px;
+  letter-spacing: 0.26em;
+  text-transform: uppercase;
+  color: rgba(190,155,90,0.45);
+  margin-bottom: 14px;
+}
+.detail-shelf-name {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 26px;
+  font-weight: 300;
+  color: rgba(228,218,200,0.92);
+  letter-spacing: 0.015em;
+  line-height: 1.3;
+  margin-bottom: 8px;
+}
+.detail-shelf-sub {
+  font-size: 11px;
+  font-weight: 300;
+  color: rgba(200,185,165,0.25);
+  letter-spacing: 0.06em;
+  margin-bottom: 32px;
+}
+
+/* ── BOOK LIST inside panel ── */
+.book-list { list-style: none; }
+.book-item {
+  border-bottom: 1px solid rgba(180,160,130,0.06);
+  padding: 18px 0;
+  cursor: pointer;
+  transition: padding-left 0.25s ease;
+}
+.book-item:first-child { padding-top: 0; }
+.book-item:last-child { border-bottom: none; }
+.book-item:hover { padding-left: 8px; }
+
+.book-type {
+  font-size: 7px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: rgba(190,155,90,0.35);
+  margin-bottom: 6px;
+}
+.book-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 18px;
+  font-weight: 400;
+  color: rgba(228,218,200,0.88);
+  letter-spacing: 0.01em;
+  line-height: 1.3;
+  margin-bottom: 3px;
+  transition: color 0.25s;
+}
+.book-item:hover .book-title { color: rgba(228,218,200,1); }
+.book-author {
+  font-size: 11px;
+  font-weight: 300;
+  color: rgba(200,185,165,0.35);
+  font-style: italic;
+  letter-spacing: 0.02em;
+}
+.book-year {
+  font-size: 9px;
+  color: rgba(200,185,165,0.18);
+  letter-spacing: 0.08em;
+  margin-top: 4px;
+}
+
+/* ── Expanded book detail ── */
+.book-detail {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.4s ease, opacity 0.3s ease;
+  opacity: 0;
+}
+.book-item.expanded .book-detail {
+  max-height: 300px;
+  opacity: 1;
+}
+.book-note {
+  font-size: 12px;
+  font-weight: 300;
+  color: rgba(200,185,165,0.5);
+  line-height: 1.8;
+  letter-spacing: 0.015em;
+  margin-top: 12px;
+  padding-top: 10px;
+  border-top: 1px solid rgba(180,160,130,0.06);
+}
+.book-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 10px;
+}
+.book-tag {
+  font-size: 7.5px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: rgba(190,155,90,0.4);
+  border: 1px solid rgba(190,155,90,0.12);
+  padding: 3px 9px;
+}
+
+/* ── WORDMARK — bottom left (level 2-3 pattern) ── */
+.wordmark {
+  position: fixed;
+  bottom: 24px; left: 21px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 10px;
+  font-weight: 300;
+  letter-spacing: 0.2em;
+  color: rgba(210,195,172,0.18);
+  pointer-events: none;
+  z-index: 10;
+}
+
+/* ── BACK BUTTON — frosted pill, top left (level 2-3 pattern) ── */
+.back-link {
+  position: fixed;
+  top: 28px; left: 32px;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  background: rgba(255,255,255,0.06);
+  backdrop-filter: blur(14px) saturate(1.2);
+  -webkit-backdrop-filter: blur(14px) saturate(1.2);
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 100px;
+  padding: 9px 18px 9px 14px;
+  cursor: pointer;
+  color: rgba(200,185,165,0.75);
+  font-family: 'DM Sans', sans-serif;
+  font-size: 10px;
+  font-weight: 400;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  transition: background 0.25s ease, color 0.25s ease, border-color 0.25s ease;
+  z-index: 100;
+}
+.back-link:hover {
+  background: rgba(255,255,255,0.11);
+  color: rgba(200,185,165,1);
+  border-color: rgba(255,255,255,0.18);
+}
+.back-arrow {
+  display: inline-block;
+  width: 16px; height: 1px;
+  background: currentColor;
+  position: relative; flex-shrink: 0;
+}
+.back-arrow::before {
+  content: '';
+  position: absolute;
+  left: 0; top: -3px;
+  width: 6px; height: 6px;
+  border-left: 1px solid currentColor;
+  border-bottom: 1px solid currentColor;
+  transform: rotate(45deg);
+}
+
+/* ── PAGE TRANSITIONS ── */
+#page-exit {
+  position: fixed; inset: 0;
+  background: #0b1c26;
+  opacity: 0; pointer-events: none;
+  transition: opacity 0.28s ease-in;
+  z-index: 9999;
+}
+#page-exit.active { opacity: 1; }
+
+/* ── HINT ── */
+#hint {
+  position: fixed;
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 10px;
+  letter-spacing: 0.22em;
+  color: rgba(200,185,165,0.25);
+  pointer-events: none;
+  z-index: 5;
+  text-align: center;
+  animation: hint-fade 4s ease-in-out infinite;
+  transition: opacity 1s ease;
+}
+#hint.gone { opacity: 0; }
+@keyframes hint-fade {
+  0%, 100% { opacity: 0.15; }
+  50% { opacity: 0.4; }
+}
+
+/* ── MOTES ── */
+.mote {
+  position: absolute;
+  border-radius: 50%;
+  background: rgba(220,210,195,0.45);
+  animation: mote-float var(--d,9s) ease-in-out infinite var(--delay,0s);
+  pointer-events: none; z-index: 3;
+}
+@keyframes mote-float {
+  0%   { opacity: 0; transform: translateY(0); }
+  10%  { opacity: 0.35; }
+  90%  { opacity: 0.08; }
+  100% { opacity: 0; transform: translateY(-70vh) translateX(var(--dx,15px)); }
+}
+
+/* ── MOBILE-ONLY ELEMENTS: hidden on desktop ── */
+#mob-pan-hint,
+#mob-desktop-note {
+  display: none;
+}
+
+/* ══ MOBILE ══════════════════════════════════════════ */
+@media (max-width: 768px) {
+
+  /* Scene: pannable on mobile */
+  #scene {
+    height: 100svh;
+    will-change: transform;
+    cursor: grab;
+  }
+  #scene.dragging { cursor: grabbing; }
+
+  /* Detail panel goes full-width */
+  #detail-panel { width: 100%; padding: 36px 24px 50px; }
+
+  /* Back link */
+  .back-link { top: 16px; left: 16px; padding: 7px 14px 7px 10px; font-size: 9px; }
+
+  /* Wordmark hides on mobile */
+  .wordmark { display: none; }
+
+  /* ── Hide desktop frosted pills on mobile ── */
+  .zone-label-pill { display: none !important; }
+
+  /* ── Always-visible zone labels (SVG text, matching studio page) ── */
+  .zone-lbl {
+    display: block !important;
+    fill: rgba(218, 206, 186, 0.7) !important;
+    font-family: 'DM Sans', sans-serif !important;
+    font-size: 11px !important;
+    font-style: italic !important;
+    letter-spacing: 0.06em !important;
+    text-transform: none !important;
+    transition: none !important;
+    pointer-events: none !important;
+  }
+
+  /* Zone borders: hide glow/stroke on mobile */
+  .zone-glow {
+    fill: transparent !important;
+    stroke: transparent !important;
+  }
+
+  /* Sparkles hidden on mobile */
+  .zone-sparkle { display: none; }
+
+  /* Tap target */
+  .zone-group { cursor: pointer; }
+
+  /* Hint text */
+  #hint {
+    font-size: 9px;
+    letter-spacing: 0.18em;
+  }
+
+  /* ── Pan hint ── */
+  #mob-pan-hint {
+    display: block;
+    position: fixed;
+    bottom: 44px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-family: 'DM Sans', sans-serif;
+    font-style: italic;
+    font-size: 10px;
+    letter-spacing: 0.2em;
+    color: rgba(200, 185, 165, 0.42);
+    pointer-events: none;
+    z-index: 50;
+    white-space: nowrap;
+    opacity: 1;
+    transition: opacity 0.7s ease;
+  }
+  #mob-pan-hint.gone { opacity: 0; }
+
+  /* Desktop nudge */
+  #mob-desktop-note {
+    display: block;
+    position: fixed;
+    bottom: 16px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 9px;
+    letter-spacing: 0.16em;
+    color: rgba(200, 185, 165, 0.18);
+    pointer-events: none;
+    z-index: 50;
+    white-space: nowrap;
+  }
+}
+</style>
+</head>
+<body>
+
+<div id="page-exit"></div>
+
+<div id="scene">
+
+  <!-- LAYER 0: CABINET PHOTO -->
+  <img id="cabinet-photo" src="A Images/Studio Box Bookshelf Edited 4.webp" alt="The Studio Box">
+
+  <!-- LAYER 1: VIGNETTE -->
+  <div id="vignette"></div>
+
+  <!-- LAYER 2: SVG INTERACTION OVERLAY
+       viewBox 1447×1086 matches the actual image pixel dimensions.
+       Zones positioned from Figma design coordinates. -->
+  <svg id="overlay"
+       viewBox="0 0 1447 1086"
+       preserveAspectRatio="xMidYMid slice"
+       xmlns="http://www.w3.org/2000/svg"
+       aria-hidden="true">
+
+    <!-- ══ PLANTS — top center above lamp ══ -->
+    <g class="zone-group" data-zone="plants">
+      <rect class="zone-glow" x="625" y="0" width="285" height="161" rx="2"/>
+      <rect class="zone-hit"  x="625" y="0" width="285" height="161"/>
+      <text class="zone-lbl" x="767" y="85" text-anchor="middle">Plants</text>
+      <circle class="zone-sparkle" cx="680" cy="60" r="1.5"/>
+      <circle class="zone-sparkle" cx="860" cy="100" r="1"/>
+    </g>
+
+    <!-- ══ PHILOSOPHY — upper left shelf, standing books ══ -->
+    <g class="zone-group" data-zone="philosophy">
+      <rect class="zone-glow" x="352" y="152" width="154" height="120" rx="2"/>
+      <rect class="zone-hit"  x="352" y="152" width="154" height="120"/>
+      <text class="zone-lbl" x="429" y="215" text-anchor="middle">Philosophy</text>
+      <circle class="zone-sparkle" cx="380" cy="180" r="1.2"/>
+      <circle class="zone-sparkle" cx="470" cy="240" r="1"/>
+    </g>
+
+    <!-- ══ FREE TIME — center upper, stuffed animal & objects ══ -->
+    <g class="zone-group" data-zone="free-time">
+      <rect class="zone-glow" x="574" y="172" width="140" height="180" rx="2"/>
+      <rect class="zone-hit"  x="574" y="172" width="140" height="180"/>
+      <text class="zone-lbl" x="644" y="265" text-anchor="middle">Free Time</text>
+      <circle class="zone-sparkle" cx="610" cy="210" r="1.3"/>
+      <circle class="zone-sparkle" cx="680" cy="310" r="1"/>
+    </g>
+
+    <!-- ══ PERCEPTION & MEANING — second shelf row ══ -->
+    <g class="zone-group" data-zone="perception">
+      <rect class="zone-glow" x="350" y="278" width="158" height="146" rx="2"/>
+      <rect class="zone-hit"  x="350" y="278" width="158" height="146"/>
+      <text class="zone-lbl" x="429" y="355" text-anchor="middle">Design Theory</text>
+      <circle class="zone-sparkle" cx="385" cy="310" r="1.2"/>
+      <circle class="zone-sparkle" cx="475" cy="380" r="1"/>
+    </g>
+
+    <!-- ══ THOUGHTS — center curios & vessels ══ -->
+    <g class="zone-group" data-zone="thoughts">
+      <rect class="zone-glow" x="582" y="358" width="132" height="154" rx="2"/>
+      <rect class="zone-hit"  x="582" y="358" width="132" height="154"/>
+      <text class="zone-lbl" x="648" y="440" text-anchor="middle">Thoughts</text>
+      <circle class="zone-sparkle" cx="620" cy="400" r="1.2"/>
+      <circle class="zone-sparkle" cx="690" cy="470" r="1"/>
+    </g>
+
+    <!-- ══ RESEARCH & PAPERS — third shelf row ══ -->
+    <g class="zone-group" data-zone="research">
+      <rect class="zone-glow" x="354" y="425" width="161" height="136" rx="2"/>
+      <rect class="zone-hit"  x="354" y="425" width="161" height="136"/>
+      <text class="zone-lbl" x="434" y="497" text-anchor="middle">Research &amp; Papers</text>
+      <circle class="zone-sparkle" cx="390" cy="460" r="1.3"/>
+      <circle class="zone-sparkle" cx="480" cy="520" r="1"/>
+    </g>
+
+    <!-- ══ MUSIC — center bottom, records & stacks ══ -->
+    <g class="zone-group" data-zone="music">
+      <rect class="zone-glow" x="582" y="536" width="354" height="354" rx="2"/>
+      <rect class="zone-hit"  x="582" y="536" width="354" height="354"/>
+      <text class="zone-lbl" x="759" y="720" text-anchor="middle">Music</text>
+      <circle class="zone-sparkle" cx="640" cy="600" r="1.5"/>
+      <circle class="zone-sparkle" cx="850" cy="750" r="1.2"/>
+      <circle class="zone-sparkle" cx="720" cy="830" r="1"/>
+    </g>
+
+    <!-- ══ ECOLOGY & ETHICS — fourth shelf row ══ -->
+    <g class="zone-group" data-zone="ecology">
+      <rect class="zone-glow" x="366" y="570" width="155" height="114" rx="2"/>
+      <rect class="zone-hit"  x="366" y="570" width="155" height="114"/>
+      <text class="zone-lbl" x="443" y="630" text-anchor="middle">Ecology &amp; Ethics</text>
+      <circle class="zone-sparkle" cx="400" cy="600" r="1"/>
+      <circle class="zone-sparkle" cx="490" cy="650" r="1.2"/>
+    </g>
+
+    <!-- ══ REFERENCE BOOKS — bottom shelf ══ -->
+    <g class="zone-group" data-zone="reference">
+      <rect class="zone-glow" x="366" y="699" width="194" height="191" rx="2"/>
+      <rect class="zone-hit"  x="366" y="699" width="194" height="191"/>
+      <text class="zone-lbl" x="463" y="800" text-anchor="middle">Reference Books</text>
+      <circle class="zone-sparkle" cx="400" cy="750" r="1.3"/>
+      <circle class="zone-sparkle" cx="520" cy="840" r="1"/>
+    </g>
+
+    <!-- ══ SCREENS & SOUND — right door with photos ══ -->
+    <g class="zone-group" data-zone="screens">
+      <rect class="zone-glow" x="959" y="102" width="149" height="786" rx="2"/>
+      <rect class="zone-hit"  x="959" y="102" width="149" height="786"/>
+      <text class="zone-lbl" x="1033" y="500" text-anchor="middle" transform="rotate(-90 1033 500)">Screens &amp; Sound</text>
+      <circle class="zone-sparkle" cx="1000" cy="200" r="1.2"/>
+      <circle class="zone-sparkle" cx="1060" cy="500" r="1"/>
+      <circle class="zone-sparkle" cx="1020" cy="750" r="1.3"/>
+    </g>
+
+    <!-- ══ CURIOSITIES — far right cubbies ══ -->
+    <g class="zone-group" data-zone="curiosities">
+      <rect class="zone-glow" x="1194" y="82" width="145" height="43" rx="2"/>
+      <rect class="zone-hit"  x="1194" y="82" width="145" height="43"/>
+      <text class="zone-lbl" x="1266" y="108" text-anchor="middle">Curiosities</text>
+    </g>
+
+  </svg>
+
+  <!-- Frosted label pills — positioned by JS to match SVG zones -->
+  <div id="label-pills"></div>
+
+  <div id="motes"></div>
+</div><!-- #scene -->
+
+<div id="hint">explore the shelves</div>
+
+<!-- Back button — top left frosted pill (level 2-3 pattern) -->
+<button class="back-link" onclick="navigateTo('studio-portfolio.html')">
+  <span class="back-arrow"></span>
+  Studio
+</button>
+
+<!-- Wordmark — bottom left (level 2-3 pattern) -->
+<div class="wordmark">Amber Grey</div>
+
+<!-- Mobile-only UI -->
+<div id="mob-pan-hint">swipe to explore</div>
+<div id="mob-desktop-note">best experienced on desktop</div>
+
+<!-- ══ DETAIL PANEL ══ -->
+<div id="detail-overlay">
+  <div id="detail-scrim"></div>
+  <div id="detail-panel">
+    <div class="detail-close" id="detailClose"></div>
+    <div class="detail-shelf-label" id="detailLabel"></div>
+    <div class="detail-shelf-name" id="detailName"></div>
+    <div class="detail-shelf-sub" id="detailSub"></div>
+    <ul class="book-list" id="bookList"></ul>
+  </div>
+</div>
+
+<script>
+/* ══════════════════════════════════════════════════════
+   THE STUDIO BOX — Interactive Cabinet
+   Zones mapped from Figma design (1447×1086)
+   ══════════════════════════════════════════════════════ */
+
+/* ── PAGE TRANSITION ── */
+function navigateTo(url) {
+  const exit = document.getElementById('page-exit');
+  exit.classList.add('active');
+  setTimeout(() => { window.location.href = url; }, 300);
+}
+
+/* ── DATA — all zones ── */
+const shelfData = {
+
+  'plants': {
+    label: 'Above the Lamp',
+    name: 'Plants',
+    sub: 'Living systems that share the studio',
+    items: [
+      { type: 'Object', title: 'Hanging Vines & Trailing Plants', author: '', year: '',
+        note: 'Nature spilling into the workspace from above. A reminder that the studio exists inside a larger ecology, not apart from it.',
+        tags: ['Nature', 'Ecology', 'Atmosphere'] },
+      { type: 'Object', title: 'Dried Botanicals', author: '', year: '',
+        note: 'Preserved specimens from places that mattered. They mark seasons and landscapes woven into the thinking.',
+        tags: ['Memory', 'Place'] },
+    ]
+  },
+
+  'philosophy': {
+    label: 'Top Shelf',
+    name: 'Philosophy',
+    sub: 'The deep structures underneath the practice',
+    items: [
+      { type: 'Book', title: 'Ways of Seeing', author: 'John Berger', year: '1972',
+        note: 'Still the sharpest text on how images construct meaning and power. Berger\'s way of reading the world visually shaped my approach to every design artifact.',
+        tags: ['Visual culture', 'Critique'] },
+      { type: 'Book', title: 'Dark Ecology', author: 'Timothy Morton', year: '2016',
+        note: 'A disorienting, necessary meditation on coexistence and the impossibility of separating ourselves from the ecological mesh.',
+        tags: ['Philosophy', 'Ecology', 'Coexistence'] },
+      { type: 'Book', title: 'The Order of Things', author: 'Michel Foucault', year: '1966',
+        note: 'How systems of knowledge are constructed — and who gets to construct them. Foundational to my thinking about classification and power in design.',
+        tags: ['Epistemology', 'Power', 'Systems'] },
+    ]
+  },
+
+  'free-time': {
+    label: 'Center Shelf',
+    name: 'Free Time',
+    sub: 'The artifacts of play and decompression',
+    items: [
+      { type: 'Object', title: 'The Stuffed Monkey', author: '', year: '',
+        note: 'A studio companion. Not everything needs to mean something. Some things just need to make you smile when synthesis gets heavy.',
+        tags: ['Play', 'Joy'] },
+      { type: 'Object', title: 'The Lamp', author: '', year: '',
+        note: 'Warm light is non-negotiable. The lamp sets the temperature of the thinking — golden, low, enough to see by but not enough to flatten.',
+        tags: ['Atmosphere', 'Light'] },
+      { type: 'Object', title: 'Candles & Ritual Vessels', author: '', year: '',
+        note: 'Lighting a candle is how a work session begins — it marks the transition from distraction to attention.',
+        tags: ['Ritual', 'Focus'] },
+    ]
+  },
+
+  'perception': {
+    label: 'Second Shelf',
+    name: 'Design Theory',
+    sub: 'How we sense, interpret, and construct the world',
+    items: [
+      { type: 'Book', title: 'The Senses', author: 'Ellen Lupton & Andrea Lipps', year: '2018',
+        note: 'A multisensory exploration that expanded my understanding of experience design beyond the visual. Critical for HapTurn and accessibility work.',
+        tags: ['Multisensory', 'Perception'] },
+      { type: 'Book', title: 'The Mushroom at the End of the World', author: 'Anna Lowenhaupt Tsing', year: '2015',
+        note: 'A meditation on precarity, collaboration, and possibility in damaged landscapes. Deeply influenced my approach to designing within broken systems.',
+        tags: ['Anthropology', 'Ecology', 'Precarity'] },
+      { type: 'Book', title: 'Design Justice', author: 'Sasha Costanza-Chock', year: '2020',
+        note: 'A foundational reframing of who design is for and who gets to do it. Reshaped how I think about participation, power, and the politics embedded in every design decision.',
+        tags: ['Equity', 'Participatory', 'Systems'] },
+    ]
+  },
+
+  'thoughts': {
+    label: 'Center',
+    name: 'Thoughts',
+    sub: 'Vessels, objects, and things that provoke thinking',
+    items: [
+      { type: 'Object', title: 'Ceramic Vessels', author: '', year: '',
+        note: 'Objects that hold space — literally and metaphorically. Each one came from somewhere that mattered.',
+        tags: ['Craft', 'Containment', 'Place'] },
+      { type: 'Object', title: 'Stacked Notebooks', author: '', year: '',
+        note: 'The analog layer. Ideas that needed to be drawn before they could be digitized. Field notes, sketches, half-formed frameworks.',
+        tags: ['Process', 'Sketching', 'Thinking'] },
+    ]
+  },
+
+  'research': {
+    label: 'Third Shelf',
+    name: 'Research & Papers',
+    sub: 'The academic backbone — frameworks and findings',
+    items: [
+      { type: 'Paper', title: 'Leverage Points: Places to Intervene in a System', author: 'Donella Meadows', year: '1999',
+        note: 'The canonical framework for understanding where small interventions create outsized systemic change. Referenced in nearly every systems-level project.',
+        tags: ['Systems', 'Intervention', 'Leverage'] },
+      { type: 'Paper', title: 'Nothing About Us Without Us: Co-design in Assistive Technology', author: 'Placeholder Author et al.', year: '2021',
+        note: 'A framework for inclusive co-design that centers the expertise of disabled people. Foundational to the Glidance work.',
+        tags: ['Co-design', 'Accessibility', 'BLV'] },
+      { type: 'Paper', title: 'Haptic Wayfinding: Tactile Navigation for Blind Pedestrians', author: 'Placeholder Author et al.', year: '2019',
+        note: 'Research on haptic feedback modalities for spatial orientation — directly informed the HapTurn interaction model.',
+        tags: ['Haptics', 'Navigation', 'Wayfinding'] },
+      { type: 'Paper', title: 'More-than-Human Design: Frameworks for Multispecies Futures', author: 'Placeholder Author et al.', year: '2023',
+        note: 'Expands the design frame beyond human-centered to include non-human stakeholders — shaped the ReWilded project\'s ethical stance.',
+        tags: ['More-than-human', 'Multispecies', 'Ethics'] },
+    ]
+  },
+
+  'ecology': {
+    label: 'Fourth Shelf',
+    name: 'Ecology & Ethics',
+    sub: 'Reciprocity, care, and the living world',
+    items: [
+      { type: 'Book', title: 'Braiding Sweetgrass', author: 'Robin Wall Kimmerer', year: '2013',
+        note: 'Indigenous wisdom woven with scientific knowledge. Fundamentally changed how I think about reciprocity and designing with rather than for the living world.',
+        tags: ['Ecology', 'Indigenous knowledge', 'Reciprocity'] },
+      { type: 'Book', title: 'Entangled Life', author: 'Merlin Sheldrake', year: '2020',
+        note: 'Fungi as a lens for rethinking networks, symbiosis, and interconnection. Shifted how I see the hidden systems holding visible ones together.',
+        tags: ['Ecology', 'Networks', 'Symbiosis'] },
+      { type: 'Book', title: 'Ruined by Design', author: 'Mike Monteiro', year: '2019',
+        note: 'A sharp provocation about ethical responsibility in design. Reinforced my conviction that designers must interrogate the consequences of what they build.',
+        tags: ['Ethics', 'Responsibility'] },
+    ]
+  },
+
+  'reference': {
+    label: 'Bottom Shelf',
+    name: 'Reference Books',
+    sub: 'The large-format volumes and visual atlases',
+    items: [
+      { type: 'Book', title: 'Thinking in Systems', author: 'Donella Meadows', year: '2008',
+        note: 'The primer that made leverage points and feedback loops feel intuitive. I return to it whenever a project gets tangled.',
+        tags: ['Systems thinking', 'Complexity'] },
+      { type: 'Book', title: 'Exposing the Magic of Design', author: 'Jon Kolko', year: '2011',
+        note: 'Kolko\'s articulation of design synthesis — the invisible, intuitive work of making meaning from research — gave language to something I\'d been doing without knowing its name.',
+        tags: ['Synthesis', 'Sensemaking'] },
+      { type: 'Book', title: 'Universal Principles of Design', author: 'Lidwell, Holden & Butler', year: '2003',
+        note: 'The reference I keep returning to. A compendium of 125 design principles, cross-referenced and visual. Useful when a project needs a framework I haven\'t named yet.',
+        tags: ['Design', 'Reference', 'Principles'] },
+    ]
+  },
+
+  'music': {
+    label: 'The Floor',
+    name: 'Music',
+    sub: 'The sounds in the studio during deep work and synthesis',
+    items: [
+      { type: 'Music', title: 'Music for Airports', author: 'Brian Eno', year: '',
+        note: 'The original ambient album. Soundtrack to every synthesis wall and mapping session.',
+        tags: ['Ambient', 'Focus'] },
+      { type: 'Music', title: 'Vespertine', author: 'Bjork', year: '',
+        note: 'Intimacy and technology woven together. A masterclass in multisensory design.',
+        tags: ['Electronic', 'Texture'] },
+      { type: 'Music', title: 'A Love Supreme', author: 'John Coltrane', year: '',
+        note: 'Spiritual architecture in sound. Devotion to structure and transcendence simultaneously.',
+        tags: ['Jazz', 'Devotion'] },
+      { type: 'Music', title: 'The Disintegration Loops', author: 'William Basinski', year: '',
+        note: 'Decay as composition. A meditation on impermanence — connected to how I think about systems over time.',
+        tags: ['Ambient', 'Impermanence'] },
+      { type: 'Music', title: 'Cosmogramma', author: 'Flying Lotus', year: '',
+        note: 'Jazz, electronic, and spiritual music colliding. How my brain works during research synthesis.',
+        tags: ['Electronic', 'Jazz', 'Synthesis'] },
+      { type: 'Music', title: 'Async', author: 'Ryuichi Sakamoto', year: '',
+        note: 'Sound as space. Sakamoto\'s late work dissolves the boundary between music and environment.',
+        tags: ['Ambient', 'Atmosphere'] },
+    ]
+  },
+
+  'screens': {
+    label: 'The Right Door',
+    name: 'Screens & Sound',
+    sub: 'The stories that shaped how I see systems and the human condition',
+    items: [
+      { type: 'Film', title: 'Arrival', author: 'Denis Villeneuve, 2016', year: '',
+        note: 'Language as a tool for reshaping perception. Communication as design — as world-building.',
+        tags: ['Sci-Fi', 'Language', 'Perception'] },
+      { type: 'Film', title: 'Blade Runner 2049', author: 'Denis Villeneuve, 2017', year: '',
+        note: 'Atmosphere as narrative. Every texture, every absence tells a story about what a society values.',
+        tags: ['Sci-Fi', 'Worldbuilding'] },
+      { type: 'TV', title: 'Severance', author: 'Apple TV+, 2022–', year: '',
+        note: 'The most precise critique of workplace systems. Externalizes the internal experience of compartmentalization.',
+        tags: ['Drama', 'Systems', 'Work'] },
+      { type: 'TV', title: 'The Bear', author: 'FX / Hulu, 2022–', year: '',
+        note: 'Craft, pressure, and the systems that hold a kitchen together. Kinetic energy mirrors design sprints.',
+        tags: ['Drama', 'Craft'] },
+      { type: 'Film', title: 'Ex Machina', author: 'Alex Garland, 2015', year: '',
+        note: 'The ethics of creation and the violence of designing consciousness without consent.',
+        tags: ['Sci-Fi', 'AI Ethics'] },
+      { type: 'Film', title: 'Annihilation', author: 'Alex Garland, 2018', year: '',
+        note: 'Transformation as horror and beauty simultaneously. The shimmer as a design metaphor — boundaries dissolving, systems recombining.',
+        tags: ['Sci-Fi', 'Transformation'] },
+    ]
+  },
+
+  'curiosities': {
+    label: 'Far Right',
+    name: 'Curiosities',
+    sub: 'Small fragments, samples, and questions',
+    items: [
+      { type: 'Object', title: 'Material Samples', author: '', year: '',
+        note: 'Textures, fabrics, fragments of things. A tactile library for when screens aren\'t enough.',
+        tags: ['Material', 'Tactile', 'Research'] },
+      { type: 'Object', title: 'Small Treasures', author: '', year: '',
+        note: 'Miniatures, found objects. Things too small and strange to categorize but too meaningful to discard.',
+        tags: ['Wonder', 'Collection'] },
+    ]
+  }
+
+};
+
+/* ── DOM refs ── */
+const detailOverlay = document.getElementById('detail-overlay');
+const detailClose   = document.getElementById('detailClose');
+const detailScrim   = document.getElementById('detail-scrim');
+const detailLabel   = document.getElementById('detailLabel');
+const detailName    = document.getElementById('detailName');
+const detailSub     = document.getElementById('detailSub');
+const bookList      = document.getElementById('bookList');
+const hint          = document.getElementById('hint');
+const zones         = document.querySelectorAll('.zone-group');
+
+/* ── Open shelf detail ── */
+function openShelf(zoneId) {
+  const data = shelfData[zoneId];
+  if (!data) return;
+
+  hint.classList.add('gone');
+
+  zones.forEach(z => {
+    z.classList.remove('active');
+    const p = pillMap.get(z);
+    if (p) { p.classList.remove('active', 'show'); p.style.transform = 'translate(-50%, calc(-50% + 4px))'; }
+  });
+  const activeZone = document.querySelector(`[data-zone="${zoneId}"]`);
+  activeZone.classList.add('active');
+  const activePill = pillMap.get(activeZone);
+  if (activePill) { activePill.classList.add('active', 'show'); activePill.style.transform = 'translate(-50%, -50%)'; }
+
+  detailLabel.textContent = data.label;
+  detailName.textContent  = data.name;
+  detailSub.textContent   = data.sub;
+
+  bookList.innerHTML = data.items.map((item, i) => `
+    <li class="book-item" data-idx="${i}">
+      <div class="book-type">${item.type}</div>
+      <div class="book-title">${item.title}</div>
+      ${item.author ? `<div class="book-author">${item.author}</div>` : ''}
+      ${item.year ? `<div class="book-year">${item.year}</div>` : ''}
+      <div class="book-detail">
+        <div class="book-note">${item.note}</div>
+        <div class="book-tags">
+          ${item.tags.map(t => `<span class="book-tag">${t}</span>`).join('')}
+        </div>
+      </div>
+    </li>
+  `).join('');
+
+  bookList.querySelectorAll('.book-item').forEach(li => {
+    li.addEventListener('click', () => {
+      const wasOpen = li.classList.contains('expanded');
+      bookList.querySelectorAll('.book-item').forEach(b => b.classList.remove('expanded'));
+      if (!wasOpen) li.classList.add('expanded');
+    });
+  });
+
+  detailOverlay.classList.add('open');
+  document.getElementById('detail-panel').scrollTop = 0;
+}
+
+function closeDetail() {
+  detailOverlay.classList.remove('open');
+  zones.forEach(z => {
+    z.classList.remove('active');
+    const p = pillMap.get(z);
+    if (p) { p.classList.remove('active', 'show'); p.style.transform = 'translate(-50%, calc(-50% + 4px))'; }
+  });
+}
+
+/* ── FROSTED LABEL PILLS — positioned over SVG zones ── */
+const pillContainer = document.getElementById('label-pills');
+const overlay       = document.getElementById('overlay');
+const pillMap       = new Map(); // zone element → pill element
+
+const pillLabels = {
+  'plants': 'Plants',
+  'philosophy': 'Philosophy',
+  'free-time': 'Free Time',
+  'perception': 'Design Theory',
+  'thoughts': 'Thoughts',
+  'research': 'Research & Papers',
+  'ecology': 'Ecology & Ethics',
+  'reference': 'Reference Books',
+  'music': 'Music',
+  'screens': 'Screens & Sound',
+  'curiosities': 'Curiosities',
+};
+
+zones.forEach(z => {
+  const zoneId = z.dataset.zone;
+  const pill = document.createElement('div');
+  pill.className = 'zone-label-pill';
+  pill.innerHTML = `<span class="pill-inner">${pillLabels[zoneId] || zoneId}</span>`;
+  pillContainer.appendChild(pill);
+  pillMap.set(z, pill);
+});
+
+function positionPills() {
+  const svgEl = overlay;
+  const svgRect = svgEl.getBoundingClientRect();
+  // The SVG viewBox is 1447×1086; figure out the rendered mapping
+  const vbW = 1447, vbH = 1086;
+  const imgAspect = vbW / vbH;
+  const winAspect = svgRect.width / svgRect.height;
+
+  let scale, offX, offY;
+  if (winAspect > imgAspect) {
+    // wider than image — image is width-fitted, cropped top/bottom
+    scale = svgRect.width / vbW;
+    offX = 0;
+    offY = (svgRect.height - vbH * scale) / 2;
+  } else {
+    // taller than image — image is height-fitted, cropped left/right
+    scale = svgRect.height / vbH;
+    offX = (svgRect.width - vbW * scale) / 2;
+    offY = 0;
+  }
+
+  zones.forEach(z => {
+    const pill = pillMap.get(z);
+    if (!pill) return;
+
+    // Get the hit rect inside this zone group
+    const hitRect = z.querySelector('.zone-hit');
+    if (!hitRect) return;
+
+    const rx = parseFloat(hitRect.getAttribute('x'));
+    const ry = parseFloat(hitRect.getAttribute('y'));
+    const rw = parseFloat(hitRect.getAttribute('width'));
+    const rh = parseFloat(hitRect.getAttribute('height'));
+
+    // Center of zone in screen coords
+    const cx = offX + (rx + rw / 2) * scale;
+    const cy = offY + (ry + rh / 2) * scale;
+
+    pill.style.left = cx + 'px';
+    pill.style.top  = cy + 'px';
+    pill.style.transform = pill.classList.contains('show')
+      ? 'translate(-50%, -50%)'
+      : 'translate(-50%, calc(-50% + 4px))';
+  });
+}
+
+positionPills();
+window.addEventListener('resize', positionPills);
+
+/* ── Zone hover → show/hide pills ── */
+zones.forEach(z => {
+  z.addEventListener('mouseenter', () => {
+    const pill = pillMap.get(z);
+    if (pill) {
+      pill.classList.add('show');
+      pill.style.transform = 'translate(-50%, -50%)';
+    }
+  });
+  z.addEventListener('mouseleave', () => {
+    const pill = pillMap.get(z);
+    if (pill && !pill.classList.contains('active')) {
+      pill.classList.remove('show');
+      pill.style.transform = 'translate(-50%, calc(-50% + 4px))';
+    }
+  });
+});
+
+/* ── Zone clicks ── */
+zones.forEach(z => {
+  z.addEventListener('click', () => openShelf(z.dataset.zone));
+});
+
+/* ── Close ── */
+detailClose.addEventListener('click', closeDetail);
+detailScrim.addEventListener('click', closeDetail);
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeDetail(); });
+
+/* ── Motes ── */
+(function spawnMotes() {
+  const container = document.getElementById('motes');
+  for (let i = 0; i < 12; i++) {
+    const m = document.createElement('div');
+    m.className = 'mote';
+    const s = 1.5 + Math.random() * 2;
+    m.style.cssText = `
+      width:${s}px; height:${s}px;
+      left:${Math.random()*100}%;
+      top:${55 + Math.random()*45}%;
+      --d:${7 + Math.random()*10}s;
+      --delay:${Math.random()*8}s;
+      --dx:${-25 + Math.random()*50}px;
+    `;
+    container.appendChild(m);
+  }
+})();
+
+/* ── MOBILE PAN (matching studio page pattern) ── */
+(function mobilePan() {
+  if (window.innerWidth > 768) return;
+
+  const scene = document.getElementById('scene');
+  const photo = document.getElementById('cabinet-photo');
+  const panHint = document.getElementById('mob-pan-hint');
+
+  // Set scene width to match photo aspect ratio at viewport height
+  const imgAspect = 1447 / 1086;
+  const vh = window.innerHeight;
+  const sceneW = Math.round(vh * imgAspect);
+  scene.style.width = sceneW + 'px';
+
+  // Center initially
+  let panX = -(sceneW - window.innerWidth) / 2;
+  scene.style.transform = `translateX(${panX}px)`;
+
+  let startX = 0, startPanX = 0, dragging = false, hasSwiped = false;
+
+  scene.addEventListener('touchstart', e => {
+    startX = e.touches[0].clientX;
+    startPanX = panX;
+    dragging = true;
+    scene.classList.add('dragging');
+  }, { passive: true });
+
+  scene.addEventListener('touchmove', e => {
+    if (!dragging) return;
+    const dx = e.touches[0].clientX - startX;
+    panX = Math.max(-(sceneW - window.innerWidth), Math.min(0, startPanX + dx));
+    scene.style.transform = `translateX(${panX}px)`;
+
+    if (!hasSwiped && Math.abs(dx) > 20) {
+      hasSwiped = true;
+      if (panHint) panHint.classList.add('gone');
+    }
+  }, { passive: true });
+
+  scene.addEventListener('touchend', () => {
+    dragging = false;
+    scene.classList.remove('dragging');
+  });
+
+  // Also handle mouse drag for tablets with mouse
+  scene.addEventListener('mousedown', e => {
+    startX = e.clientX;
+    startPanX = panX;
+    dragging = true;
+    scene.classList.add('dragging');
+    e.preventDefault();
+  });
+  window.addEventListener('mousemove', e => {
+    if (!dragging) return;
+    const dx = e.clientX - startX;
+    panX = Math.max(-(sceneW - window.innerWidth), Math.min(0, startPanX + dx));
+    scene.style.transform = `translateX(${panX}px)`;
+  });
+  window.addEventListener('mouseup', () => {
+    dragging = false;
+    scene.classList.remove('dragging');
+  });
+
+  // On mobile, zone taps open detail directly
+  zones.forEach(z => {
+    z.addEventListener('click', e => {
+      e.stopPropagation();
+      openShelf(z.dataset.zone);
+    });
+  });
+})();
+</script>
+</body>
+</html>

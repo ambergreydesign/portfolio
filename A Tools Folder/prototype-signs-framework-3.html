@@ -1,0 +1,673 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The SIGNS Framework</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,600;1,400;1,500&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bg:      #0d1a0f;
+  --bgp:     #101c12;
+  --bgc:     #131f15;
+  --text:    #f2ead8;
+  --muted:   rgba(242,234,216,0.55);
+  --dim:     rgba(242,234,216,0.28);
+  --border:  rgba(242,234,216,0.09);
+  --amber:   #e2aa62;
+  --aglow:   rgba(226,170,98,0.45);
+  --asoft:   rgba(226,170,98,0.10);
+  --aborder: rgba(226,170,98,0.22);
+  --green:   #68b078;
+  --gglow:   rgba(104,176,120,0.50);
+  --gsoft:   rgba(104,176,120,0.10);
+  --gborder: rgba(104,176,120,0.24);
+  --mag:     #cc6cf0;
+  --mglow:   rgba(204,108,240,0.45);
+  --msoft:   rgba(204,108,240,0.10);
+}
+
+html, body { width:100%; height:100%; overflow:hidden;
+  background:var(--bg); color:var(--text);
+  font-family:'DM Sans',sans-serif; }
+
+#shell { display:flex; flex-direction:column; width:100%; height:100%; }
+
+/* ── STATUS BAR ── */
+#statusBar {
+  height:34px; flex-shrink:0;
+  background:rgba(13,26,15,0.97); border-bottom:1px solid var(--border);
+  display:flex; align-items:center; justify-content:space-between;
+  padding:0 18px; font-size:11px; color:var(--muted); letter-spacing:.05em;
+}
+.sl { display:flex; align-items:center; gap:10px; }
+.sr { display:flex; align-items:center; gap:12px; }
+.dot { width:6px; height:6px; border-radius:50%; background:var(--amber);
+  box-shadow:0 0 5px var(--aglow); animation:blink 2.2s ease-in-out infinite; }
+.dot.all-done { background:var(--green); box-shadow:0 0 5px var(--gglow); }
+@keyframes blink { 0%,100%{opacity:.55} 50%{opacity:1} }
+.s-sep { color:var(--dim); }
+
+/* ── MAIN ── */
+#main { flex:1; display:flex; overflow:hidden; min-height:0; }
+
+/* ── RADAR PANEL ── */
+#radarPanel {
+  width:310px; flex-shrink:0; position:relative;
+  background:var(--bg); display:flex; flex-direction:column;
+  align-items:center; justify-content:center;
+  padding:18px 10px 14px;
+  border-right:1px solid var(--border);
+}
+.plbl { font-size:8.5px; letter-spacing:.16em; color:var(--dim);
+  text-transform:uppercase; align-self:flex-start; padding-left:16px; margin-bottom:10px; }
+#radarSvg { width:280px; height:270px; display:block; overflow:visible; }
+
+/* SVG elements */
+.grid-poly { fill:none; stroke:rgba(242,234,216,0.06); stroke-width:1; }
+.grid-poly.outer { stroke:rgba(242,234,216,0.10); stroke-dasharray:4 4; }
+.axis-line { stroke:rgba(242,234,216,0.07); stroke-width:1; }
+.target-poly { fill:none; stroke:rgba(104,176,120,0.12); stroke-width:1.5; stroke-dasharray:3 5; }
+
+.state-poly {
+  fill:rgba(104,176,120,0.10); stroke:var(--green); stroke-width:2;
+  filter:drop-shadow(0 0 6px rgba(104,176,120,0.25));
+  transition: filter 0.3s ease;
+}
+.state-poly.complete {
+  fill:rgba(104,176,120,0.18);
+  filter:drop-shadow(0 0 14px rgba(104,176,120,0.55)) drop-shadow(0 0 28px rgba(104,176,120,0.3));
+}
+
+/* Center hub */
+.hub-bg    { fill:rgba(13,26,15,0.95); stroke:rgba(242,234,216,0.10); stroke-width:1.5; }
+.hub-ring  { fill:none; stroke:rgba(242,234,216,0.08); stroke-width:5; }
+.hub-prog  { fill:none; stroke:var(--green); stroke-width:5; stroke-linecap:round;
+  transition:stroke-dasharray 0.65s cubic-bezier(0.25,0.46,0.45,0.94); }
+.hub-num   { font-family:'DM Sans',sans-serif; font-size:11px; font-weight:500;
+  fill:var(--green); text-anchor:middle; }
+.hub-label { font-family:'DM Sans',sans-serif; font-size:7px; font-weight:400;
+  letter-spacing:0.14em; fill:var(--dim); text-anchor:middle; text-transform:uppercase; }
+
+/* Vertex nodes */
+.vnode { cursor:pointer; }
+.vn-bg { fill:rgba(242,234,216,0.04); stroke:rgba(226,170,98,0.28); stroke-width:1.5;
+  transition:fill 0.3s, stroke 0.3s; }
+.vn-pulse { fill:none; stroke:rgba(226,170,98,0.20); stroke-width:1.5;
+  animation:vPulse 2.4s ease-out infinite; }
+.vn-letter { font-family:'Cormorant Garamond',serif; font-size:14px; font-weight:600;
+  fill:rgba(226,170,98,0.55); text-anchor:middle; dominant-baseline:central;
+  transition:fill 0.3s; }
+@keyframes vPulse { 0%{r:13;opacity:.4} 100%{r:22;opacity:0} }
+
+.vnode.selected .vn-bg { fill:rgba(226,170,98,0.10); stroke:var(--amber); }
+.vnode.selected .vn-letter { fill:var(--amber); }
+.vnode.done .vn-bg  { fill:rgba(104,176,120,0.12); stroke:rgba(104,176,120,0.55); }
+.vnode.done .vn-pulse { stroke:rgba(104,176,120,0.20); animation:none; }
+.vnode.done .vn-letter { fill:var(--green); }
+.vnode.done.selected .vn-bg { fill:rgba(104,176,120,0.18); stroke:var(--green); }
+
+/* Axis labels */
+.ax-lbl { font-family:'DM Sans',sans-serif; font-size:7.5px; font-weight:400;
+  letter-spacing:0.12em; fill:var(--dim); text-transform:uppercase; }
+.ax-lbl.sel { fill:rgba(226,170,98,0.65); }
+.ax-lbl.done-lbl { fill:rgba(104,176,120,0.55); }
+
+/* ── CONTENT PANEL ── */
+#contentPanel {
+  flex:1; background:var(--bgp); display:flex; flex-direction:column;
+  overflow:hidden; min-height:0;
+}
+#cpHeader {
+  padding:16px 20px 12px; border-bottom:1px solid var(--border);
+  flex-shrink:0;
+}
+.cp-kicker { font-size:8px; font-weight:500; letter-spacing:0.28em;
+  text-transform:uppercase; color:var(--dim); margin-bottom:6px; display:block; }
+.cp-title  { font-family:'Cormorant Garamond',serif; font-size:clamp(20px,2.4vw,28px);
+  font-weight:600; color:var(--text); line-height:1.1; }
+
+#cpBody { flex:1; overflow-y:auto; padding:16px 20px 20px; }
+
+/* Blocks */
+.signal-block { border-radius:10px; padding:14px 16px; margin-bottom:12px; }
+.signal-block.before {
+  background:linear-gradient(140deg, rgba(38,30,18,0.8), rgba(28,22,13,0.7));
+  border:1px solid var(--aborder);
+}
+.signal-block.after  {
+  background:linear-gradient(140deg, rgba(18,32,20,0.8), rgba(13,24,15,0.7));
+  border:1px solid var(--gborder);
+  opacity:0.42; transition:opacity 0.5s ease;
+}
+.signal-block.after.unlocked { opacity:1; }
+
+.blk-label { font-size:7.5px; font-weight:500; letter-spacing:0.26em;
+  text-transform:uppercase; margin-bottom:8px; display:flex; align-items:center; gap:7px; }
+.before .blk-label { color:rgba(226,170,98,0.58); }
+.after  .blk-label { color:rgba(104,176,120,0.65); }
+.blk-status { width:5px; height:5px; border-radius:50%; flex-shrink:0; }
+.before .blk-status { background:rgba(226,170,98,0.55); }
+.after  .blk-status { background:rgba(104,176,120,0.30); }
+.after.unlocked .blk-status { background:var(--green); box-shadow:0 0 5px var(--gglow); }
+
+.blk-word { font-family:'Cormorant Garamond',serif; font-size:18px; font-weight:600;
+  color:var(--text); margin-bottom:8px; line-height:1; }
+.blk-desc { font-size:12px; font-weight:300; line-height:1.82;
+  color:var(--muted); letter-spacing:0.01em; margin-bottom:10px; }
+.blk-desc em { font-style:normal; color:var(--text); font-weight:400; }
+
+.blk-example { border-top:1px solid rgba(255,255,255,0.06); padding-top:10px; }
+.blk-ex-label { font-size:7px; font-weight:500; letter-spacing:0.26em;
+  text-transform:uppercase; display:block; margin-bottom:5px; }
+.before .blk-ex-label { color:rgba(226,170,98,0.35); }
+.after  .blk-ex-label { color:rgba(104,176,120,0.38); }
+.blk-ex-text { font-family:'Cormorant Garamond',serif; font-size:13.5px;
+  font-style:italic; line-height:1.6; color:rgba(242,234,216,0.45); }
+.blk-ex-text em { font-style:normal; color:rgba(242,234,216,0.68); }
+
+/* Empty state */
+.cp-empty { height:100%; display:flex; flex-direction:column;
+  align-items:center; justify-content:center; gap:8px; text-align:center; padding:20px; }
+.cp-empty-icon { font-size:22px; opacity:0.2; margin-bottom:4px; }
+.cp-empty-title { font-size:13px; font-weight:400; color:var(--muted); }
+.cp-empty-sub { font-size:11px; font-weight:300; color:var(--dim); line-height:1.6; max-width:220px; }
+
+/* ── CONTROL BAR ── */
+#ctrlBar {
+  height:52px; flex-shrink:0; background:rgba(10,18,11,0.98);
+  border-top:1px solid var(--border);
+  display:flex; align-items:center; gap:8px; padding:0 16px;
+}
+.sign-btn {
+  height:36px; padding:0 12px; flex:1;
+  background:rgba(242,234,216,0.04); border:1px solid var(--border);
+  border-radius:8px; color:var(--dim); font-family:'DM Sans',sans-serif;
+  font-size:11px; font-weight:500; letter-spacing:0.05em; cursor:pointer;
+  display:flex; align-items:center; justify-content:center; gap:5px;
+  transition:background 0.2s, border-color 0.2s, color 0.2s;
+  white-space:nowrap;
+}
+.sign-btn:hover { background:rgba(226,170,98,0.07); border-color:var(--aborder); color:var(--amber); }
+.sign-btn.active { background:rgba(226,170,98,0.09); border-color:var(--amber); color:var(--amber); }
+.sign-btn.done   { background:rgba(104,176,120,0.08); border-color:rgba(104,176,120,0.35); color:var(--green); }
+.sign-btn.done.active { border-color:var(--green); background:rgba(104,176,120,0.14); }
+
+.sb-dot { width:5px; height:5px; border-radius:50%; flex-shrink:0;
+  background:rgba(226,170,98,0.40); transition:background 0.3s; }
+.sign-btn.done .sb-dot { background:var(--green); box-shadow:0 0 4px var(--gglow); }
+.sign-btn.active .sb-dot { background:var(--amber); box-shadow:0 0 4px var(--aglow); }
+
+.ctrl-divider { width:1px; height:28px; background:var(--border); flex-shrink:0; }
+
+#btnTransform {
+  height:36px; padding:0 18px; flex-shrink:0;
+  background:rgba(226,170,98,0.12); border:1px solid var(--aborder);
+  border-radius:8px; color:var(--amber); font-family:'DM Sans',sans-serif;
+  font-size:11px; font-weight:500; letter-spacing:0.08em; cursor:pointer;
+  transition:background 0.2s, box-shadow 0.2s, transform 0.1s;
+  white-space:nowrap;
+}
+#btnTransform:not(:disabled):hover {
+  background:rgba(226,170,98,0.20); box-shadow:0 0 12px rgba(226,170,98,0.18); }
+#btnTransform:active:not(:disabled) { transform:scale(0.97); }
+#btnTransform:disabled { opacity:0.25; cursor:default; }
+#btnTransform.done-state {
+  background:rgba(104,176,120,0.10); border-color:rgba(104,176,120,0.30);
+  color:var(--green); cursor:default; }
+
+/* ── TOAST ── */
+#toast {
+  position:fixed; bottom:66px; left:50%; transform:translateX(-50%);
+  background:rgba(10,18,11,0.95); border:1px solid rgba(104,176,120,0.35);
+  border-radius:20px; padding:7px 20px;
+  font-size:11px; color:var(--green); letter-spacing:0.08em;
+  opacity:0; pointer-events:none; white-space:nowrap;
+  transition:opacity 0.3s ease; backdrop-filter:blur(8px);
+  box-shadow:0 0 16px rgba(104,176,120,0.12);
+}
+#toast.show { opacity:1; }
+
+/* ── COMPLETE FLASH ── */
+#completeFlash {
+  position:fixed; inset:0; pointer-events:none;
+  background:radial-gradient(ellipse 60% 50% at 50% 50%, rgba(104,176,120,0.07) 0%, transparent 70%);
+  opacity:0; transition:opacity 0.25s ease;
+}
+#completeFlash.on { opacity:1; }
+</style>
+</head>
+<body>
+<div id="shell">
+
+  <!-- STATUS BAR -->
+  <div id="statusBar">
+    <div class="sl">
+      <div class="dot" id="status-dot"></div>
+      <span>ZOO EXPERIENCE AUDIT</span>
+      <span class="s-sep">·</span>
+      <span>SIGNS FRAMEWORK</span>
+    </div>
+    <div class="sr">
+      <span id="progress-label">0 / 5 SIGNALS TRANSFORMED</span>
+    </div>
+  </div>
+
+  <!-- MAIN -->
+  <div id="main">
+
+    <!-- LEFT: RADAR -->
+    <div id="radarPanel">
+      <div class="plbl">Experience Quality</div>
+      <svg id="radarSvg" viewBox="0 0 280 268" width="280" height="268">
+
+        <!-- Grid polygons (set by JS) -->
+        <polygon class="grid-poly" id="grid-25"/>
+        <polygon class="grid-poly" id="grid-50"/>
+        <polygon class="grid-poly" id="grid-75"/>
+        <polygon class="grid-poly outer" id="grid-100"/>
+
+        <!-- Axis lines (set by JS) -->
+        <line class="axis-line" id="ax0"/>
+        <line class="axis-line" id="ax1"/>
+        <line class="axis-line" id="ax2"/>
+        <line class="axis-line" id="ax3"/>
+        <line class="axis-line" id="ax4"/>
+
+        <!-- Target outline -->
+        <polygon class="target-poly" id="target-poly"/>
+
+        <!-- State polygon -->
+        <polygon class="state-poly" id="state-poly"/>
+
+        <!-- Center hub -->
+        <circle id="hub-bg"   class="hub-bg"  cx="140" cy="134"/>
+        <circle id="hub-ring" class="hub-ring" cx="140" cy="134"/>
+        <circle id="hub-prog" class="hub-prog" cx="140" cy="134"/>
+        <text   id="hub-num"  class="hub-num"  x="140"  y="131">0/5</text>
+        <text   id="hub-lbl"  class="hub-label" x="140" y="141">health</text>
+
+        <!-- Vertex nodes (translated by JS) -->
+        <g class="vnode" id="vnode-0" onclick="selectPair(0)">
+          <circle r="22" class="vn-pulse"/>
+          <circle r="13" class="vn-bg"/>
+          <text class="vn-letter">S</text>
+        </g>
+        <g class="vnode" id="vnode-1" onclick="selectPair(1)">
+          <circle r="22" class="vn-pulse"/>
+          <circle r="13" class="vn-bg"/>
+          <text class="vn-letter">I</text>
+        </g>
+        <g class="vnode" id="vnode-2" onclick="selectPair(2)">
+          <circle r="22" class="vn-pulse"/>
+          <circle r="13" class="vn-bg"/>
+          <text class="vn-letter">G</text>
+        </g>
+        <g class="vnode" id="vnode-3" onclick="selectPair(3)">
+          <circle r="22" class="vn-pulse"/>
+          <circle r="13" class="vn-bg"/>
+          <text class="vn-letter">N</text>
+        </g>
+        <g class="vnode" id="vnode-4" onclick="selectPair(4)">
+          <circle r="22" class="vn-pulse"/>
+          <circle r="13" class="vn-bg"/>
+          <text class="vn-letter">S</text>
+        </g>
+
+        <!-- Axis labels (positioned by JS) -->
+        <text class="ax-lbl" id="lbl-0" text-anchor="middle"/>
+        <text class="ax-lbl" id="lbl-1" text-anchor="start"/>
+        <text class="ax-lbl" id="lbl-2" text-anchor="start"/>
+        <text class="ax-lbl" id="lbl-3" text-anchor="end"/>
+        <text class="ax-lbl" id="lbl-4" text-anchor="end"/>
+
+      </svg>
+    </div>
+
+    <!-- RIGHT: CONTENT -->
+    <div id="contentPanel">
+      <div id="cpHeader">
+        <span class="cp-kicker" id="cp-kicker">No Signal Selected</span>
+        <div class="cp-title" id="cp-title">Select a signal node to begin the audit</div>
+      </div>
+      <div id="cpBody">
+        <div class="cp-empty">
+          <div class="cp-empty-icon">◎</div>
+          <div class="cp-empty-title">Five signals. Five transformations.</div>
+          <div class="cp-empty-sub">Click a vertex on the radar — or use the controls below — to audit each dimension of the exhibit experience.</div>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /main -->
+
+  <!-- CONTROL BAR -->
+  <div id="ctrlBar">
+    <button class="sign-btn" id="sbtn-0" onclick="selectPair(0)">
+      <span class="sb-dot"></span>S
+    </button>
+    <button class="sign-btn" id="sbtn-1" onclick="selectPair(1)">
+      <span class="sb-dot"></span>I
+    </button>
+    <button class="sign-btn" id="sbtn-2" onclick="selectPair(2)">
+      <span class="sb-dot"></span>G
+    </button>
+    <button class="sign-btn" id="sbtn-3" onclick="selectPair(3)">
+      <span class="sb-dot"></span>N
+    </button>
+    <button class="sign-btn" id="sbtn-4" onclick="selectPair(4)">
+      <span class="sb-dot"></span>S
+    </button>
+    <div class="ctrl-divider"></div>
+    <button id="btnTransform" disabled onclick="transformSelected()">
+      Transform Signal →
+    </button>
+  </div>
+
+</div><!-- /shell -->
+
+<div id="toast">✓ Signal Transformed</div>
+<div id="completeFlash"></div>
+
+<script>
+'use strict';
+
+/* ══ DATA ══════════════════════════════════════════════════ */
+const PAIRS = [
+  {
+    letter:'S', from:'Spectacle', to:'Story',
+    beforeDesc:`Animals perform within systems designed for reaction. The moment of impact — the charge at the glass, the roar — is the exhibit's primary output. <em>Context is secondary, if present at all.</em>`,
+    beforeEx:`A gorilla strikes the glass. The crowd screams. Phones go up. No sign explains what displaying means. The behavior becomes what each person already believed.`,
+    afterDesc:`Every behavior is a sentence in a longer narrative. The exhibit creates the conditions for that sentence to land — <em>before the moment, during it, and after it passes.</em>`,
+    afterEx:`An interactive panel activates. "These gorillas are part of a bachelor troop. This behavior is called displaying — directed at other gorillas, not at you."`
+  },
+  {
+    letter:'I', from:'Information', to:'Interaction',
+    beforeDesc:`Plaques describe. Signs instruct. The visitor reads — or doesn't. Knowledge is delivered at the exhibit, not built inside the visitor. <em>The institution speaks in one direction.</em>`,
+    beforeEx:`A QR code links to a PDF. Engagement time: near zero. Average dwell time at a standard exhibit sign: under eight seconds.`,
+    afterDesc:`The exhibit responds to the visitor. Touch. Choose. Witness something change. <em>The visitor becomes a participant in meaning-making</em> — not a recipient of it.`,
+    afterEx:`The Dissonance Loop walks you through what you felt, what the system knew, and what could have been said — in the moment it mattered.`
+  },
+  {
+    letter:'G', from:'Gaps', to:'Guidance',
+    beforeDesc:`The exhibit ends where the complexity begins. Welfare concerns go unnamed. Behavioral signals go unexplained. <em>Visitors fill the silence with whatever they carried in.</em>`,
+    beforeEx:`The polar bear paces. Left. Fourteen feet. Turn. Right. Fourteen feet. The sign reads: Conservation Ambassador. No sign mentions stereotypy.`,
+    afterDesc:`The exhibit moves toward honest complexity. Staff are empowered to name difficult things. <em>Guidance doesn't simplify — it accompanies the visitor through what's real.</em>`,
+    afterEx:`"That pacing is called stereotypy — it's a stress response. We're working with behavior specialists. You're right to notice."`
+  },
+  {
+    letter:'N', from:'Neglect', to:'Nurture',
+    beforeDesc:`Welfare metrics stay internal. Enrichment is often performed for visitors, not designed for animals. <em>The institution's relationship to its animals is invisible to the people inside it.</em>`,
+    beforeEx:`GWI research: 38% of surveyed institutions reported zero philanthropic giving during the study period. The gap between stated mission and investment is rarely made visible.`,
+    afterDesc:`Care is made visible. Welfare science becomes part of the exhibit. Visitors understand that the institution's relationship with its animals is <em>ongoing, imperfect, and genuinely committed.</em>`,
+    afterEx:`A welfare transparency panel shows enrichment schedules, behavioral milestones, and honest notes on challenges. The institution makes itself accountable.`
+  },
+  {
+    letter:'S', from:'Stigma', to:'Support',
+    beforeDesc:`"Dangerous." "Unpredictable." "Wild." The language of threat builds distance — between visitor and animal. <em>It shapes how visitors interpret everything they see.</em>`,
+    beforeEx:`"That is a bad gorilla." A child's frame — formed in the silence of an exhibit that offered no other language. She'll carry it for years.`,
+    afterDesc:`The exhibit builds vocabulary for connection. Behaviors are named. Context is given. <em>Visitors leave with language for what they witnessed</em> — and a reason to care about what happens to it.`,
+    afterEx:`"Displaying is how gorillas communicate. In all of recorded human history, there is no confirmed case of a gorilla killing a human being." A child's frame, redirected.`
+  }
+];
+
+/* ══ RADAR GEOMETRY ═══════════════════════════════════════ */
+const CX = 140, CY = 134, MAX_R = 102;
+const CIRC = 2 * Math.PI * 18; // hub ring circumference at r=18
+
+function angle(i)    { return (-90 + i * 72) * Math.PI / 180; }
+function vtx(i, r)   { return { x: CX + r * Math.cos(angle(i)), y: CY + r * Math.sin(angle(i)) }; }
+function ptsStr(r)   { return Array.from({length:5},(_,i)=>{ const p=vtx(i,r); return `${p.x.toFixed(1)},${p.y.toFixed(1)}`; }).join(' '); }
+
+/* ══ STATE ════════════════════════════════════════════════ */
+const values   = [0.22, 0.22, 0.22, 0.22, 0.22]; // 0→1 per pair
+const done     = [false, false, false, false, false];
+let selected   = null;
+let animating  = false;
+let toastTimer = null;
+
+/* ══ INIT SVG ══════════════════════════════════════════════ */
+function initSVG() {
+  document.getElementById('grid-25').setAttribute('points', ptsStr(MAX_R * 0.25));
+  document.getElementById('grid-50').setAttribute('points', ptsStr(MAX_R * 0.50));
+  document.getElementById('grid-75').setAttribute('points', ptsStr(MAX_R * 0.75));
+  document.getElementById('grid-100').setAttribute('points', ptsStr(MAX_R * 1.00));
+  document.getElementById('target-poly').setAttribute('points', ptsStr(MAX_R));
+
+  // Axis lines
+  for (let i = 0; i < 5; i++) {
+    const p = vtx(i, MAX_R);
+    const el = document.getElementById(`ax${i}`);
+    el.setAttribute('x1', CX); el.setAttribute('y1', CY);
+    el.setAttribute('x2', p.x.toFixed(1)); el.setAttribute('y2', p.y.toFixed(1));
+  }
+
+  // Vertex nodes
+  const VTXS = Array.from({length:5}, (_,i) => vtx(i, MAX_R));
+  VTXS.forEach((v, i) => {
+    document.getElementById(`vnode-${i}`).setAttribute('transform', `translate(${v.x.toFixed(1)},${v.y.toFixed(1)})`);
+  });
+
+  // Axis labels (offset outward)
+  const LABELS = ['SPECTACLE','INFORMATION','GAPS','NEGLECT','STIGMA'];
+  const ANCHORS = ['middle','start','start','end','end'];
+  const LBL_OFFSET = [
+    {dx:0,  dy:-16},  // top
+    {dx:16, dy:2},    // top-right
+    {dx:14, dy:16},   // bottom-right
+    {dx:-14,dy:16},   // bottom-left
+    {dx:-16,dy:2}     // top-left
+  ];
+  VTXS.forEach((v, i) => {
+    const el = document.getElementById(`lbl-${i}`);
+    el.setAttribute('x', (v.x + LBL_OFFSET[i].dx).toFixed(1));
+    el.setAttribute('y', (v.y + LBL_OFFSET[i].dy).toFixed(1));
+    el.setAttribute('text-anchor', ANCHORS[i]);
+    el.textContent = LABELS[i];
+  });
+
+  // Hub ring dimensions
+  const hubR = 18;
+  document.getElementById('hub-bg').setAttribute('r', 22);
+  document.getElementById('hub-ring').setAttribute('r', hubR);
+  document.getElementById('hub-prog').setAttribute('r', hubR);
+  const progCirc = 2 * Math.PI * hubR;
+  document.getElementById('hub-prog').style.strokeDasharray = `0 ${progCirc}`;
+  document.getElementById('hub-prog').style.strokeDashoffset = `${progCirc * 0.25}`; // start at top
+
+  // Initial state polygon
+  updateStatePoly();
+
+  // Animate in
+  animateInitLoad();
+}
+
+function updateStatePoly() {
+  const pts = Array.from({length:5}, (_,i) => {
+    const r = MAX_R * values[i];
+    const p = vtx(i, r);
+    return `${p.x.toFixed(2)},${p.y.toFixed(2)}`;
+  }).join(' ');
+  document.getElementById('state-poly').setAttribute('points', pts);
+}
+
+function animateInitLoad() {
+  const target = [0.22, 0.22, 0.22, 0.22, 0.22];
+  const start  = [0, 0, 0, 0, 0];
+  const dur = 900, t0 = performance.now();
+  function frame(now) {
+    const p = Math.min((now - t0) / dur, 1);
+    const e = 1 - Math.pow(1 - p, 3);
+    values.forEach((_,i) => { values[i] = start[i] + (target[i] - start[i]) * e; });
+    updateStatePoly();
+    if (p < 1) requestAnimationFrame(frame);
+  }
+  requestAnimationFrame(frame);
+}
+
+/* ══ UPDATE HUB ═══════════════════════════════════════════ */
+function updateHub() {
+  const count = done.filter(Boolean).length;
+  document.getElementById('hub-num').textContent = `${count}/5`;
+  const hubR   = 18;
+  const circ   = 2 * Math.PI * hubR;
+  const filled = (count / 5) * circ;
+  const prog   = document.getElementById('hub-prog');
+  prog.style.strokeDasharray  = `${filled.toFixed(2)} ${(circ - filled).toFixed(2)}`;
+  prog.style.strokeDashoffset = `${(circ * 0.25).toFixed(2)}`; // top-start
+
+  document.getElementById('progress-label').textContent =
+    `${count} / 5 SIGNALS TRANSFORMED`;
+
+  if (count === 5) {
+    document.getElementById('status-dot').classList.add('all-done');
+    document.getElementById('state-poly').classList.add('complete');
+    flashComplete();
+  }
+}
+
+/* ══ SELECT PAIR ══════════════════════════════════════════ */
+function selectPair(idx) {
+  selected = idx;
+
+  // Update vertex nodes
+  document.querySelectorAll('.vnode').forEach((n, i) => {
+    n.classList.toggle('selected', i === idx);
+  });
+
+  // Update buttons
+  document.querySelectorAll('.sign-btn').forEach((b, i) => {
+    b.classList.toggle('active', i === idx);
+  });
+
+  // Update axis labels
+  document.querySelectorAll('.ax-lbl').forEach((l, i) => {
+    l.classList.remove('sel','done-lbl');
+    if (i === idx) l.classList.add(done[i] ? 'done-lbl' : 'sel');
+    else if (done[i]) l.classList.add('done-lbl');
+  });
+
+  // Update content panel
+  renderContent(idx);
+
+  // Update transform button
+  const btn = document.getElementById('btnTransform');
+  if (done[idx]) {
+    btn.disabled = true;
+    btn.textContent = '✓ Already Transformed';
+    btn.className = 'done-state';
+  } else {
+    btn.disabled = false;
+    btn.textContent = 'Transform Signal →';
+    btn.className = '';
+  }
+}
+
+/* ══ RENDER CONTENT ═══════════════════════════════════════ */
+function renderContent(idx) {
+  const p = PAIRS[idx];
+  document.getElementById('cp-kicker').textContent = `Signal ${idx+1} of 5 · ${p.from} → ${p.to}`;
+  document.getElementById('cp-title').textContent  = `${p.from} → ${p.to}`;
+
+  const isUnlocked = done[idx];
+  document.getElementById('cpBody').innerHTML = `
+    <div class="signal-block before">
+      <div class="blk-label">
+        <span class="blk-status"></span>
+        The Zoo Today
+      </div>
+      <div class="blk-word">${p.from}</div>
+      <div class="blk-desc">${p.beforeDesc}</div>
+      <div class="blk-example">
+        <span class="blk-ex-label">In practice</span>
+        <div class="blk-ex-text">${p.beforeEx}</div>
+      </div>
+    </div>
+    <div class="signal-block after${isUnlocked ? ' unlocked' : ''}">
+      <div class="blk-label">
+        <span class="blk-status"></span>
+        The ReWilded Approach
+      </div>
+      <div class="blk-word">${p.to}</div>
+      <div class="blk-desc">${p.afterDesc}</div>
+      <div class="blk-example">
+        <span class="blk-ex-label">In practice</span>
+        <div class="blk-ex-text">${p.afterEx}</div>
+      </div>
+    </div>`;
+}
+
+/* ══ TRANSFORM ════════════════════════════════════════════ */
+function transformSelected() {
+  if (selected === null || done[selected] || animating) return;
+  animating = true;
+
+  const idx = selected;
+  const startV = values[idx];
+  const endV   = 1.0;
+  const dur    = 750;
+  const t0     = performance.now();
+
+  function frame(now) {
+    const prog = Math.min((now - t0) / dur, 1);
+    const ease = 1 - Math.pow(1 - prog, 3);
+    values[idx] = startV + (endV - startV) * ease;
+    updateStatePoly();
+    if (prog < 1) { requestAnimationFrame(frame); return; }
+    values[idx] = endV;
+    updateStatePoly();
+    animating = false;
+    done[idx] = true;
+
+    // Update vertex node state
+    document.getElementById(`vnode-${idx}`).classList.add('done');
+    document.getElementById(`sbtn-${idx}`).classList.add('done');
+
+    // Refresh content (unlock after block)
+    renderContent(idx);
+    updateHub();
+
+    // Disable transform button
+    const btn = document.getElementById('btnTransform');
+    btn.disabled = true;
+    btn.textContent = '✓ Already Transformed';
+    btn.className = 'done-state';
+
+    // Update label style
+    const lbl = document.getElementById(`lbl-${idx}`);
+    lbl.classList.remove('sel');
+    lbl.classList.add('done-lbl');
+
+    showToast();
+
+    // Auto-advance to next untransformed pair after brief delay
+    const next = done.findIndex((d, i) => !d);
+    if (next !== -1) setTimeout(() => selectPair(next), 1100);
+  }
+  requestAnimationFrame(frame);
+}
+
+/* ══ TOAST ════════════════════════════════════════════════ */
+function showToast() {
+  const toast = document.getElementById('toast');
+  if (toastTimer) clearTimeout(toastTimer);
+  toast.classList.add('show');
+  toastTimer = setTimeout(() => toast.classList.remove('show'), 2200);
+}
+
+/* ══ COMPLETE FLASH ═══════════════════════════════════════ */
+function flashComplete() {
+  const el = document.getElementById('completeFlash');
+  el.classList.add('on');
+  setTimeout(() => el.classList.remove('on'), 600);
+}
+
+/* ══ BOOT ══════════════════════════════════════════════════ */
+initSVG();
+</script>
+</body>
+</html>

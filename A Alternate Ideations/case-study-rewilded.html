@@ -1,0 +1,693 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ReWilded — Case Study — Amber Grey</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400;1,500&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --sage:        #6ab54f;
+  --sage-dim:    rgba(106, 181, 79, 0.09);
+  --sage-border: rgba(106, 181, 79, 0.22);
+  --bg:          #070e07;
+  --bg-alt:      #0b150a;
+  --text:        rgba(215, 228, 198, 0.90);
+  --text-muted:  rgba(100, 148, 78, 0.65);
+  --sage-bright: #a8d48a;
+  --amber:       #c8a050;
+  --border:      rgba(255, 255, 255, 0.055);
+}
+
+html { scroll-behavior: smooth; }
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'DM Sans', sans-serif;
+  font-weight: 300;
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+}
+
+/* ── PAGE EXIT ── */
+#page-exit {
+  position: fixed; inset: 0;
+  background: var(--bg);
+  opacity: 0; pointer-events: none;
+  transition: opacity 0.28s ease-in;
+  z-index: 9999;
+}
+#page-exit.active { opacity: 1; }
+
+/* ── NAV ── */
+.nav-back {
+  position: fixed; top: 28px; left: 32px;
+  display: inline-flex; align-items: center; gap: 10px;
+  background: rgba(255,255,255,0.05);
+  backdrop-filter: blur(14px);
+  border: 1px solid rgba(255,255,255,0.09);
+  border-radius: 100px;
+  padding: 9px 18px 9px 14px;
+  cursor: pointer;
+  color: rgba(140,210,105,0.75);
+  font-size: 10px; font-weight: 400; letter-spacing: 0.22em; text-transform: uppercase;
+  transition: all 0.25s; z-index: 100;
+}
+.nav-back:hover { background: rgba(255,255,255,0.09); color: rgba(168,235,130,1); border-color: rgba(255,255,255,0.16); }
+.nav-back-arrow { display: inline-block; width: 16px; height: 1px; background: currentColor; position: relative; flex-shrink: 0; }
+.nav-back-arrow::before { content: ''; position: absolute; left: 0; top: -3px; width: 6px; height: 6px; border-left: 1px solid currentColor; border-bottom: 1px solid currentColor; transform: rotate(45deg); }
+
+.wordmark {
+  position: fixed; bottom: 24px; left: 21px;
+  font-size: 13px; font-weight: 300; letter-spacing: 0.2em;
+  color: rgba(106,181,79,0.13); pointer-events: none; z-index: 10;
+}
+
+/* ── HERO ── */
+.hero {
+  position: relative; min-height: 100svh;
+  display: flex; flex-direction: column; justify-content: flex-end;
+  padding: 0 64px 80px;
+  overflow: hidden;
+  background-image:
+    linear-gradient(to bottom,
+      rgba(5, 18, 5, 0.50) 0%,
+      rgba(7, 14, 7, 0.92) 70%,
+      #070e07 100%),
+    url('Studio_Edited.webp');
+  background-size: cover;
+  background-position: center top;
+  background-attachment: fixed;
+}
+.hero::before {
+  content: ''; position: absolute; inset: 0; pointer-events: none;
+  background:
+    radial-gradient(ellipse 80% 60% at 15% 60%, rgba(30, 90, 18, 0.20) 0%, transparent 60%),
+    radial-gradient(ellipse 60% 50% at 75% 30%, rgba(15, 50, 10, 0.14) 0%, transparent 55%);
+  animation: heroPulse 9s ease-in-out infinite alternate;
+}
+@keyframes heroPulse {
+  0%   { opacity: 0.7; transform: scale(1); }
+  100% { opacity: 1;   transform: scale(1.06); }
+}
+.hero-eyebrow {
+  font-size: 9px; font-weight: 500; letter-spacing: 0.34em; text-transform: uppercase;
+  color: rgba(140,210,105,0.88); margin-bottom: 20px; position: relative; z-index: 1;
+}
+.hero h1 {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(72px, 10vw, 130px);
+  font-weight: 600; line-height: 0.90; letter-spacing: -0.01em;
+  color: var(--sage-bright); position: relative; z-index: 1; margin-bottom: 28px;
+}
+.hero-subtitle {
+  font-size: clamp(14px, 1.4vw, 18px); font-weight: 300; font-style: italic;
+  color: rgba(215,228,198,0.48); position: relative; z-index: 1; margin-bottom: 56px;
+  max-width: 560px; line-height: 1.6;
+}
+.hero-meta {
+  display: flex; gap: 48px; position: relative; z-index: 1;
+  border-top: 1px solid rgba(106,181,79,0.13); padding-top: 28px;
+  flex-wrap: wrap;
+}
+.hero-meta-item { display: flex; flex-direction: column; gap: 5px; }
+.hero-meta-label { font-size: 8px; font-weight: 500; letter-spacing: 0.28em; text-transform: uppercase; color: var(--text-muted); }
+.hero-meta-value { font-size: 13px; font-weight: 400; color: rgba(140,210,105,0.75); }
+
+/* ── SECTIONS ── */
+.cs-section { padding: 96px 64px; }
+.cs-section.alt-bg { background: var(--bg-alt); }
+.section-inner { max-width: 1000px; margin: 0 auto; }
+
+.section-eyebrow {
+  font-size: 8.5px; font-weight: 500; letter-spacing: 0.34em; text-transform: uppercase;
+  color: rgba(140,210,105,0.68); margin-bottom: 16px;
+}
+.section-heading {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(32px, 4vw, 52px); font-weight: 600; line-height: 1.1;
+  color: var(--sage-bright); margin-bottom: 32px;
+}
+
+/* ── OVERVIEW ── */
+.overview-intro {
+  font-size: clamp(15px, 1.5vw, 18px); font-weight: 300; line-height: 1.9;
+  color: rgba(215,228,198,0.68); max-width: 700px; margin-bottom: 52px;
+}
+.overview-intro em { color: rgba(185,235,155,0.9); font-style: italic; }
+
+/* ── CHIP PANEL ── */
+.proj-meta-outer {
+  border: 1px solid var(--sage-border);
+  border-radius: 14px;
+  background: var(--sage-dim);
+  position: relative; overflow: hidden;
+  margin-bottom: 12px;
+}
+.proj-meta-outer::before {
+  content: ''; position: absolute; inset: 0; pointer-events: none;
+  background: radial-gradient(ellipse 80% 60% at var(--mx,50%) var(--my,40%), rgba(106,181,79,0.06) 0%, transparent 70%);
+  transition: background 0.1s ease; border-radius: inherit;
+}
+.chip-panel {
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: 0; padding: 36px 40px;
+}
+.chip-group { display: flex; flex-direction: column; gap: 16px; }
+.chip-group + .chip-group { border-left: 1px solid var(--sage-border); padding-left: 40px; }
+.chip-group-label {
+  font-size: 9px; font-weight: 500; letter-spacing: 0.26em; text-transform: uppercase;
+  color: rgba(140,210,105,0.65); margin-bottom: 4px;
+}
+.chip-row { display: flex; flex-wrap: wrap; gap: 8px; }
+.chip-btn {
+  font-size: 11px; font-weight: 400; letter-spacing: 0.06em;
+  color: rgba(140,210,105,0.7);
+  background: rgba(106,181,79,0.07);
+  border: 1px solid rgba(106,181,79,0.18);
+  border-radius: 100px; padding: 6px 14px;
+  cursor: default; white-space: nowrap;
+  transition: background 0.2s, border-color 0.2s, color 0.2s;
+}
+.chip-btn:hover {
+  background: rgba(106,181,79,0.15);
+  border-color: rgba(106,181,79,0.38);
+  color: rgba(185,240,155,0.95);
+}
+.chip-detail-wrap { padding: 0 40px 28px; min-height: 28px; }
+.chip-detail {
+  font-size: 12px; font-weight: 300; letter-spacing: 0.04em;
+  color: rgba(140,210,105,0.75); font-style: italic;
+  transition: opacity 0.2s ease; opacity: 0;
+}
+.chip-detail.has-value { opacity: 1; }
+
+/* ── THESIS CALLOUT ── */
+.thesis-block {
+  border-left: 2px solid rgba(106,181,79,0.35);
+  padding: 28px 36px;
+  background: rgba(106,181,79,0.04);
+  border-radius: 0 10px 10px 0;
+  margin: 48px 0;
+}
+.thesis-quote {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(22px, 2.8vw, 34px); font-weight: 400; font-style: italic;
+  color: rgba(185,235,155,0.88); line-height: 1.45; margin-bottom: 12px;
+}
+.thesis-attr {
+  font-size: 10px; font-weight: 400; letter-spacing: 0.2em; text-transform: uppercase;
+  color: rgba(120,170,90,0.5);
+}
+
+/* ── BODY TEXT ── */
+.body-text {
+  font-size: clamp(14px, 1.4vw, 16px); font-weight: 300; line-height: 1.9;
+  color: rgba(215,228,198,0.65); margin-bottom: 24px; max-width: 700px;
+}
+.body-text strong { color: rgba(185,235,155,0.88); font-weight: 500; }
+.body-text em { color: rgba(215,228,198,0.8); font-style: italic; }
+
+/* ── STAT ROW ── */
+.stat-row {
+  display: grid; grid-template-columns: repeat(3, 1fr); gap: 1px;
+  background: var(--sage-border);
+  border: 1px solid var(--sage-border);
+  border-radius: 12px; overflow: hidden;
+  margin: 40px 0;
+}
+.stat-cell {
+  background: var(--bg); padding: 28px 32px;
+  display: flex; flex-direction: column; gap: 8px;
+}
+.stat-cell.alt { background: var(--bg-alt); }
+.stat-number {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 42px; font-weight: 600; line-height: 1;
+  color: var(--sage-bright);
+}
+.stat-label {
+  font-size: 10px; font-weight: 400; letter-spacing: 0.14em; text-transform: uppercase;
+  color: rgba(140,210,105,0.5);
+}
+.stat-sub {
+  font-size: 11px; font-weight: 300; color: rgba(180,200,160,0.48); line-height: 1.5;
+}
+
+/* ── FRAMEWORK GRID ── */
+.framework-grid {
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: 16px; margin: 40px 0;
+}
+.framework-card {
+  background: rgba(106,181,79,0.04);
+  border: 1px solid rgba(106,181,79,0.12);
+  border-radius: 10px; padding: 24px 28px;
+}
+.framework-arrow {
+  font-size: 10px; font-weight: 500; letter-spacing: 0.16em; text-transform: uppercase;
+  color: rgba(200,160,80,0.7); margin-bottom: 10px;
+}
+.framework-label {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 22px; font-weight: 600; color: rgba(185,235,155,0.85);
+  margin-bottom: 8px; line-height: 1.1;
+}
+.framework-desc {
+  font-size: 12px; font-weight: 300; line-height: 1.7;
+  color: rgba(180,200,160,0.55);
+}
+
+/* ── GWI SECTION ── */
+.gwi-copy {
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: 48px; margin: 36px 0 44px;
+}
+.gwi-body {
+  font-size: clamp(14px, 1.4vw, 16px); font-weight: 300; line-height: 1.9;
+  color: rgba(215,228,198,0.65); margin-bottom: 20px;
+}
+.gwi-body strong { color: rgba(185,235,155,0.88); font-weight: 500; }
+
+.gwi-embed {
+  border-radius: 16px;
+  border: 1px solid rgba(106,181,79,0.2);
+  overflow: hidden;
+  position: relative;
+  height: 640px;
+  background: #0c1610;
+  box-shadow: 0 12px 64px rgba(0,0,0,0.65), 0 0 0 1px rgba(106,181,79,0.07);
+}
+.gwi-embed iframe {
+  width: 100%; height: 100%; border: none; display: block;
+}
+.gwi-embed-label {
+  font-size: 8.5px; font-weight: 500; letter-spacing: 0.28em; text-transform: uppercase;
+  color: rgba(140,210,105,0.38); margin-top: 10px; text-align: center;
+}
+
+/* ── DISSONANCE LOOP ── */
+.loop-steps {
+  display: flex; gap: 0; margin: 36px 0;
+  border: 1px solid var(--sage-border); border-radius: 12px; overflow: hidden;
+}
+.loop-step {
+  flex: 1; padding: 24px 20px;
+  border-right: 1px solid var(--sage-border);
+  background: var(--bg);
+  display: flex; flex-direction: column; gap: 8px;
+  position: relative;
+}
+.loop-step:last-child { border-right: none; }
+.loop-step.highlight { background: rgba(106,181,79,0.05); }
+.loop-num {
+  font-size: 9px; font-weight: 500; letter-spacing: 0.2em;
+  color: rgba(140,210,105,0.4);
+}
+.loop-name {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 19px; font-weight: 600;
+  color: rgba(185,235,155,0.82); line-height: 1.1;
+}
+.loop-desc {
+  font-size: 11px; font-weight: 300; line-height: 1.65;
+  color: rgba(180,200,160,0.48);
+}
+
+/* ── WIL ── */
+.wil-grid {
+  display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px;
+  margin-top: 40px;
+}
+.wil-card {
+  padding: 28px; background: rgba(106,181,79,0.04);
+  border: 1px solid rgba(106,181,79,0.10); border-radius: 10px;
+}
+.wil-number {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 32px; font-weight: 600; color: rgba(106,181,79,0.22);
+  margin-bottom: 12px;
+}
+.wil-title { font-size: 11px; font-weight: 500; letter-spacing: 0.12em; text-transform: uppercase; color: rgba(106,181,79,0.65); margin-bottom: 10px; }
+.wil-body { font-size: 13px; font-weight: 300; line-height: 1.75; color: rgba(215,228,198,0.52); }
+
+/* ── REFLECTION ── */
+.reflection-quote {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(26px, 3.5vw, 46px); font-weight: 400; font-style: italic;
+  line-height: 1.35; color: rgba(185,235,155,0.78);
+  border-left: 2px solid rgba(106,181,79,0.28);
+  padding-left: 36px; margin-bottom: 20px;
+}
+.reflection-attr {
+  font-size: 10px; font-weight: 400; letter-spacing: 0.22em;
+  text-transform: uppercase; color: rgba(120,170,90,0.45);
+  padding-left: 36px;
+}
+
+/* ── REVEAL ── */
+.reveal {
+  opacity: 0; transform: translateY(22px);
+  transition: opacity 0.7s ease, transform 0.7s ease;
+}
+.reveal.is-visible { opacity: 1; transform: translateY(0); }
+
+/* ── MOBILE ── */
+@media (max-width: 860px) {
+  .gwi-copy { grid-template-columns: 1fr; gap: 24px; }
+  .framework-grid { grid-template-columns: 1fr; }
+  .wil-grid { grid-template-columns: 1fr; gap: 12px; }
+  .stat-row { grid-template-columns: 1fr; }
+  .loop-steps { flex-direction: column; }
+  .loop-step { border-right: none; border-bottom: 1px solid var(--sage-border); }
+  .loop-step:last-child { border-bottom: none; }
+  .chip-panel { grid-template-columns: 1fr; gap: 28px; }
+  .chip-group + .chip-group { border-left: none; padding-left: 0; border-top: 1px solid var(--sage-border); padding-top: 24px; }
+}
+@media (max-width: 660px) {
+  .hero { padding: 0 24px 52px; }
+  .cs-section { padding: 64px 24px; }
+  .hero h1 { font-size: 64px; }
+  .chip-panel { padding: 24px 20px; }
+  .chip-detail-wrap { padding: 0 20px 20px; }
+  .gwi-embed { height: 480px; }
+}
+</style>
+</head>
+<body>
+
+<div id="page-exit"></div>
+<div class="wordmark">Amber Grey</div>
+
+<button class="nav-back" onclick="navigateTo('level-3-rewilded.html')">
+  <span class="nav-back-arrow"></span>
+  ReWilded
+</button>
+
+<!-- ── HERO ── -->
+<section class="hero">
+  <div class="hero-eyebrow">ReWilded · Case Study</div>
+  <h1>ReWilded</h1>
+  <p class="hero-subtitle">What if a zoo's financial behavior told a different story than its mission?</p>
+  <div class="hero-meta">
+    <div class="hero-meta-item">
+      <span class="hero-meta-label">Role</span>
+      <span class="hero-meta-value">UX Research · Systems Lead</span>
+    </div>
+    <div class="hero-meta-item">
+      <span class="hero-meta-label">Team</span>
+      <span class="hero-meta-value">Solo</span>
+    </div>
+    <div class="hero-meta-item">
+      <span class="hero-meta-label">Timeframe</span>
+      <span class="hero-meta-value">6 months</span>
+    </div>
+    <div class="hero-meta-item">
+      <span class="hero-meta-label">Data</span>
+      <span class="hero-meta-value">114 AZA Institutions · IRS 990</span>
+    </div>
+  </div>
+</section>
+
+<!-- ── OVERVIEW ── -->
+<section class="cs-section">
+  <div class="section-inner">
+    <p class="section-eyebrow reveal">Overview</p>
+    <h2 class="section-heading reveal">The gap between what zoos say and what they fund.</h2>
+
+    <p class="overview-intro reveal">ReWilded began with a simple observation: zoos describe themselves as conservation organizations that also offer experiences — but structurally, they operate as <em>experience businesses that occasionally fund conservation.</em> That inversion isn't a failure of intention. It's a system operating exactly as designed. The question became: how do you make that visible, and what do you do with it?</p>
+
+    <div class="thesis-block reveal">
+      <div class="thesis-quote">"Discomfort is not noise. It is signal."</div>
+      <div class="thesis-attr">ReWilded · Core Thesis</div>
+    </div>
+
+    <!-- skills / tools chip panel -->
+    <div class="proj-meta-outer reveal" id="chipOuter">
+      <div class="chip-panel">
+        <div class="chip-group">
+          <div class="chip-group-label">Skills</div>
+          <div class="chip-row">
+            <button class="chip-btn" data-detail="Mixed method research · Field observation · Survey design · Statistical analysis · Behavioral experiments">UX Research</button>
+            <button class="chip-btn" data-detail="Ecosystem mapping · Feedback loop design · Institutional modeling · Ethical systems analysis">Systems Thinking</button>
+            <button class="chip-btn" data-detail="Embodied interaction · Participatory affordances · Dwell time optimization · Experience prototyping">Interaction Design</button>
+            <button class="chip-btn" data-detail="Modular experience architecture · Journey mapping · Pilot design · Cross touchpoint strategy">Service Design</button>
+            <button class="chip-btn" data-detail="Trust index modeling · Financial analysis (990 review) · Conservation impact mapping · Pattern synthesis">Data & Insight Translation</button>
+            <button class="chip-btn" data-detail="Emotional signal mapping · Designing with dissonance · Agency-centered design · Engagement amplification">Behavioral Design</button>
+            <button class="chip-btn" data-detail="Business model development · Strategy cascade · Revenue-aligned design · Institutional positioning">Strategic Innovation</button>
+          </div>
+        </div>
+        <div class="chip-group">
+          <div class="chip-group-label">Tools</div>
+          <div class="chip-row">
+            <button class="chip-btn" data-detail="Qualtrics · SPSS · Excel (990 financial modeling) · MAXQDA">Research & Analysis</button>
+            <button class="chip-btn" data-detail="Figma · Illustrator · Photoshop · InDesign · After Effects · Premiere">Design & Prototyping</button>
+            <button class="chip-btn" data-detail="WordPress · HTML · CSS · Visual Studio Code">Web & Systems</button>
+            <button class="chip-btn" data-detail="ChatGPT (custom GPT) · Midjourney · Runway · Firefly">AI & Creative Systems</button>
+            <button class="chip-btn" data-detail="Miro · Google Workspace · Notion · ProPublica Nonprofit Explorer">Documentation & Strategy</button>
+          </div>
+        </div>
+      </div>
+      <div class="chip-detail-wrap">
+        <div class="chip-detail" id="chipDetail">Hover a chip to see what it means in this project.</div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ── THE PROBLEM ── -->
+<section class="cs-section alt-bg">
+  <div class="section-inner">
+    <p class="section-eyebrow reveal">The Problem</p>
+    <h2 class="section-heading reveal">Zoos are experience businesses wearing a conservation identity.</h2>
+
+    <p class="body-text reveal">Most AZA-accredited zoos lead with conservation language — in their mission statements, on their signage, across their marketing. Visitors arrive expecting an institution that prioritizes wildlife protection. What they encounter is an experience designed for family entertainment, with conservation as narrative decoration.</p>
+
+    <p class="body-text reveal">This isn't a criticism. It's a structural observation. Zoos require significant revenue to operate — animal care, habitat maintenance, veterinary services, staffing. But when conservation language is used to justify admission prices and donor giving, while <strong>direct conservation funding averages well below 2% of revenue</strong> across the sector, a gap opens between what is claimed and what is financially demonstrated. Visitors feel it — they just can't name it.</p>
+
+    <div class="stat-row reveal">
+      <div class="stat-cell">
+        <div class="stat-number">114</div>
+        <div class="stat-label">Institutions Analyzed</div>
+        <div class="stat-sub">AZA-accredited non-profits, IRS 990 filings across 2019, 2022, and 2023</div>
+      </div>
+      <div class="stat-cell alt">
+        <div class="stat-number">−5 → +6</div>
+        <div class="stat-label">GWI Range</div>
+        <div class="stat-sub">From overperformers who do more than they claim, to institutions whose words far exceed their financial action</div>
+      </div>
+      <div class="stat-cell">
+        <div class="stat-number">38%</div>
+        <div class="stat-label">Zero Direct Giving</div>
+        <div class="stat-sub">Of institutions in the dataset report zero direct conservation giving while carrying conservation-forward mission statements</div>
+      </div>
+    </div>
+
+    <p class="body-text reveal">The dissonance isn't incidental. It's <strong>structural</strong> — built into the operating model. And structural dissonance produces a specific kind of visitor experience: one where trust slowly erodes without a legible reason. ReWilded was designed to make that structure visible, interpretable, and ultimately designable.</p>
+
+  </div>
+</section>
+
+<!-- ── THE RESEARCH ── -->
+<section class="cs-section">
+  <div class="section-inner">
+    <p class="section-eyebrow reveal">The Research</p>
+    <h2 class="section-heading reveal">Financial behavior as a research signal.</h2>
+
+    <p class="body-text reveal">IRS Form 990 filings — public records submitted annually by non-profit organizations — contain a layer of information that most visitors never see: where money actually goes. Schedule I tracks domestic grants and conservation giving. Schedule F tracks international conservation activity. Together, they paint a picture of institutional financial behavior that either aligns with or diverges from stated mission.</p>
+
+    <p class="body-text reveal">Across 114 AZA-accredited institutions, three years of data (2019, 2022, 2023) were collected, cleaned, and analyzed. Each zoo was scored on two dimensions: <strong>Mission Score</strong> — the strength of conservation language in their stated mission — and <strong>Action Score</strong> — the degree of financial conservation behavior demonstrated through their giving. The gap between the two is the <strong>Greenwashing Index (GWI).</strong></p>
+
+    <div class="thesis-block reveal" style="border-left-color: rgba(200,160,80,0.4); background: rgba(200,160,80,0.03);">
+      <div class="thesis-quote" style="color: rgba(240,210,140,0.82);">GWI = Mission Score − Action Score</div>
+      <div class="thesis-attr">Negative = institution does more than it says. Positive = institution claims more than it funds.</div>
+    </div>
+
+    <p class="body-text reveal">The methodology was deliberately observational rather than accusatory. The goal was interpretation, not indictment — understanding what these signals suggest about visitor experience and institutional trust, not assigning moral failure to any individual institution. Systems produce behavior. The research was designed to read the system.</p>
+
+    <p class="body-text reveal">A custom <strong>ReWilded Research GPT</strong> was built to operationalize this framework — enabling structured analysis of zoo financial data, mission language, and visitor perception signals at scale, using a consistent interpretive methodology across all 114 institutions.</p>
+
+  </div>
+</section>
+
+<!-- ── GWI VISUALIZER ── -->
+<section class="cs-section alt-bg">
+  <div class="section-inner">
+    <p class="section-eyebrow reveal">The Tool</p>
+    <h2 class="section-heading reveal">See the gap. Read the signal.</h2>
+
+    <div class="gwi-copy reveal">
+      <div>
+        <p class="gwi-body">The GWI Visualizer maps all 114 institutions across the full index range — from overperformers who give significantly more than their mission language claims, to institutions whose conservation language far outpaces any financial commitment. <strong>Select any zoo</strong> to see its actual mission statement alongside its 990-sourced financial data and a signal interpretation written in the voice of the research.</p>
+        <p class="gwi-body">Each institution's score is the product of two independent assessments: how strongly the mission statement commits to conservation in language, and how strongly the institution commits in financial behavior. The gap between those two numbers is what visitors feel — even when they can't articulate why.</p>
+      </div>
+      <div>
+        <p class="gwi-body">Use the filter tabs to isolate overperformers, aligned institutions, or those with notable gaps. The color spectrum runs from deep forest green (negative GWI — does more than claimed) through warm amber to terracotta (positive GWI — claims exceed action).</p>
+        <p class="gwi-body">The signal interpretation below each zoo's score translates the financial data into <strong>what a visitor is likely to feel</strong> — not what an auditor would flag. This is the core ReWilded methodology: reading institutional behavior through the lens of human experience.</p>
+      </div>
+    </div>
+
+    <div class="reveal">
+      <div class="gwi-embed">
+        <iframe src="prototype-gwi-visualizer.html" title="GWI Greenwashing Index — Interactive Tool" loading="lazy" scrolling="no"></iframe>
+      </div>
+      <p class="gwi-embed-label">GWI Visualizer · 114 AZA-Accredited Institutions · IRS 990 Data · 2019–2023</p>
+    </div>
+
+  </div>
+</section>
+
+<!-- ── FRAMEWORKS ── -->
+<section class="cs-section">
+  <div class="section-inner">
+    <p class="section-eyebrow reveal">The Frameworks</p>
+    <h2 class="section-heading reveal">From signal to design.</h2>
+
+    <p class="body-text reveal">Identifying the gap was step one. The research was designed to go further — toward a set of frameworks that could translate institutional analysis into design direction. If a zoo scores high on the GWI, what does that actually mean for how the experience should be redesigned? The SIGNS framework answers that question.</p>
+
+    <div class="framework-grid reveal">
+      <div class="framework-card">
+        <div class="framework-arrow">Spectacle → Story</div>
+        <div class="framework-label">Replace performance with narrative</div>
+        <div class="framework-desc">Move from theatrical animal presentation toward honest, keeper-narrated encounters that acknowledge animal behavior on its own terms.</div>
+      </div>
+      <div class="framework-card">
+        <div class="framework-arrow">Information → Interaction</div>
+        <div class="framework-label">Make data participatory</div>
+        <div class="framework-desc">Conservation statistics become meaningful only when visitors can act on them. Static signage becomes real-time giving, tracked publicly.</div>
+      </div>
+      <div class="framework-card">
+        <div class="framework-arrow">Gaps → Guidance</div>
+        <div class="framework-label">Name what's missing</div>
+        <div class="framework-desc">Where the zoo doesn't have answers — about trade-offs, about funding, about captivity — design those absences into honest acknowledgment.</div>
+      </div>
+      <div class="framework-card">
+        <div class="framework-arrow">Neglect → Nurture</div>
+        <div class="framework-label">Surface the invisible labor</div>
+        <div class="framework-desc">Keeper knowledge and daily animal care routines are the most authentic conservation content a zoo has. Most of it goes unseen by visitors.</div>
+      </div>
+    </div>
+
+    <p class="body-text reveal" style="margin-top: 36px;">Alongside SIGNS, the <strong>Dissonance Loop</strong> provides a framework for how visitors move through moments of institutional friction — and how those moments can be designed to deepen trust rather than erode it.</p>
+
+    <div class="loop-steps reveal">
+      <div class="loop-step">
+        <div class="loop-num">01</div>
+        <div class="loop-name">Signal</div>
+        <div class="loop-desc">Discomfort surfaces. Something doesn't add up. The visitor senses a gap between what's been promised and what's present.</div>
+      </div>
+      <div class="loop-step highlight">
+        <div class="loop-num">02</div>
+        <div class="loop-name">Containment</div>
+        <div class="loop-desc">The experience holds the discomfort rather than resolving it prematurely. Safety is maintained while the signal is kept alive.</div>
+      </div>
+      <div class="loop-step">
+        <div class="loop-num">03</div>
+        <div class="loop-name">Context</div>
+        <div class="loop-desc">Information is offered — not to dismiss the feeling, but to give it shape. What is known. What is uncertain. What is being worked on.</div>
+      </div>
+      <div class="loop-step highlight">
+        <div class="loop-num">04</div>
+        <div class="loop-name">Choice</div>
+        <div class="loop-desc">Agency is returned to the visitor. They can go deeper, step back, or redirect. The experience doesn't force a conclusion.</div>
+      </div>
+      <div class="loop-step">
+        <div class="loop-num">05</div>
+        <div class="loop-name">Closure</div>
+        <div class="loop-desc">The signal resolves — not into comfort, but into meaning. The visitor leaves with a fuller picture, not a managed one.</div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ── WHAT I LEARNED ── -->
+<section class="cs-section alt-bg">
+  <div class="section-inner">
+    <p class="section-eyebrow reveal">What I Learned</p>
+    <h2 class="section-heading reveal">What the research taught me about systems and trust.</h2>
+
+    <div class="wil-grid reveal">
+      <div class="wil-card">
+        <div class="wil-number">01</div>
+        <p class="wil-title">Behavior is the actual message</p>
+        <p class="wil-body">Visitors don't read 990 filings. But they feel financial priorities through the texture of an experience — what's funded, what's crowded, what's explained and what isn't. Behavioral design starts with institutional behavior, not just interaction design.</p>
+      </div>
+      <div class="wil-card">
+        <div class="wil-number">02</div>
+        <p class="wil-title">Dissonance is data</p>
+        <p class="wil-body">The instinct in design is to smooth friction. ReWilded taught me that unexamined friction is a signal worth preserving. The discomfort visitors feel at a zoo isn't a design failure — it's an honest response to a real tension. The failure is when design covers it rather than interprets it.</p>
+      </div>
+      <div class="wil-card">
+        <div class="wil-number">03</div>
+        <p class="wil-title">Scale changes interpretation</p>
+        <p class="wil-body">Analyzing one zoo tells you something. Analyzing 114 tells you something entirely different — about patterns, outliers, and what "aligned" even means in context. Quantitative research at scale made the qualitative signals legible in a way individual cases couldn't.</p>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ── REFLECTION ── -->
+<section class="cs-section" style="padding-bottom: 140px;">
+  <div class="section-inner">
+    <p class="section-eyebrow reveal">Reflection</p>
+
+    <div class="reflection-quote reveal">
+      What ecology already knows, design is still learning to ask.
+    </div>
+    <div class="reflection-attr reveal">ReWilded · 2026</div>
+
+    <p class="body-text reveal" style="margin-top: 48px;">Rewilding — in ecology — is the practice of removing human management and letting a system recover its own logic. The same principle applies to institutions. ReWilded asks what happens when you stop managing the narrative and start reading the behavior. The answer, in most cases, is that the truth was already there — in the filings, in the experience gaps, in the discomfort visitors couldn't quite name. The research didn't reveal a problem. It gave the problem a language.</p>
+
+  </div>
+</section>
+
+<script>
+'use strict';
+
+// ── PAGE TRANSITION ──────────────────────────────────────────
+function navigateTo(url) {
+  document.getElementById('page-exit').classList.add('active');
+  setTimeout(() => { window.location.href = url; }, 320);
+}
+
+// ── SCROLL REVEAL ────────────────────────────────────────────
+const revealObs = new IntersectionObserver((entries) => {
+  entries.forEach(e => {
+    if (e.isIntersecting) { e.target.classList.add('is-visible'); revealObs.unobserve(e.target); }
+  });
+}, { threshold: 0.08 });
+document.querySelectorAll('.reveal').forEach(el => revealObs.observe(el));
+
+// ── CHIP HOVER ───────────────────────────────────────────────
+const chipDetail = document.getElementById('chipDetail');
+document.querySelectorAll('.chip-btn').forEach(btn => {
+  btn.addEventListener('mouseenter', () => {
+    chipDetail.textContent = btn.dataset.detail || '';
+    chipDetail.classList.add('has-value');
+  });
+  btn.addEventListener('mouseleave', () => {
+    chipDetail.classList.remove('has-value');
+  });
+});
+
+// ── CHIP PANEL MOUSE GLOW ────────────────────────────────────
+const chipOuter = document.getElementById('chipOuter');
+if (chipOuter) {
+  chipOuter.addEventListener('mousemove', e => {
+    const r = chipOuter.getBoundingClientRect();
+    const x = ((e.clientX - r.left) / r.width * 100).toFixed(1);
+    const y = ((e.clientY - r.top)  / r.height * 100).toFixed(1);
+    chipOuter.style.setProperty('--mx', x + '%');
+    chipOuter.style.setProperty('--my', y + '%');
+  });
+}
+</script>
+</body>
+</html>

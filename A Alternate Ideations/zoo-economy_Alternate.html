@@ -1,0 +1,1514 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>The Zoo Economy – Money In, Money Out</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    html, body {
+      width: 100vw; height: 100vh;
+      max-width: 100vw; max-height: 100vh;
+      overflow: hidden;
+      background: #1a1a1a;
+      margin: 0; padding: 0;
+    }
+    /* Wrapper constrains to the true viewport so we can measure it */
+    #slide-wrapper {
+      position: fixed; top: 0; left: 0;
+      width: 100%; height: 100%;
+      overflow: hidden;
+      background: #1a1a1a;
+    }
+
+    .slide {
+      position: absolute; top: 0; left: 0;
+      width: 1920px; height: 1080px;
+      background: #c6e9f8;
+      transform-origin: 0 0;
+    }
+
+    /* ── Map layers (left:49 top:-2 w:1810 h:1082) ── */
+    .map-layer {
+      position: absolute;
+      left: 49px; top: -2px;
+      width: 1810px; height: 1082px;
+      object-fit: cover;
+      display: none;
+      pointer-events: none;
+    }
+    .map-layer.s-default { display: block; }
+
+    .slide[data-state="info"]       .map-layer.s-default  { display: none; }
+    .slide[data-state="info"]       .map-layer.s-info     { display: block; }
+    .slide[data-state="area"]       .map-layer.s-default  { display: none; }
+    .slide[data-state="area"]       .map-layer.s-area     { display: block; }
+    .slide[data-state="color"]      .map-layer.s-default  { display: none; }
+    .slide[data-state="color"]      .map-layer.s-color    { display: block; }
+    .slide[data-state="green"]      .map-layer.s-default  { display: none; }
+    .slide[data-state="green"]      .map-layer.s-green    { display: block; }
+    .slide[data-state="nodot-dg"]   .map-layer.s-default  { display: none; }
+    .slide[data-state="nodot-dg"]   .map-layer.s-nodot-dg { display: block; }
+    .slide[data-state="nodot-ng"]   .map-layer.s-default  { display: none; }
+    .slide[data-state="nodot-ng"]   .map-layer.s-nodot-ng { display: block; }
+    .slide[data-state="halo"]       .map-layer.s-default  { display: none; }
+    .slide[data-state="halo"]       .map-layer.s-halo     { display: block; }
+
+    /* ── Legend image ── */
+    .legend-wrap {
+      position: absolute;
+      left: 786px; top: -2px;
+      width: 1134px; height: 280px;
+      pointer-events: none;
+    }
+    .legend-wrap img {
+      position: absolute; inset: 0;
+      width: 100%; height: 100%;
+      object-fit: cover;
+      display: none;
+    }
+    .legend-wrap img.s-default { display: block; }
+    .slide[data-state="info"]     .legend-wrap img.s-default { display:none; } .slide[data-state="info"]     .legend-wrap img.s-info     { display:block; }
+    .slide[data-state="area"]     .legend-wrap img.s-default { display:none; } .slide[data-state="area"]     .legend-wrap img.s-area     { display:block; }
+    .slide[data-state="color"]    .legend-wrap img.s-default { display:none; } .slide[data-state="color"]    .legend-wrap img.s-color    { display:block; }
+    .slide[data-state="green"]    .legend-wrap img.s-default { display:none; } .slide[data-state="green"]    .legend-wrap img.s-green    { display:block; }
+    .slide[data-state="nodot-dg"] .legend-wrap img.s-default { display:none; } .slide[data-state="nodot-dg"] .legend-wrap img.s-nodot-dg { display:block; }
+    .slide[data-state="nodot-ng"] .legend-wrap img.s-default { display:none; } .slide[data-state="nodot-ng"] .legend-wrap img.s-nodot-ng { display:block; }
+    .slide[data-state="halo"]     .legend-wrap img.s-default { display:none; } .slide[data-state="halo"]     .legend-wrap img.s-halo     { display:block; }
+
+    /* ── Always-on title ── */
+    .title-bg {
+      position: absolute; left: 127px; top: 33px;
+      width: 726px; height: 134px; background: #c6e9f8;
+    }
+    .title {
+      position: absolute; left: 144px; top: 53px; width: 808px;
+      font-family: 'ITC Avant Garde Gothic','Century Gothic','Futura',sans-serif;
+      font-size: 70px; font-weight: 700; color: #484a49;
+      line-height: normal; white-space: nowrap; letter-spacing: -1px;
+    }
+    .subtitle {
+      position: absolute; left: 155px; top: 128px;
+      font-family: 'ITC Avant Garde Gothic','Century Gothic','Futura',sans-serif;
+      font-size: 24px; color: #4c4e4e; white-space: nowrap;
+    }
+
+    /* ── State panels ── */
+    .panel {
+      position: absolute; inset: 0;
+      width: 1920px; height: 1080px;
+      display: none; pointer-events: none;
+    }
+    .panel.s-default { display: block; }
+
+    .slide[data-state="info"]     .panel.s-default { display:none; } .slide[data-state="info"]     .panel.s-info     { display:block; }
+    .slide[data-state="area"]     .panel.s-default { display:none; } .slide[data-state="area"]     .panel.s-area     { display:block; }
+    .slide[data-state="color"]    .panel.s-default { display:none; } .slide[data-state="color"]    .panel.s-color    { display:block; }
+    .slide[data-state="green"]    .panel.s-default { display:none; } .slide[data-state="green"]    .panel.s-green    { display:block; }
+    .slide[data-state="nodot-dg"] .panel.s-default { display:none; } .slide[data-state="nodot-dg"] .panel.s-nodot-dg { display:block; }
+    .slide[data-state="nodot-ng"] .panel.s-default { display:none; } .slide[data-state="nodot-ng"] .panel.s-nodot-ng { display:block; }
+    .slide[data-state="halo"]     .panel.s-default { display:none; } .slide[data-state="halo"]     .panel.s-halo     { display:block; }
+
+    /* ── Hover zones ── */
+    .hz {
+      position: absolute;
+      cursor: pointer;
+      z-index: 200;
+      border-radius: 6px;
+      transition: box-shadow 0.15s, background 0.15s;
+    }
+    .hz:hover {
+      background: rgba(255,255,255,0.09);
+    }
+    /* Locked state: visible ring so presenter knows view is pinned */
+    .hz.locked {
+      box-shadow: inset 0 0 0 2px rgba(255,255,255,0.65);
+      background: rgba(255,255,255,0.13);
+    }
+
+    /* ── State HUD (bottom-left) ── */
+    #state-hud {
+      position: absolute;
+      bottom: 32px;
+      left: 155px;
+      font-family: 'ITC Avant Garde Gothic','Century Gothic','Futura',sans-serif;
+      font-size: 15px;
+      letter-spacing: 0.02em;
+      color: rgba(255,255,255,0.92);
+      background: rgba(76,78,78,0.82);
+      padding: 8px 20px;
+      border-radius: 24px;
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity 0.25s;
+      z-index: 300;
+      white-space: nowrap;
+    }
+    #state-hud.visible { opacity: 1; }
+    /* Lock badge inside HUD */
+    #state-hud .lock-badge {
+      display: inline-block;
+      margin-right: 7px;
+      font-size: 13px;
+      opacity: 0.75;
+      vertical-align: middle;
+    }
+
+    /* ── Navigation + utility buttons (bottom-right cluster) ── */
+    .ctrl-btn {
+      position: absolute;
+      width: 44px;
+      height: 44px;
+      background: rgba(76,78,78,0.78);
+      border-radius: 50%;
+      cursor: pointer;
+      z-index: 300;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background 0.18s, transform 0.1s;
+      user-select: none;
+    }
+    .ctrl-btn:hover { background: rgba(76,78,78,1); transform: scale(1.08); }
+    .ctrl-btn svg   { display: block; }
+
+    #btn-prev  { bottom: 32px; right: 248px; }
+    #btn-next  { bottom: 32px; right: 192px; }
+    #btn-help  { bottom: 32px; right: 136px; }
+    #btn-print { bottom: 32px; right: 32px;  }
+    /* Step counter between arrows */
+    #step-counter {
+      position: absolute;
+      bottom: 32px; right: 136px;
+      /* repositioned by JS to sit between arrows */
+      font-family: 'ITC Avant Garde Gothic','Century Gothic','Futura',sans-serif;
+      font-size: 13px;
+      color: rgba(255,255,255,0.7);
+      z-index: 300;
+      pointer-events: none;
+      white-space: nowrap;
+      bottom: 46px;
+      right: 211px;
+    }
+
+    /* ── Keyboard shortcut overlay ── */
+    #kbd-help {
+      position: absolute;
+      bottom: 90px;
+      right: 32px;
+      background: rgba(40,42,42,0.97);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 16px;
+      padding: 22px 28px;
+      font-family: 'Corbel','Calibri',sans-serif;
+      font-size: 15px;
+      color: #fff;
+      z-index: 500;
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity 0.2s;
+      min-width: 290px;
+      line-height: 1;
+    }
+    #kbd-help.visible { opacity: 1; pointer-events: auto; }
+    #kbd-help h3 {
+      font-family: 'ITC Avant Garde Gothic','Century Gothic','Futura',sans-serif;
+      font-size: 13px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.45);
+      margin-bottom: 14px;
+    }
+    .krow {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 24px;
+      padding: 5px 0;
+      border-bottom: 1px solid rgba(255,255,255,0.07);
+    }
+    .krow:last-child { border-bottom: none; }
+    .krow .klabel { color: rgba(255,255,255,0.8); font-size: 14px; }
+    .krow .kkeys  { display: flex; gap: 5px; flex-shrink: 0; }
+    kbd {
+      background: rgba(255,255,255,0.14);
+      border: 1px solid rgba(255,255,255,0.18);
+      border-radius: 5px;
+      padding: 2px 8px;
+      font-family: 'Courier New', monospace;
+      font-size: 12px;
+      color: #fff;
+      line-height: 1.6;
+    }
+
+    /* ── Print styles ── */
+    @media print {
+      html, body {
+        width: auto; height: auto;
+        overflow: visible;
+        background: white;
+      }
+      .slide {
+        position: static !important;
+        transform: none !important;
+        width: 100% !important;
+        height: auto !important;
+        aspect-ratio: 16 / 9;
+        page-break-inside: avoid;
+      }
+      .ctrl-btn, #state-hud, #kbd-help, #step-counter { display: none !important; }
+    }
+  
+    /* ── Sector stats bar ── */
+    #stats-bar {
+      position: absolute; left: 0; top: 1044px;
+      width: 1920px; height: 36px;
+      background: rgba(40,42,42,0.92);
+      display: flex; align-items: center; justify-content: center;
+      gap: 0; pointer-events: none; z-index: 250;
+    }
+    .stat-item {
+      display: flex; align-items: center; gap: 10px;
+      padding: 0 32px;
+      font-family: 'ITC Avant Garde Gothic','Century Gothic','Futura',sans-serif;
+      font-size: 14px; color: rgba(255,255,255,0.65);
+      border-right: 1px solid rgba(255,255,255,0.12);
+      white-space: nowrap;
+    }
+    .stat-item:last-child { border-right: none; }
+    .stat-n { font-weight: 700; font-size: 16px; color: #fff; }
+    .stat-red   { color: #e05c5c; }
+    .stat-green { color: #6fbf8a; }
+
+    /* ctrl-btn: pull up to clear stats bar */
+    .ctrl-btn { bottom: 52px !important; }
+    #state-hud { bottom: 52px !important; }
+    #step-counter { bottom: 66px !important; }
+    #kbd-help { bottom: 110px !important; }
+
+    /* ── Search button ── */
+    #btn-search { bottom: 52px !important; right: 304px; }
+
+    /* ── Search panel ── */
+    #search-panel {
+      position: absolute; left: 120px; top: 200px;
+      width: 480px;
+      background: rgba(28,30,30,0.97);
+      border: 1px solid rgba(255,255,255,0.12);
+      border-radius: 18px;
+      z-index: 600;
+      display: none;
+      flex-direction: column;
+      overflow: hidden;
+      box-shadow: 0 8px 40px rgba(0,0,0,0.6);
+    }
+    #search-panel.open { display: flex; }
+    #search-input-wrap {
+      display: flex; align-items: center; gap: 12px;
+      padding: 16px 20px;
+      border-bottom: 1px solid rgba(255,255,255,0.1);
+    }
+    #search-input {
+      flex: 1;
+      background: none; border: none; outline: none;
+      font-family: 'ITC Avant Garde Gothic','Century Gothic','Futura',sans-serif;
+      font-size: 18px; color: #fff;
+    }
+    #search-input::placeholder { color: rgba(255,255,255,0.3); }
+    #search-input-wrap svg { flex-shrink: 0; opacity: 0.4; }
+    #search-results {
+      max-height: 360px; overflow-y: auto;
+    }
+    #search-results::-webkit-scrollbar { width: 4px; }
+    #search-results::-webkit-scrollbar-track { background: transparent; }
+    #search-results::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.2); border-radius: 2px; }
+    .sr-item {
+      padding: 14px 22px;
+      cursor: pointer;
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+      transition: background 0.12s;
+      display: flex; justify-content: space-between; align-items: center;
+    }
+    .sr-item:hover { background: rgba(255,255,255,0.07); }
+    .sr-item:last-child { border-bottom: none; }
+    .sr-name {
+      font-family: 'ITC Avant Garde Gothic','Century Gothic','Futura',sans-serif;
+      font-size: 16px; color: #fff;
+    }
+    .sr-sub {
+      font-family: 'Corbel','Calibri',sans-serif;
+      font-size: 13px; color: rgba(255,255,255,0.45);
+      margin-top: 2px;
+    }
+    .sr-gwi {
+      font-family: 'ITC Avant Garde Gothic','Century Gothic','Futura',sans-serif;
+      font-size: 13px; font-weight: 700;
+      padding: 3px 9px; border-radius: 20px;
+      white-space: nowrap; flex-shrink: 0;
+    }
+    .sr-empty {
+      padding: 24px 22px;
+      font-family: 'Corbel','Calibri',sans-serif;
+      font-size: 15px; color: rgba(255,255,255,0.35);
+      text-align: center;
+    }
+
+    /* ── Profile card overlay ── */
+    #profile-overlay {
+      position: absolute; inset: 0;
+      width: 1920px; height: 1080px;
+      background: rgba(20,22,22,0.75);
+      z-index: 700;
+      display: none;
+      align-items: center;
+      justify-content: center;
+    }
+    #profile-overlay.open { display: flex; }
+    #profile-card {
+      width: 900px;
+      background: #1e2020;
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 22px;
+      overflow: hidden;
+      box-shadow: 0 16px 60px rgba(0,0,0,0.7);
+      font-family: 'Corbel','Calibri',sans-serif;
+      color: #fff;
+      max-height: 900px;
+      overflow-y: auto;
+    }
+    #profile-card::-webkit-scrollbar { width: 4px; }
+    #profile-card::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.15); border-radius:2px; }
+
+    /* Card sections */
+    .pc-header {
+      padding: 28px 32px 20px;
+      background: #262929;
+      border-bottom: 1px solid rgba(255,255,255,0.08);
+    }
+    .pc-header-top {
+      display: flex; justify-content: space-between; align-items: flex-start; gap: 16px;
+    }
+    .pc-zoo-name {
+      font-family: 'ITC Avant Garde Gothic','Century Gothic','Futura',sans-serif;
+      font-size: 26px; font-weight: 700; color: #fff; line-height: 1.1;
+    }
+    .pc-zoo-meta {
+      font-size: 14px; color: rgba(255,255,255,0.5);
+      margin-top: 5px;
+    }
+    .pc-header-links { display: flex; gap: 10px; flex-shrink: 0; }
+    .pc-link {
+      padding: 6px 14px; border-radius: 20px;
+      font-family: 'ITC Avant Garde Gothic','Century Gothic','Futura',sans-serif;
+      font-size: 12px; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase;
+      text-decoration: none; cursor: pointer;
+      transition: opacity 0.15s;
+    }
+    .pc-link:hover { opacity: 0.75; }
+    .pc-link-irs { background: rgba(255,255,255,0.1); color: #fff; }
+    .pc-link-web { background: #3d6b5c; color: #fff; }
+    .pc-close {
+      width: 32px; height: 32px; border-radius: 50%;
+      background: rgba(255,255,255,0.08);
+      cursor: pointer; display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0; transition: background 0.15s;
+    }
+    .pc-close:hover { background: rgba(255,255,255,0.18); }
+    .pc-flags { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 14px; }
+    .pc-flag {
+      padding: 4px 12px; border-radius: 20px;
+      font-size: 12px; font-weight: 700; letter-spacing: 0.04em;
+      font-family: 'ITC Avant Garde Gothic','Century Gothic','Futura',sans-serif;
+      text-transform: uppercase;
+    }
+    .flag-zero    { background: rgba(224,92,92,0.2);  color: #e05c5c; border: 1px solid rgba(224,92,92,0.35); }
+    .flag-deficit { background: rgba(111,191,138,0.2); color: #6fbf8a; border: 1px solid rgba(111,191,138,0.35); }
+    .flag-offshore{ background: rgba(100,150,220,0.2); color: #88aaf0; border: 1px solid rgba(100,150,220,0.3); }
+
+    /* Metrics row */
+    .pc-metrics {
+      display: grid; grid-template-columns: 1fr 1fr;
+      gap: 1px; background: rgba(255,255,255,0.06);
+      border-bottom: 1px solid rgba(255,255,255,0.08);
+    }
+    .pc-metric {
+      background: #1e2020; padding: 22px 28px;
+    }
+    .pc-metric-label {
+      font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase;
+      color: rgba(255,255,255,0.4);
+      font-family: 'ITC Avant Garde Gothic','Century Gothic','Futura',sans-serif;
+      margin-bottom: 6px;
+    }
+    .pc-metric-value {
+      font-family: 'ITC Avant Garde Gothic','Century Gothic','Futura',sans-serif;
+      font-size: 28px; font-weight: 700; color: #fff; line-height: 1;
+    }
+    .pc-metric-sub { font-size: 13px; color: rgba(255,255,255,0.4); margin-top: 5px; }
+    .pc-trend {
+      display: inline-flex; align-items: center; gap: 5px;
+      font-family: 'ITC Avant Garde Gothic','Century Gothic','Futura',sans-serif;
+      font-size: 12px; font-weight: 700; margin-top: 8px;
+      padding: 3px 10px; border-radius: 20px;
+    }
+    .trend-up   { background: rgba(111,191,138,0.15); color: #6fbf8a; }
+    .trend-down { background: rgba(224,92,92,0.15);   color: #e05c5c; }
+    .trend-flat { background: rgba(255,255,255,0.07); color: rgba(255,255,255,0.45); }
+
+    /* Sparkline bars */
+    .pc-spark { display: flex; align-items: flex-end; gap: 6px; height: 36px; margin-top: 10px; }
+    .pc-bar {
+      flex: 1; border-radius: 3px 3px 0 0;
+      background: rgba(255,255,255,0.18); min-height: 3px;
+      position: relative;
+    }
+    .pc-bar-label {
+      position: absolute; bottom: -18px; left: 50%;
+      transform: translateX(-50%);
+      font-size: 10px; color: rgba(255,255,255,0.3);
+      font-family: 'ITC Avant Garde Gothic','Century Gothic','Futura',sans-serif;
+      white-space: nowrap;
+    }
+    .pc-spark-wrap { margin-top: 4px; padding-bottom: 20px; }
+
+    /* GWI alignment section */
+    .pc-gwi-section {
+      padding: 22px 28px;
+      border-bottom: 1px solid rgba(255,255,255,0.08);
+    }
+    .pc-section-title {
+      font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase;
+      color: rgba(255,255,255,0.4);
+      font-family: 'ITC Avant Garde Gothic','Century Gothic','Futura',sans-serif;
+      margin-bottom: 14px;
+    }
+    .pc-score-row { display: flex; align-items: center; gap: 14px; margin-bottom: 10px; }
+    .pc-score-label {
+      font-family: 'ITC Avant Garde Gothic','Century Gothic','Futura',sans-serif;
+      font-size: 13px; color: rgba(255,255,255,0.6); width: 130px; flex-shrink: 0;
+    }
+    .pc-dots { display: flex; gap: 6px; }
+    .pc-dot {
+      width: 16px; height: 16px; border-radius: 50%;
+    }
+    .pc-dot-filled-m { background: #4c4e4e; }
+    .pc-dot-filled-a { background: #3d6b5c; }
+    .pc-dot-empty    { background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.15); }
+    .pc-score-num {
+      font-family: 'ITC Avant Garde Gothic','Century Gothic','Futura',sans-serif;
+      font-size: 15px; font-weight: 700; color: rgba(255,255,255,0.7);
+    }
+    .pc-gwi-gap {
+      display: flex; align-items: center; gap: 12px;
+      margin-top: 6px; padding: 10px 14px;
+      background: rgba(255,255,255,0.04); border-radius: 10px;
+    }
+    .pc-gwi-num {
+      font-family: 'ITC Avant Garde Gothic','Century Gothic','Futura',sans-serif;
+      font-size: 22px; font-weight: 700;
+    }
+    .pc-gwi-desc { font-size: 13px; color: rgba(255,255,255,0.55); }
+    .pc-mission-text {
+      font-size: 13px; color: rgba(255,255,255,0.5); font-style: italic;
+      line-height: 1.5; margin-top: 10px;
+    }
+
+    /* Themes section */
+    .pc-themes {
+      display: grid; grid-template-columns: 1fr 1fr;
+      gap: 1px; background: rgba(255,255,255,0.06);
+    }
+    .pc-theme-col { background: #1e2020; padding: 20px 28px; }
+    .pc-theme-tag {
+      display: inline-block;
+      background: rgba(255,255,255,0.08);
+      border-radius: 20px; padding: 4px 12px;
+      font-size: 12px; color: rgba(255,255,255,0.65);
+      margin: 3px 3px 3px 0;
+      font-family: 'ITC Avant Garde Gothic','Century Gothic','Futura',sans-serif;
+    }
+    .pc-theme-empty {
+      font-size: 13px; color: rgba(255,255,255,0.25); font-style: italic;
+    }
+
+  
+    /* ── Zoom HUD ── */
+    #zoom-hud-wrap {
+      position: absolute;
+      /* Anchored top-left so it stays visible even when the right side is clipped */
+      top: 14px; left: 14px;
+      display: flex; align-items: center; gap: 0;
+      z-index: 9999;
+      background: rgba(30,32,32,0.88);
+      border: 1px solid rgba(255,255,255,0.12);
+      border-radius: 22px;
+      overflow: hidden;
+      font-family: 'ITC Avant Garde Gothic','Century Gothic','Futura',sans-serif;
+      pointer-events: auto;
+    }
+    .zoom-btn {
+      width: 36px; height: 36px;
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer; color: #fff; font-size: 20px; font-weight: 300;
+      background: transparent;
+      transition: background 0.15s;
+      user-select: none;
+    }
+    .zoom-btn:hover { background: rgba(255,255,255,0.12); }
+    #zoom-hud {
+      min-width: 46px; text-align: center;
+      font-size: 13px; font-weight: 700;
+      color: rgba(255,255,255,0.75);
+      padding: 0 2px;
+    }
+
+  </style>
+</head>
+<body>
+<div id="slide-wrapper">
+<div class="slide" id="slide">
+
+  <!-- ════════ MAP LAYERS ════════ -->
+
+  <!-- default -->
+  <img class="map-layer s-default" src="https://www.figma.com/api/mcp/asset/0fb08d3d-7c53-4f00-b0d6-e0107c4530e2" alt="">
+  <img class="map-layer s-default" src="https://www.figma.com/api/mcp/asset/1263e663-916c-4834-b821-ca02e1af7640" alt="">
+
+  <!-- info -->
+  <img class="map-layer s-info" src="https://www.figma.com/api/mcp/asset/169fc2d9-f657-416b-8905-6290ef5b4712" alt="">
+
+  <!-- area -->
+  <img class="map-layer s-area" src="https://www.figma.com/api/mcp/asset/e7cce6db-9a33-4a47-9ef6-a585be2bdb83" alt="">
+  <img class="map-layer s-area" src="https://www.figma.com/api/mcp/asset/f177a514-9b49-4ae8-bdda-2aacb3d5e622" alt="">
+
+  <!-- color -->
+  <img class="map-layer s-color" src="https://www.figma.com/api/mcp/asset/bc147cc9-4568-4782-a2a3-16dd5af3fe32" alt="">
+  <img class="map-layer s-color" src="https://www.figma.com/api/mcp/asset/5fac920f-7672-4e90-9b7f-3e7c8e8eca2e" alt="">
+
+  <!-- green center -->
+  <img class="map-layer s-green" src="https://www.figma.com/api/mcp/asset/8a2f9175-55b0-44f0-8ead-ba7222c560db" alt="">
+  <img class="map-layer s-green" src="https://www.figma.com/api/mcp/asset/c3c1edff-8bc3-4b3e-a9d4-275edcfa5d8d" alt="">
+
+  <!-- no dot dark green -->
+  <img class="map-layer s-nodot-dg" src="https://www.figma.com/api/mcp/asset/c3957153-c599-4002-ab11-4bf2a35a6b01" alt="">
+  <img class="map-layer s-nodot-dg" src="https://www.figma.com/api/mcp/asset/21231d39-7605-4d53-bbb2-ba9b53a39ea3" alt="">
+
+  <!-- no dot non-green -->
+  <img class="map-layer s-nodot-ng" src="https://www.figma.com/api/mcp/asset/88ad9a59-58eb-4038-851b-b397c44c4eb9" alt="">
+  <img class="map-layer s-nodot-ng" src="https://www.figma.com/api/mcp/asset/2b21bc10-eb90-46ae-8986-78f3ba553acb" alt="">
+
+  <!-- halo -->
+  <img class="map-layer s-halo" src="https://www.figma.com/api/mcp/asset/00c01cc8-85bf-45c6-8525-b581813be886" alt="">
+  <img class="map-layer s-halo" src="https://www.figma.com/api/mcp/asset/77f9bfdd-580c-412b-b115-35424f416b76" alt="">
+
+  <!-- ════════ LEGEND (per-state, same position) ════════ -->
+  <div class="legend-wrap">
+    <img class="s-default"  src="https://www.figma.com/api/mcp/asset/fc591b82-1749-49bb-bc85-2836eb434861" alt="Legend">
+    <img class="s-info"     src="https://www.figma.com/api/mcp/asset/ab05286c-46a4-46e3-bd73-b8559b29c266" alt="Legend">
+    <img class="s-area"     src="https://www.figma.com/api/mcp/asset/fd9ef4c4-ddea-4b36-9017-2290e9a8cb67" alt="Legend">
+    <img class="s-color"    src="https://www.figma.com/api/mcp/asset/bd57b744-958b-4aab-ae78-617cccef2aaf" alt="Legend">
+    <img class="s-green"    src="https://www.figma.com/api/mcp/asset/79a18923-4c2c-4b9b-b059-6f3abba7e499" alt="Legend">
+    <img class="s-nodot-dg" src="https://www.figma.com/api/mcp/asset/259d3570-9962-42ed-9a13-afe79203a1aa" alt="Legend">
+    <img class="s-nodot-ng" src="https://www.figma.com/api/mcp/asset/3475ab71-240a-4e74-8009-c29baad0e660" alt="Legend">
+    <img class="s-halo"     src="https://www.figma.com/api/mcp/asset/239129da-476a-421a-94fe-354780282c53" alt="Legend">
+  </div>
+
+  <!-- ════════ TITLE (always visible) ════════ -->
+  <div class="title-bg"></div>
+  <p class="title">The Zoo Economy</p>
+  <p class="subtitle">Money In - Money Out</p>
+
+  <!-- ════════════════════════════════════════════
+       PANELS
+  ════════════════════════════════════════════ -->
+
+  <!-- ── DEFAULT: dark info box ── -->
+  <div class="panel s-default">
+    <!-- outer rounded box clips all children -->
+    <div style="position:absolute;left:1375px;top:503px;width:445px;height:490px;background:#4c4e4e;border-radius:22px;overflow:hidden;">
+      <!-- inner flat rect (depth layer) -->
+      <div style="position:absolute;left:19px;top:18px;width:392px;height:453px;background:#4c4e4e;"></div>
+      <!-- text: coordinates relative to outer box (1412-1375=37, 540-503=37) -->
+      <div style="position:absolute;left:37px;top:37px;width:389px;font-family:'Corbel','Calibri',sans-serif;font-size:12px;color:#fff;white-space:pre-wrap;line-height:0;">
+        <p style="line-height:normal;margin:0;">This map visualizes the financial relationship between U.S. zoos and the conservation missions they promote. It's built from IRS Form 990 data for AZA-accredited, non-profit, non–city-owned zoos in North America, averaged across 2019, 2021, and 2023 to smooth out COVID-era fluctuations. Each zoo's data was drawn from publicly available filings on ProPublica's Nonprofit Explorer, cross-referenced with Schedule F (foreign giving) and Schedule I (domestic giving) disclosures. The result is a composite picture of how much zoos earn, how much they give, and how closely those actions align with their stated conservation values.</p>
+        <p style="line-height:normal;margin:0;">&nbsp;</p>
+        <p style="line-height:normal;margin:0;">Rather than ranking institutions, the map reveals patterns, highlighting the relationship between message and action. Together, the colors, sizes, and halos invite viewers to explore how capacity, commitment, and integrity interact across the zoo landscape.</p>
+        <p style="line-height:normal;margin:0;">&nbsp;</p>
+        <p style="line-height:normal;margin:0;">Through the Greenwashing Index (GWI) , this map establishes a baseline for understanding what zoos are truly communicating through their actions, not just their words. By visualizing financial and conservation data, it reveals how each institution's choices shape what the public learns, what values stick, and where gaps may unintentionally undermine conservation goals.</p>
+        <p style="line-height:normal;margin:0;">Paired with upcoming tools for emotional and educational literacy, the Index invites reflection and collaboration, helping zoos align mission, message, and impact through transparent, adaptive design.</p>
+        <p style="line-height:normal;margin:0;">&nbsp;</p>
+        <p style="line-height:normal;margin:0;">Data source: AZA-accredited, non-profit, non-city-owned zoos in North America. All financial data were drawn from IRS Form 990s available on ProPublica.org. Figures represent three-year averages (2019, 2022,<br>and 2023) to mitigate COVID-era fluctuations. Conservation giving<br>totals were derived from Schedule I and Schedule F disclosures within</p>
+        <p style="line-height:normal;margin:0;">each 990.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── INFO HOVER: full-screen overlay ── -->
+  <div class="panel s-info">
+    <!-- dim overlay -->
+    <div style="position:absolute;left:0;top:-33px;width:1920px;height:1146px;background:rgba(76,78,78,0.68);border-radius:22px;"></div>
+    <!-- Rectangle4: fresh URL -->
+    <img src="https://www.figma.com/api/mcp/asset/1ee2d013-b1bd-4036-957a-b151ad6db46b"
+         style="position:absolute;left:295px;top:-93px;width:1116px;height:1266px;display:block;" alt="">
+    <!-- Text: left:407 top:46 w:892 h:1008, Corbel 28px white -->
+    <div style="position:absolute;left:407px;top:46px;width:892px;font-family:'Corbel','Calibri',sans-serif;font-size:28px;color:#fff;white-space:pre-wrap;line-height:0;">
+      <p style="line-height:normal;margin:0;">This map visualizes the financial relationship between U.S. zoos and the conservation missions they promote. It's built from IRS Form 990 data for AZA-accredited, non-profit, non–city-owned zoos in North America, averaged across 2019, 2021, and 2023 to smooth out COVID-era fluctuations. Each zoo's data was drawn from publicly available filings on ProPublica's Nonprofit Explorer, cross-referenced with Schedule F (foreign giving) and Schedule I (domestic giving) disclosures. The result is a composite picture of how much zoos earn, how much they give, and how closely those actions align with their stated conservation values.</p>
+      <p style="line-height:normal;margin:0;">&nbsp;</p>
+      <p style="line-height:normal;margin:0;">Rather than ranking institutions, the Greenwashing Index reveals patterns, highlighting the relationship between message and action. Together, the colors, sizes, and halos invite viewers to explore how capacity, commitment, and integrity interact across the zoo landscape.</p>
+      <p style="line-height:normal;margin:0;">&nbsp;</p>
+      <p style="line-height:normal;margin:0;">Through The Greenwashing Index , this map establishes a baseline for understanding what zoos are truly communicating through their actions, not just their words. By visualizing financial and conservation data, it reveals how each institution's choices shape what the public learns, what values stick, and where gaps may unintentionally undermine conservation goals.</p>
+      <p style="line-height:normal;margin:0;">Paired with upcoming tools for emotional and educational literacy, the Index invites reflection and collaboration, helping zoos align mission, message, and impact through transparent, adaptive design.</p>
+      <p style="line-height:normal;margin:0;">&nbsp;</p>
+      <p style="line-height:normal;margin:0;">Data source: AZA-accredited, non-profit, non-city-owned zoos in North America. All financial data were drawn from IRS Form 990s available on ProPublica.org. Figures represent three-year averages (2019, 2022,<br>and 2023) to mitigate COVID-era fluctuations. Conservation giving<br>totals were derived from Schedule I and Schedule F disclosures within</p>
+      <p style="line-height:normal;margin:0;">each 990.</p>
+    </div>
+  </div>
+
+  <!-- ── AREA OF CIRCLE ── -->
+  <div class="panel s-area">
+    <div style="position:absolute;left:1375px;top:503px;width:426px;height:490px;background:#4c4e4e;border-radius:22px;"></div>
+    <div style="position:absolute;left:1375px;top:503px;width:445px;height:490px;background:#4c4e4e;border-radius:22px;"></div>
+    <div style="position:absolute;left:1391px;top:520px;width:413px;height:456px;background:#fff;border-radius:22px;"></div>
+    <!-- title -->
+    <div style="position:absolute;left:1414px;top:575px;font-family:'ITC Avant Garde Gothic','Century Gothic','Futura',sans-serif;font-weight:700;font-size:24px;color:#000;line-height:1.2;">
+      Area of Circle:<br>Revenue +<br>Surplus Capacity
+    </div>
+    <!-- 5 concentric grey circles — all sharing bottom-center at (1483.5, 837) -->
+    <!-- Container anchored at top-left of the largest circle -->
+    <div style="position:absolute;left:1414px;top:700px;width:139px;height:137px;">
+      <!-- C1 largest (behind) -->
+      <div style="position:absolute;left:0;top:0;width:139px;height:137px;border-radius:50%;background:#d4d4d4;"></div>
+      <!-- C2 -->
+      <div style="position:absolute;left:14px;top:27px;width:111px;height:110px;border-radius:50%;background:#c4c4c4;"></div>
+      <!-- C3 -->
+      <div style="position:absolute;left:28px;top:54px;width:83px;height:83px;border-radius:50%;background:#b4b4b4;"></div>
+      <!-- C4 -->
+      <div style="position:absolute;left:42px;top:81px;width:56px;height:56px;border-radius:50%;background:#a4a4a4;"></div>
+      <!-- C5 smallest (front) -->
+      <div style="position:absolute;left:56px;top:110px;width:27px;height:27px;border-radius:50%;background:#949494;"></div>
+    </div>
+    <!-- 5 arrows -->
+    <img src="https://www.figma.com/api/mcp/asset/6f5dbea3-25e2-4156-a6ce-2389cfb1816f" style="position:absolute;left:1484px;top:692px;width:172px;height:15px;display:block;" alt="">
+    <img src="https://www.figma.com/api/mcp/asset/6f5dbea3-25e2-4156-a6ce-2389cfb1816f" style="position:absolute;left:1484px;top:720px;width:172px;height:15px;display:block;" alt="">
+    <img src="https://www.figma.com/api/mcp/asset/6f5dbea3-25e2-4156-a6ce-2389cfb1816f" style="position:absolute;left:1484px;top:746px;width:172px;height:15px;display:block;" alt="">
+    <img src="https://www.figma.com/api/mcp/asset/6f5dbea3-25e2-4156-a6ce-2389cfb1816f" style="position:absolute;left:1484px;top:774px;width:172px;height:15px;display:block;" alt="">
+    <img src="https://www.figma.com/api/mcp/asset/6f5dbea3-25e2-4156-a6ce-2389cfb1816f" style="position:absolute;left:1484px;top:802px;width:172px;height:15px;display:block;" alt="">
+    <!-- labels -->
+    <div style="position:absolute;left:1661px;top:688px;font-family:'ITC Avant Garde Gothic','Century Gothic','Futura',sans-serif;font-size:19px;color:#000;line-height:1.245;">
+      <p>&gt;$200M</p>
+      <p>$100&#8209;$200M</p>
+      <p>$50&#8209;$100M</p>
+      <p>$10M&#8209;$50M</p>
+      <p>&lt;$10M</p>
+    </div>
+  </div>
+
+  <!-- ── COLOR OF CIRCLE ── -->
+  <div class="panel s-color">
+    <div style="position:absolute;left:1375px;top:503px;width:426px;height:490px;background:#4c4e4e;border-radius:22px;"></div>
+    <div style="position:absolute;left:1390px;top:520px;width:396px;height:456px;background:#fff;border-radius:22px;"></div>
+    <div style="position:absolute;left:1375px;top:503px;width:445px;height:490px;background:#4c4e4e;border-radius:22px;"></div>
+    <div style="position:absolute;left:1391px;top:520px;width:413px;height:456px;background:#fff;border-radius:22px;"></div>
+    <!-- GWI chart image: left:1338 top:561 w:551 h:383 (intentionally overflows left edge of panel) -->
+    <img src="https://www.figma.com/api/mcp/asset/6ecffb88-d3b6-4770-8f6c-c9a03ce5f34e"
+         style="position:absolute;left:1338px;top:561px;width:551px;height:383px;display:block;object-fit:cover;" alt="">
+    <!-- small sample circle overlaid on chart -->
+    <img src="https://www.figma.com/api/mcp/asset/f03433fb-73c8-4638-a0ad-ccc33838a9b9"
+         style="position:absolute;left:1418px;top:674px;width:39px;height:39px;display:block;" alt="">
+  </div>
+
+  <!-- ── DARK GREEN CENTER CIRCLE ── -->
+  <div class="panel s-green">
+    <div style="position:absolute;left:1375px;top:503px;width:445px;height:490px;background:#4c4e4e;border-radius:22px;"></div>
+    <div style="position:absolute;left:1391px;top:520px;width:413px;height:456px;background:#fff;border-radius:22px;"></div>
+    <!-- GIVNG 1 top strip (title + giving %) -->
+    <div style="position:absolute;left:1376px;top:536px;width:548px;height:164px;overflow:hidden;">
+      <img src="https://www.figma.com/api/mcp/asset/beca3ca6-2ec7-44ca-b712-01e544c6f23c"
+           style="width:100%;display:block;" alt="">
+    </div>
+    <!-- 5 concentric dark-green ellipses -->
+    <img src="https://www.figma.com/api/mcp/asset/f1d7b16f-4028-4c77-9ce0-257533920a2d" style="position:absolute;left:1413px;top:700px;width:170px;height:170px;display:block;" alt="">
+    <img src="https://www.figma.com/api/mcp/asset/e75f0c2d-a59a-493b-950f-ccccb0c601cc" style="position:absolute;left:1430px;top:718px;width:136px;height:136px;display:block;" alt="">
+    <img src="https://www.figma.com/api/mcp/asset/0bcbdc19-bda2-4fd2-a1ad-f22612532911" style="position:absolute;left:1445px;top:734px;width:106px;height:106px;display:block;" alt="">
+    <img src="https://www.figma.com/api/mcp/asset/92fe22ee-c060-40fa-b159-dbee66effe55" style="position:absolute;left:1463px;top:753px;width:70px;height:70px;display:block;" alt="">
+    <img src="https://www.figma.com/api/mcp/asset/2c0d26c7-8d80-4c27-84a5-e4d94921994f" style="position:absolute;left:1480px;top:770px;width:36px;height:36px;display:block;" alt="">
+    <!-- arrows pointing to labels -->
+    <img src="https://www.figma.com/api/mcp/asset/a004490e-fd48-4dd6-978f-09e897871322" style="position:absolute;left:1544px;top:709px;width:106px;height:15px;display:block;" alt="">
+    <img src="https://www.figma.com/api/mcp/asset/0871c1e1-5467-4a4c-b6cd-59c771b2d8fc" style="position:absolute;left:1561px;top:752px;width:89px;height:15px;display:block;" alt="">
+    <img src="https://www.figma.com/api/mcp/asset/c09513e7-e59f-4404-9d89-b14bdceaedbd" style="position:absolute;left:1529px;top:797px;width:121px;height:15px;display:block;" alt="">
+    <img src="https://www.figma.com/api/mcp/asset/a004490e-fd48-4dd6-978f-09e897871322" style="position:absolute;left:1506px;top:837px;width:144px;height:15px;display:block;" alt="">
+    <img src="https://www.figma.com/api/mcp/asset/d255d890-9959-474a-a8f6-d59cc2c35121" style="position:absolute;left:1497px;top:879px;width:153px;height:15px;display:block;" alt="">
+    <!-- GIVNG 2: side percentage labels (cropped) -->
+    <div style="position:absolute;left:1661px;top:672px;width:143px;height:233px;overflow:hidden;">
+      <img src="https://www.figma.com/api/mcp/asset/beca3ca6-2ec7-44ca-b712-01e544c6f23c"
+           style="position:absolute;width:671px;height:467px;left:-292px;top:-187px;display:block;" alt="">
+    </div>
+    <!-- NO DOT label -->
+    <p style="position:absolute;left:1420px;top:933px;font-family:'ITC Avant Garde Gothic','Century Gothic','Futura',sans-serif;font-weight:700;font-size:24px;color:#810505;white-space:nowrap;">NO DOT = NO GIVING</p>
+  </div>
+
+  <!-- ── NO DOT: ANY SIZE DARK GREEN ── -->
+  <div class="panel s-nodot-dg">
+    <div style="position:absolute;left:1375px;top:503px;width:445px;height:490px;background:#4c4e4e;border-radius:22px;"></div>
+    <div style="position:absolute;left:1391px;top:520px;width:413px;height:456px;background:#fff;border-radius:22px;"></div>
+    <!-- legend-27-1 image: shows top 211px -->
+    <div style="position:absolute;left:1391px;top:543px;width:449px;height:211px;overflow:hidden;">
+      <img src="https://www.figma.com/api/mcp/asset/8785ac8a-1df8-4933-aff3-cf8c4b0f6d90"
+           style="width:449px;display:block;" alt="">
+    </div>
+  </div>
+
+  <!-- ── NO DOT: ANY SIZE / NON-GREEN ── -->
+  <div class="panel s-nodot-ng">
+    <div style="position:absolute;left:1375px;top:503px;width:445px;height:490px;background:#4c4e4e;border-radius:22px;"></div>
+    <div style="position:absolute;left:1391px;top:520px;width:413px;height:456px;background:#fff;border-radius:22px;"></div>
+    <!-- top section: first 83px of the image -->
+    <div style="position:absolute;left:1391px;top:543px;width:449px;height:83px;overflow:hidden;">
+      <img src="https://www.figma.com/api/mcp/asset/33e09221-076e-4c41-a2c0-263428d40f5d"
+           style="width:449px;display:block;" alt="">
+    </div>
+    <!-- bottom section: crops into the lower portion of the same image -->
+    <div style="position:absolute;left:1363px;top:645px;width:449px;height:103px;overflow:hidden;">
+      <img src="https://www.figma.com/api/mcp/asset/33e09221-076e-4c41-a2c0-263428d40f5d"
+           style="position:absolute;width:449px;top:-208px;display:block;" alt="">
+    </div>
+  </div>
+
+  <!-- ── OUTER HALO ── -->
+  <div class="panel s-halo">
+    <div style="position:absolute;left:1375px;top:503px;width:445px;height:490px;background:#4c4e4e;border-radius:22px;"></div>
+    <div style="position:absolute;left:1391px;top:520px;width:413px;height:456px;background:#fff;border-radius:22px;"></div>
+    <!-- Halo 1 (title + two halo rows) -->
+    <img src="https://www.figma.com/api/mcp/asset/25e3ec34-fde6-43a7-95d8-5ec9c45518c0"
+         style="position:absolute;left:1365px;top:535px;width:513px;height:116px;display:block;" alt="">
+    <!-- Halo 2 (detailed examples, cropped) -->
+    <div style="position:absolute;left:1350px;top:666px;width:608px;height:201px;overflow:hidden;">
+      <img src="https://www.figma.com/api/mcp/asset/57cc16bc-14f2-46bf-be27-10838254c782"
+           style="position:absolute;width:608px;top:-122px;display:block;" alt="">
+    </div>
+    <!-- halo circles on the map -->
+    <img src="https://www.figma.com/api/mcp/asset/0a1794bb-64c0-4e69-9c96-76df33e488e1" style="position:absolute;left:713px;top:872px;width:46px;height:46px;display:block;" alt="">
+    <img src="https://www.figma.com/api/mcp/asset/0a1794bb-64c0-4e69-9c96-76df33e488e1" style="position:absolute;left:512px;top:579px;width:46px;height:46px;display:block;" alt="">
+    <img src="https://www.figma.com/api/mcp/asset/0a1794bb-64c0-4e69-9c96-76df33e488e1" style="position:absolute;left:950px;top:466px;width:46px;height:46px;display:block;" alt="">
+    <img src="https://www.figma.com/api/mcp/asset/68c5cb71-30b6-4ade-981b-51fba1254482" style="position:absolute;left:753px;top:609px;width:40px;height:40px;display:block;" alt="">
+    <img src="https://www.figma.com/api/mcp/asset/68c5cb71-30b6-4ade-981b-51fba1254482" style="position:absolute;left:1297px;top:539px;width:40px;height:40px;display:block;" alt="">
+    <img src="https://www.figma.com/api/mcp/asset/1ec5ffe7-67ee-46b7-8615-5fd12c072a11" style="position:absolute;left:556px;top:563px;width:37px;height:37px;display:block;" alt="">
+    <img src="https://www.figma.com/api/mcp/asset/896971ff-75e1-4f3e-b490-b84d88c37d36" style="position:absolute;left:679px;top:788px;width:34px;height:34px;display:block;" alt="">
+    <img src="https://www.figma.com/api/mcp/asset/d8cec09f-cf65-4ffc-855c-da8e44c1e64b" style="position:absolute;left:719px;top:791px;width:27px;height:27px;display:block;" alt="">
+    <img src="https://www.figma.com/api/mcp/asset/d8cec09f-cf65-4ffc-855c-da8e44c1e64b" style="position:absolute;left:1009px;top:485px;width:27px;height:27px;display:block;" alt="">
+    <img src="https://www.figma.com/api/mcp/asset/d8cec09f-cf65-4ffc-855c-da8e44c1e64b" style="position:absolute;left:1061px;top:578px;width:27px;height:27px;display:block;" alt="">
+    <img src="https://www.figma.com/api/mcp/asset/d8cec09f-cf65-4ffc-855c-da8e44c1e64b" style="position:absolute;left:951px;top:699px;width:27px;height:27px;display:block;" alt="">
+    <img src="https://www.figma.com/api/mcp/asset/d8cec09f-cf65-4ffc-855c-da8e44c1e64b" style="position:absolute;left:966px;top:423px;width:27px;height:27px;display:block;" alt="">
+    <img src="https://www.figma.com/api/mcp/asset/4a0886d9-67c4-4755-bb4d-78a5eb6c55f9" style="position:absolute;left:769px;top:569px;width:14px;height:14px;display:block;" alt="">
+    <p style="position:absolute;left:1509px;top:871px;font-family:'ITC Avant Garde Gothic','Century Gothic','Futura',sans-serif;font-size:16px;color:#000;white-space:nowrap;">(No allocated location)</p>
+  </div>
+
+  <!-- ════════════════════════════════════════════
+       HOVER ZONES  (match the opacity-0 rects from Figma)
+  ════════════════════════════════════════════ -->
+
+  <!-- Area of Circle -->
+  <div class="hz" data-state="area"     style="left:853px; top:44px;  width:216px; height:173px;"></div>
+  <!-- Color of Circle -->
+  <div class="hz" data-state="color"    style="left:1069px;top:44px;  width:214px; height:173px;"></div>
+  <!-- Dark Green Center -->
+  <div class="hz" data-state="green"    style="left:1283px;top:44px;  width:206px; height:173px;"></div>
+  <!-- No Dot – Dark Green -->
+  <div class="hz" data-state="nodot-dg" style="left:1489px;top:44px;  width:168px; height:93px;"></div>
+  <!-- No Dot – Non-Green -->
+  <div class="hz" data-state="nodot-ng" style="left:1489px;top:137px; width:168px; height:80px;"></div>
+  <!-- Outer Halo -->
+  <div class="hz" data-state="halo"     style="left:1657px;top:44px;  width:227px; height:173px;"></div>
+  <!-- Info panel -->
+  <div class="hz" data-state="info"     style="left:1375px;top:505px; width:432px; height:487px;"></div>
+
+
+  <!-- ════════ ZOOM HUD (top-left, always in viewport) ════════ -->
+  <div id="zoom-hud-wrap">
+    <div class="zoom-btn" id="zoom-out" title="Zoom out  −">−</div>
+    <div id="zoom-hud">100%</div>
+    <div class="zoom-btn" id="zoom-in"  title="Zoom in  +">+</div>
+  </div>
+
+  <!-- ════════ STATE HUD ════════ -->
+  <div id="state-hud"></div>
+
+  <!-- ════════ STEP COUNTER ════════ -->
+  <div id="step-counter"></div>
+
+  <!-- ════════ CONTROL BUTTONS ════════ -->
+
+  <!-- Prev -->
+  <div class="ctrl-btn" id="btn-prev" title="Previous view  ←">
+    <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+      <path d="M11 14L6 9L11 4" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
+  </div>
+
+  <!-- Next -->
+  <div class="ctrl-btn" id="btn-next" title="Next view  →">
+    <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+      <path d="M7 4L12 9L7 14" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
+  </div>
+
+  <!-- Help -->
+  <div class="ctrl-btn" id="btn-help" title="Keyboard shortcuts  ?">
+    <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+      <circle cx="9" cy="9" r="7.5" stroke="white" stroke-width="1.5"/>
+      <path d="M7 7C7 5.9 7.9 5 9 5C10.1 5 11 5.9 11 7C11 8.5 9 9 9 10.5" stroke="white" stroke-width="1.5" stroke-linecap="round"/>
+      <circle cx="9" cy="13" r="0.75" fill="white"/>
+    </svg>
+  </div>
+
+  <!-- Print -->
+  <div class="ctrl-btn" id="btn-print" title="Print / Export  P">
+    <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+      <rect x="3" y="6" width="12" height="8" rx="1.5" stroke="white" stroke-width="1.5"/>
+      <path d="M5 6V3.5C5 3.22 5.22 3 5.5 3H12.5C12.78 3 13 3.22 13 3.5V6" stroke="white" stroke-width="1.5"/>
+      <rect x="6" y="10" width="6" height="4" rx="0.5" fill="white"/>
+      <circle cx="5.5" cy="8.5" r="0.75" fill="white"/>
+    </svg>
+  </div>
+
+  <!-- ════════ KEYBOARD HELP OVERLAY ════════ -->
+  <div id="kbd-help">
+    <h3>Keyboard Shortcuts</h3>
+    <div class="krow"><span class="klabel">Next view</span>       <span class="kkeys"><kbd>→</kbd></span></div>
+    <div class="krow"><span class="klabel">Previous view</span>   <span class="kkeys"><kbd>←</kbd></span></div>
+    <div class="krow"><span class="klabel">Lock / unlock view</span><span class="kkeys"><kbd>click</kbd></span></div>
+    <div class="krow"><span class="klabel">Reset to overview</span><span class="kkeys"><kbd>Esc</kbd> <kbd>0</kbd></span></div>
+    <div class="krow"><span class="klabel">Circle size</span>     <span class="kkeys"><kbd>1</kbd></span></div>
+    <div class="krow"><span class="klabel">Circle color (GWI)</span><span class="kkeys"><kbd>2</kbd></span></div>
+    <div class="krow"><span class="klabel">Dark green center</span><span class="kkeys"><kbd>3</kbd></span></div>
+    <div class="krow"><span class="klabel">No dot – dark green</span><span class="kkeys"><kbd>4</kbd></span></div>
+    <div class="krow"><span class="klabel">No dot – non-green</span><span class="kkeys"><kbd>5</kbd></span></div>
+    <div class="krow"><span class="klabel">Outer halo</span>      <span class="kkeys"><kbd>6</kbd></span></div>
+    <div class="krow"><span class="klabel">About this map</span>  <span class="kkeys"><kbd>7</kbd></span></div>
+    <div class="krow"><span class="klabel">Zoom out / in</span>   <span class="kkeys"><kbd>−</kbd> <kbd>+</kbd></span></div>
+    <div class="krow"><span class="klabel">Reset zoom</span>      <span class="kkeys"><kbd>\</kbd></span></div>
+    <div class="krow"><span class="klabel">Print / export</span>  <span class="kkeys"><kbd>P</kbd></span></div>
+  </div>
+
+
+  <!-- ════════ SECTOR STATS BAR ════════ -->
+  <div id="stats-bar">
+    <div class="stat-item">
+      <span class="stat-n">114</span>
+      <span>AZA Zoos Analyzed</span>
+    </div>
+    <div class="stat-item">
+      <span class="stat-n stat-red">56 (49%)</span>
+      <span>Give $0 to Conservation</span>
+    </div>
+    <div class="stat-item">
+      <span>Sector Avg</span>
+      <span class="stat-n">0.92%</span>
+      <span>of Revenue to Conservation</span>
+    </div>
+    <div class="stat-item">
+      <span class="stat-n stat-green">9 Zoos</span>
+      <span>Give Despite Running a Deficit</span>
+    </div>
+  </div>
+
+  <!-- ════════ SEARCH BUTTON ════════ -->
+  <div class="ctrl-btn" id="btn-search" title="Search zoos  S">
+    <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+      <circle cx="7.5" cy="7.5" r="5.5" stroke="white" stroke-width="1.5"/>
+      <path d="M12 12L16 16" stroke="white" stroke-width="1.5" stroke-linecap="round"/>
+    </svg>
+  </div>
+
+  <!-- ════════ SEARCH PANEL ════════ -->
+  <div id="search-panel">
+    <div id="search-input-wrap">
+      <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+        <circle cx="7.5" cy="7.5" r="5.5" stroke="white" stroke-width="1.5"/>
+        <path d="M12 12L16 16" stroke="white" stroke-width="1.5" stroke-linecap="round"/>
+      </svg>
+      <input type="text" id="search-input" placeholder="Search by zoo name or state…" autocomplete="off" spellcheck="false">
+    </div>
+    <div id="search-results"></div>
+  </div>
+
+  <!-- ════════ PROFILE CARD OVERLAY ════════ -->
+  <div id="profile-overlay">
+    <div id="profile-card"></div>
+  </div>
+
+  <!-- ════════ EMBEDDED ZOO DATA ════════ -->
+  <script>
+    const ZOO_DATA = {"stats":{"total":114,"zeroGiving":56,"deficitGivers":9,"avgPct":0.92,"totalGiving":25000307},"zoos":[{"id":"birmingham-zoo","name":"Birmingham Zoo","city":"Birmingham","state":"Alabama","state_abbr":"AL","acres":122,"rev":{"avg":13840962,"y19":12327529,"y22":11921574,"y23":17273784},"sur":{"avg":1346332,"y19":168777,"y22":-319468,"y23":4189687},"give":{"avg":0,"pct":0,"i19":0,"i22":0,"i23":0,"f19":0,"f22":0,"f23":0},"themes":{"dom":[],"intl":[],"countries":[],"animals":[]},"mission":{"statement":"Inspiring passion to conserve the natural world.","ms":2,"as":0,"gwi":2},"flags":{"zero":true,"deficit":false,"offshore":false},"urls":{"irs":"https://projects.propublica.org/nonprofits/organizations/621231591","web":"https://www.birminghamzoo.com"}},{"id":"phoenix-zoo","name":"Phoenix Zoo","city":"Phoenix","state":"Arizona","state_abbr":"AZ","acres":125,"rev":{"avg":42849837,"y19":34751066,"y22":47073859,"y23":46724587},"sur":{"avg":10015881,"y19":4661482,"y22":16535296,"y23":8850864},"give":{"avg":181419,"pct":0.42,"i19":111197,"i22":54000,"i23":102100,"f19":97511,"f22":65157,"f23":114293},"themes":{"dom":["Species Recovery Ssp","Education Stem","Habitat Restoration"],"intl":["Insitu Conservation","Habitat Restoration"],"countries":["Costa Rica","Malaysia","Brazil"],"animals":["Jaguire","Frog","Elephant"]},"mission":{"statement":"to advance the stewardship and conservation of animals and their habitats while providing experiences that inspire people and motivate them to care for the natural world.","ms":5,"as":3,"gwi":2},"flags":{"zero":false,"deficit":false,"offshore":true},"urls":{"irs":"https://projects.propublica.org/nonprofits/organizations/860174843","web":"https://www.phoenixzoo.org"}},{"id":"reid-park-zoo","name":"Reid Park Zoo","city":"Tucson","state":"Arizona","state_abbr":"AZ","acres":24,"rev":{"avg":10955842,"y19":9686133,"y22":11288507,"y23":11892887},"sur":{"avg":2401598,"y19":1926521,"y22":2467261,"y23":2811011},"give":{"avg":363184,"pct":3.31,"i19":293796,"i22":702256,"i23":93500,"f19":0,"f22":0,"f23":0},"themes":{"dom":["Species Recovery Ssp","Education Stem"],"intl":[],"countries":[],"animals":[]},"mission":{"statement":"To connect people with animals, inspiring the protection of wild animals and wild places.","ms":3,"as":2,"gwi":1},"flags":{"zero":false,"deficit":false,"offshore":false},"urls":{"irs":"https://projects.propublica.org/nonprofits/organizations/942379052","web":"https://reidparkzoo.org"}},{"id":"little-rock-zoo","name":"Little Rock Zoo","city":"Little Rock","state":"Arkansas","state_abbr":"AR","acres":33,"rev":{"avg":742843,"y19":559963,"y22":612768,"y23":1055799},"sur":{"avg":195542,"y19":202184,"y22":-86595,"y23":471038},"give":{"avg":7000,"pct":0.94,"i19":15000,"i22":0,"i23":6000,"f19":0,"f22":0,"f23":0},"themes":{"dom":["Conservation Org Support","Research Innovation"],"intl":[],"countries":[],"animals":[]},"mission":{"statement":"to inspire people to value and conserve our natural world,","ms":3,"as":3,"gwi":0},"flags":{"zero":false,"deficit":false,"offshore":false},"urls":{"irs":"https://projects.propublica.org/nonprofits/organizations/352241655","web":"https://www.littlerockzoo.com"}},{"id":"central-coast-zoo","name":"Central Coast Zoo","city":"Atascadero","state":"California","state_abbr":"CA","acres":5,"rev":{"avg":187120,"y19":190668,"y22":179691,"y23":191001},"sur":{"avg":110930,"y19":121802,"y22":105737,"y23":105251},"give":{"avg":0,"pct":0,"i19":0,"i22":0,"i23":0,"f19":0,"f22":0,"f23":0},"themes":{"dom":[],"intl":[],"countries":[],"animals":[]},"mission":{"statement":"aims to engage its community and visitors by inspiring them to take action for conservation and species preservation","ms":5,"as":0,"gwi":5},"flags":{"zero":true,"deficit":false,"offshore":false},"urls":{"irs":"https://projects.propublica.org/nonprofits/organizations/455250037","web":"https://www.centralcoastzoo.org"}},{"id":"frezno-chaffee-zoo","name":"Fresno Chaffee Zoo","city":"Fresno","state":"California","state_abbr":"CA","acres":39,"rev":{"avg":33134568,"y19":20422484,"y22":38573430,"y23":40407789},"sur":{"avg":6833688,"y19":622148,"y22":12237437,"y23":7641479},"give":{"avg":677373,"pct":2.04,"i19":0,"i22":0,"i23":40000,"f19":0,"f22":0,"f23":0},"themes":{"dom":["Zoo To Zoo Support          Conservation Org Support"],"intl":[],"countries":[],"animals":[]},"mission":{"statement":"Fresno Chaffee Zoo inspires people to care for animals, create connections, build community, and save wildlife.","ms":1,"as":3,"gwi":-2},"flags":{"zero":false,"deficit":false,"offshore":false},"urls":{"irs":"https://projects.propublica.org/nonprofits/organizations/421661145","web":"https://fcz.org"}},{"id":"living-desert-zoo","name":"Living Desert Zoo","city":"Palm Desert","state":"California","state_abbr":"CA","acres":80,"rev":{"avg":28445666,"y19":20164887,"y22":34591756,"y23":30580354},"sur":{"avg":10844157,"y19":5546996,"y22":16952338,"y23":10033137},"give":{"avg":328540,"pct":1.15,"i19":106281,"i22":145500,"i23":99000,"f19":0,"f22":0,"f23":0},"themes":{"dom":["Zoo To Zoo Support Conservation Org Support Rhino Rescue"],"intl":[],"countries":[],"animals":[]},"mission":{"statement":"desert conservation through preservation, education, and appreciation","ms":3,"as":2,"gwi":1},"flags":{"zero":false,"deficit":false,"offshore":false},"urls":{"irs":"https://projects.propublica.org/nonprofits/organizations/953385354","web":"https://www.livingdesert.org"}},{"id":"los-angeles-zoo","name":"Los Angeles Zoo","city":"Los Angeles","state":"California","state_abbr":"CA","acres":133,"rev":{"avg":23834208,"y19":24280743,"y22":20392647,"y23":26829235},"sur":{"avg":5009364,"y19":3834166,"y22":5800259,"y23":5393667},"give":{"avg":0,"pct":0,"i19":0,"i22":0,"i23":0,"f19":0,"f22":0,"f23":0},"themes":{"dom":["Conservation Org Support"],"intl":[],"countries":[],"animals":[]},"mission":{"statement":"Creating a just and sustainable world where people and wildlife thrive, together","ms":3,"as":2,"gwi":1},"flags":{"zero":true,"deficit":false,"offshore":false},"urls":{"irs":"https://projects.propublica.org/nonprofits/organizations/952369545","web":"https://lazoo.org"}},{"id":"oakland-zoo","name":"Oakland Zoo","city":"Oakland","state":"California","state_abbr":"CA","acres":100,"rev":{"avg":29984242,"y19":23716679,"y22":35355250,"y23":30880796},"sur":{"avg":806502,"y19":-1974134,"y22":5196207,"y23":-802567},"give":{"avg":364299,"pct":1.21,"i19":95450,"i22":175500,"i23":274500,"f19":70000,"f22":40000,"f23":437448},"themes":{"dom":["Conservation Org Support"],"intl":["Insitu Conservation","Animal Rehabilitation"],"countries":["Subsaharah Africa"],"animals":["Elephants","Chimps","Giraffees"]},"mission":{"statement":"To deepen connections with animals, save wildlife, and inspire champions for the natural world.","ms":0,"as":5,"gwi":-5},"flags":{"zero":false,"deficit":false,"offshore":true},"urls":{"irs":"https://projects.propublica.org/nonprofits/organizations/941687847","web":"https://www.oaklandzoo.org"}},{"id":"sacramento-zoo","name":"Sacramento Zoo","city":"Sacramento","state":"California","state_abbr":"CA","acres":14,"rev":{"avg":11851580,"y19":8723043,"y22":13151636,"y23":13680062},"sur":{"avg":1400533,"y19":72692,"y22":3109785,"y23":1019122},"give":{"avg":89192,"pct":0.75,"i19":113800,"i22":43900,"i23":69525,"f19":17901,"f22":8900,"f23":13550},"themes":{"dom":["Conservation Org Support"],"intl":["Grants"],"countries":["Subsaharan Africa","South Asia","South America"],"animals":[]},"mission":{"statement":"Inspires appreciation, respect and a connection with wildlife and nature through education, recreation and conservation","ms":3,"as":4,"gwi":-1},"flags":{"zero":false,"deficit":false,"offshore":true},"urls":{"irs":"https://projects.propublica.org/nonprofits/organizations/942861667","web":"https://www.saczoo.org"}},{"id":"san-diego-zoo-safari","name":"San Diego Zoo Safari","city":"San Diego","state":"California","state_abbr":"CA","acres":1900,"rev":{"avg":408518652,"y19":422092199,"y22":392443880,"y23":411019877},"sur":{"avg":68202256,"y19":118575738,"y22":40022456,"y23":46008573},"give":{"avg":6511126,"pct":1.59,"i19":1106972,"i22":1839718,"i23":1667683,"f19":3777752,"f22":5716824,"f23":5424430},"themes":{"dom":["Conservation Org Support"],"intl":["Insitu Conservation","Grants"],"countries":["Subsaharah Africa","East Asia","Europe"],"animals":["Rhinos","Okapi","Plants"]},"mission":{"statement":"save species worldwide by uniting its expertise in wildlife care and conservation science with its dedication to inspiring passion for nature","ms":4,"as":4,"gwi":0},"flags":{"zero":false,"deficit":false,"offshore":true},"urls":{"irs":"https://projects.propublica.org/nonprofits/organizations/951648219","web":"https://sandiegozoowildlifealliance.org"}},{"id":"san-franscisco-zoo","name":"San Franscisco Zoo","city":"San Francisco","state":"California","state_abbr":"CA","acres":100,"rev":{"avg":27659156,"y19":24500762,"y22":36024993,"y23":22451713},"sur":{"avg":1825412,"y19":-2244644,"y22":9686558,"y23":-1965677},"give":{"avg":0,"pct":0,"i19":0,"i22":0,"i23":0,"f19":0,"f22":0,"f23":0},"themes":{"dom":[],"intl":[],"countries":[],"animals":[]},"mission":{"statement":"connect people with wildlife, inspire caring for nature, and advance conservation action","ms":3,"as":0,"gwi":3},"flags":{"zero":true,"deficit":false,"offshore":false},"urls":{"irs":"https://projects.propublica.org/nonprofits/organizations/941429538","web":"https://www.sfzoo.org"}},{"id":"santa-barbra-zoo","name":"Santa Barbra Zoo","city":"Santa Barbara","state":"California","state_abbr":"CA","acres":30,"rev":{"avg":15278070,"y19":11017926,"y22":16605998,"y23":18210287},"sur":{"avg":155710,"y19":-1456711,"y22":878309,"y23":1045532},"give":{"avg":0,"pct":0,"i19":0,"i22":0,"i23":0,"f19":0,"f22":0,"f23":0},"themes":{"dom":[],"intl":[],"countries":[],"animals":[]},"mission":{"statement":"dedicated to the preservation, conservation, and enhancement of the natural world and its living treasures through education, research, and recreation","ms":4,"as":0,"gwi":4},"flags":{"zero":true,"deficit":false,"offshore":false},"urls":{"irs":"https://projects.propublica.org/nonprofits/organizations/952268554","web":"https://www.sbzoo.org"}},{"id":"sequoia-park-zoo","name":"Sequoia Park Zoo","city":"Eureka","state":"California","state_abbr":"CA","acres":7,"rev":{"avg":1167898,"y19":731970,"y22":1933823,"y23":837900},"sur":{"avg":180614,"y19":181011,"y22":-993,"y23":361824},"give":{"avg":41674,"pct":3.57,"i19":11115,"i22":14859,"i23":27863,"f19":0,"f22":0,"f23":0},"themes":{"dom":["Conservation Org Support","Research Innovation"],"intl":[],"countries":[],"animals":["California Condor","Northern Spotted Owl","Longfin Smelt"]},"mission":{"statement":"SEQUOIA PARK ZOO INSPIRES CONSERVATION OF THE NATURAL WORLD BY INSTILLING WONDER, RESPECT AND PASSION FOR WILDLIFE","ms":2,"as":4,"gwi":-2},"flags":{"zero":false,"deficit":false,"offshore":false},"urls":{"irs":"https://projects.propublica.org/nonprofits/organizations/562410108","web":"https://www.redwoodzoo.org"}},{"id":"cheyenne-mountain-zoo","name":"Cheyenne Mountain Zoo","city":"Colorado Springs","state":"Colorado","state_abbr":"CO","acres":140,"rev":{"avg":29003982,"y19":23671634,"y22":34446722,"y23":28893589},"sur":{"avg":9151925,"y19":7376574,"y22":13732088,"y23":6347113},"give":{"avg":1500000,"pct":5.17,"i19":0,"i22":0,"i23":0,"f19":0,"f22":0,"f23":0},"themes":{"dom":[],"intl":[],"countries":[],"animals":["Black-Footed Ferret","Wyoming Toad","Orangutan"]},"mission":{"statement":"to be a leader in conservation, captive breeding, and animal care, while connecting people with wildlife and wild places through experiences that inspire action","ms":3,"as":2,"gwi":1},"flags":{"zero":false,"deficit":false,"offshore":false},"urls":{"irs":"https://projects.propublica.org/nonprofits/organizations/841146310","web":"https://www.cmzoo.org"}},{"id":"denver-zoo","name":"Denver Zoo","city":"Denver","state":"Colorado","state_abbr":"CO","acres":80,"rev":{"avg":57396275,"y19":52738933,"y22":57669047,"y23":61780844},"sur":{"avg":-3265153,"y19":-3266727,"y22":4171176,"y23":-10699909},"give":{"avg":510110,"pct":0.89,"i19":45260,"i22":16000,"i23":81700,"f19":590056,"f22":419037,"f23":378277},"themes":{"dom":["Education Stem","Research Innovation","Conservation Org Support"],"intl":["Grants"],"countries":["Subsaharan Africa","East Asia Pacific","South America"],"animals":[]},"mission":{"statement":"Inspire communities to save wildlife for future generations","ms":0,"as":2,"gwi":-2},"flags":{"zero":false,"deficit":true,"offshore":true},"urls":{"irs":"https://projects.propublica.org/nonprofits/organizations/840502539","web":"https://denverzoo.org"}},{"id":"pueblo-zoo","name":"Pueblo Zoo","city":"Pueblo","state":"Colorado","state_abbr":"CO","acres":25,"rev":{"avg":2444487,"y19":2006450,"y22":2538439,"y23":2788572},"sur":{"avg":-132573,"y19":-204593,"y22":-51564,"y23":-141561},"give":{"avg":0,"pct":0,"i19":0,"i22":0,"i23":0,"f19":0,"f22":0,"f23":0},"themes":{"dom":[],"intl":[],"countries":[],"animals":[]},"mission":{"statement":"To empower people to engage in conservation of animals and their natural habitat","ms":5,"as":0,"gwi":5},"flags":{"zero":true,"deficit":false,"offshore":false},"urls":{"irs":"https://projects.propublica.org/nonprofits/organizations/840723360","web":"https://www.pueblozoo.org"}},{"id":"beardsley-zoo","name":"Beardsley Zoo","city":"Bridgeport","state":"Connecticut","state_abbr":"CT","acres":125,"rev":{"avg":5620882,"y19":5158138,"y22":5803461,"y23":5901048},"sur":{"avg":2142636,"y19":2186371,"y22":2242520,"y23":1999018},"give":{"avg":0,"pct":0,"i19":0,"i22":0,"i23":0,"f19":0,"f22":0,"f23":0},"themes":{"dom":[],"intl":[],"countries":[],"animals":[]},"mission":{"statement":"Education, through staff involvement and training, outreach programs, workshops, lectures, docent volunteers, natural animal exhibits, informational and interpretive graphics, and research by utilizing staff, universities and other zoological facilities. Conservation, through participation in in situ and ex situ endangered Recreation, through state-of-the-art exhibit design, well-run visitor services (i.e., food and gift concessions, rides, rest rooms and parking) and maximizing the natural and park-like setting by formal and informal landscaping. species programs such as the Species Survival Program, Zoo Conservation Outreach Group, etc. Also through professional animal and veterinary care and a comprehensive animal management policy.","ms":6,"as":0,"gwi":6},"flags":{"zero":true,"deficit":false,"offshore":false},"urls":{"irs":"https://projects.propublica.org/nonprofits/organizations/237068821","web":"https://www.beardsleyzoo.org"}},{"id":"brandywine-zoo","name":"Brandywine Zoo","city":"Wilmington","state":"Delaware","state_abbr":"DE","acres":5,"rev":{"avg":13259519,"y19":10692790,"y22":25949606,"y23":3136162},"sur":{"avg":3481007,"y19":-3594938,"y22":10902797,"y23":3135162},"give":{"avg":0,"pct":0,"i19":0,"i22":0,"i23":0,"f19":0,"f22":0,"f23":0},"themes":{"dom":[],"intl":[],"countries":[],"animals":[]},"mission":{"statement":"To enhance and enrich peoples' understanding and respect of the complex relationships among all living things and inspire wildlife conservation","ms":3,"as":0,"gwi":3},"flags":{"zero":true,"deficit":false,"offshore":false},"urls":{"irs":"https://projects.propublica.org/nonprofits/organizations/516020908","web":"https://brandywinezoo.org"}},{"id":"brevard-zoo","name":"Brevard Zoo","city":"Melbourne","state":"Florida","state_abbr":"FL","acres":72,"rev":{"avg":25289985,"y19":20207177,"y22":26391211,"y23":29271568},"sur":{"avg":8735916,"y19":8483446,"y22":8250622,"y23":9473680},"give":{"avg":70676,"pct":0.28,"i19":48978,"i22":82800,"i23":80250,"f19":0,"f22":0,"f23":0},"themes":{"dom":["Conservation Org Support"],"intl":[],"countries":[],"animals":["Manatee","Rhino","Okapi"]},"mission":{"statement":"We Share Our Joy of Nature to Help Wildlife and People Thrive.","ms":1,"as":2,"gwi":-1},"flags":{"zero":false,"deficit":false,"offshore":false},"urls":{"irs":"https://projects.propublica.org/nonprofits/organizations/592496749","web":"https://brevardzoo.org"}},{"id":"central-florida-zoo","name":"Central Florida Zoo","city":"Sanford","state":"Florida","state_abbr":"FL","acres":116,"rev":{"avg":8234055,"y19":6369364,"y22":9363528,"y23":8969273},"sur":{"avg":1447313,"y19":555123,"y22":2604631,"y23":1182185},"give":{"avg":0,"pct":0,"i19":0,"i22":0,"i23":0,"f19":0,"f22":0,"f23":0},"themes":{"dom":[],"intl":[],"countries":[],"animals":[]},"mission":{"statement":"create connections that inspire people to take action for wildlife","ms":1,"as":0,"gwi":1},"flags":{"zero":true,"deficit":false,"offshore":false},"urls":{"irs":"https://projects.propublica.org/nonprofits/organizations/591357197","web":"https://www.centralfloridazoo.org"}},{"id":"jacksonville-zoo","name":"Jacksonville Zoo","city":"Jacksonville","state":"Florida","state_abbr":"FL","acres":122,"rev":{"avg":31873646,"y19":22982300,"y22":35336419,"y23":37302218},"sur":{"avg":6175861,"y19":1849992,"y22":8743293,"y23":7934298},"give":{"avg":390216,"pct":1.22,"i19":388134,"i22":228671,"i23":386043,"f19":0,"f22":55406,"f23":112394},"themes":{"dom":["Conservation Org Support","Research Innovation","Education Stem"],"intl":["Grants"],"countries":["Subsaharan Africa","East Asia Pacific","South America"],"animals":["Rhinos","Cheetahs","Manatees"]},"mission":{"statement":"Connecting communities with wildlife and wild places.","ms":0,"as":4,"gwi":-4},"flags":{"zero":false,"deficit":false,"offshore":true},"urls":{"irs":"https://projects.propublica.org/nonprofits/organizations/591319010","web":"https://www.jacksonvillezoo.org"}},{"id":"naples-zoo","name":"Naples Zoo","city":"Naples","state":"Florida","state_abbr":"FL","acres":43,"rev":{"avg":12125529,"y19":13425715,"y22":13740700,"y23":9210173},"sur":{"avg":4137220,"y19":6441706,"y22":5369983,"y23":599970},"give":{"avg":125000,"pct":1.03,"i19":75000,"i22":185000,"i23":115000,"f19":0,"f22":0,"f23":0},"themes":{"dom":["Conservation Org Support","Research Innovation","Education Stem"],"intl":[],"countries":[],"animals":[]},"mission":{"statement":"To inspire people of all ages to respect, value and help conserve wildlife and our natural world","ms":3,"as":3,"gwi":0},"flags":{"zero":false,"deficit":false,"offshore":false},"urls":{"irs":"https://projects.propublica.org/nonprofits/organizations/562412630","web":"https://www.napleszoo.org"}},{"id":"palm-beach-zoo","name":"Palm Beach Zoo","city":"West Palm Beach","state":"Florida","state_abbr":"FL","acres":23,"rev":{"avg":12827814,"y19":10268470,"y22":12769380,"y23":15445592},"sur":{"avg":1551005,"y19":-214086,"y22":1983971,"y23":2883131},"give":{"avg":77291,"pct":0.6,"i19":56000,"i22":156054,"i23":19820,"f19":0,"f22":0,"f23":0},"themes":{"dom":["Conservation Org Support"],"intl":[],"countries":[],"animals":[]},"mission":{"statement":"inspire people to act on behalf of wildlife and the natural world","ms":1,"as":3,"gwi":-2},"flags":{"zero":false,"deficit":false,"offshore":false},"urls":{"irs":"https://projects.propublica.org/nonprofits/organizations/591259270","web":"https://www.palmbeachzoo.org"}},{"id":"zoo-miami","name":"Zoo Miami","city":"Miami","state":"Florida","state_abbr":"FL","acres":740,"rev":{"avg":8165999,"y19":6402713,"y22":9969049,"y23":8126235},"sur":{"avg":683473,"y19":776716,"y22":303077,"y23":970625},"give":{"avg":85202,"pct":1.04,"i19":5430,"i22":213475,"i23":36700,"f19":0,"f22":0,"f23":0},"themes":{"dom":["Conservation Org Support"],"intl":[],"countries":[],"animals":["Cheetah","Painted Dog","Giraffe"]},"mission":{"statement":"To inspire people through engaging experiences to preserve nature in South Florida and across the globe","ms":3,"as":4,"gwi":-1},"flags":{"zero":false,"deficit":false,"offshore":false},"urls":{"irs":"https://projects.propublica.org/nonprofits/organizations/596192814","web":"https://www.zoomiami.org"}},{"id":"zoo-tampa","name":"Zoo Tampa","city":"Tampa","state":"Florida","state_abbr":"FL","acres":63,"rev":{"avg":35882190,"y19":28057028,"y22":40154433,"y23":39435110},"sur":{"avg":5304590,"y19":5337175,"y22":7704289,"y23":2872307},"give":{"avg":0,"pct":0,"i19":0,"i22":0,"i23":0,"f19":0,"f22":0,"f23":0},"themes":{"dom":[],"intl":[],"countries":[],"animals":[]},"mission":{"statement":"Rescue, rehabilitate and care for animals; create exceptional personalized experiences that connect people with wildlife and each other in fun, immersive ways.","ms":1,"as":0,"gwi":1},"flags":{"zero":true,"deficit":false,"offshore":false},"urls":{"irs":"https://projects.propublica.org/nonprofits/organizations/592328289","web":"https://zootampa.org"}},{"id":"zoo-atlanta","name":"Zoo Atlanta","city":"Atlanta","state":"Georgia","state_abbr":"GA","acres":40,"rev":{"avg":37215409,"y19":30140543,"y22":35001051,"y23":46504632},"sur":{"avg":10807857,"y19":8466697,"y22":9576164,"y23":14380710},"give":{"avg":119976,"pct":0.32,"i19":11000,"i22":60000,"i23":132596,"f19":0,"f22":0,"f23":156333},"themes":{"dom":["Conservation Org Support","Zoo To Zoo Support"],"intl":["Grants"],"countries":["Mexico","South America","Sub Saharan Africa"],"animals":["Gorillas","Peregrine Falcons","Orangutans"]},"mission":{"statement":"We save wildlife and their habitats through conservation, research, education and engaging experiences. Our efforts connect people to animals and inspire conservation action.","ms":7,"as":3,"gwi":4},"flags":{"zero":false,"deficit":false,"offshore":true},"urls":{"irs":"https://projects.propublica.org/nonprofits/organizations/581655184","web":"https://zooatlanta.org"}},{"id":"honolulu-zoo","name":"Honolulu Zoo","city":"Honolulu","state":"Hawaii","state_abbr":"HI","acres":42,"rev":{"avg":1971396,"y19":3370836,"y22":1115263,"y23":1428090},"sur":{"avg":1035265,"y19":530733,"y22":349092,"y23":2225969},"give":{"avg":1727,"pct":0.09,"i19":5181,"i22":0,"i23":0,"f19":0,"f22":0,"f23":0},"themes":{"dom":["Conservation Org Support"],"intl":[],"countries":[],"animals":["Birds"]},"mission":{"statement":"inspire stewardship of our living world by providing conservation, education, and meaningful experiences to the community","ms":4,"as":2,"gwi":2},"flags":{"zero":false,"deficit":false,"offshore":false},"urls":{"irs":"https://projects.propublica.org/nonprofits/organizations/237057714","web":"https://www.honoluluzoo.org/about/mission/"}},{"id":"idaho-falls-zoo","name":"Idaho Falls Zoo","city":"Idaho Falls","state":"Idaho","state_abbr":"ID","acres":25,"rev":{"avg":622070,"y19":439958,"y22":696830,"y23":729421},"sur":{"avg":115664,"y19":95889,"y22":167601,"y23":83503},"give":{"avg":0,"pct":0,"i19":0,"i22":0,"i23":0,"f19":0,"f22":0,"f23":0},"themes":{"dom":[],"intl":[],"countries":[],"animals":[]},"mission":{"statement":"to conserve wildlife and inspire conservation action through education and engagement","ms":4,"as":0,"gwi":4},"flags":{"zero":true,"deficit":false,"offshore":false},"urls":{"irs":"https://projects.propublica.org/nonprofits/organizations/820452111","web":"https://zooidaho.org"}},{"id":"zoo-boise","name":"Zoo Boise","city":"Boise","state":"Idaho","state_abbr":"ID","acres":17,"rev":{"avg":41225,"y19":33366,"y22":43104,"y23":47204},"sur":{"avg":2484,"y19":3691,"y22":0,"y23":3761},"give":{"avg":0,"pct":0,"i19":0,"i22":0,"i23":0,"f19":0,"f22":0,"f23":0},"themes":{"dom":[],"intl":[],"countries":[],"animals":[]},"mission":{"statement":"Zoo Boise connects our guests with animals to inspire and involve our community in the conservation of wildlife worldwide","ms":5,"as":0,"gwi":5},"flags":{"zero":true,"deficit":false,"offshore":false},"urls":{"irs":"https://projects.propublica.org/nonprofits/organizations/820471629?utm_source=chatgpt.com","web":"https://zooboise.org/about/"}},{"id":"brookfield-zoo","name":"Brookfield Zoo","city":"Brookfield","state":"Illinois","state_abbr":"IL","acres":216,"rev":{"avg":72603821,"y19":70997747,"y22":82219310,"y23":64594406},"sur":{"avg":5805007,"y19":-2580403,"y22":21516101,"y23":-1520677},"give":{"avg":387419,"pct":0.53,"i19":106000,"i22":360000,"i23":185000,"f19":200772,"f22":155233,"f23":155253},"themes":{"dom":["Conservation Org Support"],"intl":["Conservation"],"countries":["Subsaharan Africa","Russia","Europe"],"animals":["Marine Mammal","Penguin","Amphibian"]},"mission":{"statement":"inspire conservation leadership by connecting people with wildlife and nature","ms":3,"as":4,"gwi":-1},"flags":{"zero":false,"deficit":false,"offshore":true},"urls":{"irs":"https://projects.propublica.org/nonprofits/organizations/362167016","web":"https://www.brookfieldzoo.org"}},{"id":"cosley-zoo","name":"Cosley Zoo","city":"Wheaton","state":"Illinois","state_abbr":"IL","acres":5,"rev":{"avg":939627,"y19":628439,"y22":1262721,"y23":927721},"sur":{"avg":480695,"y19":215095,"y22":826433,"y23":400558},"give":{"avg":0,"pct":0,"i19":0,"i22":0,"i23":0,"f19":0,"f22":0,"f23":0},"themes":{"dom":[],"intl":[],"countries":[],"animals":[]},"mission":{"statement":"To create connections between people and animals that will inspire lifelong conservation of the natural world","ms":3,"as":0,"gwi":3},"flags":{"zero":true,"deficit":false,"offshore":false},"urls":{"irs":"https://projects.propublica.org/nonprofits/organizations/363461739","web":"https://cosleyzoo.org"}},{"id":"lincoln-park-zoo","name":"Lincoln Park Zoo","city":"Chicago","state":"Illinois","state_abbr":"IL","acres":35,"rev":{"avg":51614301,"y19":42262357,"y22":64159516,"y23":48421031},"sur":{"avg":11176408,"y19":1030207,"y22":24083795,"y23":8415223},"give":{"avg":309471,"pct":0.6,"i19":0,"i22":256958,"i23":283181,"f19":320493,"f22":13754,"f23":54026},"themes":{"dom":["Conservation Org Support"],"intl":["Serengeti Health","Conservation"],"countries":["Tanzania","Congo"],"animals":["Goualougo Triangle Ape"]},"mission":{"statement":"Lincoln Park Zoo is dedicated to connecting people with nature by providing a free, family-oriented wildlife experience in the heart of Chicago and by advancing the highest quality of animal care, education, science, and conservation.","ms":5,"as":3,"gwi":2},"flags":{"zero":false,"deficit":false,"offshore":true},"urls":{"irs":"https://projects.propublica.org/nonprofits/organizations/362512404","web":"https://www.lpzoo.org"}},{"id":"miller-park-zoo","name":"Miller Park Zoo","city":"Bloomington","state":"Illinois","state_abbr":"IL","acres":4,"rev":{"avg":502262,"y19":494977,"y22":425904,"y23":585905},"sur":{"avg":117192,"y19":268653,"y22":120704,"y23":-37780},"give":{"avg":0,"pct":0,"i19":0,"i22":0,"i23":0,"f19":0,"f22":0,"f23":0},"themes":{"dom":[],"intl":[],"countries":[],"animals":[]},"mission":{"statement":"Engaging our community in conservation, education and fun.","ms":4,"as":0,"gwi":4},"flags":{"zero":true,"deficit":false,"offshore":false},"urls":{"irs":"https://projects.propublica.org/nonprofits/organizations/510156393","web":"https://mpzs.org"}},{"id":"peoria-zoo","name":"Peoria Zoo","city":"Peoria","state":"Illinois","state_abbr":"IL","acres":14,"rev":{"avg":439416,"y19":485849,"y22":384310,"y23":448088},"sur":{"avg":-9381,"y19":16546,"y22":86051,"y23":-130741},"give":{"avg":66667,"pct":15.17,"i19":0,"i22":0,"i23":200000,"f19":0,"f22":0,"f23":0},"themes":{"dom":[],"intl":[],"countries":[],"animals":[]},"mission":{"statement":"create connections that inspire an appreciation for and encourage actions to conserve the natural world","ms":2,"as":0,"gwi":2},"flags":{"zero":false,"deficit":true,"offshore":false},"urls":{"irs":"https://projects.propublica.org/nonprofits/organizations/371369420","web":"https://peoriazoo.org"}},{"id":"scovill-zoo","name":"Scovill Zoo","city":"Decatur","state":"Illinois","state_abbr":"IL","acres":62,"rev":{"avg":444076,"y19":464654,"y22":314142,"y23":553431},"sur":{"avg":-1584382,"y19":-4826174,"y22":-3249,"y23":76277},"give":{"avg":0,"pct":0,"i19":0,"i22":0,"i23":0,"f19":0,"f22":0,"f23":0},"themes":{"dom":[],"intl":[],"countries":[],"animals":[]},"mission":{"statement":"enhance the quality of life for residents and visitors by providing unique recreational and educational opportunities through the enjoyment of animals and nature","ms":1,"as":0,"gwi":1},"flags":{"zero":true,"deficit":false,"offshore":false},"urls":{"irs":"https://projects.propublica.org/nonprofits/organizations/371098847","web":"https://decatur-parks.org/scovill-zoo/"}},{"id":"fort-wayne-zoo","name":"Fort Wayne Zoo","city":"Fort Wayne","state":"Indiana","state_abbr":"IN","acres":40,"rev":{"avg":13952760,"y19":10687834,"y22":15430147,"y23":15740300},"sur":{"avg":-795981,"y19":-2226312,"y22":2675850,"y23":-2837480},"give":{"avg":242628,"pct":1.74,"i19":69676,"i22":123453,"i23":91000,"f19":194000,"f22":154756,"f23":95000},"themes":{"dom":["Conservation Org Support","Research Innovation","Education Stem"],"intl":["Conservation"],"countries":["Egypt","Australia","Cambodia"],"animals":["Lions","Turtle","Red Panda"]},"mission":{"statement":"connect kids and animals, strengthen families and inspire people to care","ms":1,"as":2,"gwi":-1},"flags":{"zero":false,"deficit":true,"offshore":true},"urls":{"irs":"https://projects.propublica.org/nonprofits/organizations/356068234","web":"https://fwzoo.com"}},{"id":"indianapolis-zoo","name":"Indianapolis Zoo","city":"Indianapolis","state":"Indiana","state_abbr":"IN","acres":64,"rev":{"avg":46255632,"y19":46518850,"y22":42184759,"y23":50063288},"sur":{"avg":8859717,"y19":10507420,"y22":6242470,"y23":9829261},"give":{"avg":350117,"pct":0.76,"i19":133605,"i22":232794,"i23":370443,"f19":135260,"f22":108000,"f23":70250},"themes":{"dom":["Zoo To Zoo Support          Conservation Org Support","Research Innovation"],"intl":["Conservation Org Support","Zoo To Zoo Support"],"countries":["Subsaharan Africa","East Asia Pacific","Europe"],"animals":["Parrot","Sturgeon","Paddlefish"]},"mission":{"statement":"to protect nature and inspire people to care for our world","ms":1,"as":4,"gwi":-3},"flags":{"zero":false,"deficit":false,"offshore":true},"urls":{"irs":"https://projects.propublica.org/nonprofits/organizations/351074747","web":"https://www.indianapoliszoo.com"}},{"id":"mesker-park-zoo","name":"Mesker Park Zoo","city":"Evansville","state":"Indiana","state_abbr":"IN","acres":45,"rev":{"avg":1296628,"y19":1824161,"y22":971314,"y23":1094409},"sur":{"avg":-916822,"y19":520960,"y22":-3457814,"y23":186389},"give":{"avg":1667,"pct":0.13,"i19":0,"i22":0,"i23":5000,"f19":0,"f22":0,"f23":0},"themes":{"dom":["Conservation Org Support"],"intl":[],"countries":[],"animals":["Penguin"]},"mission":{"statement":"Cultivating connections between people and nature that inspire action for our planet.","ms":3,"as":1,"gwi":2},"flags":{"zero":false,"deficit":true,"offshore":false},"urls":{"irs":"https://projects.propublica.org/nonprofits/organizations/356031419","web":"https://meskerparkzoo.com"}},{"id":"potawatomi-zoo","name":"Potawatomi Zoo","city":"South Bend","state":"Indiana","state_abbr":"IN","acres":23,"rev":{"avg":6339042,"y19":4230131,"y22":7129735,"y23":7657261},"sur":{"avg":691983,"y19":35836,"y22":1659939,"y23":380175},"give":{"avg":0,"pct":0,"i19":0,"i22":0,"i23":0,"f19":0,"f22":0,"f23":0},"themes":{"dom":[],"intl":[],"countries":[],"animals":[]},"mission":{"statement":"to inspire excellence in education, conservation, and improved animal quality of life","ms":3,"as":0,"gwi":3},"flags":{"zero":true,"deficit":false,"offshore":false},"urls":{"irs":"https://projects.propublica.org/nonprofits/organizations/351183974","web":"https://potawatomizoo.org"}},{"id":"blank-park-zoo","name":"Blank Park Zoo","city":"Des Moines","state":"Iowa","state_abbr":"IA","acres":22,"rev":{"avg":7271244,"y19":1731980,"y22":8756051,"y23":11325700},"sur":{"avg":599117,"y19":-1037227,"y22":1089108,"y23":1745471},"give":{"avg":13667,"pct":0.19,"i19":0,"i22":21000,"i23":20000,"f19":0,"f22":0,"f23":0},"themes":{"dom":["Conservation Org Support"],"intl":[],"countries":[],"animals":["Giraffe","Rhino"]},"mission":{"statement":"The mission of the Blank Park Zoo is to inspire an appreciation of the natural world through conservation, education, research and recreation.","ms":4,"as":2,"gwi":2},"flags":{"zero":false,"deficit":false,"offshore":false},"urls":{"irs":"https://projects.propublica.org/nonprofits/organizations/421171821","web":"https://www.blankparkzoo.com"}},{"id":"hutchinson-zoo","name":"Hutchinson Zoo","city":"Hutchinson","state":"Kansas","state_abbr":"KS","acres":9,"rev":{"avg":149400,"y19":87595,"y22":149860,"y23":210745},"sur":{"avg":-20106,"y19":33244,"y22":-95244,"y23":1683},"give":{"avg":35983,"pct":24.09,"i19":0,"i22":0,"i23":107950,"f19":0,"f22":0,"f23":0},"themes":{"dom":[],"intl":[],"countries":[],"animals":[]},"mission":{"statement":"Plains conservation through community engagement, inspiring experiences, and exemplary animal care","ms":3,"as":0,"gwi":3},"flags":{"zero":false,"deficit":true,"offshore":false},"urls":{"irs":"https://projects.propublica.org/nonprofits/organizations/481015493","web":"http://www.hutchinsonzoo.org"}},{"id":"rolling-hills-zoo","name":"Rolling Hills Zoo","city":"Salina","state":"Kansas","state_abbr":"KS","acres":65,"rev":{"avg":4605716,"y19":3577804,"y22":5613282,"y23":4626063},"sur":{"avg":404680,"y19":-241620,"y22":1200524,"y23":255136},"give":{"avg":0,"pct":0,"i19":0,"i22":0,"i23":0,"f19":0,"f22":0,"f23":0},"themes":{"dom":[],"intl":[],"countries":[],"animals":[]},"mission":{"statement":"Touching Hearts • Igniting Passion • Saving Wildlife","ms":0,"as":0,"gwi":0},"flags":{"zero":true,"deficit":false,"offshore":false},"urls":{"irs":"https://projects.propublica.org/nonprofits/organizations/300180215","web":"https://www.rollinghillszoo.org"}},{"id":"sedgwick-county-zoo","name":"Sedgwick County Zoo","city":"Wichita","state":"Kansas","state_abbr":"KS","acres":247,"rev":{"avg":20387098,"y19":24336007,"y22":18448053,"y23":18377234},"sur":{"avg":5572474,"y19":11848114,"y22":3675719,"y23":1193588},"give":{"avg":0,"pct":0,"i19":0,"i22":0,"i23":0,"f19":0,"f22":0,"f23":0},"themes":{"dom":[],"intl":[],"countries":[],"animals":[]},"mission":{"statement":"to inspire respect and conservation of wildlife and wild places","ms":2,"as":0,"gwi":2},"flags":{"zero":true,"deficit":false,"offshore":false},"urls":{"irs":"https://projects.propublica.org/nonprofits/organizations/486120530","web":"https://scz.org"}},{"id":"sunset-zoological-park","name":"Sunset Zoological Park","city":"Manhattan","state":"Kansas","state_abbr":"KS","acres":48,"rev":{"avg":312117,"y19":353182,"y22":312471,"y23":270699},"sur":{"avg":108841,"y19":350920,"y22":-137044,"y23":112646},"give":{"avg":0,"pct":0,"i19":0,"i22":0,"i23":0,"f19":0,"f22":0,"f23":0},"themes":{"dom":[],"intl":[],"countries":[],"animals":[]},"mission":{"statement":"Inspiring Conservation of the Natural World","ms":2,"as":0,"gwi":2},"flags":{"zero":true,"deficit":false,"offshore":false},"urls":{"irs":"https://projects.propublica.org/nonprofits/organizations/481096978","web":"https://www.sunsetzoo.com"}},{"id":"topeka-zoo","name":"Topeka Zoo","city":"Topeka","state":"Kansas","state_abbr":"KS","acres":29,"rev":{"avg":8315386,"y19":2716331,"y22":9391751,"y23":12838075},"sur":{"avg":2546014,"y19":-344138,"y22":2799989,"y23":5182191},"give":{"avg":0,"pct":0,"i19":0,"i22":0,"i23":0,"f19":0,"f22":0,"f23":0},"themes":{"dom":[],"intl":[],"countries":[],"animals":[]},"mission":{"statement":"to enrich our community through wildlife conservation and education","ms":4,"as":0,"gwi":4},"flags":{"zero":true,"deficit":false,"offshore":false},"urls":{"irs":"https://projects.propublica.org/nonprofits/organizations/486117369","web":"https://topekazoo.org"}},{"id":"louisville-zoo","name":"Louisville Zoo","city":"Louisville","state":"Kentucky","state_abbr":"KY","acres":134,"rev":{"avg":1761431,"y19":1263036,"y22":2073409,"y23":1947847},"sur":{"avg":-1057921,"y19":-6138820,"y22":1628900,"y23":1336157},"give":{"avg":33316,"pct":1.89,"i19":0,"i22":0,"i23":99947,"f19":0,"f22":0,"f23":0},"themes":{"dom":["Community Outreach","Conservation Org Support"],"intl":[],"countries":[],"animals":[]},"mission":{"statement":"To better the bond between people and our planet","ms":3,"as":1,"gwi":2},"flags":{"zero":false,"deficit":true,"offshore":false},"urls":{"irs":"https://projects.propublica.org/nonprofits/organizations/310971742","web":"https://louisvillezoo.org"}},{"id":"brecs-baton-rouge-zoo","name":"Brec'S Baton Rouge Zoo","city":"Baton Rouge","state":"Louisiana","state_abbr":"LA","acres":147,"rev":{"avg":484664,"y19":356563,"y22":394819,"y23":702611},"sur":{"avg":-30516,"y19":-6785,"y22":-110302,"y23":25540},"give":{"avg":0,"pct":0,"i19":0,"i22":0,"i23":0,"f19":0,"f22":0,"f23":0},"themes":{"dom":[],"intl":[],"countries":[],"animals":[]},"mission":{"statement":"The Baton Rouge Zoo connects people with wildlife and the natural world through exceptionally engaging experiences and conservation efforts that impact our world both locally and globally.","ms":5,"as":0,"gwi":5},"flags":{"zero":true,"deficit":false,"offshore":false},"urls":{"irs":"https://projects.propublica.org/nonprofits/organizations/721094494","web":"https://brzoo.org"}},{"id":"maryland-zoo","name":"Maryland Zoo","city":"Baltimore","state":"Maryland","state_abbr":"MD","acres":135,"rev":{"avg":23890592,"y19":29484797,"y22":20547927,"y23":21639051},"sur":{"avg":3238025,"y19":11066889,"y22":-777566,"y23":-575248},"give":{"avg":59208,"pct":0.25,"i19":6500,"i22":26000,"i23":35487,"f19":10125,"f22":71000,"f23":28513},"themes":{"dom":["Conservation Org Support"],"intl":["Conservation"],"countries":["Subsaharan Africa","Central America Caribbean","Russia"],"animals":["Subsaharan Africa","Central America Caribbean","Russia"]},"mission":{"statement":"The Zoo’s mission is to engage people in the wonders of the living world through personal encounters with animals, fostering empathy and lifelong support for conservation of wildlife and wild places.","ms":3,"as":3,"gwi":0},"flags":{"zero":false,"deficit":false,"offshore":true},"urls":{"irs":"https://projects.propublica.org/nonprofits/organizations/520996352","web":"https://www.marylandzoo.org"}},{"id":"buttonwood-park-zoo","name":"Buttonwood Park Zoo","city":"New Bedford","state":"Massachusetts","state_abbr":"MA","acres":7,"rev":{"avg":1169592,"y19":1415013,"y22":416327,"y23":1677436},"sur":{"avg":50301,"y19":6592,"y22":37429,"y23":106883},"give":{"avg":0,"pct":0,"i19":0,"i22":0,"i23":0,"f19":0,"f22":0,"f23":0},"themes":{"dom":[],"intl":[],"countries":[],"animals":[]},"mission":{"statement":"preserving the future of wildlife by creating engaging and educational experiences that connect the community to the natural world","ms":2,"as":0,"gwi":2},"flags":{"zero":true,"deficit":false,"offshore":false},"urls":{"irs":"https://projects.propublica.org/nonprofits/organizations/42661467","web":"https://www.bpzoo.org"}},{"id":"capron-park-zoo","name":"Capron Park Zoo","city":"Attleboro","state":"Massachusetts","state_abbr":"MA","acres":8,"rev":{"avg":43247,"y19":46703,"y22":47715,"y23":35322},"sur":{"avg":16797,"y19":8333,"y22":29443,"y23":12616},"give":{"avg":0,"pct":0,"i19":0,"i22":0,"i23":0,"f19":0,"f22":0,"f23":0},"themes":{"dom":[],"intl":[],"countries":[],"animals":[]},"mission":{"statement":"to inspire an appreciation for wildlife and the natural world through education, conservation, and recreation.","ms":3,"as":0,"gwi":3},"flags":{"zero":true,"deficit":false,"offshore":false},"urls":{"irs":"https://projects.propublica.org/nonprofits/organizations/222544006","web":"https://capronparkzoo.com"}},{"id":"zoo-england","name":"Zoo New England","city":"Boston","state":"Massachusetts","state_abbr":"MA","acres":72,"rev":{"avg":27268277,"y19":20267410,"y22":30082811,"y23":31454609},"sur":{"avg":4679073,"y19":1958593,"y22":6848013,"y23":5230613},"give":{"avg":82593,"pct":0.3,"i19":81908,"i22":105871,"i23":60000,"f19":0,"f22":0,"f23":0},"themes":{"dom":["Conservation Org Support"],"intl":[],"countries":[],"animals":["Snow Leopard","Giraffe"]},"mission":{"statement":"inspire people to protect and sustain the natural world for future generations bycreating fun and engaging experiences. *also has Stone Zoo included","ms":1,"as":2,"gwi":-1},"flags":{"zero":false,"deficit":false,"offshore":false},"urls":{"irs":"https://projects.propublica.org/nonprofits/organizations/43129124","web":"https://www.zoonewengland.org"}},{"id":"binder-park-zoo","name":"Binder Park Zoo","city":"Battle Creek","state":"Michigan","state_abbr":"MI","acres":433,"rev":{"avg":5934922,"y19":4025535,"y22":8541958,"y23":5237274},"sur":{"avg":385203,"y19":-502420,"y22":2651533,"y23":-993505},"give":{"avg":0,"pct":0,"i19":0,"i22":0,"i23":0,"f19":0,"f22":0,"f23":0},"themes":{"dom":[],"intl":[],"countries":[],"animals":[]},"mission":{"statement":"Connect. Inspire. Conserve. Connect people with nature. Inspire them to conserve.","ms":3,"as":0,"gwi":3},"flags":{"zero":true,"deficit":false,"offshore":false},"urls":{"irs":"https://projects.propublica.org/nonprofits/organizations/510163223","web":""}},{"id":"detroit-zoo","name":"Detroit Zoo","city":"Royal Oak","state":"Michigan","state_abbr":"MI","acres":125,"rev":{"avg":52139424,"y19":46934007,"y22":55141767,"y23":54342499},"sur":{"avg":1927929,"y19":1884835,"y22":5774621,"y23":-1875669},"give":{"avg":604745,"pct":1.16,"i19":325000,"i22":428711,"i23":250000,"f19":353405,"f22":208953,"f23":248167},"themes":{"dom":["Zoo To Zoo Support","Conservation Org Support"],"intl":["Conservation Org Support","Zoo To Zoo Support"],"countries":["Subsaharan Africa","East Asia Pacific","Central America Caribbean"],"animals":["Giraffe","Gorilla","Golden Lion Tamarin"]},"mission":{"statement":"To create meaningful connections between people, animals and the natural world so all can thrive.","ms":1,"as":5,"gwi":-4},"flags":{"zero":false,"deficit":false,"offshore":true},"urls":{"irs":"https://projects.propublica.org/nonprofits/organizations/386027356","web":"https://detroitzoo.org"}},{"id":"john-ball-zoo","name":"John Ball Zoo","city":"Grand Rapids","state":"Michigan","state_abbr":"MI","acres":140,"rev":{"avg":20387288,"y19":19613854,"y22":17387295,"y23":24160715},"sur":{"avg":2701874,"y19":7537630,"y22":-312142,"y23":880133},"give":{"avg":57163,"pct":0.28,"i19":36000,"i22":51377,"i23":84111,"f19":0,"f22":0,"f23":0},"themes":{"dom":["Conservation Org Support"],"intl":[],"countries":[],"animals":["Red Panda"]},"mission":{"statement":"John Ball Zoo Inspires Our Community To Be Actively Engaged In The Conservation Of Wildlife And Our Natural Environment","ms":3,"as":2,"gwi":1},"flags":{"zero":false,"deficit":false,"offshore":false},"urls":{"irs":"https://projects.propublica.org/nonprofits/organizations/386076879","web":"https://jbzoo.org"}},{"id":"saginaw-childrens-zoo","name":"Saginaw Childrens Zoo","city":"Saginaw","state":"Michigan","state_abbr":"MI","acres":10,"rev":{"avg":2215921,"y19":1990642,"y22":2295503,"y23":2361617},"sur":{"avg":21392,"y19":104297,"y22":34725,"y23":-74847},"give":{"avg":0,"pct":0,"i19":0,"i22":0,"i23":0,"f19":0,"f22":0,"f23":0},"themes":{"dom":[],"intl":[],"countries":[],"animals":[]},"mission":{"statement":"Transform an ordinary day into an extraordinary experience by interacting with animals, rides, attractions, and Zoo staff.","ms":0,"as":0,"gwi":0},"flags":{"zero":true,"deficit":false,"offshore":false},"urls":{"irs":"https://projects.propublica.org/nonprofits/organizations/382801805","web":"https://www.saginawzoo.com"}},{"id":"como-park-zoo","name":"Como Park Zoo","city":"St Paul","state":"Minnesota","state_abbr":"MN","acres":12,"rev":{"avg":4351349,"y19":2743310,"y22":4864821,"y23":5445916},"sur":{"avg":332636,"y19":-1039459,"y22":871918,"y23":1165450},"give":{"avg":0,"pct":0,"i19":0,"i22":0,"i23":0,"f19":0,"f22":0,"f23":0},"themes":{"dom":[],"intl":[],"countries":[],"animals":[]},"mission":{"statement":"inspire our public to value the presence of living things in our lives","ms":1,"as":0,"gwi":1},"flags":{"zero":true,"deficit":false,"offshore":false},"urls":{"irs":"https://projects.propublica.org/nonprofits/organizations/411943928/202031329349300748/IRS990ScheduleI","web":"https://comozooconservatory.org"}},{"id":"lake-supirior-zoo","name":"Lake Supirior Zoo","city":"DuLuth","state":"Minnesota","state_abbr":"MN","acres":19,"rev":{"avg":2458115,"y19":1889606,"y22":2608501,"y23":2876238},"sur":{"avg":70176,"y19":6279,"y22":-95833,"y23":300082},"give":{"avg":0,"pct":0,"i19":0,"i22":0,"i23":0,"f19":0,"f22":0,"f23":0},"themes":{"dom":[],"intl":[],"countries":[],"animals":[]},"mission":{"statement":"To provide close-up animal experiences that inspire connections with wildlife and action towards conservation in our region and around the world.","ms":2,"as":0,"gwi":2},"flags":{"zero":true,"deficit":false,"offshore":false},"urls":{"irs":"https://projects.propublica.org/nonprofits/organizations/410944885","web":"https://lszoo.org"}},{"id":"minnesota-zoo","name":"Minnesota Zoo","city":"Apple Valley","state":"Minnesota","state_abbr":"MN","acres":485,"rev":{"avg":9378067,"y19":10999926,"y22":10864177,"y23":6270098},"sur":{"avg":1609557,"y19":7609703,"y22":331100,"y23":-3112132},"give":{"avg":225510,"pct":2.4,"i19":219668,"i22":255801,"i23":167220,"f19":0,"f22":0,"f23":33840},"themes":{"dom":["Zoo To Zoo Support          Conservation Org Support"],"intl":["Grants"],"countries":["Subsaharan Africa"],"animals":[]},"mission":{"statement":"To connect people, animals and the natural world to save wildlife.","ms":1,"as":5,"gwi":-4},"flags":{"zero":false,"deficit":false,"offshore":true},"urls":{"irs":"https://projects.propublica.org/nonprofits/organizations/510147653","web":"https://mnzoo.org"}},{"id":"dickerson-park-zoo","name":"Dickerson Park Zoo","city":"Springfield","state":"Missouri","state_abbr":"MO","acres":70,"rev":{"avg":2046713,"y19":1572191,"y22":2419573,"y23":2148375},"sur":{"avg":30146,"y19":69540,"y22":181683,"y23":-160786},"give":{"avg":19991,"pct":0.98,"i19":12972,"i22":27500,"i23":19500,"f19":0,"f22":0,"f23":0},"themes":{"dom":["Conservation Org Support","Research Innovation"],"intl":[],"countries":[],"animals":[]},"mission":{"statement":"to connect people with animals to create curiosity, encourage discovery, and inspire conservation action","ms":3,"as":4,"gwi":-1},"flags":{"zero":false,"deficit":false,"offshore":false},"urls":{"irs":"https://projects.propublica.org/nonprofits/organizations/237096596","web":"https://dickersonparkzoo.org"}},{"id":"kansas-city-zoo","name":"Kansas City Zoo","city":"Kansas City","state":"Missouri","state_abbr":"MO","acres":202,"rev":{"avg":55234399,"y19":29071413,"y22":74114095,"y23":62517690},"sur":{"avg":1901819,"y19":-191498,"y22":857157,"y23":5039799},"give":{"avg":161601,"pct":0.29,"i19":101554,"i22":65226,"i23":89100,"f19":0,"f22":87871,"f23":141053},"themes":{"dom":["Conservation Org Support"],"intl":["Conservation","Grants"],"countries":["Subsaharan Africa","East Asia Pacific","South America"],"animals":["Polar Bears","Elephants","Marine Mammals"]},"mission":{"statement":"positively change behavior by instilling in all people the desire and knowledge to respect and conserve wildlife and nature","ms":3,"as":4,"gwi":-1},"flags":{"zero":false,"deficit":false,"offshore":true},"urls":{"irs":"https://projects.propublica.org/nonprofits/organizations/436048888","web":"https://kansascityzoo.org"}},{"id":"st-louis-zoo","name":"St Louis Zoo","city":"St Louis","state":"Missouri","state_abbr":"MO","acres":90,"rev":{"avg":39272781,"y19":23982205,"y22":30524801,"y23":63311338},"sur":{"avg":26679608,"y19":13728629,"y22":17052573,"y23":49257623},"give":{"avg":77087,"pct":0.2,"i19":0,"i22":0,"i23":0,"f19":88475,"f22":118333,"f23":24452},"themes":{"dom":[],"intl":["Grants"],"countries":["Subsaharan Africa","South America"],"animals":[]},"mission":{"statement":"To conserve animals and their habitats through animal management, research, recreation, and educational programs that encourage the support and enrich the experience of the public","ms":7,"as":2,"gwi":5},"flags":{"zero":false,"deficit":false,"offshore":true},"urls":{"irs":"https://projects.propublica.org/nonprofits/organizations/431727309","web":"https://stlzoo.org"}},{"id":"zoo-montana","name":"Zoo Montana","city":"Billings","state":"Montana","state_abbr":"MT","acres":70,"rev":{"avg":2240000,"y19":1318888,"y22":2626405,"y23":2774708},"sur":{"avg":350681,"y19":-93966,"y22":501217,"y23":644791},"give":{"avg":58333,"pct":2.6,"i19":10000,"i22":165000,"i23":0,"f19":0,"f22":0,"f23":0},"themes":{"dom":["Community Outreach","Endowment"],"intl":[],"countries":[],"animals":[]},"mission":{"statement":"provide an enjoyable, recreational, and educational experience for visitors while also ensuring quality care for its animal and plant collections.","ms":1,"as":4,"gwi":-3},"flags":{"zero":false,"deficit":false,"offshore":false},"urls":{"irs":"https://projects.propublica.org/nonprofits/organizations/810411290","web":"https://www.zoomontana.org"}},{"id":"wildlife-safari-park","name":"Wildlife Safari Park","city":"Ashland","state":"Nebraska","state_abbr":"NE","acres":440,"rev":{"avg":40148834,"y19":63534749,"y22":25005850,"y23":31905904},"sur":{"avg":17777195,"y19":28994937,"y22":3292665,"y23":21043983},"give":{"avg":0,"pct":0,"i19":0,"i22":0,"i23":0,"f19":0,"f22":0,"f23":0},"themes":{"dom":[],"intl":[],"countries":[],"animals":[]},"mission":{"statement":"to promote the viewing and conservation of North American native animals, fostering public appreciation and stewardship of wildlife and wild places.","ms":3,"as":0,"gwi":3},"flags":{"zero":true,"deficit":false,"offshore":false},"urls":{"irs":"https://projects.propublica.org/nonprofits/organizations/363297716","web":"https://www.wildlifesafaripark.com"}},{"id":"lincoln-childrens-zoo","name":"Lincoln Childrens Zoo","city":"Lincoln","state":"Nebraska","state_abbr":"NE","acres":10,"rev":{"avg":9135944,"y19":10150400,"y22":8935556,"y23":8321877},"sur":{"avg":2317644,"y19":5108474,"y22":1635367,"y23":209090},"give":{"avg":0,"pct":0,"i19":0,"i22":0,"i23":0,"f19":0,"f22":0,"f23":0},"themes":{"dom":[],"intl":[],"countries":[],"animals":[]},"mission":{"statement":"enrich lives through firsthand interaction with living things","ms":0,"as":0,"gwi":0},"flags":{"zero":true,"deficit":false,"offshore":false},"urls":{"irs":"https://projects.propublica.org/nonprofits/organizations/470482255","web":"https://www.lincolnzoo.org"}},{"id":"omaha-zoo","name":"Omaha Zoo","city":"Omaha","state":"Nebraska","state_abbr":"NE","acres":160,"rev":{"avg":71849419,"y19":72462794,"y22":72264487,"y23":70820977},"sur":{"avg":6519056,"y19":17620276,"y22":3877542,"y23":-1940649},"give":{"avg":352408,"pct":0.49,"i19":0,"i22":0,"i23":0,"f19":336880,"f22":361022,"f23":359321},"themes":{"dom":[],"intl":["Research"],"countries":["Africa"],"animals":[]},"mission":{"statement":"to inspire, educate, and engage people to serve as lifelong stewards for the conservation of animals and their habitats,","ms":6,"as":3,"gwi":3},"flags":{"zero":false,"deficit":false,"offshore":true},"urls":{"irs":"https://projects.propublica.org/nonprofits/organizations/470469782","web":"https://www.omahazoo.com"}},{"id":"cape-may-zoo","name":"Cape May Zoo","city":"Cape May","state":"New Jersey","state_abbr":"NJ","acres":120,"rev":{"avg":153147,"y19":14759,"y22":273566,"y23":171116},"sur":{"avg":-109124,"y19":-167675,"y22":-122564,"y23":-37134},"give":{"avg":0,"pct":0,"i19":0,"i22":0,"i23":0,"f19":0,"f22":0,"f23":0},"themes":{"dom":[],"intl":[],"countries":[],"animals":[]},"mission":{"statement":"inspire appreciation and respect for the natural world, create a foundation for preserving it, and increase awareness of conservation.","ms":3,"as":0,"gwi":3},"flags":{"zero":true,"deficit":false,"offshore":false},"urls":{"irs":"https://projects.propublica.org/nonprofits/organizations/222961917","web":"https://www.capemaycountynj.gov/1679/Park-Zoo"}},{"id":"turtle-back-zoo","name":"Turtle Back Zoo","city":"West Orange","state":"New Jersey","state_abbr":"NJ","acres":20,"rev":{"avg":2872630,"y19":2438671,"y22":2869683,"y23":3309537},"sur":{"avg":338255,"y19":214297,"y22":490932,"y23":309537},"give":{"avg":0,"pct":0,"i19":0,"i22":0,"i23":0,"f19":0,"f22":0,"f23":0},"themes":{"dom":[],"intl":[],"countries":[],"animals":[]},"mission":{"statement":"providing an enriching recreational experience that fosters excellence in wildlife education and wildlife conservation","ms":3,"as":0,"gwi":3},"flags":{"zero":true,"deficit":false,"offshore":false},"urls":{"irs":"https://projects.propublica.org/nonprofits/organizations/222137384","web":"https://www.turtlebackzoo.com"}},{"id":"albuquerque-biological-park","name":"Albuquerque Biological Park","city":"Albuquerque","state":"New Mexico","state_abbr":"NM","acres":64,"rev":{"avg":5750192,"y19":4992555,"y22":6330490,"y23":5927531},"sur":{"avg":1207996,"y19":720380,"y22":2354470,"y23":549137},"give":{"avg":0,"pct":0,"i19":0,"i22":0,"i23":0,"f19":0,"f22":0,"f23":0},"themes":{"dom":[],"intl":[],"countries":[],"animals":[]},"mission":{"statement":"connect people with nature and protect the natural world","ms":1,"as":0,"gwi":1},"flags":{"zero":true,"deficit":false,"offshore":false},"urls":{"irs":"https://projects.propublica.org/nonprofits/organizations/237087964","web":"https://www.cabq.gov/artsculture/biopark"}},{"id":"buffalo-zoo","name":"Buffalo Zoo","city":"Buffalo","state":"New York","state_abbr":"NY","acres":23,"rev":{"avg":10682862,"y19":10821399,"y22":10380031,"y23":10847156},"sur":{"avg":-1439491,"y19":253241,"y22":-2858492,"y23":-1713222},"give":{"avg":0,"pct":0,"i19":0,"i22":0,"i23":0,"f19":0,"f22":0,"f23":0},"themes":{"dom":[],"intl":[],"countries":[],"animals":[]},"mission":{"statement":"build community, create connections, and save wildlife","ms":1,"as":0,"gwi":1},"flags":{"zero":true,"deficit":false,"offshore":false},"urls":{"irs":"https://projects.propublica.org/nonprofits/organizations/160911204","web":"https://buffalozoo.org"}},{"id":"rosamond-gifford-zoo","name":"Rosamond Gifford Zoo","city":"Syracuse","state":"New York","state_abbr":"NY","acres":43,"rev":{"avg":3880182,"y19":3378797,"y22":3769122,"y23":4492626},"sur":{"avg":185606,"y19":563556,"y22":-190731,"y23":183993},"give":{"avg":0,"pct":0,"i19":0,"i22":0,"i23":0,"f19":0,"f22":0,"f23":0},"themes":{"dom":[],"intl":[],"countries":[],"animals":[]},"mission":{"statement":"dedicated to connecting people to the natural world by providing engaging guest experiences, exceptional animal care and unparalleled conservation education.","ms":4,"as":0,"gwi":4},"flags":{"zero":true,"deficit":false,"offshore":false},"urls":{"irs":"https://projects.propublica.org/nonprofits/organizations/237083532","web":"https://www.rosamondgiffordzoo.org"}},{"id":"seneca-park-zoo","name":"Seneca Park Zoo","city":"Rochester","state":"New York","state_abbr":"NY","acres":20,"rev":{"avg":5397662,"y19":6784492,"y22":4586471,"y23":4822023},"sur":{"avg":417945,"y19":260034,"y22":391285,"y23":602517},"give":{"avg":46061,"pct":0.85,"i19":30688,"i22":74995,"i23":32500,"f19":0,"f22":0,"f23":0},"themes":{"dom":["Conservation Org Support"],"intl":[],"countries":[],"animals":["Polar Bears","Elephants","Snow Leopard"]},"mission":{"statement":"To inspire the community to connect with, care for, and conserve wildlife and wild places","ms":3,"as":4,"gwi":-1},"flags":{"zero":false,"deficit":false,"offshore":false},"urls":{"irs":"https://projects.propublica.org/nonprofits/organizations/160905390","web":"https://senecaparkzoo.org"}},{"id":"staten-island-zoo","name":"Staten Island Zoo","city":"Staten Island","state":"New York","state_abbr":"NY","acres":8,"rev":{"avg":4789741,"y19":4140617,"y22":4735429,"y23":5493176},"sur":{"avg":212822,"y19":-124640,"y22":135259,"y23":627846},"give":{"avg":0,"pct":0,"i19":0,"i22":0,"i23":0,"f19":0,"f22":0,"f23":0},"themes":{"dom":[],"intl":[],"countries":[],"animals":[]},"mission":{"statement":"To be an educational institution that fosters meaningful connections between people, animals, and the natural world.","ms":2,"as":0,"gwi":2},"flags":{"zero":true,"deficit":false,"offshore":false},"urls":{"irs":"https://projects.propublica.org/nonprofits/organizations/135680691","web":"https://www.statenislandzoo.org"}},{"id":"utica-zoo","name":"Utica Zoo","city":"Utica","state":"New York","state_abbr":"NY","acres":40,"rev":{"avg":3215384,"y19":2632434,"y22":3134392,"y23":3879327},"sur":{"avg":755110,"y19":643389,"y22":739573,"y23":882368},"give":{"avg":0,"pct":0,"i19":0,"i22":0,"i23":0,"f19":0,"f22":0,"f23":0},"themes":{"dom":[],"intl":[],"countries":[],"animals":[]},"mission":{"statement":"creates unique experiences and promotes public appreciation of wildlife through education, conservation, and recreation.","ms":4,"as":0,"gwi":4},"flags":{"zero":true,"deficit":false,"offshore":false},"urls":{"irs":"https://projects.propublica.org/nonprofits/organizations/160915407","web":"https://www.uticazoo.org"}},{"id":"wnc-nature-center","name":"Wnc Nature Center","city":"Asheville","state":"North Carolina","state_abbr":"NC","acres":42,"rev":{"avg":1165317,"y19":1137716,"y22":1172228,"y23":1186006},"sur":{"avg":311092,"y19":293564,"y22":384610,"y23":255103},"give":{"avg":0,"pct":0,"i19":0,"i22":0,"i23":0,"f19":0,"f22":0,"f23":0},"themes":{"dom":[],"intl":[],"countries":[],"animals":[]},"mission":{"statement":"connect people with the animals and plants of the Southern Appalachian Mountain region, inspiring appreciation, nurturing understanding, and advancing conservation of the region's rich biodiversity","ms":5,"as":0,"gwi":5},"flags":{"zero":true,"deficit":false,"offshore":false},"urls":{"irs":"https://projects.propublica.org/nonprofits/organizations/237412910","web":"https://wildwnc.org"}},{"id":"dakota-zoo","name":"Dakota Zoo","city":"Bismarck","state":"North Dakota","state_abbr":"ND","acres":90,"rev":{"avg":2490152,"y19":1867057,"y22":2735440,"y23":2867960},"sur":{"avg":308490,"y19":191429,"y22":168354,"y23":565686},"give":{"avg":0,"pct":0,"i19":0,"i22":0,"i23":0,"f19":0,"f22":0,"f23":0},"themes":{"dom":[],"intl":[],"countries":[],"animals":[]},"mission":{"statement":"To instill and inspire a better understanding and appreciation for animals and nature.","ms":0,"as":0,"gwi":0},"flags":{"zero":true,"deficit":false,"offshore":false},"urls":{"irs":"https://projects.propublica.org/nonprofits/organizations/237394067","web":"https://www.dakotazoo.org"}},{"id":"red-river-zoo","name":"Red River Zoo","city":"Fargo","state":"North Dakota","state_abbr":"ND","acres":22,"rev":{"avg":1670703,"y19":1412142,"y22":2032030,"y23":1567938},"sur":{"avg":-60372,"y19":-150054,"y22":495443,"y23":-526504},"give":{"avg":0,"pct":0,"i19":0,"i22":0,"i23":0,"f19":0,"f22":0,"f23":0},"themes":{"dom":[],"intl":[],"countries":[],"animals":[]},"mission":{"statement":"to connect the community to nature and inspire people to help save species.","ms":3,"as":0,"gwi":3},"flags":{"zero":true,"deficit":false,"offshore":false},"urls":{"irs":"https://projects.propublica.org/nonprofits/organizations/363938878","web":"https://www.redriverzoo.org/mission-and-vision/"}},{"id":"roosevelt-park-zoo","name":"Roosevelt Park Zoo","city":"Minot","state":"North Dakota","state_abbr":"ND","acres":19,"rev":{"avg":1790903,"y19":1047012,"y22":994217,"y23":3331479},"sur":{"avg":-2601,"y19":-46626,"y22":-31869,"y23":70692},"give":{"avg":0,"pct":0,"i19":0,"i22":0,"i23":0,"f19":0,"f22":0,"f23":0},"themes":{"dom":[],"intl":[],"countries":[],"animals":[]},"mission":{"statement":"to provide education, experiences, and knowledge that promote wildlife understanding and conservation.","ms":3,"as":0,"gwi":3},"flags":{"zero":true,"deficit":false,"offshore":false},"urls":{"irs":"https://projects.propublica.org/nonprofits/organizations/450321791","web":""}},{"id":"akron-zoological-park","name":"Akron Zoological Park","city":"Akron","state":"Ohio","state_abbr":"OH","acres":77,"rev":{"avg":20239196,"y19":15354294,"y22":21451189,"y23":23912106},"sur":{"avg":4002956,"y19":1858493,"y22":4672111,"y23":5478263},"give":{"avg":10000,"pct":0.05,"i19":0,"i22":10000,"i23":20000,"f19":0,"f22":0,"f23":0},"themes":{"dom":["Conservation Org Support"],"intl":[],"countries":[],"animals":[]},"mission":{"statement":"to connect people with wildlife and inspire lifelong learning and conservation action","ms":4,"as":2,"gwi":2},"flags":{"zero":false,"deficit":false,"offshore":false},"urls":{"irs":"https://projects.propublica.org/nonprofits/organizations/346003866","web":"https://www.akronzoo.org"}},{"id":"cincinnati-zoo","name":"Cincinnati Zoo","city":"Cincinnati","state":"Ohio","state_abbr":"OH","acres":75,"rev":{"avg":2453647,"y19":2240627,"y22":3938977,"y23":1181337},"sur":{"avg":1050597,"y19":610182,"y22":2763304,"y23":-221694},"give":{"avg":0,"pct":0,"i19":0,"i22":0,"i23":0,"f19":0,"f22":0,"f23":0},"themes":{"dom":[],"intl":[],"countries":[],"animals":[]},"mission":{"statement":"to inspire every visitor with wildlife every day, and to engage and cultivate a healthy and sustainable future.","ms":2,"as":0,"gwi":2},"flags":{"zero":true,"deficit":false,"offshore":false},"urls":{"irs":"https://projects.propublica.org/nonprofits/organizations/311680106","web":"https://cincinnatizoo.org"}},{"id":"cleveland-metroparks-zoo","name":"Cleveland Metroparks Zoo","city":"Cleveland","state":"Ohio","state_abbr":"OH","acres":183,"rev":{"avg":11890959,"y19":8395729,"y22":13952854,"y23":13324293},"sur":{"avg":2943322,"y19":-409202,"y22":3610871,"y23":5628297},"give":{"avg":325396,"pct":2.74,"i19":0,"i22":0,"i23":0,"f19":308389,"f22":325498,"f23":342302},"themes":{"dom":[],"intl":["Conservation Org Support","Research Innovation"],"countries":["East Asia","Europe","South America"],"animals":[]},"mission":{"statement":"Protecting nature, connecting communities and inspiring conservation of our world.","ms":2,"as":4,"gwi":-2},"flags":{"zero":false,"deficit":false,"offshore":true},"urls":{"irs":"https://projects.propublica.org/nonprofits/organizations/340816490","web":"https://www.clevelandmetroparks.com/zoo"}},{"id":"columbus-zoo","name":"Columbus Zoo","city":"Powell","state":"Ohio","state_abbr":"OH","acres":406,"rev":{"avg":87077350,"y19":84038749,"y22":89903001,"y23":87290299},"sur":{"avg":11089544,"y19":9394537,"y22":12420059,"y23":11454037},"give":{"avg":2497749,"pct":2.87,"i19":936564,"i22":2090917,"i23":3349519,"f19":520016,"f22":328932,"f23":267299},"themes":{"dom":["Conservation Org Support","Research Innovation","Zoo To Zoo Support"],"intl":["Conservation Org Support","Zoo To Zoo Support"],"countries":["Subsaharan Africa","East Asia Pacific","Central America Caribbean"],"animals":["Manatee","Cheetas","Bonobo"]},"mission":{"statement":"Empowering People. Saving Wildlife.","ms":1,"as":5,"gwi":-4},"flags":{"zero":false,"deficit":false,"offshore":true},"urls":{"irs":"https://projects.propublica.org/nonprofits/organizations/314390844","web":"https://www.columbuszoo.org"}},{"id":"toledo-zoo","name":"Toledo Zoo","city":"Toledo","state":"Ohio","state_abbr":"OH","acres":65,"rev":{"avg":42690922,"y19":35572647,"y22":45038256,"y23":47461864},"sur":{"avg":937222,"y19":1896728,"y22":-2802736,"y23":3717674},"give":{"avg":217185,"pct":0.51,"i19":0,"i22":56381,"i23":89795,"f19":0,"f22":143493,"f23":361885},"themes":{"dom":["Conservation Org Support","Research Innovation"],"intl":["Grants","Conservation"],"countries":["East Asia","Europe","South Asia"],"animals":[]},"mission":{"statement":"to inspire guests to be advocates for wildlife and conserve the natural world","ms":2,"as":5,"gwi":-3},"flags":{"zero":false,"deficit":false,"offshore":true},"urls":{"irs":"https://projects.propublica.org/nonprofits/organizations/344440256","web":"https://www.toledozoo.org"}},{"id":"the-wilds","name":"The Wilds","city":"Cumberland","state":"Ohio","state_abbr":"OH","acres":10000,"rev":{"avg":8942321,"y19":6652124,"y22":9999442,"y23":10175396},"sur":{"avg":1249262,"y19":-14215,"y22":2002357,"y23":1759643},"give":{"avg":0,"pct":0,"i19":0,"i22":0,"i23":0,"f19":0,"f22":0,"f23":0},"themes":{"dom":[],"intl":[],"countries":[],"animals":[]},"mission":{"statement":"Lead and inspire by connecting people and wildlife.","ms":1,"as":0,"gwi":1},"flags":{"zero":true,"deficit":false,"offshore":false},"urls":{"irs":"https://projects.propublica.org/nonprofits/organizations/311113570","web":"https://www.thewilds.org"}},{"id":"oklahoma-zoo","name":"Oklahoma Zoo","city":"Oklahoma City","state":"Oklahoma","state_abbr":"OK","acres":130,"rev":{"avg":3824518,"y19":3086249,"y22":3513390,"y23":4873916},"sur":{"avg":711003,"y19":41090,"y22":-863513,"y23":2955431},"give":{"avg":43836,"pct":1.15,"i19":0,"i22":0,"i23":0,"f19":0,"f22":0,"f23":131509},"themes":{"dom":[],"intl":["Conservation","Grants"],"countries":["Subsaharan Africa","South America"],"animals":[]},"mission":{"statement":"To connect people with our world's vanishing wildlife and wild places to inspire conservation action","ms":3,"as":3,"gwi":0},"flags":{"zero":false,"deficit":false,"offshore":true},"urls":{"irs":"https://projects.propublica.org/nonprofits/organizations/730688645","web":"https://www.okczoo.org"}},{"id":"oregon-zoo","name":"Oregon Zoo","city":"Portland","state":"Oregon","state_abbr":"OR","acres":64,"rev":{"avg":10237632,"y19":8996307,"y22":10046812,"y23":11669777},"sur":{"avg":1862391,"y19":1849948,"y22":2001098,"y23":1736126},"give":{"avg":0,"pct":0,"i19":0,"i22":0,"i23":0,"f19":0,"f22":0,"f23":0},"themes":{"dom":[],"intl":[],"countries":[],"animals":[]},"mission":{"statement":"Inspiring our community to create a better future for wildlife","ms":1,"as":0,"gwi":1},"flags":{"zero":true,"deficit":false,"offshore":false},"urls":{"irs":"https://projects.propublica.org/nonprofits/organizations/930718337","web":"https://www.oregonzoo.org"}},{"id":"wildlife-safari","name":"Wildlife Safari","city":"Winston","state":"Oregon","state_abbr":"OR","acres":615,"rev":{"avg":6340949,"y19":5121361,"y22":8001628,"y23":5899859},"sur":{"avg":463807,"y19":148620,"y22":1918249,"y23":-675447},"give":{"avg":0,"pct":0,"i19":0,"i22":0,"i23":0,"f19":0,"f22":0,"f23":0},"themes":{"dom":[],"intl":[],"countries":[],"animals":[]},"mission":{"statement":"conservation, education, and providing a high-quality experience with wildlife.","ms":3,"as":0,"gwi":3},"flags":{"zero":true,"deficit":false,"offshore":false},"urls":{"irs":"https://projects.propublica.org/nonprofits/organizations/930772232","web":"https://wildlifesafari.net"}},{"id":"elmwood-park-zoo","name":"Elmwood Park Zoo","city":"Norristown","state":"Pennsylvania","state_abbr":"PA","acres":16,"rev":{"avg":11348024,"y19":9604523,"y22":11380231,"y23":13059318},"sur":{"avg":155308,"y19":485379,"y22":-366380,"y23":346924},"give":{"avg":0,"pct":0,"i19":0,"i22":0,"i23":0,"f19":0,"f22":0,"f23":0},"themes":{"dom":[],"intl":[],"countries":[],"animals":[]},"mission":{"statement":"to foster an appreciation for wildlife and the environment that will inspire active participation in conservation.","ms":2,"as":0,"gwi":2},"flags":{"zero":true,"deficit":false,"offshore":false},"urls":{"irs":"https://projects.propublica.org/nonprofits/organizations/231970067","web":"https://www.elmwoodparkzoo.org"}},{"id":"lehigh-valley-zoo","name":"Lehigh Valley Zoo","city":"Schnecksville","state":"Pennsylvania","state_abbr":"PA","acres":29,"rev":{"avg":4242734,"y19":3779544,"y22":4431353,"y23":4517305},"sur":{"avg":94043,"y19":127790,"y22":142061,"y23":12279},"give":{"avg":0,"pct":0,"i19":0,"i22":0,"i23":0,"f19":0,"f22":0,"f23":0},"themes":{"dom":[],"intl":[],"countries":[],"animals":[]},"mission":{"statement":"connects its community with nature to empower people to protect wildlife.","ms":1,"as":0,"gwi":1},"flags":{"zero":true,"deficit":false,"offshore":false},"urls":{"irs":"https://projects.propublica.org/nonprofits/organizations/50606070","web":"https://www.lvzoo.org"}},{"id":"national-aviary","name":"National Aviary","city":"Pittsburgh","state":"Pennsylvania","state_abbr":"PA","acres":1,"rev":{"avg":8398785,"y19":7455407,"y22":9087480,"y23":8653469},"sur":{"avg":455526,"y19":377984,"y22":1158482,"y23":-169889},"give":{"avg":16067,"pct":0.19,"i19":0,"i22":0,"i23":0,"f19":15200,"f22":0,"f23":33000},"themes":{"dom":[],"intl":["Conservation Org Support","Research Innovation"],"countries":["Guam","Marina Islands"],"animals":["African Penguin","Andean Condor"]},"mission":{"statement":"to inspire respect for nature through an appreciation of birds.","ms":0,"as":3,"gwi":-3},"flags":{"zero":false,"deficit":false,"offshore":true},"urls":{"irs":"https://projects.propublica.org/nonprofits/organizations/251667146","web":"https://www.aviary.org"}},{"id":"philadelphia-zoo","name":"Philadelphia Zoo","city":"Philadelphia","state":"Pennsylvania","state_abbr":"PA","acres":42,"rev":{"avg":43489228,"y19":40201321,"y22":54724040,"y23":35542324},"sur":{"avg":4290430,"y19":-3281696,"y22":20165805,"y23":-4012818},"give":{"avg":108561,"pct":0.25,"i19":41018,"i22":0,"i23":0,"f19":99539,"f22":55000,"f23":130127},"themes":{"dom":["Conservation Org Support","Education Stem"],"intl":["Grants"],"countries":["Subsaharan Africa","East Asia Pacific","South America"],"animals":["Jaguire"]},"mission":{"statement":"to connect people with wildlife and inspire them to take action to save wildlife.","ms":1,"as":3,"gwi":-2},"flags":{"zero":false,"deficit":false,"offshore":true},"urls":{"irs":"https://projects.propublica.org/nonprofits/organizations/231352298","web":"https://www.philadelphiazoo.org"}},{"id":"pittsburgh-zoo","name":"Pittsburgh Zoo","city":"Pittsburgh","state":"Pennsylvania","state_abbr":"PA","acres":77,"rev":{"avg":26050851,"y19":21703268,"y22":28895919,"y23":27553365},"sur":{"avg":1696824,"y19":894264,"y22":4273294,"y23":-77086},"give":{"avg":85965,"pct":0.33,"i19":74500,"i22":57500,"i23":80000,"f19":30895,"f22":15000,"f23":0},"themes":{"dom":["Conservation Org Support"],"intl":["Grants"],"countries":["Subsaharan Africa","East Asia Pacific","South America"],"animals":["Elephants"]},"mission":{"statement":"We connect people to wildlife,  inspiring our communities to conserve nature for future generations","ms":3,"as":4,"gwi":-1},"flags":{"zero":false,"deficit":false,"offshore":true},"urls":{"irs":"https://projects.propublica.org/nonprofits/organizations/251418766","web":"https://www.pittsburghzoo.org"}},{"id":"roger-williams-park-zoo","name":"Roger Williams Park Zoo","city":"Providence","state":"Rhode Island","state_abbr":"RI","acres":40,"rev":{"avg":13616470,"y19":10107475,"y22":15523711,"y23":15218225},"sur":{"avg":1297252,"y19":-116472,"y22":2689630,"y23":1318597},"give":{"avg":0,"pct":0,"i19":0,"i22":0,"i23":0,"f19":0,"f22":0,"f23":0},"themes":{"dom":[],"intl":[],"countries":[],"animals":[]},"mission":{"statement":"to conserve wildlife and wild places.","ms":2,"as":0,"gwi":2},"flags":{"zero":true,"deficit":false,"offshore":false},"urls":{"irs":"https://projects.propublica.org/nonprofits/organizations/56016675","web":"https://www.rwpzoo.org"}},{"id":"riverbanks-zoo","name":"Riverbanks Zoo","city":"Columbia","state":"South Carolina","state_abbr":"SC","acres":70,"rev":{"avg":10407622,"y19":6469077,"y22":16497632,"y23":8256156},"sur":{"avg":1371121,"y19":-641720,"y22":5944004,"y23":-1188920},"give":{"avg":32479,"pct":0.31,"i19":17842,"i22":39798,"i23":39798,"f19":0,"f22":0,"f23":0},"themes":{"dom":["Conservation Org Support","Sanctuary"],"intl":[],"countries":[],"animals":["Elephants","Rhinos"]},"mission":{"statement":"We create connections and inspire actions that have a lasting impact on wildlife and wild places.","ms":0,"as":2,"gwi":-2},"flags":{"zero":false,"deficit":false,"offshore":false},"urls":{"irs":"https://projects.propublica.org/nonprofits/organizations/237278668","web":"https://www.riverbanks.org"}},{"id":"great-plains-zoo","name":"Great Plains Zoo","city":"Sioux Falls","state":"South Dakota","state_abbr":"SD","acres":45,"rev":{"avg":14179998,"y19":5526158,"y22":29508398,"y23":7505438},"sur":{"avg":5652103,"y19":1603013,"y22":23523155,"y23":-8169860},"give":{"avg":0,"pct":0,"i19":0,"i22":0,"i23":0,"f19":0,"f22":0,"f23":0},"themes":{"dom":[],"intl":[],"countries":[],"animals":[]},"mission":{"statement":"Creating connection and inspiring conservation of wild species and spaces.","ms":4,"as":0,"gwi":4},"flags":{"zero":true,"deficit":false,"offshore":false},"urls":{"irs":"https://projects.propublica.org/nonprofits/organizations/466015015","web":"https://www.greatzoo.org"}},{"id":"chattanooga-zoo","name":"Chattanooga Zoo","city":"Chatanooga","state":"Tennessee","state_abbr":"TN","acres":13,"rev":{"avg":5780888,"y19":4273549,"y22":6364362,"y23":6704754},"sur":{"avg":1150765,"y19":465248,"y22":2041308,"y23":945738},"give":{"avg":0,"pct":0,"i19":0,"i22":0,"i23":0,"f19":0,"f22":0,"f23":0},"themes":{"dom":[],"intl":[],"countries":[],"animals":[]},"mission":{"statement":"to engage, educate and inspire our community to better understand and conserve wildlife.","ms":4,"as":0,"gwi":4},"flags":{"zero":true,"deficit":false,"offshore":false},"urls":{"irs":"https://projects.propublica.org/nonprofits/organizations/581661267","web":"https://www.chattzoo.org"}},{"id":"memphis-zoo","name":"Memphis Zoo","city":"Memphis","state":"Tennessee","state_abbr":"TN","acres":76,"rev":{"avg":22774844,"y19":17682633,"y22":24751467,"y23":25890431},"sur":{"avg":-4278252,"y19":374235,"y22":-4307839,"y23":-8901151},"give":{"avg":509490,"pct":2.24,"i19":0,"i22":0,"i23":0,"f19":528470,"f22":500000,"f23":500000},"themes":{"dom":[],"intl":["Conservation Org Support","Research Innovation"],"countries":["East Asia Pacific"],"animals":[]},"mission":{"statement":"Creating Adventures. Saving Wildlife.","ms":0,"as":1,"gwi":-1},"flags":{"zero":false,"deficit":true,"offshore":true},"urls":{"irs":"https://projects.propublica.org/nonprofits/organizations/237236155","web":"https://www.memphiszoo.org"}},{"id":"nashville-zoo","name":"Nashville Zoo","city":"Nashville","state":"Tennessee","state_abbr":"TN","acres":188,"rev":{"avg":37046126,"y19":28762869,"y22":34976521,"y23":47398988},"sur":{"avg":11713791,"y19":8634792,"y22":8612529,"y23":17894053},"give":{"avg":570466,"pct":1.54,"i19":171100,"i22":141403,"i23":276052,"f19":255614,"f22":394071,"f23":473157},"themes":{"dom":["Conservation Org Support","Education Stem"],"intl":["Conservation"],"countries":["South America  Sub Saharan Africa","East Asia Pacitic"],"animals":["Rhinos","Turtles","Giraffes"]},"mission":{"statement":"To inspire a culture of understanding and discovery of our natural world through conservation, innovation and leadership.","ms":2,"as":4,"gwi":-2},"flags":{"zero":false,"deficit":false,"offshore":true},"urls":{"irs":"https://projects.propublica.org/nonprofits/organizations/621411210","web":"https://www.nashvillezoo.org"}},{"id":"zoo-knoxville","name":"Zoo Knoxville","city":"Knoxville","state":"Tennessee","state_abbr":"TN","acres":53,"rev":{"avg":18647705,"y19":12965187,"y22":20707003,"y23":22270926},"sur":{"avg":1775994,"y19":530174,"y22":2427173,"y23":2370636},"give":{"avg":0,"pct":0,"i19":0,"i22":0,"i23":0,"f19":0,"f22":0,"f23":0},"themes":{"dom":[],"intl":[],"countries":[],"animals":[]},"mission":{"statement":"save animals from extinction.","ms":0,"as":0,"gwi":0},"flags":{"zero":true,"deficit":false,"offshore":false},"urls":{"irs":"https://projects.propublica.org/nonprofits/organizations/621034633","web":"https://www.zooknoxville.org"}},{"id":"caldwell-zoo","name":"Caldwell Zoo","city":"Tyler","state":"Texas","state_abbr":"TX","acres":85,"rev":{"avg":14188420,"y19":14341687,"y22":16191890,"y23":12031682},"sur":{"avg":3471272,"y19":4931179,"y22":5393447,"y23":89190},"give":{"avg":20925,"pct":0.15,"i19":5350,"i22":5000,"i23":5344,"f19":0,"f22":0,"f23":0},"themes":{"dom":[],"intl":[],"countries":[],"animals":["Cheetah","Giraffe","Rhino"]},"mission":{"statement":"Caldwell Zoo will be a leader in connecting people with wildlife by igniting discovery of the natural world through fun.","ms":1,"as":1,"gwi":0},"flags":{"zero":false,"deficit":false,"offshore":false},"urls":{"irs":"https://projects.propublica.org/nonprofits/organizations/756004080","web":"https://caldwellzoo.org"}},{"id":"cameron-park-zoo","name":"Cameron Park Zoo","city":"Waco","state":"Texas","state_abbr":"TX","acres":52,"rev":{"avg":1882529,"y19":1220753,"y22":2624044,"y23":1802790},"sur":{"avg":-513244,"y19":275690,"y22":1404227,"y23":-3219650},"give":{"avg":0,"pct":0,"i19":0,"i22":0,"i23":0,"f19":0,"f22":0,"f23":0},"themes":{"dom":[],"intl":[],"countries":[],"animals":[]},"mission":{"statement":"wildlife conservation and research, educating the public about nature, and preserving biological diversity.","ms":4,"as":0,"gwi":4},"flags":{"zero":true,"deficit":false,"offshore":false},"urls":{"irs":"https://projects.propublica.org/nonprofits/organizations/741290001","web":"https://www.cameronparkzoo.com"}},{"id":"dallas-zoo","name":"Dallas Zoo","city":"Dallas","state":"Texas","state_abbr":"TX","acres":106,"rev":{"avg":31126134,"y19":29629949,"y22":31361458,"y23":32386995},"sur":{"avg":323166,"y19":-153549,"y22":1533173,"y23":-410126},"give":{"avg":232032,"pct":0.75,"i19":231500,"i22":210000,"i23":245595,"f19":9000,"f22":0,"f23":0},"themes":{"dom":["Conservation Org Support"],"intl":["Conservation"],"countries":["South Africa Sub Saharan Africa","France"],"animals":["Gorillas","Sea Turtles Peregrine Falcon  Elephants","Cheetahs"]},"mission":{"statement":"Engage People & Save Wildlife","ms":1,"as":5,"gwi":-4},"flags":{"zero":false,"deficit":false,"offshore":true},"urls":{"irs":"https://projects.propublica.org/nonprofits/organizations/270777846","web":"https://www.dallaszoo.com"}},{"id":"fort-worth-zoo","name":"Fort Worth Zoo","city":"Fort Worth","state":"Texas","state_abbr":"TX","acres":64,"rev":{"avg":52450773,"y19":32497026,"y22":71775822,"y23":53079471},"sur":{"avg":-3189556,"y19":-26939475,"y22":33747670,"y23":-16376864},"give":{"avg":128224,"pct":0.24,"i19":120000,"i22":130000,"i23":134671,"f19":0,"f22":0,"f23":0},"themes":{"dom":["Conservation Org Support"],"intl":[],"countries":[],"animals":["Elephants","Okapi","Rhino"]},"mission":{"statement":"to strengthen the bond between humans and the environment by promoting responsible stewardship of wildlife and ensuring diverse, high-quality educational and entertaining family experiences through effective and efficient management of its resources.","ms":1,"as":1,"gwi":0},"flags":{"zero":false,"deficit":true,"offshore":false},"urls":{"irs":"https://projects.propublica.org/nonprofits/organizations/750991727","web":"https://www.fortworthzoo.org"}},{"id":"fossil-rim","name":"Fossil Rim","city":"Glen Rose","state":"Texas","state_abbr":"TX","acres":1800,"rev":{"avg":7639542,"y19":7323197,"y22":7352751,"y23":8242679},"sur":{"avg":748047,"y19":246903,"y22":723500,"y23":1273739},"give":{"avg":34177,"pct":0.45,"i19":20000,"i22":42500,"i23":40030,"f19":0,"f22":0,"f23":0},"themes":{"dom":["Conservation Org Support"],"intl":[],"countries":[],"animals":["Rhino"]},"mission":{"statement":"We create a better future for wildlife through our passion, place, and partnerships.","ms":0,"as":3,"gwi":-3},"flags":{"zero":false,"deficit":false,"offshore":false},"urls":{"irs":"https://projects.propublica.org/nonprofits/organizations/752327438","web":"https://fossilrim.org"}},{"id":"houston-zoo","name":"Houston Zoo","city":"Houston","state":"Texas","state_abbr":"TX","acres":55,"rev":{"avg":74871877,"y19":73932331,"y22":68161300,"y23":82522000},"sur":{"avg":18225237,"y19":21035349,"y22":13942221,"y23":19698141},"give":{"avg":3147576,"pct":4.2,"i19":1384156,"i22":1324422,"i23":1148185,"f19":1985543,"f22":1655606,"f23":1944816},"themes":{"dom":["Conservation Org Support","Research Innovation"],"intl":["Conservation Org Support","Research Innovation"],"countries":["Subsaharan Africa","East Asia Pacific","South America"],"animals":["Okapi","Gorillas","Giraffe"]},"mission":{"statement":"Connect communities with animals, inspiring action to save wildlife.","ms":0,"as":5,"gwi":-5},"flags":{"zero":false,"deficit":false,"offshore":true},"urls":{"irs":"https://projects.propublica.org/nonprofits/organizations/741590271","web":"https://www.houstonzoo.org"}},{"id":"san-antonio-zoo","name":"San Antonio Zoo","city":"San Antonio","state":"Texas","state_abbr":"TX","acres":50,"rev":{"avg":45358257,"y19":28502170,"y22":43800078,"y23":63772522},"sur":{"avg":9578102,"y19":-423934,"y22":6331310,"y23":22826929},"give":{"avg":61009,"pct":0.13,"i19":0,"i22":0,"i23":0,"f19":0,"f22":117398,"f23":65629},"themes":{"dom":[],"intl":["Conservation"],"countries":["South America"],"animals":[]},"mission":{"statement":"to inspire people to love, engage with, act for, and protect animals and the places they live","ms":1,"as":2,"gwi":-1},"flags":{"zero":false,"deficit":false,"offshore":true},"urls":{"irs":"https://projects.propublica.org/nonprofits/organizations/741323695","web":"https://sazoo.org"}},{"id":"hogle-zoo","name":"Hogle Zoo","city":"Salt Lake City","state":"Utah","state_abbr":"UT","acres":42,"rev":{"avg":21254178,"y19":18231670,"y22":20973376,"y23":24557487},"sur":{"avg":2972260,"y19":332580,"y22":4127495,"y23":4456706},"give":{"avg":254333,"pct":1.2,"i19":191000,"i22":170000,"i23":210000,"f19":0,"f22":110000,"f23":82000},"themes":{"dom":["Conservation Org Support"],"intl":["Conservation Org Support"],"countries":["Subsaharan Africa","East Asia Pacific"],"animals":["Gorillas","Giraffes","Polar Bears"]},"mission":{"statement":"Create champions for wildlife by making connections between people and animals to inspire action.","ms":1,"as":4,"gwi":-3},"flags":{"zero":false,"deficit":false,"offshore":true},"urls":{"irs":"https://projects.propublica.org/nonprofits/organizations/870217405","web":"https://www.hoglezoo.org"}},{"id":"virginia-zoo","name":"Virginia Zoo","city":"Norfolk","state":"Virginia","state_abbr":"VA","acres":53,"rev":{"avg":5767138,"y19":3126777,"y22":5638748,"y23":8535888},"sur":{"avg":2044603,"y19":29058,"y22":1482120,"y23":4622630},"give":{"avg":0,"pct":0,"i19":0,"i22":0,"i23":0,"f19":0,"f22":0,"f23":0},"themes":{"dom":[],"intl":[],"countries":[],"animals":[]},"mission":{"statement":"engaging our community in taking action to save the world's wildlife and their ecosystems.","ms":3,"as":0,"gwi":3},"flags":{"zero":true,"deficit":false,"offshore":false},"urls":{"irs":"https://projects.propublica.org/nonprofits/organizations/510253147","web":"https://virginiazoo.org"}},{"id":"northwest-trek-wildlife-park","name":"Northwest Trek Wildlife Park","city":"Eatonville","state":"Washington","state_abbr":"WA","acres":723,"rev":{"avg":526494,"y19":190351,"y22":576330,"y23":812802},"sur":{"avg":44947,"y19":-305376,"y22":237556,"y23":202660},"give":{"avg":0,"pct":0,"i19":0,"i22":0,"i23":0,"f19":0,"f22":0,"f23":0},"themes":{"dom":[],"intl":[],"countries":[],"animals":[]},"mission":{"statement":"WE CONSERVE WILDLIFE","ms":2,"as":0,"gwi":2},"flags":{"zero":true,"deficit":false,"offshore":false},"urls":{"irs":"https://projects.propublica.org/nonprofits/organizations/237438056","web":"https://www.nwtrek.org"}},{"id":"woodland-park-zoo","name":"Woodland Park Zoo","city":"Seattle","state":"Washington","state_abbr":"WA","acres":70,"rev":{"avg":57314105,"y19":45884182,"y22":61363354,"y23":64694779},"sur":{"avg":4652266,"y19":271050,"y22":7536234,"y23":6149514},"give":{"avg":1834001,"pct":3.2,"i19":44530,"i22":2337662,"i23":566708,"f19":953377,"f22":661703,"f23":938023},"themes":{"dom":["Conservation Org Support"],"intl":["Conservation Org Support"],"countries":["Subsaharan Africa","East Asia Pacific","South America"],"animals":["Tree Kangaroo"]},"mission":{"statement":"Empower","ms":0,"as":5,"gwi":-5},"flags":{"zero":false,"deficit":false,"offshore":true},"urls":{"irs":"https://projects.propublica.org/nonprofits/organizations/916070005","web":"https://www.zoo.org"}},{"id":"oglebay-good-zoo","name":"Oglebay Good Zoo","city":"Wheeling","state":"West Virginia","state_abbr":"WV","acres":30,"rev":{"avg":5972071,"y19":4774926,"y22":7064669,"y23":6076618},"sur":{"avg":734912,"y19":1936802,"y22":-203790,"y23":471724},"give":{"avg":0,"pct":0,"i19":0,"i22":0,"i23":0,"f19":0,"f22":0,"f23":0},"themes":{"dom":[],"intl":[],"countries":[],"animals":[]},"mission":{"statement":"Inspiring wildlife conservation and animal wellbeing through memorable experiences.","ms":2,"as":0,"gwi":2},"flags":{"zero":true,"deficit":false,"offshore":false},"urls":{"irs":"https://projects.propublica.org/nonprofits/organizations/550750128","web":"https://oglebay.com/explore/zoo/"}},{"id":"milwaukee-zoo","name":"Milwaukee Zoo","city":"Milwaukee","state":"Wisconsin","state_abbr":"WI","acres":198,"rev":{"avg":10178958,"y19":15429545,"y22":2889576,"y23":12217753},"sur":{"avg":-1614967,"y19":-4173398,"y22":-43660,"y23":-627843},"give":{"avg":241195,"pct":2.37,"i19":56142,"i22":14165,"i23":0,"f19":653279,"f22":0,"f23":0},"themes":{"dom":["Conservation Org Support"],"intl":["Conservation Org Support"],"countries":["Subsaharan Africa","Europe"],"animals":["Penquin","Orangutan","Iguana"]},"mission":{"statement":"to inspire public understanding, support, and participation in global conservation of animal species and their environment.","ms":7,"as":2,"gwi":5},"flags":{"zero":false,"deficit":true,"offshore":true},"urls":{"irs":"https://projects.propublica.org/nonprofits/organizations/396077242","web":"https://milwaukeezoo.org/#"}},{"id":"new-zoo","name":"New Zoo","city":"Green Bay","state":"Wisconsin","state_abbr":"WI","acres":43,"rev":{"avg":874695,"y19":310746,"y22":512407,"y23":1800931},"sur":{"avg":-43352,"y19":160928,"y22":-217792,"y23":-73191},"give":{"avg":0,"pct":0,"i19":0,"i22":0,"i23":0,"f19":0,"f22":0,"f23":0},"themes":{"dom":[],"intl":[],"countries":[],"animals":[]},"mission":{"statement":"to connect the community with wildlife and nature through engaging, interactive experiences.","ms":1,"as":0,"gwi":1},"flags":{"zero":true,"deficit":false,"offshore":false},"urls":{"irs":"https://projects.propublica.org/nonprofits/organizations/391516018","web":"https://newzoo.org"}},{"id":"racine-zoo","name":"Racine Zoo","city":"Racine","state":"Wisconsin","state_abbr":"WI","acres":28,"rev":{"avg":3742784,"y19":3916299,"y22":4670018,"y23":2642035},"sur":{"avg":881938,"y19":1243351,"y22":1787708,"y23":-385246},"give":{"avg":0,"pct":0,"i19":0,"i22":0,"i23":0,"f19":0,"f22":0,"f23":0},"themes":{"dom":[],"intl":[],"countries":[],"animals":[]},"mission":{"statement":"To foster an enlightening and affordable wildlife experience that improves the bond between people and nature.","ms":1,"as":0,"gwi":1},"flags":{"zero":true,"deficit":false,"offshore":false},"urls":{"irs":"https://projects.propublica.org/nonprofits/organizations/396065035","web":"https://racinezoo.org"}}]};
+  </script>
+
+</div><!-- /slide -->
+</div><!-- /slide-wrapper -->
+
+<script>
+  // ── Scale to fit viewport ──────────────────────────────────────────────────
+  // ── Manual zoom state ─────────────────────────────────────────────────────
+  let manualScale = null; // null = auto
+
+  // ── Viewport detection ────────────────────────────────────────────────────
+  // The Cowork webview may have a configured viewport of 1920px, making
+  // window.innerWidth and all CSS measurements return 1920 regardless of
+  // actual window size. We probe every available source and take the minimum
+  // conservative estimate.
+  function detectVW() {
+    const candidates = [
+      window.innerWidth,
+      window.outerWidth,                          // OS window outer width
+      window.screen && window.screen.availWidth,  // physical screen available
+      window.screen && window.screen.width,
+    ].filter(n => n && n > 100 && n < 8000);
+    return candidates.length ? Math.min(...candidates) : 1280;
+  }
+  function detectVH() {
+    const candidates = [
+      window.innerHeight,
+      window.outerHeight ? window.outerHeight - 80 : null, // subtract OS chrome
+      window.screen && window.screen.availHeight,
+    ].filter(n => n && n > 100 && n < 8000);
+    return candidates.length ? Math.min(...candidates) : 720;
+  }
+
+  function scaleSlide() {
+    const slide = document.getElementById('slide');
+    const vw = detectVW();
+    const vh = detectVH();
+    const autoScale = Math.min(vw / 1920, vh / 1080);
+    const scale = manualScale !== null ? manualScale : autoScale;
+    const ox = (vw - 1920 * scale) / 2;
+    const oy = (vh - 1080 * scale) / 2;
+    slide.style.transform = `translate(${ox}px,${oy}px) scale(${scale})`;
+    updateZoomHUD(scale);
+  }
+
+  // ── Zoom HUD ──────────────────────────────────────────────────────────────
+  function updateZoomHUD(scale) {
+    const hud = document.getElementById('zoom-hud');
+    if (hud) hud.textContent = Math.round(scale * 100) + '%';
+  }
+
+  // ── Manual zoom controls (keyboard) ───────────────────────────────────────
+  function adjustZoom(delta) {
+    const vw = detectVW();
+    const vh = detectVH();
+    const autoScale = Math.min(vw / 1920, vh / 1080);
+    const current = manualScale !== null ? manualScale : autoScale;
+    manualScale = Math.max(0.2, Math.min(2.0, current + delta));
+    scaleSlide();
+  }
+  function resetZoom() {
+    manualScale = null;
+    scaleSlide();
+  }
+
+  scaleSlide();
+  window.addEventListener('resize', scaleSlide);
+  window.addEventListener('load', function() {
+    scaleSlide();
+    setTimeout(scaleSlide, 150);
+    setTimeout(scaleSlide, 600);
+  });
+  try {
+    new ResizeObserver(scaleSlide).observe(document.getElementById('slide-wrapper'));
+  } catch(e) {}
+
+  // ── State definitions ──────────────────────────────────────────────────────
+  const STATE_SEQUENCE = ['area', 'color', 'green', 'nodot-dg', 'nodot-ng', 'halo', 'info'];
+  const STATE_LABELS = {
+    'area':     'Circle Size — Revenue & Capacity',
+    'color':    'Circle Color — Greenwashing Index Score',
+    'green':    'Dark Green Center — Conservation Giving %',
+    'nodot-dg': 'No Dot — Dark Green Zoo, Zero Giving',
+    'nodot-ng': 'No Dot — Non-Green Zoo, Zero Giving',
+    'halo':     'Outer Halo — Integrity Alignment',
+    'info':     'About This Map',
+  };
+
+  // ── State ──────────────────────────────────────────────────────────────────
+  const slide    = document.getElementById('slide');
+  const hud      = document.getElementById('state-hud');
+  const counter  = document.getElementById('step-counter');
+  const kbdHelp  = document.getElementById('kbd-help');
+
+  let locked        = null;  // currently locked state key, or null
+  let seqIndex      = -1;    // position in STATE_SEQUENCE (-1 = overview)
+  let helpVisible   = false;
+
+  // ── Apply a state ──────────────────────────────────────────────────────────
+  function applyState(key, isLocked) {
+    // Update slide data-state
+    if (key) {
+      slide.dataset.state = key;
+    } else {
+      delete slide.dataset.state;
+    }
+
+    // Update locked zone highlighting
+    document.querySelectorAll('.hz').forEach(z => z.classList.remove('locked'));
+    if (isLocked && key) {
+      const target = document.querySelector(`.hz[data-state="${key}"]`);
+      if (target) target.classList.add('locked');
+    }
+
+    // Update HUD
+    if (key) {
+      const badge = isLocked ? '<span class="lock-badge">⏸</span>' : '';
+      hud.innerHTML = badge + STATE_LABELS[key];
+      hud.classList.add('visible');
+    } else {
+      hud.classList.remove('visible');
+    }
+
+    // Update step counter
+    const idx = STATE_SEQUENCE.indexOf(key);
+    if (idx >= 0) {
+      counter.textContent = `${idx + 1} / ${STATE_SEQUENCE.length}`;
+      counter.style.opacity = '1';
+    } else {
+      counter.style.opacity = '0';
+    }
+  }
+
+  function reset() {
+    locked   = null;
+    seqIndex = -1;
+    applyState(null, false);
+  }
+
+  function setLocked(key) {
+    locked   = key;
+    seqIndex = STATE_SEQUENCE.indexOf(key);
+    applyState(key, true);
+  }
+
+  function setPreview(key) {
+    // Hover preview — only when nothing is locked
+    if (locked) return;
+    applyState(key, false);
+  }
+
+  function clearPreview() {
+    if (locked) return;
+    applyState(null, false);
+  }
+
+  // ── Hover zones: hover preview + click-to-lock ─────────────────────────────
+  document.querySelectorAll('.hz').forEach(zone => {
+    const key = zone.dataset.state;
+
+    // Mouse hover
+    zone.addEventListener('mouseenter', () => setPreview(key));
+    zone.addEventListener('mouseleave', () => clearPreview());
+
+    // Click to lock / unlock
+    zone.addEventListener('click', () => {
+      if (locked === key) {
+        reset();
+      } else {
+        setLocked(key);
+      }
+    });
+
+    // Touch: single tap to lock / unlock (no hover on touch devices)
+    zone.addEventListener('touchstart', e => {
+      e.preventDefault();
+      if (locked === key) {
+        reset();
+      } else {
+        setLocked(key);
+      }
+    }, { passive: false });
+  });
+
+  // ── Keyboard navigation ────────────────────────────────────────────────────
+  document.addEventListener('keydown', e => {
+    // Don't interfere with form inputs
+    if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+
+    switch (e.key) {
+      case 'ArrowRight':
+      case 'ArrowDown':
+        e.preventDefault();
+        seqIndex = Math.min(seqIndex + 1, STATE_SEQUENCE.length - 1);
+        locked = STATE_SEQUENCE[seqIndex];
+        applyState(locked, true);
+        break;
+
+      case 'ArrowLeft':
+      case 'ArrowUp':
+        e.preventDefault();
+        seqIndex--;
+        if (seqIndex < 0) {
+          reset();
+        } else {
+          locked = STATE_SEQUENCE[seqIndex];
+          applyState(locked, true);
+        }
+        break;
+
+      case 'Escape':
+      case '0':
+        reset();
+        break;
+
+      case '1': setLocked('area');     break;
+      case '2': setLocked('color');    break;
+      case '3': setLocked('green');    break;
+      case '4': setLocked('nodot-dg'); break;
+      case '5': setLocked('nodot-ng'); break;
+      case '6': setLocked('halo');     break;
+      case '7': setLocked('info');     break;
+
+      case '-':
+      case '_':
+        e.preventDefault();
+        adjustZoom(-0.05);
+        break;
+      case '=':
+      case '+':
+        e.preventDefault();
+        adjustZoom(+0.05);
+        break;
+      case '\\':
+        resetZoom();
+        break;
+      case '?':
+      case '/':
+        toggleHelp();
+        break;
+
+      case 'p':
+      case 'P':
+        window.print();
+        break;
+    }
+  });
+
+  // ── Prev / Next buttons ────────────────────────────────────────────────────
+  document.getElementById('btn-prev').addEventListener('click', () => {
+    seqIndex--;
+    if (seqIndex < 0) {
+      reset();
+    } else {
+      locked = STATE_SEQUENCE[seqIndex];
+      applyState(locked, true);
+    }
+  });
+
+  document.getElementById('btn-next').addEventListener('click', () => {
+    seqIndex = Math.min(seqIndex + 1, STATE_SEQUENCE.length - 1);
+    locked = STATE_SEQUENCE[seqIndex];
+    applyState(locked, true);
+  });
+
+  // Touch support for nav buttons
+  document.getElementById('btn-prev').addEventListener('touchstart', e => {
+    e.preventDefault();
+    document.getElementById('btn-prev').click();
+  }, { passive: false });
+
+  document.getElementById('btn-next').addEventListener('touchstart', e => {
+    e.preventDefault();
+    document.getElementById('btn-next').click();
+  }, { passive: false });
+
+  // ── Help overlay ───────────────────────────────────────────────────────────
+  function toggleHelp() {
+    helpVisible = !helpVisible;
+    kbdHelp.classList.toggle('visible', helpVisible);
+  }
+
+  document.getElementById('btn-help').addEventListener('click', toggleHelp);
+
+  // Close help on outside click
+  document.addEventListener('click', e => {
+    if (helpVisible && !kbdHelp.contains(e.target) && e.target.id !== 'btn-help') {
+      helpVisible = false;
+      kbdHelp.classList.remove('visible');
+    }
+  });
+
+  // ── Print button ───────────────────────────────────────────────────────────
+  document.getElementById('btn-print').addEventListener('click', () => window.print());
+
+
+  // ════════ ZOO SEARCH + PROFILE SYSTEM ════════
+
+  const zoos = ZOO_DATA.zoos;
+
+  // Format helpers
+  function fmt$(n) {
+    if (!n || n === 0) return '$0';
+    if (Math.abs(n) >= 1e9) return '
+</html>
+ + (n/1e9).toFixed(1) + 'B';
+    if (Math.abs(n) >= 1e6) return '
+</html>
+ + (n/1e6).toFixed(1) + 'M';
+    if (Math.abs(n) >= 1e3) return '
+</html>
+ + (n/1e3).toFixed(0) + 'K';
+    return '
+</html>
+ + n.toFixed(0);
+  }
+
+  function gwiColor(g) {
+    if (g >= 4)  return { bg: 'rgba(224,92,92,0.18)',  text: '#e05c5c' };
+    if (g >= 2)  return { bg: 'rgba(230,160,60,0.18)', text: '#e6a03c' };
+    if (g >= 1)  return { bg: 'rgba(200,200,80,0.15)', text: '#c8c84a' };
+    if (g === 0) return { bg: 'rgba(111,191,138,0.18)',text: '#6fbf8a' };
+    return { bg: 'rgba(100,160,230,0.18)', text: '#88aaf0' };
+  }
+
+  function gwiLabel(g) {
+    if (g >= 5)  return 'Claims far exceed actions';
+    if (g >= 3)  return 'Significant gap';
+    if (g >= 1)  return 'Slight gap';
+    if (g === 0) return 'Mission-action aligned';
+    if (g >= -2) return 'Actions exceed claims';
+    return 'Actions significantly exceed claims';
+  }
+
+  function trendHTML(v19, v23) {
+    if (v19 === 0 && v23 === 0) return '<span class="pc-trend trend-flat">— No giving</span>';
+    if (v23 > v19 * 1.1)  return '<span class="pc-trend trend-up">↑ Growing '+(v19===0?'(new)':''+'</span>');
+    if (v23 < v19 * 0.9)  return '<span class="pc-trend trend-down">↓ Declining</span>';
+    return '<span class="pc-trend trend-flat">→ Stable</span>';
+  }
+
+  function sparkHTML(vals, maxVal, color) {
+    const labels = ['2019','2022','2023'];
+    const max = maxVal || Math.max(...vals, 1);
+    return '<div class="pc-spark">' + vals.map((v, i) => {
+      const pct = Math.max(Math.round((v / max) * 100), v > 0 ? 5 : 1);
+      return `<div class="pc-bar" style="height:${pct}%;background:${color || 'rgba(255,255,255,0.22)'}">
+        <span class="pc-bar-label">${labels[i]}</span>
+      </div>`;
+    }).join('') + '</div>';
+  }
+
+  function dotsHTML(score, maxScore, filledClass, emptyClass) {
+    let d = '';
+    for (let i = 0; i < maxScore; i++) {
+      d += `<div class="pc-dot ${i < score ? filledClass : emptyClass}"></div>`;
+    }
+    return d;
+  }
+
+  function renderProfile(zoo) {
+    const give19 = (zoo.give.i19||0) + (zoo.give.f19||0);
+    const give23 = (zoo.give.i23||0) + (zoo.give.f23||0);
+    const giveVals = [give19, (zoo.give.i22||0)+(zoo.give.f22||0), give23];
+    const revVals  = [zoo.rev.y19, zoo.rev.y22, zoo.rev.y23];
+    const maxScore = 6;
+    const gwi = zoo.mission.gwi;
+    const gc = gwiColor(gwi);
+    const gLabel = gwiLabel(gwi);
+
+    const flagsHTML = [
+      zoo.flags.zero    ? '<span class="pc-flag flag-zero">⚑ Zero Conservation Giving</span>' : '',
+      zoo.flags.deficit ? '<span class="pc-flag flag-deficit">★ Gives Despite Deficit</span>'  : '',
+      zoo.flags.offshore? '<span class="pc-flag flag-offshore">⊕ International Giving</span>'   : '',
+    ].filter(Boolean).join('');
+
+    const domThemes = zoo.themes.dom.length
+      ? zoo.themes.dom.map(t => `<span class="pc-theme-tag">${t}</span>`).join('')
+      : '<span class="pc-theme-empty">No domestic giving recorded</span>';
+
+    const intlThemes = zoo.themes.countries.length
+      ? zoo.themes.countries.map(c => `<span class="pc-theme-tag">${c}</span>`).join('')
+        + (zoo.themes.intl.length ? '<br style="margin:4px 0">' + zoo.themes.intl.map(t=>`<span class="pc-theme-tag">${t}</span>`).join('') : '')
+      : '<span class="pc-theme-empty">No international giving recorded</span>';
+
+    const animalsHTML = zoo.themes.animals.length
+      ? zoo.themes.animals.map(a => `<span class="pc-theme-tag">${a}</span>`).join('')
+      : '';
+
+    const maxRev  = Math.max(...revVals, 1);
+    const maxGive = Math.max(...giveVals, 1);
+
+    return `
+      <div class="pc-header">
+        <div class="pc-header-top">
+          <div>
+            <div class="pc-zoo-name">${zoo.name}</div>
+            <div class="pc-zoo-meta">${zoo.city}, ${zoo.state}${zoo.acres ? ' &nbsp;·&nbsp; ' + zoo.acres.toLocaleString() + ' acres' : ''}</div>
+          </div>
+          <div style="display:flex;align-items:flex-start;gap:10px;">
+            ${zoo.urls.irs ? '<a class="pc-link pc-link-irs" href="' + zoo.urls.irs + '" target="_blank">IRS 990 ↗</a>' : ''}
+            ${zoo.urls.web ? '<a class="pc-link pc-link-web" href="' + zoo.urls.web + '" target="_blank">Website ↗</a>' : ''}
+            <div class="pc-close" id="pc-close-btn">
+              <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+                <path d="M1 1L13 13M13 1L1 13" stroke="white" stroke-width="1.5" stroke-linecap="round"/>
+              </svg>
+            </div>
+          </div>
+        </div>
+        ${flagsHTML ? '<div class="pc-flags">' + flagsHTML + '</div>' : ''}
+      </div>
+
+      <div class="pc-metrics">
+        <div class="pc-metric">
+          <div class="pc-metric-label">Average Annual Revenue</div>
+          <div class="pc-metric-value">${fmt$(zoo.rev.avg)}</div>
+          <div class="pc-metric-sub">3-year avg (2019, 2022, 2023)</div>
+          <div class="pc-spark-wrap">${sparkHTML(revVals, maxRev, 'rgba(255,255,255,0.22)')}</div>
+        </div>
+        <div class="pc-metric">
+          <div class="pc-metric-label">Conservation Giving</div>
+          <div class="pc-metric-value" style="color:${zoo.flags.zero ? '#e05c5c' : '#6fbf8a'}">${fmt$(zoo.give.avg)}</div>
+          <div class="pc-metric-sub">${zoo.give.pct > 0 ? zoo.give.pct.toFixed(2) + '% of revenue' : 'Zero percent of revenue'}</div>
+          ${trendHTML(give19, give23)}
+          <div class="pc-spark-wrap">${sparkHTML(giveVals, maxGive, zoo.flags.zero ? 'rgba(224,92,92,0.4)' : 'rgba(111,191,138,0.5)')}</div>
+        </div>
+      </div>
+
+      <div class="pc-gwi-section">
+        <div class="pc-section-title">Mission — Action Alignment (Greenwashing Index)</div>
+        <div class="pc-score-row">
+          <span class="pc-score-label">Mission Claim</span>
+          <div class="pc-dots">${dotsHTML(zoo.mission.ms, maxScore, 'pc-dot-filled-m', 'pc-dot-empty')}</div>
+          <span class="pc-score-num">${zoo.mission.ms}/${maxScore}</span>
+        </div>
+        <div class="pc-score-row">
+          <span class="pc-score-label">Conservation Action</span>
+          <div class="pc-dots">${dotsHTML(zoo.mission.as, maxScore, 'pc-dot-filled-a', 'pc-dot-empty')}</div>
+          <span class="pc-score-num">${zoo.mission.as}/${maxScore}</span>
+        </div>
+        <div class="pc-gwi-gap">
+          <div class="pc-gwi-num" style="color:${gc.text}">GWI ${gwi > 0 ? '+' : ''}${gwi}</div>
+          <div class="pc-gwi-desc">${gLabel}</div>
+        </div>
+        ${zoo.mission.statement ? '<div class="pc-mission-text">"' + zoo.mission.statement + '"</div>' : ''}
+      </div>
+
+      <div class="pc-themes">
+        <div class="pc-theme-col">
+          <div class="pc-section-title">Domestic Giving Focus</div>
+          ${domThemes}
+          ${animalsHTML ? '<div style="margin-top:10px;">' + animalsHTML + '</div>' : ''}
+        </div>
+        <div class="pc-theme-col">
+          <div class="pc-section-title">International Giving &amp; Countries</div>
+          ${intlThemes}
+        </div>
+      </div>
+    `;
+  }
+
+  // ── Zoom button wiring ──────────────────────────────────────────────────
+  document.getElementById('zoom-out').addEventListener('click', e => { e.stopPropagation(); adjustZoom(-0.05); });
+  document.getElementById('zoom-in').addEventListener('click',  e => { e.stopPropagation(); adjustZoom(+0.05); });
+
+  // ── Search panel logic ────────────────────────────────────────────────────
+  const searchPanel = document.getElementById('search-panel');
+  const searchInput = document.getElementById('search-input');
+  const searchResults = document.getElementById('search-results');
+  const profileOverlay = document.getElementById('profile-overlay');
+  const profileCard = document.getElementById('profile-card');
+  let searchOpen = false;
+
+  function openSearch() {
+    searchOpen = true;
+    searchPanel.classList.add('open');
+    searchInput.focus();
+    renderSearchResults('');
+  }
+
+  function closeSearch() {
+    searchOpen = false;
+    searchPanel.classList.remove('open');
+    searchInput.value = '';
+    searchResults.innerHTML = '';
+  }
+
+  function renderSearchResults(q) {
+    const term = q.trim().toLowerCase();
+    const matches = term
+      ? zoos.filter(z =>
+          z.name.toLowerCase().includes(term) ||
+          z.state.toLowerCase().includes(term) ||
+          z.city.toLowerCase().includes(term) ||
+          z.state_abbr.toLowerCase().includes(term)
+        ).slice(0, 12)
+      : zoos.slice().sort((a, b) => b.rev.avg - a.rev.avg).slice(0, 12);
+
+    if (matches.length === 0) {
+      searchResults.innerHTML = '<div class="sr-empty">No zoos found</div>';
+      return;
+    }
+
+    searchResults.innerHTML = matches.map(z => {
+      const gc = gwiColor(z.mission.gwi);
+      return `<div class="sr-item" data-id="${z.id}">
+        <div>
+          <div class="sr-name">${z.name}</div>
+          <div class="sr-sub">${z.city}, ${z.state} &nbsp;·&nbsp; Rev: ${fmt$(z.rev.avg)}</div>
+        </div>
+        <span class="sr-gwi" style="background:${gc.bg};color:${gc.text}">GWI ${z.mission.gwi > 0 ? '+' : ''}${z.mission.gwi}</span>
+      </div>`;
+    }).join('');
+
+    // Click handlers
+    searchResults.querySelectorAll('.sr-item').forEach(el => {
+      el.addEventListener('click', () => {
+        const zoo = zoos.find(z => z.id === el.dataset.id);
+        if (zoo) openProfile(zoo);
+      });
+    });
+  }
+
+  function openProfile(zoo) {
+    closeSearch();
+    profileCard.innerHTML = renderProfile(zoo);
+    profileOverlay.classList.add('open');
+    // Close button
+    document.getElementById('pc-close-btn').addEventListener('click', closeProfile);
+  }
+
+  function closeProfile() {
+    profileOverlay.classList.remove('open');
+  }
+
+  document.getElementById('btn-search').addEventListener('click', () => {
+    searchOpen ? closeSearch() : openSearch();
+  });
+
+  searchInput.addEventListener('input', e => renderSearchResults(e.target.value));
+
+  // Close search on outside click
+  document.addEventListener('click', e => {
+    if (searchOpen
+      && !searchPanel.contains(e.target)
+      && e.target.id !== 'btn-search'
+      && !e.target.closest('#btn-search')) {
+      closeSearch();
+    }
+    if (profileOverlay.classList.contains('open')
+      && e.target === profileOverlay) {
+      closeProfile();
+    }
+  });
+
+  // Keyboard: S to open search, Escape also closes profile
+  const _origKeydown = document.onkeydown;
+  document.addEventListener('keydown', e => {
+    if (e.target.tagName === 'INPUT') return;
+    if ((e.key === 's' || e.key === 'S') && !searchOpen) {
+      openSearch();
+    }
+    if (e.key === 'Escape') {
+      if (profileOverlay.classList.contains('open')) { closeProfile(); return; }
+      if (searchOpen) { closeSearch(); return; }
+    }
+  });
+
+</script>
+</body>
+</html>

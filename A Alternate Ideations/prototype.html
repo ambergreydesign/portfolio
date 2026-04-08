@@ -1,0 +1,1081 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Portfolio Landscape — Prototype</title>
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bg: #f4f1ec;
+  --surface: #ece8e1;
+  --text: #27241f;
+  --muted: #7d7870;
+  --border: #d6cfc5;
+
+  --sense-bg:  #cfd9d2;
+  --sys-bg:    #d4d0e6;
+  --exp-bg:    #e4d9cb;
+  --inter-bg:  #ccd8e3;
+  --persp-bg:  #e3ddd4;
+
+  --ease: cubic-bezier(.25,.46,.45,.94);
+}
+
+body {
+  font-family: 'Georgia', 'Times New Roman', serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  overflow: hidden;
+}
+
+/* ── PAGES ── */
+.page {
+  position: fixed;
+  inset: 0;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 380ms var(--ease);
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+.page.active {
+  opacity: 1;
+  pointer-events: all;
+}
+
+/* ── SHARED HEADER ── */
+.bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20px 40px;
+}
+.bar-logo {
+  font-size: 12px;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+.back-btn {
+  font-family: inherit;
+  font-size: 12px;
+  letter-spacing: .07em;
+  background: none;
+  border: 1px solid var(--border);
+  color: var(--muted);
+  padding: 5px 14px;
+  cursor: pointer;
+  transition: color 160ms, border-color 160ms;
+}
+.back-btn:hover { color: var(--text); border-color: var(--text); }
+
+/* ═══════════════════════════════════
+   LEVEL 1 — LANDSCAPE
+   ═══════════════════════════════════ */
+#landscape {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+}
+
+.l1-head {
+  padding: 28px 48px 10px;
+  text-align: center;
+}
+.l1-head h1 {
+  font-size: 18px;
+  font-weight: normal;
+  letter-spacing: .06em;
+  color: var(--muted);
+}
+.l1-head p {
+  font-size: 12px;
+  color: var(--muted);
+  margin-top: 5px;
+  letter-spacing: .04em;
+  opacity: .7;
+}
+
+.grid {
+  flex: 1;
+  display: grid;
+  grid-template-columns: 2.1fr 1.4fr 1.3fr;
+  grid-template-rows:    1.5fr 1fr  1.2fr;
+  grid-template-areas:
+    "sense sense sys"
+    "sense sense inter"
+    "exp   persp inter";
+  gap: 9px;
+  padding: 12px 36px 36px;
+}
+
+.zone {
+  border-radius: 3px;
+  padding: 24px 28px;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  transition: transform 200ms var(--ease), box-shadow 200ms var(--ease);
+}
+.zone:hover {
+  transform: scale(1.013);
+  box-shadow: 0 6px 28px rgba(0,0,0,.09);
+}
+.zone[data-id=sensemaking] { grid-area: sense; background: var(--sense-bg); }
+.zone[data-id=systems]     { grid-area: sys;   background: var(--sys-bg); }
+.zone[data-id=interaction] { grid-area: inter; background: var(--inter-bg); }
+.zone[data-id=experiments] { grid-area: exp;   background: var(--exp-bg); }
+.zone[data-id=perspective] { grid-area: persp; background: var(--persp-bg); }
+
+.zone-num {
+  font-size: 10px;
+  letter-spacing: .13em;
+  text-transform: uppercase;
+  color: rgba(39,36,31,.35);
+  margin-bottom: 7px;
+}
+.zone-name {
+  font-size: 19px;
+  font-weight: normal;
+  margin-bottom: 5px;
+}
+.zone-tag {
+  font-size: 12px;
+  color: var(--muted);
+  line-height: 1.5;
+  max-width: 240px;
+}
+.zone-hint {
+  position: absolute;
+  top: 20px;
+  right: 22px;
+  font-size: 16px;
+  color: var(--muted);
+  opacity: 0;
+  transform: translate(-3px, 3px);
+  transition: opacity 180ms, transform 180ms;
+}
+.zone:hover .zone-hint { opacity: 1; transform: translate(0,0); }
+
+/* ═══════════════════════════════════
+   LEVEL 2 — SECTION
+   ═══════════════════════════════════ */
+#section-view { min-height: 100vh; }
+
+.s2-head {
+  padding: 36px 52px 24px;
+  max-width: 640px;
+}
+.s2-eyebrow {
+  font-size: 11px;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 11px;
+}
+.s2-title {
+  font-size: 30px;
+  font-weight: normal;
+  margin-bottom: 10px;
+}
+.s2-desc {
+  font-size: 14px;
+  color: var(--muted);
+  line-height: 1.75;
+}
+
+.s2-items {
+  padding: 4px 52px 56px;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px;
+  max-width: 860px;
+}
+
+.item-card {
+  background: #fff;
+  border: 1px solid var(--border);
+  border-radius: 3px;
+  padding: 22px 26px;
+  cursor: pointer;
+  transition: border-color 160ms, transform 160ms, box-shadow 160ms;
+}
+.item-card:hover {
+  border-color: var(--muted);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 18px rgba(0,0,0,.06);
+}
+.ic-title { font-size: 15px; margin-bottom: 7px; }
+.ic-desc  { font-size: 12px; color: var(--muted); line-height: 1.6; }
+.ic-badge {
+  display: inline-block;
+  margin-top: 13px;
+  font-size: 10px;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  color: var(--muted);
+  border-bottom: 1px solid var(--border);
+  padding-bottom: 2px;
+}
+
+/* ═══════════════════════════════════
+   LEVEL 3 — EXPERIENCE PANEL
+   ═══════════════════════════════════ */
+.overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(39,36,31,.38);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 320ms;
+  z-index: 100;
+}
+.overlay.on { opacity: 1; pointer-events: all; }
+
+.panel {
+  position: fixed;
+  right: 0; top: 0; bottom: 0;
+  width: min(660px, 93vw);
+  background: var(--bg);
+  z-index: 101;
+  transform: translateX(100%);
+  transition: transform 400ms var(--ease);
+  overflow-y: auto;
+  padding: 36px 40px;
+}
+.panel.on { transform: translateX(0); }
+
+.panel-x {
+  font-family: inherit;
+  font-size: 22px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--muted);
+  padding: 0;
+  margin-bottom: 28px;
+  display: block;
+  transition: color 150ms;
+}
+.panel-x:hover { color: var(--text); }
+
+.p-eyebrow {
+  font-size: 11px;
+  letter-spacing: .11em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 9px;
+}
+.p-title {
+  font-size: 22px;
+  font-weight: normal;
+  margin-bottom: 11px;
+  line-height: 1.3;
+}
+.p-context {
+  font-size: 13px;
+  color: var(--muted);
+  line-height: 1.8;
+  margin-bottom: 24px;
+  max-width: 500px;
+}
+.p-interact {
+  background: #fff;
+  border: 1px solid var(--border);
+  border-radius: 3px;
+  padding: 22px;
+  margin-bottom: 22px;
+  min-height: 210px;
+}
+
+.transform-block {
+  border-top: 1px solid var(--border);
+  padding-top: 18px;
+  margin-bottom: 22px;
+}
+.transform-label {
+  font-size: 10px;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 10px;
+}
+.transform-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  font-size: 12px;
+  line-height: 1.65;
+}
+.t-before {
+  flex: 1;
+  padding: 9px 13px;
+  background: var(--surface);
+  border-radius: 2px;
+  color: var(--muted);
+}
+.t-arrow { color: var(--muted); font-size: 14px; margin-top: 9px; }
+.t-after {
+  flex: 1;
+  padding: 9px 13px;
+  background: #fff;
+  border: 1px solid var(--border);
+  border-radius: 2px;
+}
+
+.view-btn {
+  font-family: inherit;
+  font-size: 12px;
+  letter-spacing: .06em;
+  background: var(--text);
+  color: var(--bg);
+  border: none;
+  padding: 11px 26px;
+  cursor: pointer;
+  border-radius: 2px;
+  transition: opacity 160ms;
+}
+.view-btn:hover { opacity: .78; }
+
+/* ═══════════════════════════════════
+   MOCK INTERACTION — ZOO MAP
+   ═══════════════════════════════════ */
+.zoo-toggle {
+  display: flex;
+  margin-bottom: 14px;
+}
+.zoo-toggle button {
+  font-family: inherit;
+  font-size: 11px;
+  letter-spacing: .05em;
+  padding: 5px 13px;
+  cursor: pointer;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  color: var(--muted);
+  transition: all 140ms;
+}
+.zoo-toggle button:first-child { border-radius: 2px 0 0 2px; }
+.zoo-toggle button:last-child  { border-radius: 0 2px 2px 0; border-left: none; }
+.zoo-toggle button.on { background: var(--text); color: var(--bg); border-color: var(--text); }
+
+#zoo-stage {
+  position: relative;
+  height: 158px;
+}
+#zoo-stage svg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+.zn {
+  position: absolute;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  font-size: 9px;
+  line-height: 1.3;
+  cursor: pointer;
+  white-space: pre-line;
+  border: 2px solid transparent;
+  transition: transform 160ms, border-color 160ms;
+}
+.zn:hover { transform: scale(1.12); }
+.zn.lit   { border-color: var(--text); }
+
+/* ═══════════════════════════════════
+   MOCK INTERACTION — GPT PANEL
+   ═══════════════════════════════════ */
+.gpt-wrap {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  height: 100%;
+  min-height: 168px;
+}
+.gpt-col { display: flex; flex-direction: column; gap: 7px; }
+.gpt-lbl {
+  font-size: 10px;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+.gpt-transcript {
+  flex: 1;
+  background: var(--surface);
+  border-radius: 2px;
+  padding: 10px 12px;
+  font-size: 11px;
+  line-height: 1.75;
+  color: var(--muted);
+  font-style: italic;
+}
+.gpt-output-area {
+  flex: 1;
+  background: #fff;
+  border: 1px solid var(--border);
+  border-radius: 2px;
+  padding: 10px 12px;
+  min-height: 100px;
+  font-size: 11px;
+}
+.gpt-hint {
+  color: var(--muted);
+  font-style: italic;
+  font-size: 11px;
+}
+.insight-row {
+  padding: 5px 0;
+  border-bottom: 1px solid var(--surface);
+  color: var(--text);
+  opacity: 0;
+  transform: translateY(5px);
+  transition: opacity 260ms, transform 260ms;
+  display: flex;
+  gap: 6px;
+  align-items: baseline;
+  font-style: normal;
+}
+.insight-row.vis { opacity: 1; transform: translateY(0); }
+.insight-tag {
+  font-size: 9px;
+  text-transform: uppercase;
+  letter-spacing: .08em;
+  color: var(--muted);
+  white-space: nowrap;
+}
+.analyze-btn {
+  font-family: inherit;
+  font-size: 11px;
+  letter-spacing: .05em;
+  background: var(--text);
+  color: var(--bg);
+  border: none;
+  padding: 6px 16px;
+  cursor: pointer;
+  border-radius: 2px;
+  align-self: flex-end;
+  transition: opacity 140ms;
+}
+.analyze-btn:hover  { opacity: .8; }
+.analyze-btn:disabled { opacity: .35; cursor: default; }
+
+/* ═══════════════════════════════════
+   MOCK INTERACTION — CONTRADICTION
+   ═══════════════════════════════════ */
+.contra-row {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 12px;
+}
+.contra-switch {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 11px;
+  cursor: pointer;
+  color: var(--muted);
+  user-select: none;
+}
+.contra-switch input { display: none; }
+.sw-track {
+  width: 30px;
+  height: 17px;
+  border-radius: 9px;
+  background: var(--border);
+  position: relative;
+  transition: background 200ms;
+}
+.sw-track::after {
+  content: '';
+  position: absolute;
+  top: 3px; left: 3px;
+  width: 11px; height: 11px;
+  border-radius: 50%;
+  background: #fff;
+  transition: transform 200ms;
+}
+.contra-switch.on .sw-track { background: #7d7870; }
+.contra-switch.on .sw-track::after { transform: translateX(13px); }
+
+.surface-box {
+  padding: 14px;
+  background: var(--surface);
+  border-radius: 3px;
+}
+.surface-box .slbl {
+  font-size: 9px;
+  text-transform: uppercase;
+  letter-spacing: .1em;
+  color: var(--muted);
+  margin-bottom: 7px;
+}
+.surface-box .stxt {
+  font-size: 13px;
+  line-height: 1.65;
+  font-style: italic;
+}
+
+.tension-layer {
+  overflow: hidden;
+  max-height: 0;
+  opacity: 0;
+  transition: max-height 420ms var(--ease), opacity 380ms;
+  margin-top: 8px;
+}
+.tension-layer.open { max-height: 260px; opacity: 1; }
+
+.tension-item {
+  display: flex;
+  gap: 9px;
+  padding: 9px 13px;
+  margin-bottom: 5px;
+  background: #fff;
+  border: 1px solid var(--border);
+  border-left: 3px solid #b8a870;
+  border-radius: 0 2px 2px 0;
+  font-size: 12px;
+  line-height: 1.6;
+}
+.ti-lbl {
+  font-size: 9px;
+  text-transform: uppercase;
+  letter-spacing: .08em;
+  color: #b8a870;
+  white-space: nowrap;
+  margin-top: 1px;
+}
+
+/* placeholder */
+.placeholder-zone {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  min-height: 130px;
+  color: var(--muted);
+  font-size: 12px;
+  font-style: italic;
+  text-align: center;
+  line-height: 1.7;
+}
+
+/* ── RESPONSIVE ── */
+@media (max-width: 680px) {
+  .grid {
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: auto;
+    grid-template-areas:
+      "sense sense"
+      "sys   inter"
+      "exp   exp"
+      "persp persp";
+    height: auto;
+    min-height: calc(100vh - 90px);
+  }
+  .s2-items { grid-template-columns: 1fr; padding: 4px 24px 48px; }
+  .s2-head  { padding: 28px 24px 18px; }
+  .panel    { padding: 28px 22px; }
+  .gpt-wrap { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+
+<!-- ══ LEVEL 1: LANDSCAPE ══ -->
+<div class="page active" id="landscape">
+  <div class="l1-head">
+    <h1>Portfolio Landscape</h1>
+    <p>Select a territory to enter</p>
+  </div>
+  <div class="grid">
+    <div class="zone" data-id="sensemaking">
+      <div class="zone-hint">↗</div>
+      <div class="zone-num">01</div>
+      <div class="zone-name">Sensemaking</div>
+      <div class="zone-tag">Uncovering patterns in messy human behavior</div>
+    </div>
+    <div class="zone" data-id="systems">
+      <div class="zone-hint">↗</div>
+      <div class="zone-num">02</div>
+      <div class="zone-name">Systems</div>
+      <div class="zone-tag">Making complexity usable</div>
+    </div>
+    <div class="zone" data-id="interaction">
+      <div class="zone-hint">↗</div>
+      <div class="zone-num">04</div>
+      <div class="zone-name">Interaction</div>
+      <div class="zone-tag">Shaping how people engage</div>
+    </div>
+    <div class="zone" data-id="experiments">
+      <div class="zone-hint">↗</div>
+      <div class="zone-num">03</div>
+      <div class="zone-name">Experiments</div>
+      <div class="zone-tag">Testing ideas in the real world</div>
+    </div>
+    <div class="zone" data-id="perspective">
+      <div class="zone-hint">↗</div>
+      <div class="zone-num">05</div>
+      <div class="zone-name">Perspective</div>
+      <div class="zone-tag">How I see and question systems</div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ LEVEL 2: SECTION ══ -->
+<div class="page" id="section-view">
+  <div class="bar">
+    <span class="bar-logo">Portfolio</span>
+    <button class="back-btn" id="back-to-l1">← Landscape</button>
+  </div>
+  <div class="s2-head">
+    <div class="s2-eyebrow" id="s2-eyebrow"></div>
+    <h2 class="s2-title"  id="s2-title"></h2>
+    <p  class="s2-desc"   id="s2-desc"></p>
+  </div>
+  <div class="s2-items" id="s2-items"></div>
+</div>
+
+<!-- ══ LEVEL 3: EXPERIENCE PANEL ══ -->
+<div class="overlay" id="overlay"></div>
+<div class="panel"   id="panel">
+  <button class="panel-x" id="panel-x">×</button>
+  <div class="p-eyebrow" id="p-eyebrow"></div>
+  <h3  class="p-title"   id="p-title"></h3>
+  <p   class="p-context" id="p-context"></p>
+  <div class="p-interact" id="p-interact"></div>
+  <div class="transform-block">
+    <div class="transform-label">Transformation</div>
+    <div class="transform-row">
+      <div class="t-before" id="t-before"></div>
+      <div class="t-arrow">→</div>
+      <div class="t-after"  id="t-after"></div>
+    </div>
+  </div>
+  <button class="view-btn">View full project</button>
+</div>
+
+<script>
+/* ═══════════════════════════════════
+   DATA
+   ═══════════════════════════════════ */
+const DATA = {
+  sensemaking: {
+    title: "Sensemaking",
+    desc: "Uncovering patterns in messy human behavior — translating observation, signal, and noise into something actionable.",
+    items: [
+      { id:"zoo-econ", title:"Zoo Economy Map",
+        desc:"Visualizing how money flows through conservation systems",
+        badge:"System Mapping", interact:"zoo",
+        ctx:"Conservation zoos occupy a paradox: publicly positioned as wildlife protectors, operationally dependent on entertainment revenue. This project made that tension navigable.",
+        before:"A complex, opaque financial ecosystem with no clear entry point",
+        after:"A legible flow map revealing where stated mission and actual money diverge" },
+      { id:"dissonance", title:"Dissonance as Signal",
+        desc:"Turning emotional tension into insight",
+        badge:"Research Method", interact:"none",
+        ctx:"When a research participant contradicts themselves, most analysts flag it as noise. This framework treats it as the most important data point.",
+        before:"Participant contradiction treated as an interview flaw",
+        after:"Contradiction reframed as a direct signal about unmet needs or systemic pressure" },
+      { id:"field-synth", title:"Field Observation Synthesis",
+        desc:"From raw notes to structured patterns",
+        badge:"Analysis", interact:"none",
+        ctx:"A methodology for converting unstructured field notes — collected across different contexts, observers, and moments — into coherent pattern maps.",
+        before:"Hundreds of fragmented observations with no organizing structure",
+        after:"A tiered pattern framework that preserves context while enabling comparison" },
+      { id:"survey-sig", title:"Survey Signal Extraction",
+        desc:"Finding meaning in perception and trust data",
+        badge:"Data Analysis", interact:"none",
+        ctx:"Surveys often measure what people are willing to say, not what they believe. This approach isolates the gap between expressed perception and behavioral signal.",
+        before:"Survey responses read as straightforward self-report",
+        after:"Response patterns decoded as proxies for trust, ambiguity, and systemic friction" }
+    ]
+  },
+  systems: {
+    title: "Systems",
+    desc: "Making complexity usable — building structures that help people navigate what would otherwise be overwhelming.",
+    items: [
+      { id:"research-gpt", title:"Research Analyst GPT",
+        desc:"Turning transcripts into structured insight systems",
+        badge:"Tool Design", interact:"gpt",
+        ctx:"Qualitative research produces enormous amounts of raw text. This tool transforms interview transcripts into structured, searchable, comparative insight — without losing human texture.",
+        before:"Hours of transcript content with no searchable structure",
+        after:"A layered insight system where themes, tensions, and quotes are immediately navigable" },
+      { id:"irx", title:"Interaction Record Framework",
+        desc:"Standardizing qualitative analysis",
+        badge:"Framework", interact:"none",
+        ctx:"When multiple researchers analyze the same data, results diverge unpredictably. This framework standardizes how observations are recorded without forcing false consensus.",
+        before:"Inconsistent field logs across a research team",
+        after:"A shared record structure that allows comparison without collapsing nuance" },
+      { id:"blv", title:"BLV Ecosystem Map",
+        desc:"Making invisible user groups visible",
+        badge:"Ecosystem Mapping", interact:"none",
+        ctx:"Blind and low-vision users navigate digital ecosystems that were never designed with their actual behaviors in mind. This map made those behaviors — and gaps — visible to a product team.",
+        before:"BLV user behavior described in abstraction and stereotype",
+        after:"A behavioral ecosystem map that grounded design decisions in observed reality" },
+      { id:"adl", title:"ADL Breakdown System",
+        desc:"Translating daily life into actionable categories",
+        badge:"Taxonomy Design", interact:"none",
+        ctx:"Activities of Daily Living are typically catalogued in clinical terms. This system translated them into experiential categories — the way people actually think about their days.",
+        before:"Clinical ADL categories misaligned with how users experience daily limitation",
+        after:"An experiential taxonomy that bridges clinical language and lived reality" }
+    ]
+  },
+  experiments: {
+    title: "Experiments",
+    desc: "Testing ideas in the real world — low-cost interventions that reveal unexpected truths about behavior and context.",
+    items: [
+      { id:"dry-erase", title:"Dry Erase Marker Intervention",
+        desc:"Small change, massive engagement shift",
+        badge:"Field Experiment", interact:"none",
+        ctx:"A single design decision — giving visitors a dry-erase marker — fundamentally changed how they interacted with a zoo exhibit. This documents the intervention and what it revealed.",
+        before:"Passive observation behavior at a static exhibit",
+        after:"Active, comparative, discussion-generating engagement from a single tactile addition" },
+      { id:"zootique", title:"Zoo-tique Concepts",
+        desc:"Reimagining conservation through experience",
+        badge:"Concept Design", interact:"none",
+        ctx:"What if zoo merchandise was designed to extend conservation behavior beyond the visit? These concept experiments tested the boundaries of where mission can live.",
+        before:"Gift shop as revenue mechanism disconnected from conservation identity",
+        after:"A concept space where merchandise becomes an extension of the conservation promise" },
+      { id:"dotcalm", title:"dotCALM",
+        desc:"Haptic feedback for emotional regulation",
+        badge:"Interaction Experiment", interact:"none",
+        ctx:"A wearable prototype exploring whether subtle tactile feedback can interrupt anxiety spirals before conscious awareness kicks in. Designed for people who dissociate during stress.",
+        before:"Emotional regulation relying entirely on cognitive intervention after the fact",
+        after:"A sensory trigger that operates below the anxiety threshold, offering earlier interruption" },
+      { id:"prompt-trials", title:"Prompt Engineering Trials",
+        desc:"Exploring how inputs shape outcomes",
+        badge:"AI Research", interact:"none",
+        ctx:"A structured exploration of how framing, role assignment, and sequencing in prompts changes AI outputs — not just in quality but in the type of thinking produced.",
+        before:"Prompt writing as intuitive guesswork",
+        after:"A documented framework for prompt structure that predicts output behavior" }
+    ]
+  },
+  interaction: {
+    title: "Interaction",
+    desc: "Shaping how people engage — designing the moment of contact between a person and a system, idea, or experience.",
+    items: [
+      { id:"zoo-interactive", title:"Zoo Economy Interactive Map",
+        desc:"Explorable system, not static diagram",
+        badge:"Interactive Design", interact:"none",
+        ctx:"The same data as the Zoo Economy Map, but designed for a user who needs to find their own entry point. Interaction replaces argument.",
+        before:"A conclusion presented as a diagram",
+        after:"An explorable system where the conclusion is something the user discovers" },
+      { id:"daily-labs", title:"Daily Living Labs Interface",
+        desc:"ADL as interactive entry points",
+        badge:"Interface Design", interact:"none",
+        ctx:"A prototype interface that turns ADL assessments into navigable, self-directed entry points instead of forms to fill out.",
+        before:"A linear assessment form that positions the user as a subject",
+        after:"An interactive interface that positions the user as the expert on their own life" },
+      { id:"contra-mode", title:"Contradiction Mode",
+        desc:"Reveal hidden system tension through interaction",
+        badge:"Concept Prototype", interact:"contradiction",
+        ctx:"A design interaction pattern where a polished surface statement can be toggled to reveal what sits underneath — the tension, the assumption, the thing not being said.",
+        before:"Design presentations that smooth over tension to appear coherent",
+        after:"A mode that makes the unresolved visible — and treats it as information, not failure" },
+      { id:"portfolio-sys", title:"Portfolio Playground System",
+        desc:"Designing navigation as experience",
+        badge:"Meta-Design", interact:"none",
+        ctx:"This portfolio itself is a design experiment. The navigation you are using right now is the prototype being tested. You are inside the work.",
+        before:"A portfolio as a project archive",
+        after:"A portfolio as a navigable experience that demonstrates a way of thinking, not just outputs" }
+    ]
+  },
+  perspective: {
+    title: "Perspective",
+    desc: "How I see and question systems — the frameworks and lenses that shape every piece of work I do.",
+    items: [
+      { id:"dissonance-design", title:"Designing with Dissonance",
+        desc:"Discomfort as a design signal",
+        badge:"Design Philosophy", interact:"none",
+        ctx:"Most design processes try to resolve tension quickly. This perspective argues that dissonance — when held carefully — is where the most honest insight lives.",
+        before:"Tension treated as a problem to eliminate",
+        after:"Tension reframed as a diagnostic signal worth following before resolving" },
+      { id:"rewilded", title:"Rewilded Thesis",
+        desc:"Non-anthropocentric design approach",
+        badge:"Thesis Research", interact:"none",
+        ctx:"A graduate research project that asked: what would conservation design look like if humans were not assumed to be the primary stakeholder?",
+        before:"Conservation design optimized for human legibility and emotional comfort",
+        after:"A design framework centered on ecological function, with human experience as one layer among many" },
+      { id:"transparency", title:"Transparency Matrix",
+        desc:"Trust, visibility, and perception",
+        badge:"Framework", interact:"none",
+        ctx:"A tool for auditing how much of a system's actual behavior is visible to its users — and whether visibility and trust are being conflated when they shouldn't be.",
+        before:"Transparency used as a synonym for trustworthiness",
+        after:"A matrix that separates what is visible, what is legible, and what is actually trusted" },
+      { id:"field-notes", title:"Field Notes Practice",
+        desc:"Observation as a way of thinking",
+        badge:"Method", interact:"none",
+        ctx:"A reflective practice built over years of fieldwork. The belief that careful noticing is its own form of analysis.",
+        before:"Field notes as data collection waiting to be processed later",
+        after:"Field notes as active thinking — where the act of writing is already the beginning of insight" }
+    ]
+  }
+};
+
+const SECTION_NUMS = { sensemaking:"01", systems:"02", experiments:"03", interaction:"04", perspective:"05" };
+
+/* ═══════════════════════════════════
+   NAVIGATION
+   ═══════════════════════════════════ */
+function showPage(id) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+}
+
+function openSection(key) {
+  const d = DATA[key];
+  document.getElementById('s2-eyebrow').textContent = `${SECTION_NUMS[key]} / ${key.toUpperCase()}`;
+  document.getElementById('s2-title').textContent   = d.title;
+  document.getElementById('s2-desc').textContent    = d.desc;
+
+  const container = document.getElementById('s2-items');
+  container.innerHTML = '';
+  d.items.forEach(item => {
+    const card = document.createElement('div');
+    card.className = 'item-card';
+    card.innerHTML = `
+      <div class="ic-title">${item.title}</div>
+      <div class="ic-desc">${item.desc}</div>
+      <span class="ic-badge">${item.badge}</span>`;
+    card.addEventListener('click', () => openPanel(key, item.id));
+    container.appendChild(card);
+  });
+
+  showPage('section-view');
+}
+
+function openPanel(sectionKey, itemId) {
+  const item = DATA[sectionKey].items.find(i => i.id === itemId);
+  const section = DATA[sectionKey];
+
+  document.getElementById('p-eyebrow').textContent  = `${section.title}  /  ${item.badge}`;
+  document.getElementById('p-title').textContent    = item.title;
+  document.getElementById('p-context').textContent  = item.ctx;
+  document.getElementById('t-before').textContent   = item.before;
+  document.getElementById('t-after').textContent    = item.after;
+
+  const el = document.getElementById('p-interact');
+  el.innerHTML = buildInteract(item);
+
+  if (item.interact === 'zoo')         initZoo();
+  if (item.interact === 'gpt')         { /* ready on render */ }
+  if (item.interact === 'contradiction') { /* ready on render */ }
+
+  document.getElementById('overlay').classList.add('on');
+  document.getElementById('panel').classList.add('on');
+  // reset scroll
+  document.getElementById('panel').scrollTop = 0;
+}
+
+function closePanel() {
+  document.getElementById('overlay').classList.remove('on');
+  document.getElementById('panel').classList.remove('on');
+}
+
+/* ═══════════════════════════════════
+   INTERACTION BUILDERS
+   ═══════════════════════════════════ */
+function buildInteract(item) {
+  if (item.interact === 'zoo')          return buildZoo();
+  if (item.interact === 'gpt')          return buildGPT();
+  if (item.interact === 'contradiction') return buildContradiction();
+  return `<div class="placeholder-zone">
+    Interactive prototype for<br><em>${item.title}</em><br>would appear here</div>`;
+}
+
+/* ── ZOO MAP ── */
+const MODES = {
+  official: {
+    nodes: [
+      { id:'mission',  px:.50, py:.12, r:30, bg:'#cfd9d2', lbl:'Conservation\nMission' },
+      { id:'edu',      px:.18, py:.58, r:24, bg:'#cfd9d2', lbl:'Education' },
+      { id:'research', px:.78, py:.42, r:22, bg:'#cfd9d2', lbl:'Research' },
+      { id:'breed',    px:.55, py:.80, r:24, bg:'#cfd9d2', lbl:'Breeding\nPrograms' },
+      { id:'visitors', px:.25, py:.22, r:18, bg:'#e3ddd4', lbl:'Visitors' },
+    ],
+    links:[['visitors','mission'],['mission','edu'],['mission','research'],['mission','breed']]
+  },
+  money: {
+    nodes: [
+      { id:'tickets', px:.22, py:.15, r:30, bg:'#e4d9cb', lbl:'Ticket\nRevenue' },
+      { id:'food',    px:.74, py:.20, r:26, bg:'#e4d9cb', lbl:'Food &\nMerch' },
+      { id:'ops',     px:.48, py:.50, r:28, bg:'#d4d0e6', lbl:'Operations\n& Staff' },
+      { id:'cons',    px:.20, py:.82, r:16, bg:'#cfd9d2', lbl:'Conservation\n~3–5%' },
+      { id:'capital', px:.76, py:.78, r:20, bg:'#d4d0e6', lbl:'Capital\nProjects' },
+    ],
+    links:[['tickets','ops'],['food','ops'],['ops','cons'],['ops','capital']]
+  }
+};
+
+let zMode = 'official';
+
+function buildZoo() {
+  return `
+    <div class="zoo-toggle">
+      <button class="on" data-zmode="official" onclick="zToggle('official')">What Zoos Say</button>
+      <button data-zmode="money" onclick="zToggle('money')">Where Money Goes</button>
+    </div>
+    <div id="zoo-stage"><svg id="zoo-svg"></svg></div>`;
+}
+
+function initZoo() { renderZoo('official'); }
+
+function zToggle(mode) {
+  zMode = mode;
+  document.querySelectorAll('.zoo-toggle button').forEach(b =>
+    b.classList.toggle('on', b.dataset.zmode === mode));
+  renderZoo(mode);
+}
+
+function renderZoo(mode) {
+  const stage = document.getElementById('zoo-stage');
+  const svg   = document.getElementById('zoo-svg');
+  if (!stage || !svg) return;
+
+  const W = stage.offsetWidth  || 320;
+  const H = stage.offsetHeight || 158;
+
+  // remove old nodes
+  stage.querySelectorAll('.zn').forEach(n => n.remove());
+  svg.innerHTML = '';
+
+  const mdata = MODES[mode];
+
+  // draw lines
+  mdata.links.forEach(([a,b]) => {
+    const na = mdata.nodes.find(n => n.id===a);
+    const nb = mdata.nodes.find(n => n.id===b);
+    const x1 = na.px*W, y1 = na.py*H, x2 = nb.px*W, y2 = nb.py*H;
+    const line = document.createElementNS('http://www.w3.org/2000/svg','line');
+    line.setAttribute('x1',x1); line.setAttribute('y1',y1);
+    line.setAttribute('x2',x2); line.setAttribute('y2',y2);
+    line.setAttribute('stroke','#c4bcb0');
+    line.setAttribute('stroke-width','1.5');
+    if (mode==='money') line.setAttribute('stroke-dasharray','4 3');
+    svg.appendChild(line);
+  });
+
+  // draw nodes
+  mdata.nodes.forEach(node => {
+    const el = document.createElement('div');
+    el.className = 'zn';
+    const d = node.r * 2;
+    el.style.cssText = `width:${d}px;height:${d}px;
+      left:${node.px*W - node.r}px;top:${node.py*H - node.r}px;
+      background:${node.bg};font-size:${node.r>24?10:9}px;`;
+    el.textContent = node.lbl;
+    el.addEventListener('click', () => el.classList.toggle('lit'));
+    stage.appendChild(el);
+  });
+}
+
+/* ── GPT PANEL ── */
+const INSIGHTS = [
+  { tag:'Behavior', text:'Daily active use despite unresolved trust' },
+  { tag:'Tension',  text:'Functional satisfaction ≠ psychological safety' },
+  { tag:'Signal',   text:'Ambient anxiety about potential failure' },
+  { tag:'Social',   text:'External comparison triggered by unresolved doubt' },
+];
+
+function buildGPT() {
+  return `
+    <div class="gpt-wrap">
+      <div class="gpt-col">
+        <div class="gpt-lbl">Transcript</div>
+        <div class="gpt-transcript">"I use the app every day but I don't really… I don't know if I trust it? It does what I want but I always feel like something could go wrong. It's fine, it works, but—"<br><br>"My neighbor uses a different one and says it's more reliable."</div>
+      </div>
+      <div class="gpt-col">
+        <div class="gpt-lbl">Structured Insight</div>
+        <div class="gpt-output-area" id="gpt-out"><div class="gpt-hint">Press Analyze to extract insights</div></div>
+        <button class="analyze-btn" id="analyze-btn" onclick="runAnalysis()">Analyze →</button>
+      </div>
+    </div>`;
+}
+
+function runAnalysis() {
+  const btn = document.getElementById('analyze-btn');
+  const out  = document.getElementById('gpt-out');
+  if (!btn||!out) return;
+  btn.disabled = true;
+  out.innerHTML = '';
+  INSIGHTS.forEach((ins, i) => {
+    const row = document.createElement('div');
+    row.className = 'insight-row';
+    row.innerHTML = `<span class="insight-tag">${ins.tag}</span>${ins.text}`;
+    out.appendChild(row);
+    setTimeout(() => row.classList.add('vis'), 180 + i * 200);
+  });
+}
+
+/* ── CONTRADICTION MODE ── */
+function buildContradiction() {
+  return `
+    <div>
+      <div class="contra-row">
+        <label class="contra-switch" id="contra-sw" onclick="toggleContra()">
+          <input type="checkbox" id="contra-check">
+          <span class="sw-track"></span>
+          <span>Contradiction Mode</span>
+        </label>
+      </div>
+      <div class="surface-box">
+        <div class="slbl">Surface Statement</div>
+        <div class="stxt">"Our zoo is committed to conservation. Every visit supports wildlife protection and funds critical research that saves endangered species."</div>
+      </div>
+      <div class="tension-layer" id="tension-layer">
+        <div class="tension-item">
+          <div class="ti-lbl">Gap</div>
+          <div>~3–5% of zoo revenue is allocated to direct conservation programs.</div>
+        </div>
+        <div class="tension-item">
+          <div class="ti-lbl">Assumption</div>
+          <div>"Every visit supports" implies a direct flow. The actual path goes through operations, entertainment, and capital projects first.</div>
+        </div>
+        <div class="tension-item">
+          <div class="ti-lbl">Signal</div>
+          <div>Visitors report high trust in zoo conservation claims despite having no access to financial transparency data.</div>
+        </div>
+      </div>
+    </div>`;
+}
+
+function toggleContra() {
+  // runs after click, so checkbox is already toggled
+  setTimeout(() => {
+    const sw    = document.getElementById('contra-sw');
+    const chk   = document.getElementById('contra-check');
+    const layer = document.getElementById('tension-layer');
+    if (!sw||!chk||!layer) return;
+    if (chk.checked) {
+      sw.classList.add('on');
+      layer.classList.add('open');
+    } else {
+      sw.classList.remove('on');
+      layer.classList.remove('open');
+    }
+  }, 0);
+}
+
+/* ═══════════════════════════════════
+   EVENT WIRING
+   ═══════════════════════════════════ */
+document.querySelectorAll('.zone').forEach(z =>
+  z.addEventListener('click', () => openSection(z.dataset.id)));
+
+document.getElementById('back-to-l1').addEventListener('click', () => showPage('landscape'));
+document.getElementById('panel-x').addEventListener('click',    closePanel);
+document.getElementById('overlay').addEventListener('click',    closePanel);
+</script>
+</body>
+</html>

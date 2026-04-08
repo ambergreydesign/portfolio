@@ -1,0 +1,475 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MaterGenesis — Concept Map Explorer</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,600;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bg: #0e0d12;
+  --text: #e0d6c8;
+  --text-muted: rgba(200, 185, 165, 0.5);
+  --pink: #eac6ce;
+  --amber: #dca25b;
+  --border: rgba(255, 255, 255, 0.06);
+  --ecology: #6b8f4a;
+  --ecology-dim: rgba(107, 143, 74, 0.12);
+  --religion: #7b5ea7;
+  --religion-dim: rgba(123, 94, 167, 0.12);
+  --art: #c47a2e;
+  --art-dim: rgba(196, 122, 46, 0.12);
+}
+
+html, body { height: 100%; }
+body {
+  font-family: 'DM Sans', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  overflow: hidden;
+}
+
+/* ── LAYOUT ── */
+.app { display: grid; grid-template-columns: 280px 1fr; height: 100vh; }
+
+/* ── SIDEBAR ── */
+.sidebar {
+  background: rgba(255,255,255,0.02);
+  border-right: 1px solid var(--border);
+  display: flex; flex-direction: column;
+  overflow: hidden;
+}
+.sidebar-header {
+  padding: 28px 24px 20px;
+  border-bottom: 1px solid var(--border);
+}
+.sidebar-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 22px; font-weight: 600;
+  color: var(--pink); margin-bottom: 6px;
+}
+.sidebar-sub {
+  font-size: 11px; font-weight: 400;
+  letter-spacing: 0.04em; color: var(--text-muted);
+}
+
+/* ── BRANCH TABS ── */
+.branch-tabs {
+  display: flex; gap: 0;
+  border-bottom: 1px solid var(--border);
+}
+.branch-tab {
+  flex: 1; padding: 12px 8px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 10px; font-weight: 500;
+  letter-spacing: 0.18em; text-transform: uppercase;
+  text-align: center; cursor: pointer;
+  background: none; border: none;
+  color: var(--text-muted);
+  border-bottom: 2px solid transparent;
+  transition: all 0.25s ease;
+}
+.branch-tab:hover { color: var(--text); }
+.branch-tab.active[data-branch="ecology"] { color: var(--ecology); border-bottom-color: var(--ecology); }
+.branch-tab.active[data-branch="religion"] { color: var(--religion); border-bottom-color: var(--religion); }
+.branch-tab.active[data-branch="art"] { color: var(--art); border-bottom-color: var(--art); }
+
+/* ── NODE LIST ── */
+.node-list {
+  flex: 1; overflow-y: auto;
+  padding: 12px 0;
+}
+.node-list::-webkit-scrollbar { width: 3px; }
+.node-list::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.08); border-radius: 4px; }
+
+.node-item {
+  display: flex; align-items: center; gap: 12px;
+  padding: 11px 24px;
+  cursor: pointer;
+  transition: background 0.2s ease;
+  position: relative;
+}
+.node-item:hover { background: rgba(255,255,255,0.03); }
+.node-item.active { background: rgba(255,255,255,0.05); }
+.node-item.active::before {
+  content: '';
+  position: absolute; left: 0; top: 0; bottom: 0;
+  width: 3px;
+}
+.node-item.active[data-branch="ecology"]::before { background: var(--ecology); }
+.node-item.active[data-branch="religion"]::before { background: var(--religion); }
+.node-item.active[data-branch="art"]::before { background: var(--art); }
+
+.node-dot {
+  width: 8px; height: 8px;
+  border-radius: 50%; flex-shrink: 0;
+  opacity: 0.6;
+}
+.node-dot.ecology { background: var(--ecology); }
+.node-dot.religion { background: var(--religion); }
+.node-dot.art { background: var(--art); }
+
+.node-name {
+  font-size: 13px; font-weight: 400;
+  letter-spacing: 0.02em; color: rgba(200,185,165,0.7);
+  transition: color 0.2s ease;
+}
+.node-item.active .node-name { color: var(--text); font-weight: 500; }
+
+/* ── MAIN PANEL ── */
+.main {
+  display: flex; flex-direction: column;
+  overflow-y: auto;
+  padding: 56px 64px;
+}
+.main::-webkit-scrollbar { width: 4px; }
+.main::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.06); border-radius: 4px; }
+
+/* ── EMPTY STATE ── */
+.empty-state {
+  flex: 1; display: flex;
+  align-items: center; justify-content: center;
+  flex-direction: column; gap: 16px;
+  text-align: center;
+}
+.empty-orb {
+  width: 80px; height: 80px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(196,122,46,0.15) 0%, transparent 70%);
+  border: 1px solid rgba(196,122,46,0.15);
+  margin-bottom: 8px;
+}
+.empty-text {
+  font-size: 14px; color: var(--text-muted);
+  letter-spacing: 0.02em;
+}
+.empty-hint {
+  font-size: 11px; color: rgba(200,185,165,0.3);
+  letter-spacing: 0.06em; text-transform: uppercase;
+}
+
+/* ── DETAIL VIEW ── */
+.detail { display: none; }
+.detail.visible { display: block; }
+
+.detail-kicker {
+  font-size: 9px; font-weight: 500;
+  letter-spacing: 0.28em; text-transform: uppercase;
+  margin-bottom: 14px;
+}
+.detail-kicker.ecology { color: var(--ecology); }
+.detail-kicker.religion { color: var(--religion); }
+.detail-kicker.art { color: var(--art); }
+
+.detail-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(28px, 3.5vw, 44px);
+  font-weight: 600; line-height: 1.1;
+  color: var(--pink); margin-bottom: 24px;
+}
+.detail-question {
+  font-size: 15px; font-weight: 400;
+  line-height: 1.85; letter-spacing: 0.03em;
+  color: rgba(200, 185, 165, 0.6);
+  max-width: 600px; margin-bottom: 36px;
+}
+
+/* ── PROMPT CARD ── */
+.prompt-card {
+  background: rgba(255,255,255,0.02);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 28px 32px;
+  margin-bottom: 28px;
+  max-width: 700px;
+}
+.prompt-label {
+  font-size: 9px; font-weight: 500;
+  letter-spacing: 0.22em; text-transform: uppercase;
+  color: var(--amber); margin-bottom: 12px;
+}
+.prompt-text {
+  font-size: 13px; font-weight: 400;
+  line-height: 1.78; color: rgba(200,185,165,0.65);
+  letter-spacing: 0.02em; font-style: italic;
+}
+
+/* ── RESPONSE CARD ── */
+.response-card {
+  background: rgba(255,255,255,0.015);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 28px 32px;
+  max-width: 700px;
+}
+.response-label {
+  font-size: 9px; font-weight: 500;
+  letter-spacing: 0.22em; text-transform: uppercase;
+  margin-bottom: 12px;
+}
+.response-label.ecology { color: var(--ecology); }
+.response-label.religion { color: var(--religion); }
+.response-label.art { color: var(--art); }
+.response-text {
+  font-size: 13px; font-weight: 400;
+  line-height: 1.78; color: rgba(200,185,165,0.55);
+  letter-spacing: 0.02em;
+}
+
+/* ── TAGS ── */
+.detail-tags {
+  display: flex; flex-wrap: wrap; gap: 8px;
+  margin-top: 24px;
+}
+.detail-tag {
+  font-size: 10px; font-weight: 500;
+  letter-spacing: 0.08em; text-transform: uppercase;
+  padding: 5px 12px; border-radius: 100px;
+}
+.detail-tag.ecology { background: var(--ecology-dim); color: var(--ecology); border: 1px solid rgba(107,143,74,0.25); }
+.detail-tag.religion { background: var(--religion-dim); color: var(--religion); border: 1px solid rgba(123,94,167,0.25); }
+.detail-tag.art { background: var(--art-dim); color: var(--art); border: 1px solid rgba(196,122,46,0.25); }
+
+/* ── MOBILE ── */
+@media (max-width: 768px) {
+  .app { grid-template-columns: 1fr; grid-template-rows: auto 1fr; }
+  .sidebar { max-height: 45vh; }
+  .main { padding: 32px 24px; }
+}
+</style>
+</head>
+<body>
+
+<div class="app">
+
+  <div class="sidebar">
+    <div class="sidebar-header">
+      <div class="sidebar-title">MaterGenesis</div>
+      <div class="sidebar-sub">Concept Map Explorer &mdash; Three domains of an imagined world</div>
+    </div>
+    <div class="branch-tabs">
+      <button class="branch-tab active" data-branch="ecology" onclick="filterBranch('ecology')">Ecology</button>
+      <button class="branch-tab" data-branch="religion" onclick="filterBranch('religion')">Religion</button>
+      <button class="branch-tab" data-branch="art" onclick="filterBranch('art')">Art</button>
+    </div>
+    <div class="node-list" id="node-list"></div>
+  </div>
+
+  <div class="main" id="main-panel">
+    <div class="empty-state" id="empty-state">
+      <div class="empty-orb"></div>
+      <div class="empty-text">Select a concept node to explore</div>
+      <div class="empty-hint">Trace the path from question to image</div>
+    </div>
+    <div class="detail" id="detail-view"></div>
+  </div>
+
+</div>
+
+<script>
+'use strict';
+
+const DATA = [
+  // ── ECOLOGY ──
+  {
+    id: 'eco-thrive',
+    branch: 'ecology',
+    title: 'Would Life Thrive?',
+    question: 'What are some ways in which ecology, ecological systems, and the diversity of life in ecosystems might look different in a matriarchal world?',
+    prompt: 'IMAGE: Nature Spirituality | STYLE: Enhanced Connection | MOOD: Environmental Responsibility | SCENE: An imagined world where women are revered as spiritual wisdom holders, emphasizing a deep connection to nature. The scene showcases nature spirituality, nature-based practices, and a strong integration of ecological awareness into daily life.',
+    response: 'In a matriarchal world, ecological systems would reflect a fundamentally different relationship with the natural world. Sustainability wouldn\'t be a movement — it would be the default. Environmental decision-making would integrate spiritual reverence for nature, and resource management would prioritize long-term ecosystem health over extraction.',
+    tags: ['Ecology', 'Sustainability', 'Systems']
+  },
+  {
+    id: 'eco-extinct',
+    branch: 'ecology',
+    title: 'The Extinction Timeline',
+    question: 'What species might still be on Earth in a matriarchal world or a world without patriarchy?',
+    prompt: 'IMAGE: Scene | STYLE: Realistic | SCENE: In an imagined world where women are equals in leadership, revered as life givers, and honored as the spiritual wisdom holders, capture the moment on a lush and pristine African savanna, when a young northern white rhino calf playfully interacts with its mother.',
+    response: 'Species currently functionally extinct — a term used by conservationists to describe species that still exist but in such small numbers they are doomed to die out — might still flourish. The northern white rhino, Yangtze River dolphin, golden toad, and Javan wildlife could thrive in habitats untouched by industrial exploitation.',
+    tags: ['Extinction', 'Conservation', 'Species']
+  },
+  {
+    id: 'eco-steward',
+    branch: 'ecology',
+    title: 'Ecosystem Stewardship',
+    question: 'How would resource management and environmental stewardship differ under matriarchal governance?',
+    prompt: 'IMAGE: Ecosystem Stewardship | STYLE: Traditional Practices | MOOD: Sustainable Harmony | SCENE: An imagined world where women are revered as spiritual wisdom holders and leaders. The scene emphasizes the prioritization of resource management, careful ecosystem stewardship for long-term health, and traditional ecological knowledge.',
+    response: 'Stewardship in this world integrates traditional ecological knowledge with governance. Sacred groves are protected by spiritual practice, not just legislation. Agriculture is local and community-based with reduced ecological footprints. Renewable energy and eco-friendly innovation are the economic baseline, not the aspiration.',
+    tags: ['Stewardship', 'Governance', 'Traditional Knowledge']
+  },
+  {
+    id: 'eco-energy',
+    branch: 'ecology',
+    title: 'Sustainable Energy',
+    question: 'What would energy systems look like in a world that never industrialized through extraction?',
+    prompt: 'IMAGE: Sustainable Energy | STYLE: Eco-Friendly | MOOD: Innovation and Sustainability | SCENE: An imagined world where women are revered as spiritual wisdom holders and leaders. The scene showcases increased investment in renewable energy, favoring sustainable technologies, and innovation in eco-friendly practices.',
+    response: 'Energy systems would have evolved alongside ecological awareness rather than against it. Investment in renewable technologies would be the norm, not the exception. Innovation would be measured by ecological harmony rather than output volume.',
+    tags: ['Energy', 'Innovation', 'Sustainability']
+  },
+  {
+    id: 'eco-justice',
+    branch: 'ecology',
+    title: 'Environmental Justice',
+    question: 'How would environmental justice manifest without patriarchal power hierarchies?',
+    prompt: 'IMAGE: Environmental Justice | STYLE: Sustainable World | MOOD: Equity and Justice | SCENE: An imagined world where women are revered as spiritual wisdom holders and leaders. The scene highlights the promotion of environmental justice and equity, addressing environmental racism, and ensuring equitable access to nature.',
+    response: 'Without patriarchal power concentrations, environmental justice becomes inseparable from social justice. Decision-making includes gender-inclusive policies, eco-feminist values guide community planning, and the deep connection between women\'s rights and ecological rights is foundational.',
+    tags: ['Justice', 'Equity', 'Eco-Feminism']
+  },
+
+  // ── RELIGION ──
+  {
+    id: 'rel-belief',
+    branch: 'religion',
+    title: 'Belief Without Patriarchy',
+    question: 'What are some ways in which belief, religious worship, and the influence of religion on culture might look different in a matriarchal world?',
+    prompt: 'IMAGE: Divine Worship | STYLE: Goddess-Centered | MOOD: Serene | SCENE: In a world where women are equals in leadership, revered as life givers, and honored as the spiritual wisdom holders, religious beliefs and practices center around the worship of goddesses symbolizing life-giving and nurturing aspects.',
+    response: 'In this world, belief systems are intricately linked with nature, where women — as stewards of worship and bearers of wisdom — seek enlightenment through deep connection with the natural world. The focus is not on asserting dominance over nature but rather harmonizing with it.',
+    tags: ['Belief', 'Goddess', 'Nature']
+  },
+  {
+    id: 'rel-creation',
+    branch: 'religion',
+    title: 'The Creation Story',
+    question: 'Write a creation story from a world where women have always been equal to men and honored as life givers and spiritual leaders.',
+    prompt: 'Write me a short creation story that stems from a world where women have always been equal to men, honored as life givers and spiritual leaders, and where all other religious thoughts are non-existent. Write me a creation story where woman is the creative force and is worshiped through nature.',
+    response: 'In the beginning, there was a vast and tranquil void, a canvas of endless potential. Within this boundless expanse of nothingness, there existed a primordial consciousness, a divine essence that embodied the very essence of creation. This consciousness was known as "The Mother," the embodiment of the creative force itself.',
+    tags: ['Creation', 'Origin', 'The Mother']
+  },
+  {
+    id: 'rel-ritual',
+    branch: 'religion',
+    title: 'Sacred Rituals',
+    question: 'How would religious ceremonies and rituals differ without patriarchal gender roles?',
+    prompt: 'IMAGE: Sacred Ritual | STYLE: Goddess-Centered | MOOD: Reverent | SCENE: In an imagined world where women are equals in leadership, revered as life givers, and honored as the spiritual wisdom holders, religious beliefs and practices center around rituals that celebrate the divine feminine.',
+    response: 'Rituals are marked by active participation and gender equality. Roles are determined by individual abilities, not gender. Ceremonies celebrate life, fertility, rites of passage, and nature-centered observances. Both women and men provide spiritual guidance in matters of faith, ritual, and morality.',
+    tags: ['Ritual', 'Ceremony', 'Equality']
+  },
+  {
+    id: 'rel-myth',
+    branch: 'religion',
+    title: 'Matriarchal Mythology',
+    question: 'What role models and narratives would matriarchal mythology feature?',
+    prompt: 'IMAGE: Role Models | STYLE: Matriarchal Wisdom | MOOD: Compassion | SCENE: In an imagined world where women are equals in leadership, revered as life givers, and honored as the spiritual wisdom holders, matriarch mythology features role models embodying wisdom, compassion, and nurturing.',
+    response: 'Matriarchal mythology abounds with strong female figures — not warriors defined by conquest, but leaders defined by wisdom, compassion, and nurturing. Mythic narratives guide followers through moral complexity, and the divine feminine is not a subcategory of spirituality but its center.',
+    tags: ['Mythology', 'Role Models', 'Wisdom']
+  },
+  {
+    id: 'rel-healing',
+    branch: 'religion',
+    title: 'Spiritual Healthcare',
+    question: 'How would healthcare integrate spiritual practice in a matriarchal world?',
+    prompt: 'IMAGE: Healthcare | STYLE: Healing | SCENE: In a world where women are equals in leadership, revered as life givers, and honored as the spiritual wisdom holders, create an image of women who are also healers. They incorporate spiritual rituals and herbal remedies in their healthcare practices.',
+    response: 'Healthcare integrates spiritual practices as a core component. Women serve as healers who incorporate ritual and herbal knowledge. Healing is not only physical but spiritual. Nature guides lead others to find healing and connection in the natural world through sacred groves and plant medicine.',
+    tags: ['Healthcare', 'Healing', 'Herbal']
+  },
+
+  // ── ART ──
+  {
+    id: 'art-inst',
+    branch: 'art',
+    title: 'Inclusive Art Institutions',
+    question: 'What would art institutions look like with equitable gender representation?',
+    prompt: 'IMAGE: Inclusive Art Institutions | STYLE: Equitable Representation | MOOD: Gender-Inclusive | SCENE: An art museum with a focus on equitable representation, gender-inclusive collections, and exhibitions. In this imagined world, women are equals in leadership, celebrated as life givers, and honored as spiritual wisdom holders.',
+    response: 'Art institutions prioritize equitable representation across all collections and exhibitions. Gender-inclusive curation is the standard, not the exception. Museums are led by diverse voices, and the canon of "great artists" was never filtered through patriarchal gatekeeping.',
+    tags: ['Institutions', 'Museums', 'Equity']
+  },
+  {
+    id: 'art-collab',
+    branch: 'art',
+    title: 'Community & Collaboration',
+    question: 'How would art-making shift toward community-based creative practice?',
+    prompt: 'IMAGE: Collaboration and Community Art | STYLE: Collective Creativity | MOOD: Community-Based | SCENE: An art workshop or community project in this alternate reality where women hold equal leadership roles and are revered as life givers and spiritual wisdom holders. Artists, creators, and community members collaborate together.',
+    response: 'Art-making is fundamentally collaborative and community-based. Workshops bring together creators and community members as equal participants. The distinction between "artist" and "audience" is blurred — creation is a shared spiritual and social practice.',
+    tags: ['Community', 'Collaboration', 'Workshop']
+  },
+  {
+    id: 'art-edu',
+    branch: 'art',
+    title: 'Art Education',
+    question: 'How would art education differ with balanced gender representation in teaching and curriculum?',
+    prompt: 'IMAGE: Art Education | STYLE: Equality and Balance | MOOD: Diverse and Inclusive | SCENE: An art classroom or educational institution in this alternative human timeline, where women are equal in leadership, revered as life givers, and honored as spiritual wisdom holders. The scene portrays a balanced, interdisciplinary approach.',
+    response: 'Art education is interdisciplinary and spiritually integrated. Curriculum balances technical skill with holistic development. Teaching positions reflect gender balance, and art history is taught as a complete human story rather than a male-dominated narrative.',
+    tags: ['Education', 'Curriculum', 'Balance']
+  },
+  {
+    id: 'art-crit',
+    branch: 'art',
+    title: 'Art Criticism',
+    question: 'How would art criticism and interpretation shift without male-dominated aesthetic hierarchies?',
+    prompt: 'IMAGE: Art Criticism | STYLE: Balanced Recognition | MOOD: Equitable Interpretation | SCENE: An art criticism gathering or a platform for art assessment in this alternative human timeline, where women are equal in leadership. The scene represents balanced recognition and equitable interpretation of all artists.',
+    response: 'Art criticism moves from hierarchical judgment to equitable interpretation. Assessment recognizes diverse creative voices equally. The very notion of "genius" is redefined — away from individual male brilliance and toward collective creative wisdom.',
+    tags: ['Criticism', 'Interpretation', 'Recognition']
+  },
+  {
+    id: 'art-preserve',
+    branch: 'art',
+    title: 'Art Preservation',
+    question: 'How would art conservation prioritize differently without patriarchal curation?',
+    prompt: 'IMAGE: Art Preservation and Conservation | STYLE: Gender-Inclusive Conservation | MOOD: Valuing Women Artists | SCENE: An art preservation and conservation facility or exhibition space in the alternative human timeline where women are equal in leadership.',
+    response: 'Art preservation is gender-inclusive by default. The works of women artists — which in our timeline were systematically excluded, destroyed, or attributed to men — are fully represented. Conservation priorities reflect the full spectrum of human creative expression.',
+    tags: ['Preservation', 'Conservation', 'Legacy']
+  }
+];
+
+let activeBranch = 'ecology';
+let activeNode = null;
+
+function renderList() {
+  const list = document.getElementById('node-list');
+  const filtered = DATA.filter(d => d.branch === activeBranch);
+  list.innerHTML = filtered.map(d => `
+    <div class="node-item${activeNode === d.id ? ' active' : ''}" data-branch="${d.branch}" onclick="selectNode('${d.id}')">
+      <div class="node-dot ${d.branch}"></div>
+      <div class="node-name">${d.title}</div>
+    </div>
+  `).join('');
+}
+
+function filterBranch(branch) {
+  activeBranch = branch;
+  activeNode = null;
+  document.querySelectorAll('.branch-tab').forEach(t => t.classList.toggle('active', t.dataset.branch === branch));
+  renderList();
+  document.getElementById('empty-state').style.display = 'flex';
+  document.getElementById('detail-view').classList.remove('visible');
+}
+
+function selectNode(id) {
+  activeNode = id;
+  const d = DATA.find(n => n.id === id);
+  if (!d) return;
+
+  document.getElementById('empty-state').style.display = 'none';
+  const detail = document.getElementById('detail-view');
+  detail.innerHTML = `
+    <div class="detail-kicker ${d.branch}">${d.branch} &middot; Concept Node</div>
+    <h2 class="detail-title">${d.title}</h2>
+    <p class="detail-question">${d.question}</p>
+
+    <div class="prompt-card">
+      <div class="prompt-label">MidJourney Prompt</div>
+      <p class="prompt-text">${d.prompt}</p>
+    </div>
+
+    <div class="response-card">
+      <div class="response-label ${d.branch}">What the Research Revealed</div>
+      <p class="response-text">${d.response}</p>
+    </div>
+
+    <div class="detail-tags">
+      ${d.tags.map(t => `<span class="detail-tag ${d.branch}">${t}</span>`).join('')}
+    </div>
+  `;
+  detail.classList.add('visible');
+  renderList();
+  document.getElementById('main-panel').scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+renderList();
+</script>
+
+</body>
+</html>

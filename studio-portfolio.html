@@ -1,0 +1,1129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Studio — Portfolio</title>
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html, body {
+  width: 100%; height: 100%;
+  overflow: hidden;
+  background: #0b1c26;
+  font-family: 'Georgia', 'Times New Roman', serif;
+  color: rgba(224,212,192,0.85);
+}
+
+/* ── SCENE ── */
+#scene {
+  position: relative;
+  width: 100vw; height: 100vh;
+  overflow: hidden;
+}
+
+/* ── PHOTO BASE LAYER ── */
+#studio-photo {
+  position: absolute;
+  inset: 0;
+  width: 100%; height: 100%;
+  object-fit: cover;
+  object-position: center center;
+  display: block;
+  pointer-events: none;
+  user-select: none;
+}
+
+/* ── VIGNETTE OVER PHOTO ── */
+#vignette {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse 120% 100% at 50% 50%, transparent 40%, rgba(6,12,18,0.45) 100%);
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* ── SVG OVERLAY (interaction layer) ── */
+#overlay {
+  position: absolute;
+  inset: 0;
+  width: 100%; height: 100%;
+  z-index: 2;
+  /* viewBox 1440x900 — matches image native proportions */
+}
+
+/* ── ZONE INTERACTION ── */
+.zone-group { cursor: pointer; }
+
+.zone-hit {
+  fill: transparent;
+  stroke: none;
+}
+
+.zone-wash {
+  fill: rgba(220,210,195,0);
+  pointer-events: none;
+  transition: fill 0.5s ease;
+}
+
+.zone-rim {
+  fill: none;
+  stroke: rgba(220,210,195,0);
+  stroke-width: 1;
+  pointer-events: none;
+  transition: stroke 0.5s ease, filter 0.5s ease;
+}
+
+.zone-lbl {
+  fill: rgba(218,206,186,0);
+  font-family: 'Georgia', serif;
+  font-size: 16px;
+  letter-spacing: 0.32em;
+  pointer-events: none;
+  transition: fill 0.45s ease;
+  text-transform: uppercase;
+}
+
+/* hover + active states — zones completely transparent, labels only */
+.zone-group:hover .zone-wash,
+.zone-group.active .zone-wash  { fill: rgba(220,210,195,0); }
+
+.zone-group:hover .zone-rim,
+.zone-group.active .zone-rim   {
+  stroke: rgba(220,210,195,0);
+  filter: none;
+}
+
+.zone-group:hover .zone-lbl,
+.zone-group.active .zone-lbl   { fill: rgba(218,206,186,0.88); }
+
+
+/* ── PAGE TRANSITION ── */
+#page-exit {
+  position: fixed; inset: 0;
+  background: #0b1c26;
+  opacity: 0; pointer-events: none;
+  transition: opacity 0.45s ease;
+  z-index: 9999;
+}
+#page-exit.active { opacity: 1; }
+
+/* ── WORDMARK / SIG ── */
+.wordmark {
+  position: fixed;
+  top: 22px; left: 28px;
+  font-size: 10px;
+  letter-spacing: 0.2em;
+  color: rgba(210,195,172,0.36);
+  pointer-events: none;
+  z-index: 10;
+  text-shadow: 0 1px 6px rgba(0,0,0,0.6);
+}
+.sig {
+  position: fixed;
+  bottom: 18px; right: 22px;
+  font-size: 9px;
+  letter-spacing: 0.16em;
+  color: rgba(200,185,165,0.25);
+  pointer-events: none;
+  z-index: 10;
+}
+
+/* ── MOTES ── */
+.mote { position: absolute; border-radius: 50%; background: rgba(220,210,195,0.65); animation: mote-float var(--d,9s) ease-in-out infinite var(--delay,0s); pointer-events: none; }
+@keyframes mote-float { 0% { opacity:0; transform:translateY(0); } 10% { opacity:0.6; } 90% { opacity:0.2; } 100% { opacity:0; transform:translateY(-80vh) translateX(var(--dx,15px)); } }
+
+/* ── LEVEL 2 PANEL ── */
+#l2-overlay {
+  position: fixed; inset: 0;
+  z-index: 200;
+  pointer-events: none;
+}
+#l2-overlay.open { pointer-events: all; }
+
+#l2-panel {
+  position: absolute;
+  width: 244px;
+  background: rgba(8,18,26,0.97);
+  border: 1px solid rgba(180,160,130,0.1);
+  padding: 28px 24px 22px;
+  backdrop-filter: blur(18px);
+  opacity: 0;
+  transform: translateY(10px);
+  transition: opacity 0.35s ease, transform 0.35s cubic-bezier(0.25,0.46,0.45,0.94);
+}
+#l2-overlay.open #l2-panel { opacity: 1; transform: translateY(0); }
+
+.l2-tag {
+  font-size: 8.5px; letter-spacing: 0.26em;
+  text-transform: uppercase;
+  color: rgba(200,185,165,0.25);
+  margin-bottom: 22px;
+}
+.l2-list { list-style: none; }
+.l2-item {
+  display: flex; align-items: center; gap: 10px;
+  padding: 9px 0;
+  border-bottom: 1px solid rgba(180,160,130,0.05);
+  cursor: pointer;
+  transition: padding-left 0.25s ease;
+}
+.l2-item:last-child { border-bottom: none; }
+.l2-item:hover { padding-left: 6px; }
+.l2-dot {
+  width: 3px; height: 3px; border-radius: 50%;
+  background: rgba(190,155,90,0.55);
+  flex-shrink: 0; opacity: 0;
+  transition: opacity 0.25s ease;
+}
+.l2-item:hover .l2-dot { opacity: 1; }
+.l2-label {
+  font-size: 12.5px;
+  color: rgba(200,185,165,0.5);
+  transition: color 0.25s ease;
+  letter-spacing: 0.01em;
+}
+.l2-item:hover .l2-label { color: rgba(224,212,192,0.92); }
+.l2-proto-dot {
+  width: 4px; height: 4px; border-radius: 50%;
+  background: rgba(120,180,150,0.5);
+  flex-shrink: 0; margin-left: auto;
+}
+.l2-close {
+  position: absolute; top: 12px; right: 12px;
+  width: 20px; height: 20px; cursor: pointer;
+  opacity: 0.3; transition: opacity 0.2s;
+  display: flex; align-items: center; justify-content: center;
+}
+.l2-close:hover { opacity: 0.85; }
+.l2-close::before,.l2-close::after {
+  content:''; position: absolute;
+  width: 11px; height: 1px;
+  background: rgba(224,212,192,0.9);
+}
+.l2-close::before { transform: rotate(45deg); }
+.l2-close::after  { transform: rotate(-45deg); }
+
+/* ── LEVEL 3 PANEL ── */
+#l3-overlay {
+  position: fixed; inset: 0;
+  z-index: 300;
+  opacity: 0; pointer-events: none;
+  transition: opacity 0.4s ease;
+}
+#l3-overlay.open { opacity: 1; pointer-events: all; }
+
+#l3-scrim {
+  position: absolute; inset: 0;
+  background: rgba(4,10,16,0.55);
+  backdrop-filter: blur(2px);
+  cursor: pointer;
+}
+#l3-panel {
+  position: absolute; top: 0; right: 0; bottom: 0;
+  width: 510px; max-width: 100%;
+  background: #0b1c26;
+  border-left: 1px solid rgba(180,160,130,0.09);
+  overflow-y: auto;
+  padding: 52px 46px 60px;
+  transform: translateX(36px);
+  transition: transform 0.4s cubic-bezier(0.25,0.46,0.45,0.94);
+}
+#l3-overlay.open #l3-panel { transform: translateX(0); }
+#l3-panel::-webkit-scrollbar { width: 2px; }
+#l3-panel::-webkit-scrollbar-thumb { background: rgba(160,140,110,0.2); }
+
+.l3-close {
+  position: absolute; top: 22px; right: 22px;
+  width: 26px; height: 26px; cursor: pointer;
+  opacity: 0.3; transition: opacity 0.2s;
+  display: flex; align-items: center; justify-content: center;
+}
+.l3-close:hover { opacity: 1; }
+.l3-close::before,.l3-close::after {
+  content:''; position: absolute;
+  width: 14px; height: 1px;
+  background: rgba(224,212,192,0.9);
+}
+.l3-close::before { transform: rotate(45deg); }
+.l3-close::after  { transform: rotate(-45deg); }
+
+.l3-cat   { font-size: 8.5px; letter-spacing: 0.26em; text-transform: uppercase; color: rgba(190,155,90,0.45); margin-bottom: 14px; }
+.l3-title { font-size: 22px; font-weight: normal; color: rgba(228,218,200,0.95); letter-spacing: 0.015em; line-height: 1.25; margin-bottom: 6px; }
+.l3-sub   { font-size: 11px; color: rgba(200,185,165,0.25); letter-spacing: 0.06em; margin-bottom: 36px; }
+.l3-desc  { font-size: 12.5px; color: rgba(200,185,165,0.5); line-height: 1.85; margin-bottom: 22px; letter-spacing: 0.015em; }
+.l3-tags  { display: flex; flex-wrap: wrap; gap: 7px; margin-bottom: 30px; }
+.l3-tag   { font-size: 8px; letter-spacing: 0.16em; text-transform: uppercase; color: rgba(190,155,90,0.45); border: 1px solid rgba(190,155,90,0.14); padding: 4px 10px; }
+
+.proto-block { display: none; }
+.proto-block.on { display: block; }
+
+/* ── MAP PROTOTYPE ── */
+.map-wrap {
+  position: relative; width: 100%; height: 300px;
+  background: rgba(6,14,20,0.75);
+  border: 1px solid rgba(180,160,130,0.09);
+  overflow: hidden; margin-bottom: 10px;
+}
+.map-svg-el { position: absolute; inset: 0; pointer-events: none; }
+.map-node { position: absolute; transform: translate(-50%,-50%); cursor: pointer; z-index: 2; }
+.mn-circle {
+  width: 38px; height: 38px; border-radius: 50%;
+  border: 1px solid rgba(170,145,100,0.28);
+  background: rgba(16,36,48,0.9);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 8px; letter-spacing: 0.06em; text-transform: uppercase;
+  color: rgba(200,185,165,0.5);
+  transition: all 0.3s ease;
+}
+.map-node:hover .mn-circle { border-color: rgba(190,155,80,0.55); background: rgba(32,62,76,0.95); box-shadow: 0 0 18px rgba(180,140,50,0.18); color: rgba(224,212,192,0.9); }
+.map-node.sel .mn-circle   { border-color: rgba(110,180,140,0.5); background: rgba(30,70,55,0.8); box-shadow: 0 0 22px rgba(100,180,130,0.2); color: rgba(180,220,200,0.9); }
+.mn-lbl { position: absolute; top: calc(100% + 4px); left: 50%; transform: translateX(-50%); font-size: 7.5px; letter-spacing: 0.1em; text-transform: uppercase; color: rgba(200,185,165,0.25); white-space: nowrap; }
+.map-info { position: absolute; bottom: 0; left: 0; right: 0; padding: 14px 16px; background: linear-gradient(0deg, rgba(6,14,20,0.98) 0%, transparent 100%); font-size: 11px; line-height: 1.65; color: rgba(200,185,165,0.5); min-height: 56px; }
+.mn-conn { stroke: rgba(140,120,90,0.18); stroke-width: 1; fill: none; stroke-dasharray: 3 4; transition: stroke 0.3s; }
+.mn-conn.hi { stroke: rgba(170,140,80,0.5); }
+
+/* ── CHAT PROTOTYPE ── */
+.chat-wrap { background: rgba(6,14,20,0.75); border: 1px solid rgba(180,160,130,0.09); overflow: hidden; margin-bottom: 10px; }
+.chat-head { padding: 12px 16px; border-bottom: 1px solid rgba(180,160,130,0.05); font-size: 9px; letter-spacing: 0.2em; text-transform: uppercase; color: rgba(200,185,165,0.25); display: flex; align-items: center; gap: 9px; }
+.chat-pulse { width: 5px; height: 5px; border-radius: 50%; background: rgba(80,190,110,0.65); animation: pulse-dot 2.2s ease-in-out infinite; }
+.chat-msgs { padding: 20px 16px; display: flex; flex-direction: column; gap: 14px; max-height: 270px; overflow-y: auto; }
+.chat-msgs::-webkit-scrollbar { width: 2px; }
+.chat-msgs::-webkit-scrollbar-thumb { background: rgba(160,140,110,0.15); }
+.chat-lbl { font-size: 7.5px; letter-spacing: 0.2em; text-transform: uppercase; color: rgba(200,185,165,0.25); margin-bottom: 5px; }
+.chat-msg { font-size: 11px; line-height: 1.72; color: rgba(200,185,165,0.5); }
+.chat-msg.u { padding: 10px 14px; background: rgba(28,54,68,0.5); border-left: 2px solid rgba(90,155,135,0.3); color: rgba(175,205,195,0.8); }
+.chat-foot { display: flex; align-items: center; gap: 10px; padding: 12px 16px; border-top: 1px solid rgba(180,160,130,0.05); }
+.chat-input { flex: 1; background: transparent; border: none; outline: none; font-size: 11px; color: rgba(200,185,165,0.25); font-family: 'Georgia', serif; pointer-events: none; }
+.chat-input::placeholder { color: rgba(200,185,165,0.2); }
+.chat-send-btn { font-size: 8px; letter-spacing: 0.14em; text-transform: uppercase; color: rgba(190,155,90,0.3); border: 1px solid rgba(190,155,90,0.12); padding: 5px 10px; }
+
+/* ── CONTRADICTION PROTOTYPE ── */
+.contra-frame { background: rgba(6,14,20,0.75); border: 1px solid rgba(180,160,130,0.09); padding: 24px; margin-bottom: 14px; }
+.contra-lbl { font-size: 8.5px; letter-spacing: 0.24em; text-transform: uppercase; color: rgba(200,185,165,0.25); margin-bottom: 18px; }
+.contra-cols { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 20px; }
+.contra-col { padding: 15px; border: 1px solid rgba(180,160,130,0.05); transition: opacity 0.25s ease; }
+.contra-col.a { border-color: rgba(90,155,200,0.14); background: rgba(18,40,70,0.25); }
+.contra-col.b { border-color: rgba(210,120,70,0.14); background: rgba(55,22,12,0.25); }
+.contra-col h4 { font-size: 8px; letter-spacing: 0.14em; text-transform: uppercase; font-weight: normal; margin-bottom: 9px; }
+.contra-col.a h4 { color: rgba(100,165,210,0.55); }
+.contra-col.b h4 { color: rgba(210,130,80,0.55); }
+.contra-col p { font-size: 11px; color: rgba(200,185,165,0.5); line-height: 1.72; }
+.tension-row { display: flex; align-items: center; gap: 10px; margin-bottom: 14px; }
+.tension-lbl-sm { font-size: 7.5px; letter-spacing: 0.14em; text-transform: uppercase; color: rgba(200,185,165,0.25); white-space: nowrap; }
+.tension-track { flex: 1; height: 2px; background: rgba(30,55,70,0.8); border-radius: 2px; overflow: hidden; }
+.tension-fill { height: 100%; background: linear-gradient(90deg, rgba(90,155,210,0.55), rgba(210,120,70,0.55)); border-radius: 2px; width: 0%; transition: width 1.4s cubic-bezier(0.25,0.46,0.45,0.94); }
+.contra-tabs { display: flex; gap: 6px; }
+.ctab { font-size: 8.5px; letter-spacing: 0.12em; text-transform: uppercase; color: rgba(200,185,165,0.5); border: 1px solid rgba(180,160,130,0.09); padding: 6px 14px; cursor: pointer; background: transparent; font-family: 'Georgia', serif; transition: all 0.25s ease; }
+.ctab:hover { color: rgba(224,212,192,0.85); border-color: rgba(200,185,165,0.2); }
+.ctab.on { background: rgba(32,68,60,0.45); border-color: rgba(100,175,145,0.25); color: rgba(140,200,175,0.85); }
+
+.proto-placeholder { padding: 36px 0; text-align: center; color: rgba(200,185,165,0.2); font-size: 10px; letter-spacing: 0.14em; border: 1px solid rgba(180,160,130,0.05); margin-top: 4px; }
+
+/* ── SIGNS FRAMEWORK L3 ── */
+.l3-meta { display:grid; grid-template-columns:1fr 1fr; gap:0; border:1px solid rgba(180,160,130,0.09); margin-bottom:28px; }
+.l3-meta-item { padding:12px 14px; border-right:1px solid rgba(180,160,130,0.09); border-bottom:1px solid rgba(180,160,130,0.09); }
+.l3-meta-item:nth-child(even) { border-right:none; }
+.l3-meta-item:nth-last-child(-n+2) { border-bottom:none; }
+.l3-meta-label { font-size:7.5px; letter-spacing:.20em; text-transform:uppercase; color:rgba(190,155,90,0.40); display:block; margin-bottom:5px; }
+.l3-meta-val { font-size:11px; color:rgba(200,185,165,0.70); letter-spacing:.03em; }
+.l3-wanted { margin-bottom:28px; padding:16px 18px; border-left:2px solid rgba(190,155,90,0.18); }
+.l3-wanted-label { font-size:7.5px; letter-spacing:.20em; text-transform:uppercase; color:rgba(190,155,90,0.40); display:block; margin-bottom:8px; }
+.l3-wanted-text { font-size:12.5px; color:rgba(200,185,165,0.65); line-height:1.75; font-style:italic; letter-spacing:.015em; margin:0; }
+.l3-proto-link { display:inline-flex; align-items:center; gap:8px; font-size:9px; letter-spacing:.18em; text-transform:uppercase; color:rgba(190,155,90,0.50); border:1px solid rgba(190,155,90,0.16); padding:11px 20px; cursor:pointer; transition:color .2s, border-color .2s; text-decoration:none; }
+.l3-proto-link:hover { color:rgba(190,155,90,0.85); border-color:rgba(190,155,90,0.35); }
+
+@keyframes pulse-dot { 0%,100% { opacity:0.6; transform:scale(1); } 50% { opacity:1; transform:scale(1.35); } }
+@keyframes msg-in { from { opacity:0; transform:translateY(6px); } to { opacity:1; transform:translateY(0); } }
+
+@media (max-width:768px) {
+  #l3-panel { width:100%; padding:40px 28px 50px; }
+  .contra-cols { grid-template-columns:1fr; }
+}
+
+/* ══ MOBILE PAN STUDIO ══════════════════════════════════════ */
+@media (max-width: 768px) {
+
+  /* Scene: height-locked, width set by JS to exact photo aspect */
+  #scene {
+    height: 100svh;
+    will-change: transform;
+    cursor: grab;
+  }
+  #scene.dragging { cursor: grabbing; }
+
+  /* Photo fills scene exactly (aspect ratio matched by JS) */
+  #studio-photo {
+    object-position: left center;
+  }
+
+  /* ── Always-visible zone labels ─────────────────────────── */
+  .zone-lbl {
+    fill: rgba(218, 206, 186, 0.7) !important;
+    font-family: 'Georgia', serif !important;
+    font-size: 13px !important;
+    font-style: italic !important;
+    letter-spacing: 0.06em !important;
+    text-transform: none !important;
+    transition: none !important;
+    pointer-events: none !important;
+  }
+
+  /* Zone glitter/wash/rim: invisible on mobile */
+  .zone-wash  { fill: transparent !important; }
+  .zone-rim   { stroke: transparent !important; }
+  .sparkle-dot { display: none; }
+
+  /* Tap target — make the hit area visually tappable */
+  .zone-group { cursor: pointer; }
+
+  /* Hide inline desktop panels */
+  #l2-overlay, #l3-overlay { display: none !important; }
+
+  /* Wordmark stays, sig hides */
+  .sig { display: none; }
+
+  /* ── Pan hint (fades after first swipe) ──────────────────── */
+  #mob-pan-hint {
+    position: fixed;
+    bottom: 44px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-family: 'Georgia', serif;
+    font-style: italic;
+    font-size: 10px;
+    letter-spacing: 0.2em;
+    color: rgba(200, 185, 165, 0.42);
+    pointer-events: none;
+    z-index: 50;
+    white-space: nowrap;
+    opacity: 1;
+    transition: opacity 0.7s ease;
+  }
+  #mob-pan-hint.gone { opacity: 0; }
+
+  /* ── Desktop nudge ───────────────────────────────────────── */
+  #mob-desktop-note {
+    position: fixed;
+    bottom: 16px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-family: 'Georgia', serif;
+    font-size: 9px;
+    letter-spacing: 0.16em;
+    color: rgba(200, 185, 165, 0.18);
+    pointer-events: none;
+    z-index: 50;
+    white-space: nowrap;
+  }
+}
+
+/* ── GLITTER SPARKLES ── */
+@keyframes glitter {
+  0%, 100% { opacity: 0; transform: scale(0); }
+  10%      { opacity: 0; transform: scale(0); }
+  35%      { opacity: 1; transform: scale(1.2); }
+  55%      { opacity: 1; transform: scale(1); }
+  80%      { opacity: 0; transform: scale(0.2); }
+}
+.sparkle-dot {
+  pointer-events: none;
+  transform-box: fill-box;
+  transform-origin: center;
+}
+</style>
+</head>
+<body>
+
+<div id="scene">
+
+  <!-- ── LAYER 0: PHOTO ── -->
+  <img id="studio-photo" src="Studio_Edited.webp" alt="Studio">
+
+  <!-- ── LAYER 1: VIGNETTE ── -->
+  <div id="vignette"></div>
+
+  <!-- ── LAYER 2: SVG INTERACTION OVERLAY ──
+       viewBox 1440×900 matches the image's native aspect ratio.
+       preserveAspectRatio="xMidYMid slice" keeps zones locked to
+       real objects even when the window resizes.
+       All zones are invisible until hover — the photo IS the UI.
+  -->
+  <svg id="overlay"
+       viewBox="0 0 1440 900"
+       preserveAspectRatio="xMidYMid slice"
+       xmlns="http://www.w3.org/2000/svg"
+       aria-hidden="true">
+
+    <!-- ══ ZONE 1: Perspectives ══ -->
+    <g class="zone-group" data-zone="perspective" id="zg-perspective">
+      <rect class="zone-wash zone-rim" x="640" y="0"   width="195" height="160" rx="3"/>
+      <rect class="zone-hit"           x="640" y="0"   width="195" height="160"/>
+      <text class="zone-lbl" x="728" y="197" text-anchor="middle">Perspectives</text>
+    </g>
+
+    <!-- ══ ZONE 2: Experiments ══ -->
+    <g class="zone-group" data-zone="experiments" id="zg-experiments">
+      <rect class="zone-wash zone-rim" x="629" y="347" width="181" height="304" rx="3"/>
+      <rect class="zone-hit"           x="629" y="347" width="181" height="304"/>
+      <text class="zone-lbl" x="720" y="298" text-anchor="middle">Experiments</text>
+    </g>
+
+    <!-- ══ ZONE 3: Systems ══ -->
+    <g class="zone-group" data-zone="systems" id="zg-systems">
+      <rect class="zone-wash zone-rim" x="1022" y="308" width="176" height="276" rx="3"/>
+      <rect class="zone-hit"           x="1022" y="308" width="176" height="276"/>
+      <text class="zone-lbl" x="1088" y="272" text-anchor="middle">Systems</text>
+    </g>
+
+    <!-- ══ ZONE 4: Sense Making ══ -->
+    <g class="zone-group" data-zone="sensemaking" id="zg-sensemaking">
+      <rect class="zone-wash zone-rim" x="247" y="524" width="228" height="110" rx="3"/>
+      <rect class="zone-hit"           x="247" y="524" width="228" height="110"/>
+      <text class="zone-lbl" x="295" y="540" text-anchor="middle">Sense Making</text>
+    </g>
+
+    <!-- ══ ZONE 5: Interactions ══ -->
+    <g class="zone-group" data-zone="interaction" id="zg-interaction">
+      <rect class="zone-wash zone-rim" x="1050" y="701" width="285" height="191" rx="3"/>
+      <rect class="zone-hit"           x="1050" y="701" width="285" height="191"/>
+      <text class="zone-lbl" x="1167" y="714" text-anchor="middle">Interactions</text>
+    </g>
+
+  </svg>
+
+  <!-- Floating motes -->
+  <div id="motes"></div>
+
+</div><!-- #scene -->
+
+<div id="page-exit"></div>
+<div class="wordmark">Amber Grey</div>
+<div class="sig">Portfolio · 2025</div>
+
+<!-- Mobile-only UI -->
+<div id="mob-pan-hint">swipe to explore</div>
+<div id="mob-desktop-note">best experienced on desktop</div>
+
+<!-- ══ LEVEL 2 ══ -->
+<div id="l2-overlay">
+  <div id="l2-panel">
+    <div class="l2-close" id="l2Close"></div>
+    <div class="l2-tag"  id="l2Tag"></div>
+    <ul class="l2-list"  id="l2List"></ul>
+  </div>
+</div>
+
+<!-- ══ LEVEL 3 ══ -->
+<div id="l3-overlay">
+  <div id="l3-scrim"></div>
+  <div id="l3-panel">
+    <div class="l3-close" id="l3Close"></div>
+    <div class="l3-cat"   id="l3Cat"></div>
+    <div class="l3-title" id="l3Title"></div>
+    <div class="l3-sub"   id="l3Sub"></div>
+
+    <!-- ZOO ECONOMY MAP -->
+    <div class="proto-block" id="pb-zoo-economy-map">
+      <p class="l3-desc">A network map tracing value flows, dependency structures, and resource exchanges within the zoo ecosystem — from animal welfare budgets to visitor economy and conservation funding loops.</p>
+      <div class="l3-tags">
+        <span class="l3-tag">Sensemaking</span>
+        <span class="l3-tag">Systems mapping</span>
+        <span class="l3-tag">Economy</span>
+      </div>
+      <div class="map-wrap">
+        <svg class="map-svg-el" id="mapSvg"></svg>
+        <div class="map-info" id="mapInfo" style="color:rgba(200,185,165,0.25);font-size:10px;letter-spacing:0.04em;">
+          Select a node to explore its role in the zoo economy
+        </div>
+      </div>
+    </div>
+
+    <!-- RESEARCH ANALYST GPT -->
+    <div class="proto-block" id="pb-research-analyst-gpt">
+      <p class="l3-desc">A custom GPT configured to synthesize qualitative research — identifying patterns, surfacing tensions, and structuring findings into actionable frameworks for design teams.</p>
+      <div class="l3-tags">
+        <span class="l3-tag">AI</span>
+        <span class="l3-tag">Research</span>
+        <span class="l3-tag">Synthesis</span>
+      </div>
+      <div class="chat-wrap">
+        <div class="chat-head"><div class="chat-pulse"></div>Research Analyst GPT</div>
+        <div class="chat-msgs" id="chatMsgs"></div>
+        <div class="chat-foot">
+          <input class="chat-input" placeholder="Ask about findings, patterns, tensions…" readonly tabindex="-1">
+          <div class="chat-send-btn">Send</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- CONTRADICTION MODE -->
+    <div class="proto-block" id="pb-contradiction-mode">
+      <p class="l3-desc">A design tool for holding contradictory truths simultaneously — surfacing tensions in research as productive creative material rather than problems to resolve.</p>
+      <div class="l3-tags">
+        <span class="l3-tag">Interaction</span>
+        <span class="l3-tag">Design tool</span>
+        <span class="l3-tag">Research</span>
+      </div>
+      <div class="contra-frame">
+        <div class="contra-lbl">Active contradiction</div>
+        <div class="contra-cols">
+          <div class="contra-col a"><h4 id="caHead">Signal A</h4><p id="caText"></p></div>
+          <div class="contra-col b"><h4 id="cbHead">Signal B</h4><p id="cbText"></p></div>
+        </div>
+        <div class="tension-row">
+          <span class="tension-lbl-sm">Low tension</span>
+          <div class="tension-track"><div class="tension-fill" id="tensionFill"></div></div>
+          <span class="tension-lbl-sm">High</span>
+        </div>
+      </div>
+      <div class="contra-tabs" id="contraTabs"></div>
+    </div>
+
+    <!-- SIGNAL TRANSLATION -->
+    <div class="proto-block" id="pb-signal-translation">
+      <p class="l3-desc">A methodological layer for moving from raw field data to named, actionable frameworks — turning what visitors do, say, and feel into legible design signals.</p>
+      <div class="l3-tags">
+        <span class="l3-tag">Framework</span>
+        <span class="l3-tag">Research</span>
+        <span class="l3-tag">ReWilded</span>
+      </div>
+      <div class="proto-placeholder">— Prototype in development —</div>
+    </div>
+
+    <!-- SIGNS FRAMEWORK -->
+    <div class="proto-block" id="pb-signs-framework">
+      <p class="l3-desc">A tool for identifying breakdowns in experience and reframing them into actionable design directions.</p>
+      <div class="l3-tags">
+        <span class="l3-tag">Framework</span>
+        <span class="l3-tag">Interaction</span>
+        <span class="l3-tag">ReWilded</span>
+      </div>
+      <div class="l3-meta">
+        <div class="l3-meta-item"><span class="l3-meta-label">Type</span><span class="l3-meta-val">Framework / Interaction</span></div>
+        <div class="l3-meta-item"><span class="l3-meta-label">Year</span><span class="l3-meta-val">2025</span></div>
+        <div class="l3-meta-item"><span class="l3-meta-label">Methods</span><span class="l3-meta-val">Framework</span></div>
+        <div class="l3-meta-item"><span class="l3-meta-label">Context</span><span class="l3-meta-val">ReWilded</span></div>
+      </div>
+      <div class="l3-wanted">
+        <span class="l3-wanted-label">What I Wanted to Show</span>
+        <p class="l3-wanted-text">Confusion and tension aren't problems to ignore — they're signals to redesign.</p>
+      </div>
+      <a class="l3-proto-link" href="prototype-signs-framework.html" target="_blank">Open Prototype →</a>
+    </div>
+
+    <!-- GENERIC -->
+    <div class="proto-block" id="pb-generic">
+      <p class="l3-desc" id="pbGenericDesc"></p>
+      <div class="l3-tags" id="pbGenericTags"></div>
+      <div class="proto-placeholder">— Prototype in development —</div>
+    </div>
+  </div>
+</div>
+
+<script>
+'use strict';
+
+// ── DATA ────────────────────────────────────────────────────
+
+const ZONES = {
+  'painting-left': { label:'Mythos', items:[
+    { id:'rewilded-thesis',       label:'Rewilded Thesis',            proto:false },
+    { id:'designing-dissonance',  label:'Designing with Dissonance',  proto:false },
+    { id:'transparency-matrix',   label:'Transparency Matrix',        proto:false },
+  ]},
+  'painting-right': { label:'Perspective', items:[
+    { id:'field-notes',           label:'Field Notes Practice',       proto:false },
+    { id:'transparency-matrix',   label:'Transparency Matrix',        proto:false },
+    { id:'designing-dissonance',  label:'Designing with Dissonance',  proto:false },
+  ]},
+  botanicals: { label:'Field Notes', items:[
+    { id:'field-observation',     label:'Field Observation Synthesis',proto:false },
+    { id:'dissonance-signal',     label:'Dissonance as Signal',       proto:false },
+    { id:'survey-signal',         label:'Survey Signal Extraction',   proto:false },
+  ]},
+  sensemaking: { label:'Sensemaking', items:[
+    { id:'zoo-economy-map',       label:'Zoo Economy Map',             proto:true  },
+    { id:'dissonance-loop',       label:'The Dissonance Loop',         proto:true  },
+    { id:'dissonance-signal',     label:'Dissonance as Signal',        proto:false },
+    { id:'survey-signal',         label:'Survey Signal Extraction',    proto:false },
+    { id:'signal-translation',    label:'Signal Translation',          proto:false },
+    { id:'signs-framework',       label:'SIGNS Framework',             proto:true  },
+  ]},
+  systems: { label:'Systems', items:[
+    { id:'contextual-intelligence', label:'Contextual Intelligence',      proto:true  },
+    { id:'dll-landing',             label:'Daily Living Labs',            proto:true  },
+    { id:'interaction-record',      label:'Interaction Record Framework', proto:false },
+    { id:'blv-ecosystem',           label:'BLV Ecosystem Map',           proto:false },
+    { id:'adl-breakdown',           label:'ADL Breakdown System',        proto:false },
+  ]},
+  experiments: { label:'Experiments', items:[
+    { id:'dry-erase',             label:'Dry Erase Marker Intervention',proto:false },
+    { id:'zootique',              label:'Zoo-tique Concepts',           proto:false },
+    { id:'dotcalm',               label:'dotCALM',                      proto:false },
+    { id:'prompt-trials',         label:'Prompt Engineering Trials',    proto:false },
+  ]},
+  interaction: { label:'Interaction', items:[
+    { id:'zoo-interactive-map',   label:'Zoo Economy Interactive Map',  proto:false },
+    { id:'daily-living-labs',     label:'Daily Living Labs Interface',  proto:false },
+    { id:'contradiction-mode',    label:'Contradiction Mode',           proto:true  },
+    { id:'portfolio-playground',  label:'Portfolio Playground System',  proto:false },
+    { id:'hapturn',               label:'HapTurn',                      proto:true  },
+    { id:'takeabag',              label:'Waste Impact Calculator',       proto:true  },
+  ]},
+  perspective: { label:'Perspective', items:[
+    { id:'rewilded',              label:'Rewilded',                     proto:true  },
+    { id:'designing-dissonance',  label:'Designing with Dissonance',    proto:false },
+    { id:'transparency-matrix',   label:'Transparency Matrix',         proto:false },
+    { id:'field-notes',           label:'Field Notes Practice',        proto:false },
+  ]}
+};
+
+const PROJECTS = {
+  'zoo-economy-map':      { category:'Sensemaking', title:'Zoo Economy Map',      subtitle:'Mapping value flows within the zoo ecosystem',              block:'pb-zoo-economy-map'      },
+  'research-analyst-gpt': { category:'Systems',     title:'Research Analyst GPT', subtitle:'Custom AI configured for qualitative synthesis',            block:'pb-research-analyst-gpt' },
+  'contradiction-mode':   { category:'Interaction', title:'Contradiction Mode',   subtitle:'Holding tensions as productive design material',            block:'pb-contradiction-mode'   },
+  'signal-translation':   { category:'Sensemaking', title:'Signal Translation',   subtitle:'Turning complex observations into structured insight',      block:'pb-signal-translation'   },
+  'signs-framework':      { category:'Sensemaking', title:'SIGNS Framework',      subtitle:'An interactive framework for transforming experience signals', block:'pb-signs-framework'   },
+};
+
+const MAP_NODES = [
+  { id:'visitor',      x:'15%', y:'18%', label:'Visitor',      info:'Primary revenue driver — admission, experiences, retail, dining. Emotional investment shapes conservation giving.'       },
+  { id:'animal',       x:'50%', y:'10%', label:'Animal',       info:'The core subject. Welfare costs, behavioral programming, and public interaction shape the entire economic model.'       },
+  { id:'conservation', x:'83%', y:'18%', label:'Conservation', info:'Field programs funded by surplus revenue — often the narrative justification for the zoo\'s existence and pricing.'     },
+  { id:'keeper',       x:'18%', y:'50%', label:'Keeper',       info:'Labor-intensive, low-pay. Deep behavioral knowledge. High turnover affects animal relationships and welfare outcomes.' },
+  { id:'ops',          x:'50%', y:'47%', label:'Operations',   info:'Infrastructure, veterinary care, habitat maintenance. Largest fixed cost category in most zoo budgets.'               },
+  { id:'sponsor',      x:'82%', y:'50%', label:'Sponsor',      info:'Corporate and donor funding fills gaps — often tied to species visibility or conservation story arcs.'               },
+  { id:'retail',       x:'22%', y:'80%', label:'Retail',       info:'Gift shops, food, memberships — high-margin revenue that subsidizes core animal care operations.'                     },
+  { id:'education',    x:'78%', y:'80%', label:'Education',    info:'Schools, programs, outreach. Justifies public subsidy and philanthropic support; often undermonetized.'              },
+];
+const MAP_EDGES = [
+  ['visitor','ops'],['visitor','retail'],['visitor','education'],
+  ['animal','keeper'],['animal','conservation'],['animal','ops'],
+  ['sponsor','conservation'],['sponsor','ops'],
+  ['retail','ops'],['education','conservation'],['keeper','ops'],
+];
+
+const CHAT_MSGS = [
+  { type:'u', text:'Synthesize the main tensions in the keeper interview data.' },
+  { type:'a', text:'Across 12 keeper interviews, three core tensions emerge:\n\n1. Relational care vs. institutional protocol — keepers describe strong personal bonds with animals while navigating bureaucratic welfare standards that feel impersonal.\n\n2. Expertise vs. visibility — deep behavioral knowledge goes unrecognized by visitors and management, creating frustration around compensation and status.\n\n3. Conservation belief vs. daily reality — keepers express genuine commitment to the conservation mission but describe daily work as disconnected from that larger purpose.' },
+  { type:'u', text:'What signals suggest design opportunity?' },
+  { type:'a', text:'Strongest design signals:\n\n→ Keepers narrate animal behavior constantly but have no formal channel to document or share this with visitors\n→ Visitor interactions described as interruptions, not relationships\n→ "Story" gap — rich knowledge exists, no interface surfaces it\n\nRecommended framing: design for keeper-as-narrator, visitor-as-listener, animal-as-subject.' },
+];
+
+const CONTRADICTIONS = [
+  { label:'Encounter', a:'Visitors want authentic animal encounters — proximity, spontaneity, wildness.',              b:'Animals need controlled, predictable environments to avoid chronic stress.',                                   t:85 },
+  { label:'Economy',   a:'Zoo economic models depend on high-volume, affordable admission to remain viable.',         b:'High-quality animal welfare requires significant per-animal investment and reduced density.',                 t:72 },
+  { label:'Identity',  a:'Zoo staff form deep bonds with individual animals — care becomes personal and relational.', b:'Institutional protocols require animals to be treated as collective, managed populations.',                  t:60 },
+];
+
+// ── MOTES ────────────────────────────────────────────────────
+(function() {
+  const c = document.getElementById('motes');
+  c.style.cssText = 'position:fixed;inset:0;pointer-events:none;z-index:5;';
+  for (let i = 0; i < 18; i++) {
+    const m = document.createElement('div');
+    m.className = 'mote';
+    const sz = 1 + Math.random() * 1.5;
+    m.style.cssText = [
+      `left:${Math.random()*100}%`,
+      `top:${30+Math.random()*70}%`,
+      `width:${sz}px`, `height:${sz}px`,
+      `--d:${8+Math.random()*12}s`,
+      `--delay:${Math.random()*-18}s`,
+      `--dx:${(Math.random()-0.5)*40}px`,
+      `opacity:${0.08+Math.random()*0.4}`
+    ].join(';');
+    c.appendChild(m);
+  }
+})();
+
+// ── LEVEL 2 ──────────────────────────────────────────────────
+const l2Overlay = document.getElementById('l2-overlay');
+const l2Panel   = document.getElementById('l2-panel');
+const l2Tag     = document.getElementById('l2Tag');
+const l2List    = document.getElementById('l2List');
+let   activeZone = null, activeZoneEl = null;
+
+function svgZoneScreenRect(zoneGroupEl) {
+  const hit = zoneGroupEl.querySelector('.zone-hit');
+  if (!hit) return zoneGroupEl.getBoundingClientRect();
+  return hit.getBoundingClientRect();
+}
+
+function placeL2(zoneGroupEl) {
+  const r  = svgZoneScreenRect(zoneGroupEl);
+  const pw = 244, ph = 240;
+  const vw = window.innerWidth, vh = window.innerHeight;
+  const cx = r.left + r.width / 2;
+  let left = cx > vw / 2 ? r.left - pw - 12 : r.right + 12;
+  let top  = r.top + r.height / 2 - ph / 2;
+  left = Math.max(12, Math.min(vw - pw - 12, left));
+  top  = Math.max(12, Math.min(vh - ph - 12, top));
+  l2Panel.style.left = left + 'px';
+  l2Panel.style.top  = top  + 'px';
+}
+
+function openL2(zoneKey, zoneGroupEl) {
+  const zone = ZONES[zoneKey];
+  if (!zone) return;
+  activeZone = zoneKey; activeZoneEl = zoneGroupEl;
+
+  document.querySelectorAll('.zone-group').forEach(g => g.classList.remove('active'));
+  zoneGroupEl.classList.add('active');
+
+  l2Tag.textContent = zone.label;
+  l2List.innerHTML  = '';
+  zone.items.forEach(item => {
+    const li = document.createElement('li');
+    li.className = 'l2-item';
+    li.innerHTML = `<div class="l2-dot"></div><span class="l2-label">${item.label}</span>${item.proto ? '<div class="l2-proto-dot"></div>' : ''}`;
+    li.addEventListener('click', () => openL3(item, zone.label));
+    l2List.appendChild(li);
+  });
+
+  placeL2(zoneGroupEl);
+  l2Overlay.classList.add('open');
+}
+
+function closeL2() {
+  l2Overlay.classList.remove('open');
+  document.querySelectorAll('.zone-group').forEach(g => g.classList.remove('active'));
+  activeZone = null; activeZoneEl = null;
+}
+
+const ZONE_PAGES = {
+  perspective:  'level-2-perspective.html',
+  experiments:  'level-2-experiments.html',
+  systems:      'level-2-systems.html',
+  sensemaking:  'level-2-sensemaking.html',
+  interaction:  'level-2-interactions.html',
+};
+
+function navigateToZone(key) {
+  const url = ZONE_PAGES[key];
+  if (!url) return;
+
+  // Default fade transition for other zones
+  const exit = document.getElementById('page-exit');
+  exit.classList.add('active');
+  setTimeout(() => { window.location.href = url; }, 450);
+}
+
+document.querySelectorAll('.zone-group').forEach(g => {
+  g.addEventListener('click', () => navigateToZone(g.dataset.zone));
+});
+
+// ── LEVEL 3 ──────────────────────────────────────────────────
+const l3Overlay = document.getElementById('l3-overlay');
+const l3Panel   = document.getElementById('l3-panel');
+let chatReady = false, mapReady = false, contraReady = false;
+
+function openL3(item, zoneName) {
+  document.querySelectorAll('.proto-block').forEach(b => b.classList.remove('on'));
+  const proj = PROJECTS[item.id];
+  if (proj) {
+    document.getElementById('l3Cat').textContent   = proj.category;
+    document.getElementById('l3Title').textContent = proj.title;
+    document.getElementById('l3Sub').textContent   = proj.subtitle;
+    document.getElementById(proj.block).classList.add('on');
+    if (item.id === 'zoo-economy-map'      && !mapReady)    initMap();
+    if (item.id === 'research-analyst-gpt' && !chatReady)   initChat();
+    if (item.id === 'contradiction-mode'   && !contraReady) initContra();
+  } else {
+    document.getElementById('l3Cat').textContent   = zoneName;
+    document.getElementById('l3Title').textContent = item.label;
+    document.getElementById('l3Sub').textContent   = '';
+    document.getElementById('pbGenericDesc').textContent = `A design project exploring themes within ${zoneName.toLowerCase()} — documentation in progress.`;
+    document.getElementById('pbGenericTags').innerHTML = `<span class="l3-tag">${zoneName}</span>`;
+    document.getElementById('pb-generic').classList.add('on');
+  }
+  l3Panel.scrollTop = 0;
+  l3Overlay.classList.add('open');
+}
+
+function closeL3() { l3Overlay.classList.remove('open'); }
+document.getElementById('l3Close').addEventListener('click', closeL3);
+document.getElementById('l3-scrim').addEventListener('click', closeL3);
+
+document.addEventListener('keydown', e => {
+  if (e.key !== 'Escape') return;
+  if (l3Overlay.classList.contains('open')) { closeL3(); return; }
+  if (l2Overlay.classList.contains('open')) closeL2();
+});
+window.addEventListener('resize', () => {
+  if (l2Overlay.classList.contains('open') && activeZoneEl) placeL2(activeZoneEl);
+  if (mapReady) requestAnimationFrame(updateMapEdges);
+});
+
+// ── MAP PROTO ────────────────────────────────────────────────
+let selectedNodeId = null;
+
+function initMap() {
+  mapReady = true;
+  const wrap = document.querySelector('.map-wrap');
+  const svg  = document.getElementById('mapSvg');
+  const NS   = 'http://www.w3.org/2000/svg';
+  MAP_EDGES.forEach(([a,b]) => {
+    const l = document.createElementNS(NS,'line');
+    l.setAttribute('data-a', a); l.setAttribute('data-b', b);
+    l.classList.add('mn-conn'); svg.appendChild(l);
+  });
+  MAP_NODES.forEach(node => {
+    const d = document.createElement('div');
+    d.className = 'map-node'; d.style.left = node.x; d.style.top = node.y; d.dataset.id = node.id;
+    d.innerHTML = `<div class="mn-circle">${node.label}</div><div class="mn-lbl">${node.label}</div>`;
+    d.addEventListener('click', () => handleMapNode(node, d));
+    wrap.appendChild(d);
+  });
+  requestAnimationFrame(updateMapEdges);
+}
+
+function updateMapEdges() {
+  const wrap = document.querySelector('.map-wrap');
+  if (!wrap) return;
+  const wr = wrap.getBoundingClientRect();
+  const svg = document.getElementById('mapSvg');
+  svg.setAttribute('viewBox',`0 0 ${wr.width} ${wr.height}`);
+  svg.setAttribute('width', wr.width); svg.setAttribute('height', wr.height);
+  MAP_EDGES.forEach(([a,b]) => {
+    const line = svg.querySelector(`[data-a="${a}"][data-b="${b}"]`);
+    const na = wrap.querySelector(`[data-id="${a}"] .mn-circle`);
+    const nb = wrap.querySelector(`[data-id="${b}"] .mn-circle`);
+    if (!line||!na||!nb) return;
+    const ra=na.getBoundingClientRect(), rb=nb.getBoundingClientRect();
+    line.setAttribute('x1', ra.left+ra.width/2-wr.left);
+    line.setAttribute('y1', ra.top+ra.height/2-wr.top);
+    line.setAttribute('x2', rb.left+rb.width/2-wr.left);
+    line.setAttribute('y2', rb.top+rb.height/2-wr.top);
+  });
+}
+
+function handleMapNode(node, el) {
+  const info = document.getElementById('mapInfo');
+  document.querySelectorAll('.map-node').forEach(n => n.classList.remove('sel'));
+  document.querySelectorAll('.mn-conn').forEach(l => l.classList.remove('hi'));
+  if (selectedNodeId === node.id) {
+    selectedNodeId = null;
+    info.style.color = 'rgba(200,185,165,0.25)'; info.style.fontSize = '10px';
+    info.textContent = 'Select a node to explore its role in the zoo economy'; return;
+  }
+  selectedNodeId = node.id; el.classList.add('sel');
+  document.querySelectorAll(`.mn-conn[data-a="${node.id}"],.mn-conn[data-b="${node.id}"]`)
+    .forEach(l => l.classList.add('hi'));
+  info.style.color = 'rgba(200,185,165,0.5)'; info.style.fontSize = '11px';
+  info.innerHTML = `<strong style="display:block;font-size:8px;letter-spacing:0.18em;text-transform:uppercase;color:rgba(215,195,160,0.8);margin-bottom:5px;font-weight:normal;">${node.label}</strong>${node.info}`;
+}
+
+// ── CHAT PROTO ───────────────────────────────────────────────
+function initChat() {
+  chatReady = true;
+  const c = document.getElementById('chatMsgs'); c.innerHTML = '';
+  CHAT_MSGS.forEach((msg, i) => {
+    setTimeout(() => {
+      const wrap = document.createElement('div');
+      wrap.style.animation = 'msg-in 0.35s ease forwards';
+      const lbl = document.createElement('div'); lbl.className='chat-lbl';
+      lbl.textContent = msg.type==='u' ? 'You' : 'Analyst GPT';
+      const txt = document.createElement('div'); txt.className=`chat-msg ${msg.type}`;
+      txt.innerHTML = msg.text.replace(/\n/g,'<br>').replace(/→/g,'<span style="color:rgba(178,148,88,0.75)">→</span>');
+      wrap.appendChild(lbl); wrap.appendChild(txt); c.appendChild(wrap);
+      c.scrollTop = c.scrollHeight;
+    }, i * 380);
+  });
+}
+
+// ── CONTRADICTION PROTO ──────────────────────────────────────
+function initContra() {
+  contraReady = true;
+  const tabs = document.getElementById('contraTabs'); tabs.innerHTML = '';
+  CONTRADICTIONS.forEach((c, i) => {
+    const btn = document.createElement('button');
+    btn.className = 'ctab'+(i===0?' on':''); btn.textContent = c.label;
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.ctab').forEach(b => b.classList.remove('on'));
+      btn.classList.add('on'); setContra(i);
+    });
+    tabs.appendChild(btn);
+  });
+  setContra(0);
+}
+
+function setContra(i) {
+  const c = CONTRADICTIONS[i];
+  const colA = document.querySelector('.contra-col.a');
+  const colB = document.querySelector('.contra-col.b');
+  const fill = document.getElementById('tensionFill');
+  colA.style.opacity='0'; colB.style.opacity='0'; fill.style.width='0%';
+  setTimeout(() => {
+    document.getElementById('caText').textContent = c.a;
+    document.getElementById('cbText').textContent = c.b;
+    colA.style.transition='opacity 0.3s ease'; colB.style.transition='opacity 0.3s ease';
+    colA.style.opacity='1'; colB.style.opacity='1';
+    setTimeout(()=>{ fill.style.width = c.t+'%'; }, 80);
+  }, 200);
+}
+
+// ── MOBILE PAN ───────────────────────────────────────────────
+(function() {
+  const MOBILE_BP = 768;
+  const ASPECT    = 1440 / 900; // SVG viewBox ratio
+
+  if (window.innerWidth > MOBILE_BP) return;
+
+  const scene    = document.getElementById('scene');
+  const panHint  = document.getElementById('mob-pan-hint');
+
+  let panX      = 0;
+  let maxPan    = 0;
+  let tStartX   = 0;
+  let tStartPan = 0;
+  let lastX     = 0;
+  let lastVX    = 0;
+  let isPan     = false;
+  let hintGone  = false;
+  let rafId     = null;
+
+  // ── Append ↗ to each zone label ─────────────────────────
+  document.querySelectorAll('.zone-lbl').forEach(el => {
+    el.textContent = el.textContent.trim() + '  ↗';
+  });
+
+  // ── Size scene to exact photo aspect ratio ───────────────
+  function resize() {
+    if (window.innerWidth > MOBILE_BP) {
+      scene.style.width = '';
+      scene.style.transform = '';
+      return;
+    }
+    const sceneW = Math.round(window.innerHeight * ASPECT);
+    scene.style.width = sceneW + 'px';
+    maxPan = Math.max(0, sceneW - window.innerWidth);
+    panX   = Math.max(0, Math.min(maxPan, panX));
+    scene.style.transform = `translateX(${-panX}px)`;
+  }
+
+  // ── Pan setter ───────────────────────────────────────────
+  function setPan(x) {
+    panX = Math.max(0, Math.min(maxPan, x));
+    scene.style.transform = `translateX(${-panX}px)`;
+  }
+
+  // ── Dismiss hint after first real swipe ─────────────────
+  function dismissHint() {
+    if (hintGone) return;
+    hintGone = true;
+    if (panHint) panHint.classList.add('gone');
+  }
+
+  // ── Brief intro drift so user knows it's pannable ────────
+  function playPanHint() {
+    const target = Math.min(52, maxPan * 0.12);
+    if (target < 4) return;
+    let start = null;
+    function step(ts) {
+      if (!start) start = ts;
+      const t = Math.min((ts - start) / 900, 1);
+      // ease out right, ease back left
+      const go   = t < 0.55 ? t / 0.55 : 1;
+      const back = t > 0.55 ? (t - 0.55) / 0.45 : 0;
+      const eased = go * (1 - back);
+      const easeOut = p => 1 - Math.pow(1 - p, 3);
+      setPan(target * easeOut(eased));
+      if (t < 1) requestAnimationFrame(step);
+      else setPan(0);
+    }
+    setTimeout(() => requestAnimationFrame(step), 1100);
+  }
+
+  // ── Touch: start ─────────────────────────────────────────
+  document.addEventListener('touchstart', e => {
+    if (e.touches.length !== 1) return;
+    if (rafId) { cancelAnimationFrame(rafId); rafId = null; }
+    tStartX   = e.touches[0].clientX;
+    tStartPan = panX;
+    lastX     = tStartX;
+    lastVX    = 0;
+    isPan     = false;
+    scene.classList.add('dragging');
+  }, { passive: true });
+
+  // ── Touch: move ──────────────────────────────────────────
+  document.addEventListener('touchmove', e => {
+    if (e.touches.length !== 1) return;
+    const cx = e.touches[0].clientX;
+    lastVX   = lastX - cx; // positive = dragging left
+    lastX    = cx;
+    const dx = tStartX - cx;
+    if (!isPan && Math.abs(dx) > 8) isPan = true;
+    if (isPan) {
+      e.preventDefault();
+      setPan(tStartPan + dx);
+    }
+  }, { passive: false });
+
+  // ── Touch: end + momentum ────────────────────────────────
+  document.addEventListener('touchend', () => {
+    scene.classList.remove('dragging');
+    if (!isPan) return;
+    dismissHint();
+    let vx = lastVX * 0.9; // carry velocity
+    function momentum() {
+      if (Math.abs(vx) < 0.4 || panX <= 0 || panX >= maxPan) return;
+      setPan(panX + vx);
+      vx *= 0.93;
+      rafId = requestAnimationFrame(momentum);
+    }
+    rafId = requestAnimationFrame(momentum);
+  }, { passive: true });
+
+  resize();
+  playPanHint();
+  window.addEventListener('resize', resize);
+})();
+
+// ── GLITTER SPARKLES ──────────────────────────────────────────
+(function() {
+  const NS = 'http://www.w3.org/2000/svg';
+  const COUNT = 38;
+
+  document.querySelectorAll('.zone-group').forEach(group => {
+    const hit = group.querySelector('.zone-hit');
+    if (!hit) return;
+    const x = parseFloat(hit.getAttribute('x'));
+    const y = parseFloat(hit.getAttribute('y'));
+    const w = parseFloat(hit.getAttribute('width'));
+    const h = parseFloat(hit.getAttribute('height'));
+
+    for (let i = 0; i < COUNT; i++) {
+      // Radial distribution from center — denser toward center, radiates outward
+      const zoneCx = x + w / 2;
+      const zoneCy = y + h / 2;
+      const angle  = Math.random() * Math.PI * 2;
+      const dist   = Math.pow(Math.random(), 0.6); // bias toward center
+      const cx     = zoneCx + Math.cos(angle) * dist * (w / 2 - 8);
+      const cy     = zoneCy + Math.sin(angle) * dist * (h / 2 - 8);
+
+      const r      = 0.5 + Math.random() * 2;
+      const dur    = 2 + Math.random() * 3.5;
+      // Inner dots fire first, outer dots lag — creates radiating pulse
+      const delay  = (-(Math.random() * 10) + dist * 2).toFixed(2);
+      const bright = Math.random() > 0.5;
+
+      const dot = document.createElementNS(NS, 'circle');
+      dot.setAttribute('cx', cx);
+      dot.setAttribute('cy', cy);
+      dot.setAttribute('r', r);
+      dot.setAttribute('fill', bright ? 'rgba(255,245,220,1)' : 'rgba(220,210,195,0.85)');
+      dot.setAttribute('class', 'sparkle-dot');
+      dot.style.animation = `glitter ${dur}s ease-in-out infinite ${delay}s`;
+      if (bright) dot.style.filter = 'drop-shadow(0 0 3px rgba(255,245,220,1)) drop-shadow(0 0 6px rgba(245,225,180,0.7))';
+
+      group.appendChild(dot);
+    }
+  });
+})();
+</script>
+</body>
+</html>

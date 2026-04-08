@@ -1,0 +1,990 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Take A Bag — Case Study — Amber Grey</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400;1,500&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --accent:        #3ba8a0;
+  --accent-dim:    rgba(59, 168, 160, 0.09);
+  --accent-border: rgba(59, 168, 160, 0.22);
+  --bg:          #060e0e;
+  --bg-alt:      #091413;
+  --text:        rgba(198, 228, 224, 0.90);
+  --text-muted:  rgba(59, 168, 160, 0.65);
+  --accent-bright: #8ad4cc;
+  --amber:       #c8a050;
+  --border:      rgba(255, 255, 255, 0.055);
+}
+
+html { scroll-behavior: smooth; }
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'DM Sans', sans-serif;
+  font-weight: 300;
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+}
+
+/* ── PAGE EXIT ── */
+#page-exit {
+  position: fixed; inset: 0;
+  background: var(--bg);
+  opacity: 0; pointer-events: none;
+  transition: opacity 0.28s ease-in;
+  z-index: 9999;
+}
+#page-exit.active { opacity: 1; }
+
+/* ── NAV ── */
+.nav-back {
+  position: fixed; top: 28px; left: 32px;
+  display: inline-flex; align-items: center; gap: 10px;
+  background: rgba(255,255,255,0.05);
+  backdrop-filter: blur(14px);
+  border: 1px solid rgba(255,255,255,0.09);
+  border-radius: 100px;
+  padding: 9px 18px 9px 14px;
+  cursor: pointer;
+  color: rgba(105,210,200,0.75);
+  font-size: 10px; font-weight: 400; letter-spacing: 0.22em; text-transform: uppercase;
+  transition: all 0.25s; z-index: 100;
+}
+.nav-back:hover { background: rgba(255,255,255,0.09); color: rgba(130,235,225,1); border-color: rgba(255,255,255,0.16); }
+.nav-back-arrow { display: inline-block; width: 16px; height: 1px; background: currentColor; position: relative; flex-shrink: 0; }
+.nav-back-arrow::before { content: ''; position: absolute; left: 0; top: -3px; width: 6px; height: 6px; border-left: 1px solid currentColor; border-bottom: 1px solid currentColor; transform: rotate(45deg); }
+
+.wordmark {
+  position: fixed; bottom: 24px; left: 21px;
+  font-size: 13px; font-weight: 300; letter-spacing: 0.2em;
+  color: rgba(59,168,160,0.13); pointer-events: none; z-index: 10;
+}
+
+/* ── HERO ── */
+.hero {
+  position: relative; min-height: 100svh;
+  display: flex; flex-direction: column; justify-content: flex-end;
+  padding: 0 64px 80px;
+  overflow: hidden;
+  background-image:
+    linear-gradient(to bottom,
+      rgba(5, 18, 18, 0.50) 0%,
+      rgba(6, 14, 14, 0.92) 70%,
+      #060e0e 100%),
+    url('Studio_Edited.webp');
+  background-size: cover;
+  background-position: center top;
+  background-attachment: fixed;
+}
+.hero::before {
+  content: ''; position: absolute; inset: 0; pointer-events: none;
+  background:
+    radial-gradient(ellipse 80% 60% at 15% 60%, rgba(18, 90, 85, 0.20) 0%, transparent 60%),
+    radial-gradient(ellipse 60% 50% at 75% 30%, rgba(10, 50, 48, 0.14) 0%, transparent 55%);
+  animation: heroPulse 9s ease-in-out infinite alternate;
+}
+@keyframes heroPulse {
+  0%   { opacity: 0.7; transform: scale(1); }
+  100% { opacity: 1;   transform: scale(1.06); }
+}
+.hero-eyebrow {
+  font-size: 9px; font-weight: 500; letter-spacing: 0.34em; text-transform: uppercase;
+  color: rgba(105,210,200,0.88); margin-bottom: 20px; position: relative; z-index: 1;
+}
+.hero h1 {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(72px, 10vw, 130px);
+  font-weight: 600; line-height: 0.90; letter-spacing: -0.01em;
+  color: var(--accent-bright); position: relative; z-index: 1; margin-bottom: 28px;
+}
+.hero-subtitle {
+  font-size: clamp(14px, 1.4vw, 18px); font-weight: 300; font-style: italic;
+  color: rgba(198,228,224,0.48); position: relative; z-index: 1; margin-bottom: 56px;
+  max-width: 560px; line-height: 1.6;
+}
+.hero-meta {
+  display: flex; gap: 48px; position: relative; z-index: 1;
+  border-top: 1px solid rgba(59,168,160,0.13); padding-top: 28px;
+  flex-wrap: wrap;
+}
+.hero-meta-item { display: flex; flex-direction: column; gap: 5px; }
+.hero-meta-label { font-size: 8px; font-weight: 500; letter-spacing: 0.28em; text-transform: uppercase; color: var(--text-muted); }
+.hero-meta-value { font-size: 13px; font-weight: 400; color: rgba(105,210,200,0.75); }
+
+/* ── SECTIONS ── */
+.cs-section { padding: 96px 64px; }
+.cs-section.alt-bg { background: var(--bg-alt); }
+.section-inner { max-width: 1000px; margin: 0 auto; }
+
+.section-eyebrow {
+  font-size: 8.5px; font-weight: 500; letter-spacing: 0.34em; text-transform: uppercase;
+  color: rgba(105,210,200,0.68); margin-bottom: 16px;
+}
+.section-heading {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(32px, 4vw, 52px); font-weight: 600; line-height: 1.1;
+  color: var(--accent-bright); margin-bottom: 32px;
+}
+
+/* ── OVERVIEW ── */
+.overview-intro {
+  font-size: clamp(15px, 1.5vw, 18px); font-weight: 300; line-height: 1.9;
+  color: rgba(198,228,224,0.68); max-width: 700px; margin-bottom: 52px;
+}
+.overview-intro em { color: rgba(155,235,225,0.9); font-style: italic; }
+
+/* ── CHIP PANEL ── */
+.proj-meta-outer {
+  border: 1px solid var(--accent-border);
+  border-radius: 14px;
+  background: var(--accent-dim);
+  position: relative; overflow: hidden;
+  margin-bottom: 12px;
+}
+.proj-meta-outer::before {
+  content: ''; position: absolute; inset: 0; pointer-events: none;
+  background: radial-gradient(ellipse 80% 60% at var(--mx,50%) var(--my,40%), rgba(59,168,160,0.06) 0%, transparent 70%);
+  transition: background 0.1s ease; border-radius: inherit;
+}
+.chip-panel {
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: 0; padding: 36px 40px;
+}
+.chip-group { display: flex; flex-direction: column; gap: 16px; }
+.chip-group + .chip-group { border-left: 1px solid var(--accent-border); padding-left: 40px; }
+.chip-group-label {
+  font-size: 9px; font-weight: 500; letter-spacing: 0.26em; text-transform: uppercase;
+  color: rgba(105,210,200,0.65); margin-bottom: 4px;
+}
+.chip-row { display: flex; flex-wrap: wrap; gap: 8px; }
+.chip-btn {
+  font-size: 11px; font-weight: 400; letter-spacing: 0.06em;
+  color: rgba(105,210,200,0.7);
+  background: rgba(59,168,160,0.07);
+  border: 1px solid rgba(59,168,160,0.18);
+  border-radius: 100px; padding: 6px 14px;
+  cursor: default; white-space: nowrap;
+  transition: background 0.2s, border-color 0.2s, color 0.2s;
+}
+.chip-btn:hover {
+  background: rgba(59,168,160,0.15);
+  border-color: rgba(59,168,160,0.38);
+  color: rgba(155,240,230,0.95);
+}
+.chip-detail-wrap { padding: 0 40px 28px; min-height: 28px; }
+.chip-detail {
+  font-size: 12px; font-weight: 300; letter-spacing: 0.04em;
+  color: rgba(105,210,200,0.75); font-style: italic;
+  transition: opacity 0.2s ease; opacity: 0;
+}
+.chip-detail.has-value { opacity: 1; }
+
+/* ── THESIS CALLOUT ── */
+.thesis-block {
+  border-left: 2px solid rgba(59,168,160,0.35);
+  padding: 28px 36px;
+  background: rgba(59,168,160,0.04);
+  border-radius: 0 10px 10px 0;
+  margin: 48px 0;
+}
+.thesis-quote {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(22px, 2.8vw, 34px); font-weight: 400; font-style: italic;
+  color: rgba(155,235,225,0.88); line-height: 1.45; margin-bottom: 12px;
+}
+.thesis-attr {
+  font-size: 10px; font-weight: 400; letter-spacing: 0.2em; text-transform: uppercase;
+  color: rgba(90,170,160,0.5);
+}
+
+/* ── BODY TEXT ── */
+.body-text {
+  font-size: clamp(14px, 1.4vw, 16px); font-weight: 300; line-height: 1.9;
+  color: rgba(198,228,224,0.65); margin-bottom: 24px; max-width: 700px;
+}
+.body-text strong { color: rgba(155,235,225,0.88); font-weight: 500; }
+.body-text em { color: rgba(198,228,224,0.8); font-style: italic; }
+
+/* ── STAT ROW ── */
+.stat-row {
+  display: grid; grid-template-columns: repeat(3, 1fr); gap: 1px;
+  background: var(--accent-border);
+  border: 1px solid var(--accent-border);
+  border-radius: 12px; overflow: hidden;
+  margin: 40px 0;
+}
+.stat-cell {
+  background: var(--bg); padding: 28px 32px;
+  display: flex; flex-direction: column; gap: 8px;
+}
+.stat-cell.alt { background: var(--bg-alt); }
+.stat-number {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 42px; font-weight: 600; line-height: 1;
+  color: var(--accent-bright);
+}
+.stat-label {
+  font-size: 10px; font-weight: 400; letter-spacing: 0.14em; text-transform: uppercase;
+  color: rgba(105,210,200,0.5);
+}
+.stat-sub {
+  font-size: 11px; font-weight: 300; color: rgba(160,200,195,0.48); line-height: 1.5;
+}
+
+/* ── FRAMEWORK GRID ── */
+.framework-grid {
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: 16px; margin: 40px 0;
+}
+.framework-card {
+  background: rgba(59,168,160,0.04);
+  border: 1px solid rgba(59,168,160,0.12);
+  border-radius: 10px; padding: 24px 28px;
+  transition: background 0.25s ease, border-color 0.25s ease, transform 0.25s ease;
+}
+.framework-card:hover {
+  background: rgba(59,168,160,0.08);
+  border-color: rgba(59,168,160,0.26);
+  transform: translateY(-3px);
+}
+.framework-card:hover .framework-arrow { color: rgba(200,160,80,0.95); }
+.framework-card:hover .framework-label { color: rgba(155,235,225,1); }
+.framework-card:hover .framework-desc  { color: rgba(160,200,195,0.75); }
+.framework-arrow {
+  font-size: 10px; font-weight: 500; letter-spacing: 0.16em; text-transform: uppercase;
+  color: rgba(200,160,80,0.7); margin-bottom: 10px;
+  transition: color 0.25s ease;
+}
+.framework-label {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 22px; font-weight: 600; color: rgba(155,235,225,0.85);
+  margin-bottom: 8px; line-height: 1.1;
+  transition: color 0.25s ease;
+}
+.framework-desc {
+  font-size: 12px; font-weight: 300; line-height: 1.7;
+  color: rgba(160,200,195,0.55);
+  transition: color 0.25s ease;
+}
+
+/* ── RESEARCH PILLARS ── */
+.pillars-grid {
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: 16px; margin: 40px 0;
+}
+.pillar-card {
+  background: rgba(59,168,160,0.04);
+  border: 1px solid rgba(59,168,160,0.12);
+  border-radius: 10px; padding: 28px 28px;
+  cursor: pointer;
+  transition: border-color 0.25s, background 0.25s;
+}
+.pillar-card:hover {
+  border-color: rgba(59,168,160,0.22);
+}
+.pillar-card.open {
+  border-color: rgba(59,168,160,0.32);
+  background: rgba(59,168,160,0.07);
+}
+.pillar-num {
+  font-size: 9px; font-weight: 500; letter-spacing: 0.2em;
+  color: rgba(105,210,200,0.35); margin-bottom: 12px;
+}
+.pillar-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 22px; font-weight: 600; color: rgba(155,235,225,0.85);
+  margin-bottom: 10px; line-height: 1.1;
+}
+.pillar-desc {
+  font-size: 12px; font-weight: 300; line-height: 1.7;
+  color: rgba(160,200,195,0.55);
+}
+.pillar-toggle {
+  font-size: 10px; font-weight: 400; letter-spacing: 0.10em;
+  color: rgba(105,210,200,0.50);
+  margin-top: 14px;
+  display: block;
+  transition: color 0.2s;
+  user-select: none;
+}
+.pillar-card:hover .pillar-toggle,
+.pillar-card.open .pillar-toggle {
+  color: rgba(105,210,200,0.80);
+}
+.pillar-impl {
+  max-height: 0;
+  overflow: hidden;
+  opacity: 0;
+  transition: max-height 0.38s ease, opacity 0.32s ease;
+}
+.pillar-card.open .pillar-impl {
+  max-height: 160px;
+  opacity: 1;
+}
+.pillar-impl-inner {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 11.5px;
+  font-style: italic;
+  font-weight: 300;
+  line-height: 1.65;
+  color: rgba(220,175,90,0.70);
+  padding-top: 14px;
+  border-top: 1px solid rgba(200,160,80,0.15);
+  margin-top: 14px;
+}
+
+/* ── PAIN POINTS LIST ── */
+.pain-list {
+  display: flex; gap: 0; margin: 36px 0;
+  border: 1px solid var(--accent-border); border-radius: 12px; overflow: hidden;
+}
+.pain-item {
+  flex: 1; padding: 24px 20px;
+  border-right: 1px solid var(--accent-border);
+  background: var(--bg);
+  display: flex; flex-direction: column; gap: 8px;
+  transition: background 0.25s;
+}
+.pain-item:last-child { border-right: none; }
+.pain-item.highlight { background: rgba(59,168,160,0.05); }
+.pain-item:hover { background: rgba(59,168,160,0.07); }
+.pain-icon {
+  font-size: 9px; font-weight: 500; letter-spacing: 0.2em;
+  color: rgba(105,210,200,0.4);
+}
+.pain-name {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 19px; font-weight: 600;
+  color: rgba(155,235,225,0.82); line-height: 1.1;
+}
+.pain-desc {
+  font-size: 11px; font-weight: 300; line-height: 1.65;
+  color: rgba(160,200,195,0.48);
+}
+.pain-response {
+  font-size: 10.5px;
+  font-style: italic;
+  font-weight: 300;
+  line-height: 1.6;
+  color: transparent;
+  border-top: 1px solid transparent;
+  padding-top: 0;
+  max-height: 0;
+  overflow: hidden;
+  transition: color 0.3s ease, border-color 0.3s ease, padding-top 0.3s ease, max-height 0.3s ease;
+}
+.pain-item:hover .pain-response {
+  color: rgba(105,210,200,0.70);
+  border-top: 1px solid rgba(59,168,160,0.20);
+  padding-top: 10px;
+  max-height: 80px;
+}
+
+/* ── PERSONA CARDS ── */
+.persona-grid {
+  display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px;
+  margin: 40px 0;
+}
+.persona-card {
+  padding: 28px; background: rgba(59,168,160,0.04);
+  border: 1px solid rgba(59,168,160,0.10); border-radius: 10px;
+  transition: background 0.25s ease, border-color 0.25s ease, transform 0.25s ease;
+}
+.persona-card:hover {
+  background: rgba(59,168,160,0.08);
+  border-color: rgba(59,168,160,0.24);
+  transform: translateY(-3px);
+}
+.persona-card:hover .persona-badge { color: rgba(200,160,80,0.9); }
+.persona-card:hover .persona-name  { color: rgba(155,235,225,1); }
+.persona-card:hover .persona-desc  { color: rgba(160,200,195,0.75); }
+.persona-badge {
+  font-size: 9px; font-weight: 500; letter-spacing: 0.2em; text-transform: uppercase;
+  color: rgba(200,160,80,0.65); margin-bottom: 14px;
+  transition: color 0.25s ease;
+}
+.persona-name {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 26px; font-weight: 600; color: rgba(155,235,225,0.85);
+  margin-bottom: 10px; line-height: 1.1;
+  transition: color 0.25s ease;
+}
+.persona-desc {
+  font-size: 12px; font-weight: 300; line-height: 1.7;
+  color: rgba(160,200,195,0.55);
+  transition: color 0.25s ease;
+}
+
+/* ── WIL ── */
+.wil-grid {
+  display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px;
+  margin-top: 40px;
+}
+.wil-card {
+  padding: 28px; background: rgba(59,168,160,0.04);
+  border: 1px solid rgba(59,168,160,0.10); border-radius: 10px;
+  transition: background 0.25s ease, border-color 0.25s ease, transform 0.25s ease;
+}
+.wil-card:hover {
+  background: rgba(59,168,160,0.08);
+  border-color: rgba(59,168,160,0.24);
+  transform: translateY(-3px);
+}
+.wil-card:hover .wil-number { color: rgba(59,168,160,0.45); }
+.wil-card:hover .wil-title  { color: rgba(59,168,160,0.9); }
+.wil-card:hover .wil-body   { color: rgba(198,228,224,0.75); }
+.wil-number {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 32px; font-weight: 600; color: rgba(59,168,160,0.22);
+  margin-bottom: 12px;
+  transition: color 0.25s ease;
+}
+.wil-title { font-size: 11px; font-weight: 500; letter-spacing: 0.12em; text-transform: uppercase; color: rgba(59,168,160,0.65); margin-bottom: 10px; transition: color 0.25s ease; }
+.wil-body { font-size: 13px; font-weight: 300; line-height: 1.75; color: rgba(198,228,224,0.52); transition: color 0.25s ease; }
+
+/* ── REFLECTION ── */
+.reflection-quote {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(26px, 3.5vw, 46px); font-weight: 400; font-style: italic;
+  line-height: 1.35; color: rgba(155,235,225,0.78);
+  border-left: 2px solid rgba(59,168,160,0.28);
+  padding-left: 36px; margin-bottom: 20px;
+}
+.reflection-attr {
+  font-size: 10px; font-weight: 400; letter-spacing: 0.22em;
+  text-transform: uppercase; color: rgba(90,170,160,0.45);
+  padding-left: 36px;
+}
+
+/* ── REVEAL ── */
+.reveal {
+  opacity: 0; transform: translateY(22px);
+  transition: opacity 0.7s ease, transform 0.7s ease;
+}
+.reveal.is-visible { opacity: 1; transform: translateY(0); }
+
+/* ── MOBILE ── */
+@media (max-width: 860px) {
+  .pillars-grid { grid-template-columns: 1fr; }
+  .framework-grid { grid-template-columns: 1fr; }
+  .wil-grid { grid-template-columns: 1fr; gap: 12px; }
+  .persona-grid { grid-template-columns: 1fr; gap: 12px; }
+  .stat-row { grid-template-columns: 1fr; }
+  .pain-list { flex-direction: column; }
+  .pain-item { border-right: none; border-bottom: 1px solid var(--accent-border); }
+  .pain-item:last-child { border-bottom: none; }
+  .chip-panel { grid-template-columns: 1fr; gap: 28px; }
+  .chip-group + .chip-group { border-left: none; padding-left: 0; border-top: 1px solid var(--accent-border); padding-top: 24px; }
+}
+@media (max-width: 660px) {
+  .hero { padding: 0 24px 52px; }
+  .cs-section { padding: 64px 24px; }
+  .hero h1 { font-size: 64px; }
+  .chip-panel { padding: 24px 20px; }
+  .chip-detail-wrap { padding: 0 20px 20px; }
+}
+
+/* ── PROTOTYPE EMBED ── */
+.proto-frame-wrap {
+  width: 100%;
+  max-width: 900px;
+  margin: 0 auto;
+  border-radius: 14px;
+  border: 1px solid var(--accent-border);
+  overflow: hidden;
+  aspect-ratio: 9 / 7;
+}
+.proto-frame-wrap iframe {
+  width: 100%; height: 100%;
+  border: none; display: block;
+}
+
+/* ── SECTION PROGRESS NAV ── */
+#snav {
+  position: fixed;
+  right: 24px;
+  top: 50%;
+  transform: translateY(-50%);
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  z-index: 200;
+}
+.snav-dot {
+  position: relative;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: rgba(59,168,160,0.18);
+  border: 1px solid rgba(59,168,160,0.40);
+  padding: 0;
+  cursor: pointer;
+  transition: background 0.25s, border-color 0.25s, transform 0.25s;
+  outline: none;
+}
+.snav-dot:hover,
+.snav-dot.active {
+  background: rgba(59,168,160,0.75);
+  border-color: rgba(59,168,160,0.90);
+}
+.snav-dot.active {
+  transform: scale(1.4);
+}
+.snav-dot::after {
+  content: attr(data-label);
+  position: absolute;
+  right: calc(100% + 10px);
+  top: 50%;
+  transform: translateY(-50%);
+  background: rgba(6,14,14,0.88);
+  border: 1px solid rgba(59,168,160,0.22);
+  border-radius: 4px;
+  padding: 4px 9px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 10px;
+  font-weight: 400;
+  letter-spacing: 0.05em;
+  color: rgba(105,210,200,0.85);
+  white-space: nowrap;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.18s ease;
+}
+.snav-dot:hover::after {
+  opacity: 1;
+}
+@media (max-width: 1000px) {
+  #snav { display: none; }
+}
+</style>
+</head>
+<body>
+
+<div id="page-exit"></div>
+<div class="wordmark">Amber Grey</div>
+
+<!-- ── SECTION PROGRESS DOTS NAV ── -->
+<nav id="snav">
+  <button class="snav-dot" data-target="s-overview" data-label="Overview"></button>
+  <button class="snav-dot" data-target="s-problem"  data-label="The Problem"></button>
+  <button class="snav-dot" data-target="s-research" data-label="The Research"></button>
+  <button class="snav-dot" data-target="s-solution" data-label="The Solution"></button>
+  <button class="snav-dot" data-target="s-proto"    data-label="Try It"></button>
+  <button class="snav-dot" data-target="s-reflect"  data-label="Reflection"></button>
+</nav>
+
+<button class="nav-back" onclick="navigateTo('level-3-takeabag.html')">
+  <span class="nav-back-arrow"></span>
+  Waste Impact Calculator
+</button>
+
+<!-- ── HERO ── -->
+<section class="hero">
+  <div class="hero-eyebrow">Take A Bag · Case Study</div>
+  <h1>Take A Bag</h1>
+  <p class="hero-subtitle">What if sustainable behavior wasn't a sacrifice — but a shared infrastructure?</p>
+  <div class="hero-meta">
+    <div class="hero-meta-item">
+      <span class="hero-meta-label">Role</span>
+      <span class="hero-meta-value">UX Research · Product Design</span>
+    </div>
+    <div class="hero-meta-item">
+      <span class="hero-meta-label">Team</span>
+      <span class="hero-meta-value">Solo</span>
+    </div>
+    <div class="hero-meta-item">
+      <span class="hero-meta-label">Focus</span>
+      <span class="hero-meta-value">Sustainable UX · Community Sharing</span>
+    </div>
+    <div class="hero-meta-item">
+      <span class="hero-meta-label">Scope</span>
+      <span class="hero-meta-value">Research · Strategy · Product Design</span>
+    </div>
+  </div>
+</section>
+
+<!-- ── OVERVIEW ── -->
+<section class="cs-section" id="s-overview">
+  <div class="section-inner">
+    <p class="section-eyebrow reveal">Overview</p>
+    <h2 class="section-heading reveal">A communal system for what we already throw away.</h2>
+
+    <p class="overview-intro reveal">Despite increasing awareness of the negative environmental impact of single-use plastics, the issue persists due to a lack of accessible, everyday solutions. The result is a continued reliance on single-use bags, contributing to waste and pollution. Take A Bag was designed to address this — not with guilt, but with <em>shared infrastructure that makes sustainable behavior the path of least resistance.</em></p>
+
+    <div class="thesis-block reveal">
+      <div class="thesis-quote">"Sustainability doesn't fail at the point of conviction. It fails at the point of convenience."</div>
+      <div class="thesis-attr">Take A Bag · Core Thesis</div>
+    </div>
+
+    <!-- skills / tools chip panel -->
+    <div class="proj-meta-outer reveal" id="chipOuter">
+      <div class="chip-panel">
+        <div class="chip-group">
+          <div class="chip-group-label">Skills</div>
+          <div class="chip-row">
+            <button class="chip-btn" data-detail="Anthropological lens · Cultural analysis · Behavioral research · Pain point mapping · Literature review">UX Research</button>
+            <button class="chip-btn" data-detail="Circular economy modeling · Neoliberal systems critique · Greenwashing analysis · Structural behavior mapping">Systems Thinking</button>
+            <button class="chip-btn" data-detail="App interface design · Station interaction flow · Map-based discovery · Contribution tracking">Interaction Design</button>
+            <button class="chip-btn" data-detail="Communal exchange architecture · Touchpoint strategy · Station network design · User journey orchestration">Service Design</button>
+            <button class="chip-btn" data-detail="Donor flow · Recipient flow · Environmental impact visualization · Community engagement loops">Behavioral Design</button>
+            <button class="chip-btn" data-detail="Waste reduction strategy · Accessibility-first approach · Community engagement framework">Strategic Innovation</button>
+          </div>
+        </div>
+        <div class="chip-group">
+          <div class="chip-group-label">Tools</div>
+          <div class="chip-row">
+            <button class="chip-btn" data-detail="Literature review · Field research · Ethnographic observation · User interviews">Research & Analysis</button>
+            <button class="chip-btn" data-detail="Figma · Illustrator · Photoshop · InDesign">Design & Prototyping</button>
+            <button class="chip-btn" data-detail="Wireframing · Interactive map design · Mobile-first UI · Station kiosk UX">Product Design</button>
+          </div>
+        </div>
+      </div>
+      <div class="chip-detail-wrap">
+        <div class="chip-detail" id="chipDetail">Hover a chip to see what it means in this project.</div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ── THE PROBLEM ── -->
+<section class="cs-section alt-bg" id="s-problem">
+  <div class="section-inner">
+    <p class="section-eyebrow reveal">The Problem</p>
+    <h2 class="section-heading reveal">Awareness without access doesn't change behavior.</h2>
+
+    <p class="body-text reveal">People know single-use bags are harmful. The awareness campaigns have worked. But awareness hasn't translated into consistent behavior change — because the friction points are practical, not ideological. Forgetting bags at home, concerns about cleanliness, resistance from store employees, limited availability, inadequate capacity, and storage challenges all conspire against good intentions.</p>
+
+    <p class="body-text reveal">The reusable bag problem isn't a knowledge problem. It's a <strong>systems problem</strong> — one where individual willpower is expected to override structural inconvenience. Every forgotten bag is a moment where the system fails, not the person. Take A Bag was designed to move the solution from the individual to the infrastructure.</p>
+
+    <div class="pain-list reveal">
+      <div class="pain-item">
+        <div class="pain-icon">01</div>
+        <div class="pain-name">Forgetting</div>
+        <div class="pain-desc">The most common failure point — bags left at home, in the car, or at the office despite best intentions.</div>
+        <div class="pain-response">→ GreenSwap puts bags at the point of need — forgetting becomes irrelevant.</div>
+      </div>
+      <div class="pain-item highlight">
+        <div class="pain-icon">02</div>
+        <div class="pain-name">Cleanliness</div>
+        <div class="pain-desc">Hygiene concerns about reused bags create psychological barriers to adoption and sharing.</div>
+        <div class="pain-response">→ Station design uses visual hygiene cues; bags are communal infrastructure, not personal.</div>
+      </div>
+      <div class="pain-item">
+        <div class="pain-icon">03</div>
+        <div class="pain-name">Resistance</div>
+        <div class="pain-desc">Store employees sometimes push back on reusable bags, adding social friction to an already fragile behavior.</div>
+        <div class="pain-response">→ Removes the person-to-bag relationship — it's neutral infrastructure, like a shopping cart.</div>
+      </div>
+      <div class="pain-item highlight">
+        <div class="pain-icon">04</div>
+        <div class="pain-name">Capacity</div>
+        <div class="pain-desc">Limited bag sizes and carrying capacity make reusable bags impractical for larger shopping trips.</div>
+        <div class="pain-response">→ Multiple sizes at each station. The system scales to the trip, not the other way around.</div>
+      </div>
+    </div>
+
+    <p class="body-text reveal">These pain points aren't edge cases — they're the <strong>everyday experience</strong> of trying to be sustainable within a system designed for disposability. The question became: what if the solution didn't ask people to change, but changed the environment around them?</p>
+
+  </div>
+</section>
+
+<!-- ── THE RESEARCH ── -->
+<section class="cs-section" id="s-research">
+  <div class="section-inner">
+    <p class="section-eyebrow reveal">The Research</p>
+    <h2 class="section-heading reveal">Four lenses on why sustainable behavior breaks down.</h2>
+
+    <p class="body-text reveal">The research for Take A Bag moved through four interdisciplinary lenses — each revealing a different layer of why individual behavior change fails to solve systemic environmental problems. Together, they formed the foundation for a design response that works with human behavior rather than against it.</p>
+
+    <div class="pillars-grid">
+      <div class="pillar-card reveal" style="transition-delay: 0s;">
+        <div class="pillar-num">01</div>
+        <div class="pillar-title">Anthropology</div>
+        <div class="pillar-desc">Cultural dynamics, social structures, and historical contexts shape attitudes toward sustainable practices. Effective interventions must resonate with diverse cultural backgrounds and acknowledge that sustainability is culturally mediated, not universal.</div>
+        <span class="pillar-toggle">Design Implication +</span>
+        <div class="pillar-impl">
+          <div class="pillar-impl-inner">GreenSwap removes cultural signaling — it's infrastructure, not activism. The system works without asking people to identify with a cause.</div>
+        </div>
+      </div>
+      <div class="pillar-card reveal" style="transition-delay: 0.1s;">
+        <div class="pillar-num">02</div>
+        <div class="pillar-title">Circular Economy</div>
+        <div class="pillar-desc">Circular models drive resource efficiency and waste reduction by keeping materials in use. The research explored how communal exchange systems can function as micro-circular economies — extending the life of bags through shared access rather than individual ownership.</div>
+        <span class="pillar-toggle">Design Implication +</span>
+        <div class="pillar-impl">
+          <div class="pillar-impl-inner">The station network is designed as a micro-loop. Bags stay in circulation rather than ending in disposal — extending life through shared access.</div>
+        </div>
+      </div>
+      <div class="pillar-card reveal" style="transition-delay: 0.2s;">
+        <div class="pillar-num">03</div>
+        <div class="pillar-title">Neoliberalism</div>
+        <div class="pillar-desc">Free-market ideology places the burden of environmental responsibility on individual consumers rather than systems. This research examined how neoliberal framing turns structural problems into personal failures — and how design can redistribute that responsibility.</div>
+        <span class="pillar-toggle">Design Implication +</span>
+        <div class="pillar-impl">
+          <div class="pillar-impl-inner">Responsibility shifts to the system. The person just participates — no guilt, no identity politics, no moral ask required.</div>
+        </div>
+      </div>
+      <div class="pillar-card reveal" style="transition-delay: 0.3s;">
+        <div class="pillar-num">04</div>
+        <div class="pillar-title">Greenwashing</div>
+        <div class="pillar-desc">Corporate sustainability claims often exceed actual environmental commitment, eroding consumer trust and undermining genuine efforts. Understanding greenwashing dynamics was essential to designing a solution grounded in transparency and measurable impact.</div>
+        <span class="pillar-toggle">Design Implication +</span>
+        <div class="pillar-impl">
+          <div class="pillar-impl-inner">Impact transparency is non-negotiable. The accumulator prototype exists to prove consequence, not persuade belief.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="thesis-block reveal" style="border-left-color: rgba(200,160,80,0.4); background: rgba(200,160,80,0.03);">
+      <div class="thesis-quote" style="color: rgba(240,210,140,0.82);">The gap between intention and action isn't moral — it's infrastructural.</div>
+      <div class="thesis-attr">Research synthesis — across all four lenses</div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ── THE SOLUTION ── -->
+<section class="cs-section alt-bg" id="s-solution">
+  <div class="section-inner">
+    <p class="section-eyebrow reveal">The Solution</p>
+    <h2 class="section-heading reveal">GreenSwap — communal exchange as everyday infrastructure.</h2>
+
+    <p class="body-text reveal">GreenSwap is a communal bag exchange system designed to make reusable bag access frictionless. Instead of asking individuals to remember, carry, and manage their own bags, the system creates a shared pool of bags available at the point of need — transforming sustainable behavior from personal discipline into community infrastructure.</p>
+
+    <div class="stat-row reveal">
+      <div class="stat-cell">
+        <div class="stat-number" data-count="3">0</div>
+        <div class="stat-label">Core Features</div>
+        <div class="stat-sub">Bag Drop Stations, Mobile App, and Interactive Map working as a unified system</div>
+      </div>
+      <div class="stat-cell alt">
+        <div class="stat-number" data-count="3">0</div>
+        <div class="stat-label">User Flows</div>
+        <div class="stat-sub">Donors, Recipients, and Impact Trackers — each with a distinct but interconnected experience</div>
+      </div>
+      <div class="stat-cell">
+        <div class="stat-number" data-count="3">0</div>
+        <div class="stat-label">Objectives</div>
+        <div class="stat-sub">Waste reduction, accessibility, and community engagement as equal design priorities</div>
+      </div>
+    </div>
+
+    <div class="framework-grid reveal">
+      <div class="framework-card">
+        <div class="framework-arrow">Feature</div>
+        <div class="framework-label">Bag Drop Stations</div>
+        <div class="framework-desc">Strategically positioned across key locations, these physical stations allow users to contribute reusable or single-use bags to the communal pool — making giving as simple as passing by.</div>
+      </div>
+      <div class="framework-card">
+        <div class="framework-arrow">Feature</div>
+        <div class="framework-label">Mobile App</div>
+        <div class="framework-desc">A user-friendly app providing real-time location tracking of nearby stations, enhancing accessibility and lowering the barrier to both contributing and collecting bags.</div>
+      </div>
+      <div class="framework-card">
+        <div class="framework-arrow">Feature</div>
+        <div class="framework-label">Interactive Map</div>
+        <div class="framework-desc">Real-time visualization of available bag stations, creating a dynamic and encouraging environment for users to actively participate in the communal exchange network.</div>
+      </div>
+      <div class="framework-card">
+        <div class="framework-arrow">Design Principle</div>
+        <div class="framework-label">Impact Visibility</div>
+        <div class="framework-desc">Participants witness the direct effect of their contributions on waste reduction — making the abstract environmental impact tangible and personal, instilling a sense of shared accomplishment.</div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ── USER EXPERIENCE ── -->
+<section class="cs-section">
+  <div class="section-inner">
+    <p class="section-eyebrow reveal">User Experience</p>
+    <h2 class="section-heading reveal">Three flows. One shared system.</h2>
+
+    <p class="body-text reveal">The GreenSwap experience is built around three core user types — each engaging with the same infrastructure from a different angle. The system doesn't require all three to be active simultaneously; it's designed so that any single interaction strengthens the communal pool for everyone.</p>
+
+    <div class="persona-grid reveal">
+      <div class="persona-card">
+        <div class="persona-badge">User Flow</div>
+        <div class="persona-name">Donors</div>
+        <div class="persona-desc">Individuals with surplus reusable bags contribute to the communal pool at designated stations. The act of giving is designed to be as effortless as disposal — no signup, no friction, no judgment. Drop and go.</div>
+      </div>
+      <div class="persona-card">
+        <div class="persona-badge">User Flow</div>
+        <div class="persona-name">Recipients</div>
+        <div class="persona-desc">Users in need of bags easily locate nearby stations through the app, fostering a sense of community sharing. The experience is designed to feel like access, not charity — normalizing shared resources.</div>
+      </div>
+      <div class="persona-card">
+        <div class="persona-badge">User Flow</div>
+        <div class="persona-name">Impact</div>
+        <div class="persona-desc">All participants witness the direct effect of their contributions on waste reduction. The system makes collective environmental impact legible — turning individual actions into visible community outcomes.</div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ── PROTOTYPE ── -->
+<section class="cs-section alt-bg" id="s-proto">
+  <div class="section-inner">
+    <p class="section-eyebrow reveal">Try It</p>
+    <h2 class="section-heading reveal">Measure the impact yourself.</h2>
+    <p class="body-text reveal">Select a household size and timeframe to see the bags accumulate — weekly, monthly, yearly, or across a lifetime. Toggle between the statistics and the visual to feel the difference between data and scale.</p>
+    <div class="proto-frame-wrap reveal">
+      <iframe src="prototype-takeabag-impact.html" title="Waste Impact Accumulator" loading="lazy"></iframe>
+    </div>
+  </div>
+</section>
+
+<!-- ── WHAT I LEARNED ── -->
+<section class="cs-section alt-bg">
+  <div class="section-inner">
+    <p class="section-eyebrow reveal">What I Learned</p>
+    <h2 class="section-heading reveal">What this project taught me about designing for behavior.</h2>
+
+    <div class="wil-grid reveal">
+      <div class="wil-card">
+        <div class="wil-number">01</div>
+        <p class="wil-title">Systems over willpower</p>
+        <p class="wil-body">Sustainable behavior change doesn't scale through individual motivation. It scales through infrastructure that makes the right choice the easy choice. Designing for communities means designing the environment, not the person.</p>
+      </div>
+      <div class="wil-card">
+        <div class="wil-number">02</div>
+        <p class="wil-title">Research shapes the question</p>
+        <p class="wil-body">The interdisciplinary research didn't just validate the problem — it reframed it. Anthropology, circular economy, neoliberalism, and greenwashing each revealed a different structural layer that individual-focused solutions miss entirely.</p>
+      </div>
+      <div class="wil-card">
+        <div class="wil-number">03</div>
+        <p class="wil-title">Visibility creates momentum</p>
+        <p class="wil-body">When people can see the collective impact of small actions, participation compounds. The interactive map and impact tracking transformed abstract environmental benefit into something tangible — and that visibility became the system's strongest engagement mechanism.</p>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ── REFLECTION ── -->
+<section class="cs-section" style="padding-bottom: 140px;" id="s-reflect">
+  <div class="section-inner">
+    <p class="section-eyebrow reveal">Reflection</p>
+
+    <div class="reflection-quote reveal">
+      The most sustainable behavior is the one that doesn't require you to remember.
+    </div>
+    <div class="reflection-attr reveal">Take A Bag · GreenSwap</div>
+
+    <p class="body-text reveal" style="margin-top: 48px;">Take A Bag started with a familiar environmental problem and arrived at a systems-level insight: the gap between knowing and doing isn't a failure of character — it's a failure of design. GreenSwap doesn't ask people to care more. It builds caring into the infrastructure. The bags were always there. The system just needed to make them findable, shareable, and part of something larger than any single trip to the store.</p>
+
+  </div>
+</section>
+
+<script>
+'use strict';
+
+// ── PAGE TRANSITION ──────────────────────────────────────────
+function navigateTo(url) {
+  document.getElementById('page-exit').classList.add('active');
+  setTimeout(() => { window.location.href = url; }, 320);
+}
+
+// ── SCROLL REVEAL ────────────────────────────────────────────
+const revealObs = new IntersectionObserver((entries) => {
+  entries.forEach(e => {
+    if (e.isIntersecting) { e.target.classList.add('is-visible'); revealObs.unobserve(e.target); }
+  });
+}, { threshold: 0.08 });
+document.querySelectorAll('.reveal').forEach(el => revealObs.observe(el));
+
+// ── CHIP HOVER ───────────────────────────────────────────────
+const chipDetail = document.getElementById('chipDetail');
+document.querySelectorAll('.chip-btn').forEach(btn => {
+  btn.addEventListener('mouseenter', () => {
+    chipDetail.textContent = btn.dataset.detail || '';
+    chipDetail.classList.add('has-value');
+  });
+  btn.addEventListener('mouseleave', () => {
+    chipDetail.classList.remove('has-value');
+  });
+});
+
+// ── CHIP PANEL MOUSE GLOW ────────────────────────────────────
+const chipOuter = document.getElementById('chipOuter');
+if (chipOuter) {
+  chipOuter.addEventListener('mousemove', e => {
+    const r = chipOuter.getBoundingClientRect();
+    const x = ((e.clientX - r.left) / r.width * 100).toFixed(1);
+    const y = ((e.clientY - r.top)  / r.height * 100).toFixed(1);
+    chipOuter.style.setProperty('--mx', x + '%');
+    chipOuter.style.setProperty('--my', y + '%');
+  });
+}
+
+// ── SECTION PROGRESS DOTS ────────────────────────────────────
+const snavDots = document.querySelectorAll('.snav-dot');
+const snavSections = Array.from(snavDots).map(dot => document.getElementById(dot.dataset.target));
+
+const snavObs = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      const id = entry.target.id;
+      snavDots.forEach(dot => {
+        dot.classList.toggle('active', dot.dataset.target === id);
+      });
+    }
+  });
+}, { threshold: 0.35 });
+
+snavSections.forEach(sec => { if (sec) snavObs.observe(sec); });
+
+snavDots.forEach(dot => {
+  dot.addEventListener('click', () => {
+    const target = document.getElementById(dot.dataset.target);
+    if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  });
+});
+
+// ── PILLAR CARD TOGGLE ───────────────────────────────────────
+document.querySelectorAll('.pillar-card').forEach(card => {
+  card.addEventListener('click', () => {
+    const isOpen = card.classList.contains('open');
+    card.classList.toggle('open');
+    const toggle = card.querySelector('.pillar-toggle');
+    if (toggle) {
+      toggle.textContent = isOpen ? 'Design Implication +' : 'Design Implication –';
+    }
+  });
+});
+
+// ── STAT COUNTERS ────────────────────────────────────────────
+const statObs = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      const el = entry.target;
+      const target = parseInt(el.dataset.count, 10);
+      const duration = 700;
+      const start = performance.now();
+      function tick(now) {
+        const elapsed = now - start;
+        const progress = Math.min(elapsed / duration, 1);
+        el.textContent = Math.round(progress * target);
+        if (progress < 1) requestAnimationFrame(tick);
+        else el.textContent = target;
+      }
+      requestAnimationFrame(tick);
+      statObs.unobserve(el);
+    }
+  });
+}, { threshold: 0.5 });
+
+document.querySelectorAll('.stat-number[data-count]').forEach(el => statObs.observe(el));
+</script>
+</body>
+</html>

@@ -1,0 +1,627 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Psilocybin as System — Case Study — Amber Grey</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400;1,500&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --accent:        #9b6dff;
+  --accent-dim:    rgba(155, 109, 255, 0.09);
+  --accent-border: rgba(155, 109, 255, 0.22);
+  --bg:          #09070e;
+  --bg-alt:      #0d0a15;
+  --text:        rgba(215, 208, 232, 0.90);
+  --text-muted:  rgba(140, 110, 180, 0.65);
+  --accent-bright: #c4a8ff;
+  --warm:       #d4a054;
+  --border:      rgba(255, 255, 255, 0.055);
+}
+
+html { scroll-behavior: smooth; }
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'DM Sans', sans-serif;
+  font-weight: 300;
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+}
+
+/* ── PAGE EXIT ── */
+#page-exit {
+  position: fixed; inset: 0;
+  background: var(--bg);
+  opacity: 0; pointer-events: none;
+  transition: opacity 0.28s ease-in;
+  z-index: 9999;
+}
+#page-exit.active { opacity: 1; }
+
+/* ── NAV ── */
+.nav-back {
+  position: fixed; top: 28px; left: 32px;
+  display: inline-flex; align-items: center; gap: 10px;
+  background: rgba(255,255,255,0.05);
+  backdrop-filter: blur(14px);
+  border: 1px solid rgba(255,255,255,0.09);
+  border-radius: 100px;
+  padding: 9px 18px 9px 14px;
+  cursor: pointer;
+  color: rgba(165,135,220,0.75);
+  font-size: 10px; font-weight: 400; letter-spacing: 0.22em; text-transform: uppercase;
+  transition: all 0.25s; z-index: 100;
+}
+.nav-back:hover { background: rgba(255,255,255,0.09); color: rgba(196,168,255,1); border-color: rgba(255,255,255,0.16); }
+.nav-back-arrow { display: inline-block; width: 16px; height: 1px; background: currentColor; position: relative; flex-shrink: 0; }
+.nav-back-arrow::before { content: ''; position: absolute; left: 0; top: -3px; width: 6px; height: 6px; border-left: 1px solid currentColor; border-bottom: 1px solid currentColor; transform: rotate(45deg); }
+
+.wordmark {
+  position: fixed; bottom: 24px; left: 21px;
+  font-size: 13px; font-weight: 300; letter-spacing: 0.2em;
+  color: rgba(155,109,255,0.13); pointer-events: none; z-index: 10;
+}
+
+/* ── HERO ── */
+.hero {
+  position: relative; min-height: 100svh;
+  display: flex; flex-direction: column; justify-content: flex-end;
+  padding: 0 64px 80px;
+  overflow: hidden;
+  background-image:
+    linear-gradient(to bottom,
+      rgba(9, 7, 14, 0.50) 0%,
+      rgba(9, 7, 14, 0.92) 70%,
+      #09070e 100%),
+    url('Studio_Edited.webp');
+  background-size: cover;
+  background-position: center top;
+  background-attachment: fixed;
+}
+.hero::before {
+  content: ''; position: absolute; inset: 0; pointer-events: none;
+  background:
+    radial-gradient(ellipse 80% 60% at 15% 60%, rgba(80, 30, 140, 0.20) 0%, transparent 60%),
+    radial-gradient(ellipse 60% 50% at 75% 30%, rgba(50, 15, 100, 0.14) 0%, transparent 55%);
+  animation: heroPulse 9s ease-in-out infinite alternate;
+}
+@keyframes heroPulse {
+  0%   { opacity: 0.7; transform: scale(1); }
+  100% { opacity: 1;   transform: scale(1.06); }
+}
+.hero-eyebrow {
+  font-size: 9px; font-weight: 500; letter-spacing: 0.34em; text-transform: uppercase;
+  color: rgba(165,135,220,0.88); margin-bottom: 20px; position: relative; z-index: 1;
+}
+.hero h1 {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(60px, 8vw, 120px);
+  font-weight: 600; line-height: 0.90; letter-spacing: -0.01em;
+  color: var(--accent-bright); position: relative; z-index: 1; margin-bottom: 28px;
+}
+.hero-subtitle {
+  font-size: clamp(14px, 1.4vw, 18px); font-weight: 300; font-style: italic;
+  color: rgba(215,208,232,0.48); position: relative; z-index: 1; margin-bottom: 56px;
+  max-width: 560px; line-height: 1.6;
+}
+.hero-meta {
+  display: flex; gap: 48px; position: relative; z-index: 1;
+  border-top: 1px solid rgba(155,109,255,0.13); padding-top: 28px;
+  flex-wrap: wrap;
+}
+.hero-meta-item { display: flex; flex-direction: column; gap: 5px; }
+.hero-meta-label { font-size: 8px; font-weight: 500; letter-spacing: 0.28em; text-transform: uppercase; color: var(--text-muted); }
+.hero-meta-value { font-size: 13px; font-weight: 400; color: rgba(165,135,220,0.75); }
+
+/* ── SECTIONS ── */
+.cs-section { padding: 96px 64px; }
+.cs-section.alt-bg { background: var(--bg-alt); }
+.section-inner { max-width: 1000px; margin: 0 auto; }
+
+.section-eyebrow {
+  font-size: 8.5px; font-weight: 500; letter-spacing: 0.34em; text-transform: uppercase;
+  color: rgba(165,135,220,0.68); margin-bottom: 16px;
+}
+.section-heading {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(32px, 4vw, 52px); font-weight: 600; line-height: 1.1;
+  color: var(--accent-bright); margin-bottom: 32px;
+}
+
+/* ── OVERVIEW ── */
+.overview-intro {
+  font-size: clamp(15px, 1.5vw, 18px); font-weight: 300; line-height: 1.9;
+  color: rgba(215,208,232,0.68); max-width: 700px; margin-bottom: 52px;
+}
+.overview-intro em { color: rgba(200,175,255,0.9); font-style: italic; }
+
+/* ── CHIP PANEL ── */
+.proj-meta-outer {
+  border: 1px solid var(--accent-border);
+  border-radius: 14px;
+  background: var(--accent-dim);
+  position: relative; overflow: hidden;
+  margin-bottom: 12px;
+}
+.proj-meta-outer::before {
+  content: ''; position: absolute; inset: 0; pointer-events: none;
+  background: radial-gradient(ellipse 80% 60% at var(--mx,50%) var(--my,40%), rgba(155,109,255,0.06) 0%, transparent 70%);
+  transition: background 0.1s ease; border-radius: inherit;
+}
+.chip-panel {
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: 0; padding: 36px 40px;
+}
+.chip-group { display: flex; flex-direction: column; gap: 16px; }
+.chip-group + .chip-group { border-left: 1px solid var(--accent-border); padding-left: 40px; }
+.chip-group-label {
+  font-size: 9px; font-weight: 500; letter-spacing: 0.26em; text-transform: uppercase;
+  color: rgba(165,135,220,0.65); margin-bottom: 4px;
+}
+.chip-row { display: flex; flex-wrap: wrap; gap: 8px; }
+.chip-btn {
+  font-size: 11px; font-weight: 400; letter-spacing: 0.06em;
+  color: rgba(165,135,220,0.7);
+  background: rgba(155,109,255,0.07);
+  border: 1px solid rgba(155,109,255,0.18);
+  border-radius: 100px; padding: 6px 14px;
+  cursor: default; white-space: nowrap;
+  transition: background 0.2s, border-color 0.2s, color 0.2s;
+}
+.chip-btn:hover {
+  background: rgba(155,109,255,0.15);
+  border-color: rgba(155,109,255,0.38);
+  color: rgba(200,175,255,0.95);
+}
+.chip-detail-wrap { padding: 0 40px 28px; min-height: 28px; }
+.chip-detail {
+  font-size: 12px; font-weight: 300; letter-spacing: 0.04em;
+  color: rgba(165,135,220,0.75); font-style: italic;
+  transition: opacity 0.2s ease; opacity: 0;
+}
+.chip-detail.has-value { opacity: 1; }
+
+/* ── THESIS CALLOUT ── */
+.thesis-block {
+  border-left: 2px solid rgba(155,109,255,0.35);
+  padding: 28px 36px;
+  background: rgba(155,109,255,0.04);
+  border-radius: 0 10px 10px 0;
+  margin: 48px 0;
+}
+.thesis-quote {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(22px, 2.8vw, 34px); font-weight: 400; font-style: italic;
+  color: rgba(200,175,255,0.88); line-height: 1.45; margin-bottom: 12px;
+}
+.thesis-attr {
+  font-size: 10px; font-weight: 400; letter-spacing: 0.2em; text-transform: uppercase;
+  color: rgba(140,110,180,0.5);
+}
+
+/* ── BODY TEXT ── */
+.body-text {
+  font-size: clamp(14px, 1.4vw, 16px); font-weight: 300; line-height: 1.9;
+  color: rgba(215,208,232,0.65); margin-bottom: 24px; max-width: 700px;
+}
+.body-text strong { color: rgba(200,175,255,0.88); font-weight: 500; }
+.body-text em { color: rgba(215,208,232,0.8); font-style: italic; }
+
+/* ── STAT ROW ── */
+.stat-row {
+  display: grid; grid-template-columns: repeat(3, 1fr); gap: 1px;
+  background: var(--accent-border);
+  border: 1px solid var(--accent-border);
+  border-radius: 12px; overflow: hidden;
+  margin: 40px 0;
+}
+.stat-cell {
+  background: var(--bg); padding: 28px 32px;
+  display: flex; flex-direction: column; gap: 8px;
+}
+.stat-cell.alt { background: var(--bg-alt); }
+.stat-number {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 42px; font-weight: 600; line-height: 1;
+  color: var(--accent-bright);
+}
+.stat-label {
+  font-size: 10px; font-weight: 400; letter-spacing: 0.14em; text-transform: uppercase;
+  color: rgba(165,135,220,0.5);
+}
+.stat-sub {
+  font-size: 11px; font-weight: 300; color: rgba(190,180,210,0.48); line-height: 1.5;
+}
+
+/* ── FRAMEWORK GRID ── */
+.framework-grid {
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: 16px; margin: 40px 0;
+}
+.framework-card {
+  background: rgba(155,109,255,0.04);
+  border: 1px solid rgba(155,109,255,0.12);
+  border-radius: 10px; padding: 24px 28px;
+}
+.framework-arrow {
+  font-size: 10px; font-weight: 500; letter-spacing: 0.16em; text-transform: uppercase;
+  color: rgba(212,160,84,0.7); margin-bottom: 10px;
+}
+.framework-label {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 22px; font-weight: 600; color: rgba(200,175,255,0.85);
+  margin-bottom: 8px; line-height: 1.1;
+}
+.framework-desc {
+  font-size: 12px; font-weight: 300; line-height: 1.7;
+  color: rgba(190,180,210,0.55);
+}
+
+/* ── PROCESS STEPS ── */
+.loop-steps {
+  display: flex; gap: 0; margin: 36px 0;
+  border: 1px solid var(--accent-border); border-radius: 12px; overflow: hidden;
+}
+.loop-step {
+  flex: 1; padding: 24px 20px;
+  border-right: 1px solid var(--accent-border);
+  background: var(--bg);
+  display: flex; flex-direction: column; gap: 8px;
+  position: relative;
+}
+.loop-step:last-child { border-right: none; }
+.loop-step.highlight { background: rgba(155,109,255,0.05); }
+.loop-num {
+  font-size: 9px; font-weight: 500; letter-spacing: 0.2em;
+  color: rgba(165,135,220,0.4);
+}
+.loop-name {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 19px; font-weight: 600;
+  color: rgba(200,175,255,0.82); line-height: 1.1;
+}
+.loop-desc {
+  font-size: 11px; font-weight: 300; line-height: 1.65;
+  color: rgba(190,180,210,0.48);
+}
+
+/* ── WIL ── */
+.wil-grid {
+  display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px;
+  margin-top: 40px;
+}
+.wil-card {
+  padding: 28px; background: rgba(155,109,255,0.04);
+  border: 1px solid rgba(155,109,255,0.10); border-radius: 10px;
+}
+.wil-number {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 32px; font-weight: 600; color: rgba(155,109,255,0.22);
+  margin-bottom: 12px;
+}
+.wil-title { font-size: 11px; font-weight: 500; letter-spacing: 0.12em; text-transform: uppercase; color: rgba(155,109,255,0.65); margin-bottom: 10px; }
+.wil-body { font-size: 13px; font-weight: 300; line-height: 1.75; color: rgba(215,208,232,0.52); }
+
+/* ── REFLECTION ── */
+.reflection-quote {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(26px, 3.5vw, 46px); font-weight: 400; font-style: italic;
+  line-height: 1.35; color: rgba(200,175,255,0.78);
+  border-left: 2px solid rgba(155,109,255,0.28);
+  padding-left: 36px; margin-bottom: 20px;
+}
+.reflection-attr {
+  font-size: 10px; font-weight: 400; letter-spacing: 0.22em;
+  text-transform: uppercase; color: rgba(140,110,180,0.45);
+  padding-left: 36px;
+}
+
+/* ── REVEAL ── */
+.reveal {
+  opacity: 0; transform: translateY(22px);
+  transition: opacity 0.7s ease, transform 0.7s ease;
+}
+.reveal.is-visible { opacity: 1; transform: translateY(0); }
+
+/* ── MOBILE ── */
+@media (max-width: 860px) {
+  .framework-grid { grid-template-columns: 1fr; }
+  .wil-grid { grid-template-columns: 1fr; gap: 12px; }
+  .stat-row { grid-template-columns: 1fr; }
+  .loop-steps { flex-direction: column; }
+  .loop-step { border-right: none; border-bottom: 1px solid var(--accent-border); }
+  .loop-step:last-child { border-bottom: none; }
+  .chip-panel { grid-template-columns: 1fr; gap: 28px; }
+  .chip-group + .chip-group { border-left: none; padding-left: 0; border-top: 1px solid var(--accent-border); padding-top: 24px; }
+}
+@media (max-width: 660px) {
+  .hero { padding: 0 24px 52px; }
+  .cs-section { padding: 64px 24px; }
+  .hero h1 { font-size: 52px; }
+  .chip-panel { padding: 24px 20px; }
+  .chip-detail-wrap { padding: 0 20px 20px; }
+}
+</style>
+</head>
+<body>
+
+<div id="page-exit"></div>
+<div class="wordmark">Amber Grey</div>
+
+<button class="nav-back" onclick="navigateTo('level-3-psilocybin.html')">
+  <span class="nav-back-arrow"></span>
+  Modeling Transformation
+</button>
+
+<!-- ── HERO ── -->
+<section class="hero">
+  <div class="hero-eyebrow">Psilocybin as System · Case Study</div>
+  <h1>Psilocybin<br>as System</h1>
+  <p class="hero-subtitle">What if altered states of consciousness could reveal the hidden architecture of creativity?</p>
+  <div class="hero-meta">
+    <div class="hero-meta-item">
+      <span class="hero-meta-label">Role</span>
+      <span class="hero-meta-value">UX Researcher · Observational Lead</span>
+    </div>
+    <div class="hero-meta-item">
+      <span class="hero-meta-label">Team</span>
+      <span class="hero-meta-value">Solo</span>
+    </div>
+    <div class="hero-meta-item">
+      <span class="hero-meta-label">Context</span>
+      <span class="hero-meta-value">Academic · Professor Approved</span>
+    </div>
+    <div class="hero-meta-item">
+      <span class="hero-meta-label">Focus</span>
+      <span class="hero-meta-value">Creativity · Altered States · Systems</span>
+    </div>
+  </div>
+</section>
+
+<!-- ── OVERVIEW ── -->
+<section class="cs-section">
+  <div class="section-inner">
+    <p class="section-eyebrow reveal">Overview</p>
+    <h2 class="section-heading reveal">Creativity as a system. Psilocybin as a lens.</h2>
+
+    <p class="overview-intro reveal">This study, conducted with special permission from the assigning professor, explores psilocybin as a unique system for creative flow. The investigation dives into the intricate dynamics of creativity — pondering whether it's an <em>innate gift or a skill to be learned.</em> Through observational research, psilocybin becomes a potential catalyst for understanding the hidden mechanics of the creative process.</p>
+
+    <div class="thesis-block reveal">
+      <div class="thesis-quote">"What if the creative process isn't a talent to possess, but a system to enter?"</div>
+      <div class="thesis-attr">Psilocybin as System · Core Inquiry</div>
+    </div>
+
+    <!-- skills / tools chip panel -->
+    <div class="proj-meta-outer reveal" id="chipOuter">
+      <div class="chip-panel">
+        <div class="chip-group">
+          <div class="chip-group-label">Skills</div>
+          <div class="chip-row">
+            <button class="chip-btn" data-detail="Observational study design · Ethnographic observation · Qualitative analysis · Behavioral documentation">Observational Research</button>
+            <button class="chip-btn" data-detail="Ritual space analysis · Creative flow mapping · Altered state dynamics · Feedback loop identification">Systems Thinking</button>
+            <button class="chip-btn" data-detail="Image synthesis · Compositional merging · Intuitive interpretation · Visual narrative construction">Visual Synthesis</button>
+            <button class="chip-btn" data-detail="Non-directive facilitation · Environmental design · Creative material selection · Participant safety">Facilitation Design</button>
+            <button class="chip-btn" data-detail="Psychedelic research context · Creative cognition · Altered states literature · Ethical research framing">Academic Research</button>
+          </div>
+        </div>
+        <div class="chip-group">
+          <div class="chip-group-label">Tools</div>
+          <div class="chip-row">
+            <button class="chip-btn" data-detail="Field journals · Audio documentation · Photographic documentation · Observational protocols">Research & Documentation</button>
+            <button class="chip-btn" data-detail="Markers · Paper · Paint · Mixed media — provided for spontaneous artistic expression">Creative Materials</button>
+            <button class="chip-btn" data-detail="Photoshop · Illustrator · Mixed media painting · Image compositing">Design & Synthesis</button>
+            <button class="chip-btn" data-detail="Academic databases · Peer-reviewed psychedelic research · Creative cognition literature">Literature & Context</button>
+          </div>
+        </div>
+      </div>
+      <div class="chip-detail-wrap">
+        <div class="chip-detail" id="chipDetail">Hover a chip to see what it means in this project.</div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ── THE METHODOLOGY ── -->
+<section class="cs-section alt-bg">
+  <div class="section-inner">
+    <p class="section-eyebrow reveal">The Methodology</p>
+    <h2 class="section-heading reveal">Observing creativity through ritual and spontaneous expression.</h2>
+
+    <p class="body-text reveal">Participants engaged in a carefully crafted psilocybin ritual, accompanied by a controlled environment and supportive facilitators. During the ceremony, creative supplies — markers, paper, and mixed media — were provided to encourage <strong>spontaneous artistic expression.</strong> No coercion, no direction. The goal was to enable explorers to play and express within the intersection of altered states and artistic creation.</p>
+
+    <p class="body-text reveal">The research was deliberately observational. Attendees were not forced or guided to create in any specific way. The environment was designed to hold space — to lower barriers between impulse and mark-making, between inner experience and outer expression. What emerged was entirely participant-driven.</p>
+
+    <div class="stat-row reveal">
+      <div class="stat-cell">
+        <div class="stat-number">Ritual</div>
+        <div class="stat-label">Research Setting</div>
+        <div class="stat-sub">Carefully crafted ceremonial environment with supportive facilitators and controlled conditions</div>
+      </div>
+      <div class="stat-cell alt">
+        <div class="stat-number">Open</div>
+        <div class="stat-label">Creative Framework</div>
+        <div class="stat-sub">Non-directive approach — creative supplies provided, no instruction given, no outcomes prescribed</div>
+      </div>
+      <div class="stat-cell">
+        <div class="stat-number">Flow</div>
+        <div class="stat-label">Primary Signal</div>
+        <div class="stat-sub">Observing the emergence of creative flow states during altered consciousness as a systems-level phenomenon</div>
+      </div>
+    </div>
+
+    <p class="body-text reveal">The role of the researcher was to observe, document, and later interpret — not to intervene. This boundary between facilitation and direction was central to the study's integrity. <strong>The system had to speak for itself.</strong></p>
+
+  </div>
+</section>
+
+<!-- ── THE PROCESS ── -->
+<section class="cs-section">
+  <div class="section-inner">
+    <p class="section-eyebrow reveal">The Process</p>
+    <h2 class="section-heading reveal">From individual expression to collective synthesis.</h2>
+
+    <p class="body-text reveal">The creative process unfolded in three distinct phases — each building on the last, moving from individual altered-state expression through careful analysis to a synthesized visual artifact that captures the collective creative energy of the ceremony.</p>
+
+    <div class="loop-steps reveal">
+      <div class="loop-step">
+        <div class="loop-num">01</div>
+        <div class="loop-name">Ceremony</div>
+        <div class="loop-desc">Participants engage with psilocybin in a held, ritualized space. Creative materials are present but unprescribed. Expression emerges on its own terms.</div>
+      </div>
+      <div class="loop-step highlight">
+        <div class="loop-num">02</div>
+        <div class="loop-name">Expression</div>
+        <div class="loop-desc">Spontaneous art-making unfolds. Marks, colors, and forms emerge from the intersection of altered perception and embodied impulse. Each piece is unique to its maker.</div>
+      </div>
+      <div class="loop-step">
+        <div class="loop-num">03</div>
+        <div class="loop-name">Collection</div>
+        <div class="loop-desc">Individual artworks are gathered and carefully documented. Observation of each participant's expressive journey guides the interpretive process.</div>
+      </div>
+      <div class="loop-step highlight">
+        <div class="loop-num">04</div>
+        <div class="loop-name">Analysis</div>
+        <div class="loop-desc">Themes, emotions, and visual patterns are identified across the collected works. The researcher reads the collective signal embedded in individual expression.</div>
+      </div>
+      <div class="loop-step">
+        <div class="loop-num">05</div>
+        <div class="loop-name">Synthesis</div>
+        <div class="loop-desc">The researcher synthesizes the various elements into a single cohesive painting — a visual representation of the collective creative journey.</div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ── CREATION COMPILATION ── -->
+<section class="cs-section alt-bg">
+  <div class="section-inner">
+    <p class="section-eyebrow reveal">Creation Compilation</p>
+    <h2 class="section-heading reveal">Many voices, one image.</h2>
+
+    <p class="body-text reveal">The individual artworks generated during the ceremony were collected and carefully analyzed. Observation of the participants' expression — their gestures, their hesitations, their moments of flow — guided the process of merging these individual creations into a cohesive image.</p>
+
+    <p class="body-text reveal">Using the compiled creations, the researcher took on the task of <strong>synthesizing the various elements into one image painting.</strong> This process involved intuitive artistic choices guided by the themes and emotions expressed in the individual artworks. The resulting painting serves as a visual representation of the collective creative journey undertaken during the psilocybin ritual.</p>
+
+    <div class="thesis-block reveal" style="border-left-color: rgba(212,160,84,0.4); background: rgba(212,160,84,0.03);">
+      <div class="thesis-quote" style="color: rgba(240,210,140,0.82);">The synthesis isn't interpretation imposed — it's collective signal made visible.</div>
+      <div class="thesis-attr">The compiled image becomes an artifact of shared creative consciousness.</div>
+    </div>
+
+    <div class="framework-grid reveal">
+      <div class="framework-card">
+        <div class="framework-arrow">Individual → Collective</div>
+        <div class="framework-label">From personal marks to shared meaning</div>
+        <div class="framework-desc">Each participant's artwork carried traces of their unique experience. The compilation process honored individual expression while revealing patterns that only emerge at the collective level.</div>
+      </div>
+      <div class="framework-card">
+        <div class="framework-arrow">Spontaneous → Intentional</div>
+        <div class="framework-label">Channeling emergence into form</div>
+        <div class="framework-desc">The shift from unguided creation to deliberate synthesis mirrors the creative process itself — from raw impulse to structured meaning, from altered perception to integrated understanding.</div>
+      </div>
+      <div class="framework-card">
+        <div class="framework-arrow">Observation → Interpretation</div>
+        <div class="framework-label">The researcher as creative instrument</div>
+        <div class="framework-desc">Synthesis required the researcher to become part of the creative system — not merely documenting what happened, but translating collective experience into a new visual language.</div>
+      </div>
+      <div class="framework-card">
+        <div class="framework-arrow">Altered → Integrated</div>
+        <div class="framework-label">Bridging states of consciousness</div>
+        <div class="framework-desc">The final painting exists between two worlds — born from altered states but composed with waking intention. It captures what happens when the boundary between the two becomes permeable.</div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ── WHAT I LEARNED ── -->
+<section class="cs-section">
+  <div class="section-inner">
+    <p class="section-eyebrow reveal">What I Learned</p>
+    <h2 class="section-heading reveal">What this study taught me about creativity and systems.</h2>
+
+    <div class="wil-grid reveal">
+      <div class="wil-card">
+        <div class="wil-number">01</div>
+        <p class="wil-title">Creativity is a system, not a trait</p>
+        <p class="wil-body">This study reinforced that creativity operates as a dynamic system — influenced by environment, internal state, social context, and the tools available. It isn't something you either have or don't. It's something that emerges when the conditions are right.</p>
+      </div>
+      <div class="wil-card">
+        <div class="wil-number">02</div>
+        <p class="wil-title">The observer shapes the system</p>
+        <p class="wil-body">Observational research is never truly passive. The decision to provide materials, the choice of space, the presence of the researcher — all of these shape what emerges. Acknowledging that influence, rather than pretending neutrality, produces more honest research.</p>
+      </div>
+      <div class="wil-card">
+        <div class="wil-number">03</div>
+        <p class="wil-title">Altered states reveal default patterns</p>
+        <p class="wil-body">Psilocybin didn't create creativity in participants — it disrupted the patterns that typically constrain it. The most interesting signal wasn't what people made, but what they stopped doing: self-editing, second-guessing, performing. The altered state removed the filters.</p>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ── REFLECTION ── -->
+<section class="cs-section alt-bg" style="padding-bottom: 140px;">
+  <div class="section-inner">
+    <p class="section-eyebrow reveal">Reflection</p>
+
+    <div class="reflection-quote reveal">
+      Perhaps the creative process was never about adding something new — but about dissolving what was in the way.
+    </div>
+    <div class="reflection-attr reveal">Psilocybin as System · 2024</div>
+
+    <p class="body-text reveal" style="margin-top: 48px;">This case study offers a unique perspective on the intersection of psychedelics and creativity. By blending scientific observation with artistic interpretation, the aim was to contribute to the growing understanding of psilocybin's impact on the human creative experience. Through this exploration, perhaps room can be made for new avenues of discussion around the potential benefits and risks associated with the ritualized use of psychedelics in a creative context. The research didn't prescribe answers. It opened a space where the question could be held — and where what emerged was more honest than anything a hypothesis could have predicted.</p>
+
+  </div>
+</section>
+
+<script>
+'use strict';
+
+// ── PAGE TRANSITION ──────────────────────────────────────────
+function navigateTo(url) {
+  document.getElementById('page-exit').classList.add('active');
+  setTimeout(() => { window.location.href = url; }, 320);
+}
+
+// ── SCROLL REVEAL ────────────────────────────────────────────
+const revealObs = new IntersectionObserver((entries) => {
+  entries.forEach(e => {
+    if (e.isIntersecting) { e.target.classList.add('is-visible'); revealObs.unobserve(e.target); }
+  });
+}, { threshold: 0.08 });
+document.querySelectorAll('.reveal').forEach(el => revealObs.observe(el));
+
+// ── CHIP HOVER ───────────────────────────────────────────────
+const chipDetail = document.getElementById('chipDetail');
+document.querySelectorAll('.chip-btn').forEach(btn => {
+  btn.addEventListener('mouseenter', () => {
+    chipDetail.textContent = btn.dataset.detail || '';
+    chipDetail.classList.add('has-value');
+  });
+  btn.addEventListener('mouseleave', () => {
+    chipDetail.classList.remove('has-value');
+  });
+});
+
+// ── CHIP PANEL MOUSE GLOW ────────────────────────────────────
+const chipOuter = document.getElementById('chipOuter');
+if (chipOuter) {
+  chipOuter.addEventListener('mousemove', e => {
+    const r = chipOuter.getBoundingClientRect();
+    const x = ((e.clientX - r.left) / r.width * 100).toFixed(1);
+    const y = ((e.clientY - r.top)  / r.height * 100).toFixed(1);
+    chipOuter.style.setProperty('--mx', x + '%');
+    chipOuter.style.setProperty('--my', y + '%');
+  });
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,781 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Contradiction Mode — ReWilded</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,600;1,400;1,500&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html, body {
+  width: 100%; height: 100%;
+  overflow: hidden;
+  background: #0e1a12;
+  font-family: 'DM Sans', sans-serif;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+/* ── AMBIENT ORBS ── */
+.orb {
+  position: fixed;
+  border-radius: 50%;
+  filter: blur(120px);
+  pointer-events: none;
+  opacity: 0.12;
+}
+.orb-1 {
+  width: 500px; height: 500px;
+  background: #cc6cf0;
+  top: -120px; left: -100px;
+  animation: orbDrift1 12s ease-in-out infinite;
+}
+.orb-2 {
+  width: 400px; height: 400px;
+  background: #e2aa62;
+  bottom: -80px; right: -60px;
+  animation: orbDrift2 15s ease-in-out infinite;
+}
+@keyframes orbDrift1 {
+  0%, 100% { transform: translate(0, 0); }
+  50%      { transform: translate(30px, 20px); }
+}
+@keyframes orbDrift2 {
+  0%, 100% { transform: translate(0, 0); }
+  50%      { transform: translate(-20px, -30px); }
+}
+
+/* ── HEADER ── */
+.header {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 28px 36px;
+  z-index: 50;
+}
+.header-title {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 9px;
+  font-weight: 500;
+  letter-spacing: 0.32em;
+  text-transform: uppercase;
+  color: rgba(204, 108, 240, 0.5);
+}
+.header-counter {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 10px;
+  font-weight: 400;
+  letter-spacing: 0.18em;
+  color: rgba(200, 185, 165, 0.25);
+}
+
+/* ── STAGE ── */
+.stage {
+  position: fixed; inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+.stage.active { opacity: 1; pointer-events: auto; }
+
+/* ── INTRO SCREEN ── */
+.intro {
+  text-align: center;
+  max-width: 560px;
+  padding: 0 40px;
+}
+.intro-label {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 9px;
+  font-weight: 500;
+  letter-spacing: 0.35em;
+  text-transform: uppercase;
+  color: rgba(204, 108, 240, 0.6);
+  margin-bottom: 28px;
+}
+.intro-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(36px, 5vw, 60px);
+  font-weight: 600;
+  line-height: 1.1;
+  color: #eac6ce;
+  margin-bottom: 20px;
+}
+.intro-sub {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(16px, 2vw, 22px);
+  font-weight: 400;
+  font-style: italic;
+  line-height: 1.5;
+  color: rgba(200, 185, 165, 0.5);
+  margin-bottom: 48px;
+}
+.intro-cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  background: none;
+  border: 1px solid rgba(204, 108, 240, 0.25);
+  border-radius: 100px;
+  padding: 12px 28px;
+  color: rgba(204, 108, 240, 0.7);
+  font-family: 'DM Sans', sans-serif;
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: background 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+}
+.intro-cta:hover {
+  background: rgba(204, 108, 240, 0.08);
+  color: rgba(204, 108, 240, 0.95);
+  border-color: rgba(204, 108, 240, 0.45);
+}
+
+/* ── CONTRADICTION ARENA ── */
+.arena {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  position: relative;
+}
+
+/* statements */
+.statement {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  max-width: 320px;
+  transition: opacity 0.35s ease, transform 0.35s ease;
+}
+.statement-left {
+  left: clamp(32px, 6vw, 80px);
+  text-align: left;
+}
+.statement-right {
+  right: clamp(32px, 6vw, 80px);
+  text-align: right;
+}
+.statement-text {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(20px, 2.8vw, 34px);
+  font-weight: 400;
+  font-style: italic;
+  line-height: 1.4;
+  color: #f2ead8;
+  transition: transform 0.12s ease-out, opacity 0.12s ease-out, filter 0.12s ease-out;
+}
+
+/* tension line */
+.tension-line {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 40%;
+  height: 2px;
+  pointer-events: none;
+}
+.tension-svg {
+  width: 100%;
+  height: 40px;
+  overflow: visible;
+}
+.tension-path {
+  fill: none;
+  stroke: rgba(204, 108, 240, 0.2);
+  stroke-width: 1;
+  transition: stroke 0.2s ease;
+}
+
+/* drag node */
+.drag-node {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(204, 108, 240, 0.5) 0%, rgba(204, 108, 240, 0.15) 70%);
+  border: 1px solid rgba(204, 108, 240, 0.35);
+  cursor: grab;
+  z-index: 20;
+  transition: box-shadow 0.25s ease;
+  touch-action: none;
+}
+.drag-node:hover {
+  box-shadow: 0 0 24px rgba(204, 108, 240, 0.3);
+}
+.drag-node.dragging {
+  cursor: grabbing;
+  box-shadow: 0 0 36px rgba(204, 108, 240, 0.45);
+}
+.drag-node-ring {
+  position: absolute; inset: -8px;
+  border-radius: 50%;
+  border: 1px solid rgba(204, 108, 240, 0.12);
+  animation: ringPulse 3s ease-in-out infinite;
+}
+@keyframes ringPulse {
+  0%, 100% { transform: scale(1); opacity: 1; }
+  50%      { transform: scale(1.35); opacity: 0; }
+}
+
+/* drag hint */
+.drag-hint {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, 36px);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  pointer-events: none;
+  opacity: 0;
+  animation: hintFadeIn 1s ease 1.2s forwards;
+}
+.drag-hint.hidden { opacity: 0 !important; animation: none; }
+.drag-hint-text {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 9px;
+  font-weight: 400;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  color: rgba(200, 185, 165, 0.3);
+}
+.drag-hint-arrow {
+  font-size: 12px;
+  color: rgba(204, 108, 240, 0.3);
+  animation: hintPulse 2s ease-in-out infinite;
+}
+.drag-hint-arrow:first-child { animation-delay: 0s; }
+.drag-hint-arrow:last-child  { animation-delay: 1s; }
+@keyframes hintFadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+@keyframes hintPulse {
+  0%, 100% { transform: translateX(0); opacity: 0.3; }
+  50%      { transform: translateX(-3px); opacity: 0.6; }
+}
+.drag-hint-arrow:last-child {
+  animation-name: hintPulseRight;
+}
+@keyframes hintPulseRight {
+  0%, 100% { transform: translateX(0); opacity: 0.3; }
+  50%      { transform: translateX(3px); opacity: 0.6; }
+}
+
+/* dwell prompt */
+.dwell-prompt {
+  position: absolute;
+  bottom: 22%;
+  left: 50%;
+  transform: translateX(-50%);
+  font-family: 'DM Sans', sans-serif;
+  font-size: 11px;
+  font-weight: 400;
+  font-style: italic;
+  letter-spacing: 0.06em;
+  color: rgba(200, 185, 165, 0);
+  transition: color 1.2s ease;
+  pointer-events: none;
+  white-space: nowrap;
+}
+.dwell-prompt.visible {
+  color: rgba(200, 185, 165, 0.4);
+}
+
+/* ── CLOSING SCREEN ── */
+.closing {
+  text-align: center;
+  max-width: 620px;
+  padding: 0 40px;
+}
+.closing-question {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(28px, 4vw, 48px);
+  font-weight: 600;
+  line-height: 1.2;
+  color: #eac6ce;
+  margin-bottom: 48px;
+}
+.closing-metrics {
+  display: flex;
+  justify-content: center;
+  gap: 56px;
+  margin-bottom: 48px;
+}
+.metric {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+.metric-value {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 38px;
+  font-weight: 600;
+  color: rgba(204, 108, 240, 0.7);
+}
+.metric-label {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 9px;
+  font-weight: 400;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: rgba(200, 185, 165, 0.3);
+  max-width: 120px;
+  line-height: 1.5;
+}
+.closing-restart {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  background: none;
+  border: 1px solid rgba(200, 185, 165, 0.12);
+  border-radius: 100px;
+  padding: 10px 24px;
+  color: rgba(200, 185, 165, 0.35);
+  font-family: 'DM Sans', sans-serif;
+  font-size: 9px;
+  font-weight: 400;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: color 0.25s ease, border-color 0.25s ease;
+}
+.closing-restart:hover {
+  color: rgba(200, 185, 165, 0.65);
+  border-color: rgba(200, 185, 165, 0.25);
+}
+
+/* ── PROGRESS DOTS ── */
+.progress {
+  position: fixed;
+  bottom: 32px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 12px;
+  z-index: 50;
+}
+.progress-dot {
+  width: 5px; height: 5px;
+  border-radius: 50%;
+  background: rgba(200, 185, 165, 0.15);
+  transition: background 0.5s ease, transform 0.3s ease;
+}
+.progress-dot.active {
+  background: rgba(204, 108, 240, 0.55);
+  transform: scale(1.4);
+}
+.progress-dot.done {
+  background: rgba(200, 185, 165, 0.35);
+}
+
+/* ── MOBILE ── */
+@media (max-width: 680px) {
+  .header { padding: 20px 24px; }
+  .statement { max-width: 180px; }
+  .statement-left  { left: 20px; }
+  .statement-right { right: 20px; }
+  .tension-line { width: 30%; }
+  .closing-metrics { gap: 32px; }
+  .intro { padding: 0 24px; }
+}
+
+@media (max-width: 420px) {
+  .statement { max-width: 140px; }
+  .statement-text { font-size: 16px; }
+  .drag-node { width: 36px; height: 36px; }
+}
+</style>
+</head>
+<body>
+
+<div class="orb orb-1"></div>
+<div class="orb orb-2"></div>
+
+<div class="header">
+  <span class="header-title">Contradiction Mode</span>
+  <span class="header-counter" id="counter"></span>
+</div>
+
+<div class="progress" id="progress"></div>
+
+<!-- ══ INTRO ══ -->
+<div class="stage active" id="stage-intro">
+  <div class="intro">
+    <div class="intro-label">Prototype</div>
+    <h1 class="intro-title">Contradiction Mode</h1>
+    <p class="intro-sub">Two truths. One tension. No resolution.<br>Hold both. Don't resolve.</p>
+    <button class="intro-cta" id="btn-begin">Enter</button>
+  </div>
+</div>
+
+<!-- ══ ARENA ══ -->
+<div class="stage" id="stage-arena">
+  <div class="arena">
+    <div class="statement statement-left">
+      <p class="statement-text" id="text-left"></p>
+    </div>
+
+    <div class="tension-line">
+      <svg class="tension-svg" viewBox="0 0 400 40" preserveAspectRatio="none">
+        <path class="tension-path" id="tension-path" d="M0,20 Q200,20 400,20"/>
+      </svg>
+    </div>
+
+    <div class="drag-node" id="drag-node">
+      <div class="drag-node-ring"></div>
+    </div>
+
+    <div class="statement statement-right">
+      <p class="statement-text" id="text-right"></p>
+    </div>
+
+    <div class="drag-hint" id="drag-hint">
+      <span class="drag-hint-arrow">&larr;</span>
+      <span class="drag-hint-text">drag</span>
+      <span class="drag-hint-arrow">&rarr;</span>
+    </div>
+    <div class="dwell-prompt" id="dwell-prompt">Still here? Good.</div>
+  </div>
+</div>
+
+<!-- ══ CLOSING ══ -->
+<div class="stage" id="stage-closing">
+  <div class="closing">
+    <h2 class="closing-question">What did you notice<br>about wanting to choose?</h2>
+    <div class="closing-metrics">
+      <div class="metric">
+        <span class="metric-value" id="metric-pulls">0</span>
+        <span class="metric-label">Times you pulled toward a side</span>
+      </div>
+      <div class="metric">
+        <span class="metric-value" id="metric-dwell">0s</span>
+        <span class="metric-label">Longest time held in tension</span>
+      </div>
+    </div>
+    <button class="closing-restart" id="btn-restart">Begin again</button>
+  </div>
+</div>
+
+<script>
+'use strict';
+
+/* ── DATA ── */
+const PAIRS = [
+  { left: 'Zoos protect endangered species',        right: 'Zoos profit from captivity' },
+  { left: 'Children learn empathy here',             right: 'The animal didn\u2019t choose to teach' },
+  { left: 'Conservation requires funding',           right: 'Revenue shapes what gets conserved' },
+  { left: 'We call it enrichment',                   right: 'They call it Tuesday' },
+  { left: 'The mission statement mentions the wild', right: 'The gift shop doesn\u2019t' }
+];
+
+const DWELL_PROMPTS = [
+  'Still here? Good.',
+  'Sit with it.',
+  'Neither side is wrong.',
+  'The tension is the point.',
+  'Almost done. Stay.'
+];
+
+const ADVANCE_DELAY  = 10000;   // ms to dwell before auto-advance
+const PROMPT_DELAY   = 6000;    // ms before dwell prompt appears
+const DRAG_THRESHOLD = 0.12;    // normalized distance to count as a "pull"
+
+/* ── STATE ── */
+let currentPair   = 0;
+let pullCount     = 0;
+let longestDwell  = 0;
+let dwellStart    = 0;
+let dwellTimer    = null;
+let promptTimer   = null;
+let isDragging    = false;
+let dragOffset    = 0;          // –1 (full left) to +1 (full right)
+let hasPulled     = false;
+let springRAF     = null;
+let transitioning = false;
+
+/* ── ELEMENTS ── */
+const stageIntro   = document.getElementById('stage-intro');
+const stageArena   = document.getElementById('stage-arena');
+const stageClosing = document.getElementById('stage-closing');
+const textLeft     = document.getElementById('text-left');
+const textRight    = document.getElementById('text-right');
+const node         = document.getElementById('drag-node');
+const tensionPath  = document.getElementById('tension-path');
+const dwellPrompt  = document.getElementById('dwell-prompt');
+const counter      = document.getElementById('counter');
+const progressBar  = document.getElementById('progress');
+const btnBegin     = document.getElementById('btn-begin');
+const btnRestart   = document.getElementById('btn-restart');
+const metricPulls  = document.getElementById('metric-pulls');
+const metricDwell  = document.getElementById('metric-dwell');
+const dragHint     = document.getElementById('drag-hint');
+
+/* ── BUILD DOTS ── */
+PAIRS.forEach(() => {
+  const d = document.createElement('div');
+  d.className = 'progress-dot';
+  progressBar.appendChild(d);
+});
+const dots = progressBar.querySelectorAll('.progress-dot');
+
+/* ── NAVIGATION ── */
+function showStage(stage) {
+  [stageIntro, stageArena, stageClosing].forEach(s => s.classList.remove('active'));
+  stage.classList.add('active');
+}
+
+btnBegin.addEventListener('click', () => {
+  showStage(stageArena);
+  loadPair(0);
+});
+
+btnRestart.addEventListener('click', () => {
+  currentPair  = 0;
+  pullCount    = 0;
+  longestDwell = 0;
+  dots.forEach(d => { d.className = 'progress-dot'; });
+  showStage(stageArena);
+  loadPair(0);
+});
+
+/* ── LOAD PAIR ── */
+function loadPair(idx) {
+  if (transitioning) return;
+  transitioning = true;
+
+  clearTimers();
+  dwellPrompt.classList.remove('visible');
+  dragHint.classList.add('hidden');
+  dragOffset = 0;
+  hasPulled  = false;
+  currentPair = idx;
+
+  // fade out text briefly
+  textLeft.style.opacity  = '0';
+  textRight.style.opacity = '0';
+
+  setTimeout(() => {
+    const pair = PAIRS[idx];
+    textLeft.textContent  = pair.left;
+    textRight.textContent = pair.right;
+    dwellPrompt.textContent = DWELL_PROMPTS[idx];
+    counter.textContent = (idx + 1) + ' / ' + PAIRS.length;
+
+    // update dots
+    dots.forEach((d, i) => {
+      d.className = 'progress-dot';
+      if (i < idx)  d.classList.add('done');
+      if (i === idx) d.classList.add('active');
+    });
+
+    updateVisuals(0);
+    positionNode(0);
+
+    textLeft.style.opacity  = '1';
+    textRight.style.opacity = '1';
+
+    transitioning = false;
+    startDwellClock();
+  }, 500);
+}
+
+/* ── DWELL CLOCK ── */
+function startDwellClock() {
+  dwellStart = Date.now();
+  clearTimers();
+
+  promptTimer = setTimeout(() => {
+    dwellPrompt.classList.add('visible');
+  }, PROMPT_DELAY);
+
+  dwellTimer = setTimeout(() => {
+    recordDwell();
+    advance();
+  }, ADVANCE_DELAY);
+}
+
+function clearTimers() {
+  clearTimeout(dwellTimer);
+  clearTimeout(promptTimer);
+}
+
+function recordDwell() {
+  const elapsed = (Date.now() - dwellStart) / 1000;
+  if (elapsed > longestDwell) longestDwell = elapsed;
+}
+
+function advance() {
+  if (currentPair < PAIRS.length - 1) {
+    loadPair(currentPair + 1);
+  } else {
+    // mark last dot done
+    dots[currentPair].className = 'progress-dot done';
+    showClosing();
+  }
+}
+
+function showClosing() {
+  recordDwell();
+  clearTimers();
+  metricPulls.textContent = pullCount;
+  metricDwell.textContent = longestDwell.toFixed(1) + 's';
+  showStage(stageClosing);
+}
+
+/* ── DRAG SYSTEM ── */
+const arenaRect = () => stageArena.getBoundingClientRect();
+const clamp = (v, lo, hi) => Math.max(lo, Math.min(hi, v));
+
+function onPointerDown(e) {
+  if (transitioning) return;
+  isDragging = true;
+  node.classList.add('dragging');
+  node.setPointerCapture(e.pointerId);
+  clearTimers();
+  dwellPrompt.classList.remove('visible');
+  dragHint.classList.add('hidden');
+  if (springRAF) { cancelAnimationFrame(springRAF); springRAF = null; }
+}
+
+function onPointerMove(e) {
+  if (!isDragging) return;
+  const rect = arenaRect();
+  const cx   = rect.left + rect.width / 2;
+  const half = rect.width * 0.42; // max drag range
+  const raw  = (e.clientX - cx) / half;
+  dragOffset = clamp(raw, -1, 1);
+
+  if (Math.abs(dragOffset) > DRAG_THRESHOLD && !hasPulled) {
+    hasPulled = true;
+    pullCount++;
+  }
+
+  positionNode(dragOffset);
+  updateVisuals(dragOffset);
+}
+
+function onPointerUp() {
+  if (!isDragging) return;
+  isDragging = false;
+  node.classList.remove('dragging');
+  hasPulled = false;
+  springBack();
+}
+
+node.addEventListener('pointerdown', onPointerDown);
+window.addEventListener('pointermove', onPointerMove);
+window.addEventListener('pointerup', onPointerUp);
+
+/* ── POSITION & VISUALS ── */
+function positionNode(offset) {
+  const rect = arenaRect();
+  const half = rect.width * 0.42;
+  const px   = offset * half;
+  node.style.left = `calc(50% + ${px}px)`;
+}
+
+function updateVisuals(offset) {
+  const abs = Math.abs(offset);
+  const dir = Math.sign(offset); // -1 left, +1 right
+
+  // The side you drag TOWARD shrinks, fades, blurs — you're trying to dismiss it
+  // The OPPOSITE side grows dramatically louder — the thing you flee screams
+  const towardScale   = 1 - abs * 0.3;
+  const towardOp      = 0.7 - abs * 0.55;
+  const towardBlur    = abs * 3;
+
+  const oppositeScale = 1 + abs * 0.45;
+  const oppositeOp    = 0.7 + abs * 0.3;
+
+  // opposite side creeps toward center — it follows you
+  const oppositeShift = abs * 40;
+
+  // node glow intensifies with drag distance
+  node.style.boxShadow = `0 0 ${12 + abs * 40}px rgba(204, 108, 240, ${0.15 + abs * 0.4})`;
+
+  if (dir < 0) {
+    // pulling left — left shrinks/blurs, right grows and creeps in
+    textLeft.style.transform  = `translateY(-50%) scale(${towardScale})`;
+    textLeft.style.opacity    = towardOp;
+    textLeft.style.filter     = `blur(${towardBlur}px)`;
+    textRight.style.transform = `translateY(-50%) scale(${oppositeScale}) translateX(${-oppositeShift}px)`;
+    textRight.style.opacity   = oppositeOp;
+    textRight.style.filter    = 'blur(0px)';
+  } else if (dir > 0) {
+    // pulling right — right shrinks/blurs, left grows and creeps in
+    textRight.style.transform = `translateY(-50%) scale(${towardScale})`;
+    textRight.style.opacity   = towardOp;
+    textRight.style.filter    = `blur(${towardBlur}px)`;
+    textLeft.style.transform  = `translateY(-50%) scale(${oppositeScale}) translateX(${oppositeShift}px)`;
+    textLeft.style.opacity    = oppositeOp;
+    textLeft.style.filter     = 'blur(0px)';
+  } else {
+    textLeft.style.transform  = 'translateY(-50%) scale(1)';
+    textLeft.style.opacity    = 0.7;
+    textLeft.style.filter     = 'blur(0px)';
+    textRight.style.transform = 'translateY(-50%) scale(1)';
+    textRight.style.opacity   = 0.7;
+    textRight.style.filter    = 'blur(0px)';
+    node.style.boxShadow      = '';
+  }
+
+  // tension line warps dramatically
+  const bend = offset * 35;
+  tensionPath.setAttribute('d', `M0,20 Q200,${20 + bend} 400,20`);
+
+  // line thickens and brightens with drag
+  const lineOp = 0.15 + abs * 0.6;
+  const lineW  = 1 + abs * 1.5;
+  tensionPath.style.stroke = `rgba(204, 108, 240, ${lineOp})`;
+  tensionPath.style.strokeWidth = lineW;
+}
+
+/* ── SPRING PHYSICS ── */
+function springBack() {
+  const stiffness = 0.08;
+  const damping   = 0.78;
+  let velocity    = 0;
+
+  function tick() {
+    const force = -dragOffset * stiffness;
+    velocity = (velocity + force) * damping;
+    dragOffset += velocity;
+
+    if (Math.abs(dragOffset) < 0.002 && Math.abs(velocity) < 0.001) {
+      dragOffset = 0;
+      positionNode(0);
+      updateVisuals(0);
+      springRAF = null;
+      // restart dwell clock after settling
+      startDwellClock();
+      return;
+    }
+
+    positionNode(dragOffset);
+    updateVisuals(dragOffset);
+    springRAF = requestAnimationFrame(tick);
+  }
+
+  springRAF = requestAnimationFrame(tick);
+}
+</script>
+
+</body>
+</html>

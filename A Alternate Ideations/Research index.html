@@ -1,0 +1,1004 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Amber Grey — UX Researcher</title>
+  <style>
+    /* ── Reset & Base ── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --ink:      #1C1B22;
+      --warm-bg:  #FAF8F4;
+      --paper:    #F2EDE5;
+      --coral:    #E07A5F;
+      --teal:     #3D9B8C;
+      --gold:     #F2A65A;
+      --sticky:   #FFF0A0;
+      --sticky2:  #D0F0E8;
+      --sticky3:  #FFD6CC;
+      --muted:    #7A7580;
+      --line:     #E0DAD2;
+      --serif:    'Georgia', 'Times New Roman', serif;
+      --sans:     -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    }
+    html { scroll-behavior: smooth; }
+    body {
+      background: var(--warm-bg);
+      color: var(--ink);
+      font-family: var(--sans);
+      font-size: 16px;
+      line-height: 1.6;
+      overflow-x: hidden;
+      cursor: none;
+    }
+
+    /* ── Custom Cursor ── */
+    #cursor {
+      position: fixed;
+      width: 10px; height: 10px;
+      background: var(--coral);
+      border-radius: 50%;
+      pointer-events: none;
+      z-index: 9999;
+      transform: translate(-50%, -50%);
+      transition: transform .1s ease, background .3s ease;
+      mix-blend-mode: multiply;
+    }
+    #cursor.hovering { transform: translate(-50%,-50%) scale(2.5); background: var(--teal); }
+
+    /* ── Heatmap Dots ── */
+    .heat-dot {
+      position: fixed;
+      width: 6px; height: 6px;
+      border-radius: 50%;
+      pointer-events: none;
+      z-index: 9990;
+      transform: translate(-50%, -50%);
+      animation: heatFade 3s forwards;
+    }
+    @keyframes heatFade {
+      0%   { opacity: .7; transform: translate(-50%,-50%) scale(1); }
+      100% { opacity: 0;  transform: translate(-50%,-50%) scale(2); }
+    }
+
+    /* ── Annotation Mode ── */
+    .annotation { display: none; }
+    body.annotate-mode .annotation {
+      display: block;
+      animation: annotateIn .35s ease both;
+    }
+    @keyframes annotateIn {
+      from { opacity: 0; transform: scale(.9) rotate(-1deg); }
+      to   { opacity: 1; transform: scale(1) rotate(0deg); }
+    }
+
+    /* ── Sticky Notes ── */
+    .sticky {
+      position: absolute;
+      padding: 12px 14px;
+      font-family: var(--sans);
+      font-size: 12px;
+      line-height: 1.5;
+      max-width: 180px;
+      box-shadow: 2px 4px 12px rgba(0,0,0,.12);
+      z-index: 100;
+      pointer-events: none;
+    }
+    .sticky::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 6px;
+      opacity: .3;
+      background: repeating-linear-gradient(90deg, transparent, transparent 6px, rgba(0,0,0,.15) 6px, rgba(0,0,0,.15) 7px);
+    }
+    .sticky-y  { background: var(--sticky);  transform: rotate(-2.5deg); }
+    .sticky-g  { background: var(--sticky2); transform: rotate(1.8deg); }
+    .sticky-p  { background: var(--sticky3); transform: rotate(-1.2deg); }
+    .sticky strong { display: block; font-weight: 700; margin-bottom: 4px; font-size: 11px; text-transform: uppercase; letter-spacing: .04em; }
+
+    /* ── Nav ── */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0;
+      z-index: 500;
+      padding: 16px 48px;
+      display: flex; align-items: center; justify-content: space-between;
+      background: rgba(250,248,244,.88);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--line);
+      transition: box-shadow .3s;
+    }
+    nav.scrolled { box-shadow: 0 2px 20px rgba(0,0,0,.06); }
+    .nav-logo { font-family: var(--serif); font-size: 18px; font-style: italic; color: var(--ink); text-decoration: none; }
+    .nav-links { display: flex; gap: 32px; list-style: none; }
+    .nav-links a { text-decoration: none; color: var(--muted); font-size: 14px; letter-spacing: .03em; transition: color .2s; }
+    .nav-links a:hover { color: var(--coral); }
+    #annotate-btn {
+      display: flex; align-items: center; gap: 8px;
+      padding: 8px 16px;
+      background: var(--ink); color: #fff;
+      border: none; border-radius: 20px;
+      font-size: 13px; font-family: var(--sans);
+      cursor: none;
+      transition: background .25s, transform .15s;
+      user-select: none;
+    }
+    #annotate-btn:hover { background: var(--coral); transform: scale(1.03); }
+    #annotate-btn .dot { width: 8px; height: 8px; background: #fff; border-radius: 50%; opacity: .5; transition: opacity .2s, background .2s; }
+    body.annotate-mode #annotate-btn { background: var(--teal); }
+    body.annotate-mode #annotate-btn .dot { background: #fff; opacity: 1; }
+
+    /* ── Hero ── */
+    #hero {
+      min-height: 100vh;
+      padding: 120px 48px 80px;
+      display: flex; align-items: center;
+      position: relative;
+      overflow: hidden;
+    }
+    .hero-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 64px; align-items: center; max-width: 1100px; margin: 0 auto; width: 100%; }
+    .hero-left { position: relative; }
+    .hero-tag {
+      display: inline-flex; align-items: center; gap: 8px;
+      font-size: 12px; letter-spacing: .1em; text-transform: uppercase; color: var(--coral);
+      margin-bottom: 24px;
+    }
+    .hero-tag::before { content: ''; width: 24px; height: 1px; background: var(--coral); }
+    h1 {
+      font-family: var(--serif);
+      font-size: clamp(2.6rem, 5vw, 4.2rem);
+      line-height: 1.15;
+      font-weight: 400;
+      color: var(--ink);
+      margin-bottom: 24px;
+    }
+    h1 em { color: #EE562E; font-style: italic; }
+    .hero-desc { font-size: 17px; line-height: 1.75; color: var(--muted); max-width: 440px; margin-bottom: 40px; }
+    .hero-ctas { display: flex; gap: 16px; flex-wrap: wrap; }
+    .btn-primary {
+      padding: 13px 28px;
+      background: var(--ink); color: #fff;
+      border-radius: 4px; text-decoration: none;
+      font-size: 14px; letter-spacing: .04em;
+      transition: background .25s, transform .15s;
+    }
+    .btn-primary:hover { background: var(--coral); transform: translateY(-2px); }
+    .btn-ghost {
+      padding: 13px 28px;
+      border: 1.5px solid var(--ink); color: var(--ink);
+      border-radius: 4px; text-decoration: none;
+      font-size: 14px; letter-spacing: .04em;
+      transition: border-color .25s, color .25s, transform .15s;
+    }
+    .btn-ghost:hover { border-color: var(--teal); color: var(--teal); transform: translateY(-2px); }
+
+    /* Hero — Right: Observation Canvas */
+    .hero-canvas {
+      position: relative;
+      background: var(--paper);
+      border-radius: 12px;
+      padding: 32px;
+      min-height: 380px;
+      border: 1px solid var(--line);
+      overflow: hidden;
+    }
+    .canvas-label {
+      font-size: 11px; text-transform: uppercase; letter-spacing: .1em; color: var(--muted);
+      margin-bottom: 20px; display: flex; align-items: center; gap: 8px;
+    }
+    .canvas-label::after { content: ''; flex: 1; height: 1px; background: var(--line); }
+    .think-stream {
+      list-style: none;
+      display: flex; flex-direction: column; gap: 12px;
+    }
+    .think-stream li {
+      display: flex; gap: 12px; align-items: flex-start;
+      opacity: 0;
+      animation: streamIn .5s ease both;
+      font-size: 14px; color: var(--ink); line-height: 1.55;
+    }
+    .think-stream li:nth-child(1) { animation-delay: .4s; }
+    .think-stream li:nth-child(2) { animation-delay: .9s; }
+    .think-stream li:nth-child(3) { animation-delay: 1.4s; }
+    .think-stream li:nth-child(4) { animation-delay: 1.9s; }
+    .think-stream li:nth-child(5) { animation-delay: 2.4s; }
+    @keyframes streamIn {
+      from { opacity: 0; transform: translateX(-10px); }
+      to   { opacity: 1; transform: translateX(0); }
+    }
+    .stream-icon {
+      width: 28px; height: 28px; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 14px; flex-shrink: 0; margin-top: 1px;
+    }
+    .icon-obs  { background: #EEF7F5; }
+    .icon-q    { background: #FFF0A0; }
+    .icon-ins  { background: #FFEEEB; }
+    .icon-hyp  { background: #E8F0F1; }
+    .icon-act  { background: #E8EBFF; }
+    .stream-text { font-style: italic; color: var(--muted); }
+    .stream-label {
+      font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: .08em;
+      color: var(--coral); display: block; margin-bottom: 2px; font-style: normal;
+    }
+
+    /* Hero background grid */
+    .hero-grid-bg {
+      position: absolute; inset: 0; pointer-events: none;
+      background-image: radial-gradient(circle, rgba(224,122,95,.06) 1px, transparent 1px);
+      background-size: 28px 28px;
+    }
+
+    /* ── Section scaffold ── */
+    section { padding: 100px 48px; }
+    .section-inner { max-width: 1100px; margin: 0 auto; }
+    .section-label {
+      font-size: 11px; text-transform: uppercase; letter-spacing: .12em; color: var(--coral);
+      display: flex; align-items: center; gap: 12px; margin-bottom: 20px;
+    }
+    .section-label::before { content: ''; width: 32px; height: 1px; background: var(--coral); }
+    h2 {
+      font-family: var(--serif);
+      font-size: clamp(1.9rem, 3.5vw, 2.8rem);
+      font-weight: 400; line-height: 1.2;
+      margin-bottom: 16px;
+    }
+    .section-intro { font-size: 17px; color: var(--muted); max-width: 560px; line-height: 1.8; margin-bottom: 56px; }
+
+    /* ── Process ── */
+    #process { background: var(--paper); position: relative; }
+    .process-steps { display: grid; grid-template-columns: repeat(5, 1fr); gap: 0; position: relative; }
+    .process-steps::before {
+      content: ''; position: absolute;
+      top: 40px; left: 10%; right: 10%; height: 2px;
+      background: linear-gradient(90deg, var(--coral), var(--gold), var(--teal));
+      z-index: 0;
+    }
+    .step {
+      text-align: center; padding: 0 12px;
+      position: relative; z-index: 1;
+      opacity: 0; transform: translateY(20px);
+      transition: opacity .5s ease, transform .5s ease;
+    }
+    .step.visible { opacity: 1; transform: translateY(0); }
+    .step:nth-child(2) { transition-delay: .1s; }
+    .step:nth-child(3) { transition-delay: .2s; }
+    .step:nth-child(4) { transition-delay: .3s; }
+    .step:nth-child(5) { transition-delay: .4s; }
+    .step-icon {
+      width: 80px; height: 80px;
+      border-radius: 50%;
+      background: var(--warm-bg);
+      border: 2px solid var(--line);
+      display: flex; align-items: center; justify-content: center;
+      margin: 0 auto 16px;
+      font-size: 28px;
+      transition: border-color .3s, transform .3s;
+    }
+    .step:hover .step-icon { border-color: var(--coral); transform: scale(1.08); }
+    .step h3 { font-size: 15px; font-weight: 700; margin-bottom: 8px; letter-spacing: .02em; }
+    .step p { font-size: 13px; color: var(--muted); line-height: 1.6; }
+    .step-num {
+      font-size: 11px; font-weight: 700; color: var(--coral);
+      letter-spacing: .1em; text-transform: uppercase; margin-bottom: 6px;
+      display: block;
+    }
+
+    /* ── Case Studies ── */
+    #work { position: relative; }
+    .cases-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 28px; }
+    .case-card {
+      background: #fff;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      overflow: hidden;
+      transition: transform .3s ease, box-shadow .3s ease;
+      cursor: none;
+      position: relative;
+    }
+    .case-card:hover { transform: translateY(-6px); box-shadow: 0 20px 50px rgba(0,0,0,.09); }
+    .case-thumb {
+      height: 200px;
+      display: flex; align-items: center; justify-content: center;
+      position: relative; overflow: hidden;
+      font-size: 48px;
+    }
+    .thumb-1 { background: linear-gradient(25.25deg, #EEF7F5 39.675%, #D0F0E8 110.4%); }
+    .thumb-2 { background: linear-gradient(135deg, #FFF4EE, #FFD6CC); }
+    .thumb-3 { background: linear-gradient(135deg, #F4F0FF, #E8D8FF); }
+
+    /* Journey Map mini */
+    .jmap {
+      position: absolute; bottom: 12px; left: 12px; right: 12px;
+      height: 60px; display: flex; align-items: flex-end; gap: 4px;
+    }
+    .jmap-bar {
+      flex: 1; border-radius: 3px 3px 0 0;
+      transition: height .3s ease;
+    }
+    .case-card:hover .jmap-bar { animation: jmapPulse .6s ease; }
+    @keyframes jmapPulse {
+      0%,100% { transform: scaleY(1); }
+      50%      { transform: scaleY(1.15); }
+    }
+
+    /* Affinity cluster mini */
+    .affinity {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      padding: 0 12px;
+      width: 100%;
+    }
+    .af-node {
+      padding: 5px 9px;
+      font-size: 10px;
+      border-radius: 3px;
+      font-weight: 700;
+      white-space: nowrap;
+    }
+    .af-node:nth-child(1) { background: #FFF0A0; }
+    .af-node:nth-child(2) { background: #D0F0E8; }
+    .af-node:nth-child(3) { background: #FFD6CC; }
+    .af-node:nth-child(4) { background: #E7D8FF; }
+    .af-node:nth-child(5) { background: #FFF0A0; }
+
+    /* Usability heatmap mini */
+    .uheat { position: relative; width: 100%; height: 140px; overflow: hidden; }
+    .uheat-bg {
+      position: absolute; inset: 10px;
+      background: #f4f0f8;
+      border-radius: 8px;
+    }
+    .uheat-spot {
+      position: absolute; border-radius: 50%;
+      filter: blur(16px);
+      pointer-events: none;
+    }
+
+    .case-body { padding: 24px; }
+    .case-tag {
+      display: inline-block;
+      padding: 3px 10px; border-radius: 12px;
+      font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: .07em;
+      margin-bottom: 12px;
+    }
+    .tag-teal  { background: #EEF7F5; color: var(--teal); }
+    .tag-coral { background: #FFF1EE; color: var(--coral); }
+    .tag-purple{ background: #F4F0FF; color: #7B61C4; }
+    .case-body h3 { font-family: var(--serif); font-size: 20px; font-weight: 400; margin-bottom: 8px; line-height: 1.3; }
+    .case-body p  { font-size: 14px; color: var(--muted); line-height: 1.7; margin-bottom: 16px; }
+    .case-meta { display: flex; gap: 20px; padding-top: 16px; border-top: 1px solid var(--line); }
+    .meta-item { font-size: 12px; }
+    .meta-label { color: var(--muted); display: block; margin-bottom: 2px; }
+    .meta-value { font-weight: 600; color: var(--ink); }
+
+    /* Research insight callout */
+    .insight-pull {
+      background: var(--paper);
+      border-left: 3px solid var(--coral);
+      padding: 12px 16px;
+      margin: 12px 0;
+      font-size: 13px;
+      font-style: italic;
+      color: var(--ink);
+      border-radius: 0 4px 4px 0;
+    }
+    .insight-pull::before {
+      content: '"';
+      font-size: 24px; color: var(--coral);
+      line-height: 0; vertical-align: -8px; margin-right: 4px;
+    }
+
+    /* ── Methods ── */
+    #methods { background: var(--ink); color: #fff; }
+    #methods .section-label { color: var(--gold); }
+    #methods .section-label::before { background: var(--gold); }
+    #methods h2 { color: #fff; }
+    #methods .section-intro { color: rgba(255,255,255,.6); }
+    .methods-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; }
+    .method-card {
+      background: rgba(255,255,255,.05);
+      border: 1px solid rgba(255,255,255,.1);
+      border-radius: 10px;
+      padding: 24px;
+      transition: background .25s, transform .25s;
+    }
+    .method-card:hover { background: rgba(255,255,255,.1); transform: translateY(-3px); }
+    .method-icon { font-size: 28px; margin-bottom: 14px; }
+    .method-card h3 { font-size: 15px; font-weight: 700; margin-bottom: 8px; color: #fff; }
+    .method-card p  { font-size: 13px; color: rgba(255,255,255,.55); line-height: 1.65; }
+    .method-tags { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 14px; }
+    .method-tag {
+      font-size: 11px; padding: 3px 8px;
+      border: 1px solid rgba(255,255,255,.2);
+      border-radius: 10px; color: rgba(255,255,255,.6);
+    }
+
+    /* ── Testimonials / Insight Highlight ── */
+    #insights { position: relative; overflow: hidden; }
+    .insights-grid { display: grid; grid-template-columns: 2fr 1fr; gap: 48px; align-items: center; }
+    .big-quote {
+      font-family: var(--serif);
+      font-size: clamp(1.4rem, 2.5vw, 2rem);
+      line-height: 1.5; color: var(--ink);
+      position: relative; padding-left: 28px;
+    }
+    .big-quote::before {
+      content: '"';
+      position: absolute; left: 0; top: -8px;
+      font-size: 64px; color: var(--coral); line-height: 1; font-family: var(--serif);
+      opacity: .4;
+    }
+    .quote-attr { margin-top: 20px; font-size: 14px; color: var(--muted); }
+    .stat-stack { display: flex; flex-direction: column; gap: 24px; }
+    .stat-item { padding: 20px; background: var(--paper); border-radius: 8px; border-left: 3px solid var(--teal); }
+    .stat-num { font-family: var(--serif); font-size: 2.4rem; color: var(--ink); line-height: 1; }
+    .stat-desc { font-size: 13px; color: var(--muted); margin-top: 4px; }
+
+    /* ── About ── */
+    #about { background: var(--paper); position: relative; }
+    .about-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: start; }
+    .about-img {
+      position: relative;
+      background: var(--warm-bg);
+      border-radius: 16px;
+      aspect-ratio: 4/5;
+      overflow: hidden;
+      border: 1px solid var(--line);
+      display: flex; align-items: center; justify-content: center;
+      flex-direction: column; gap: 12px;
+      color: var(--muted); font-size: 14px;
+    }
+    .about-img-avatar { font-size: 64px; }
+    .about-philosophy h3 { font-family: var(--serif); font-size: 1.6rem; font-weight: 400; margin-bottom: 20px; line-height: 1.3; }
+    .about-philosophy p  { font-size: 15px; color: var(--muted); line-height: 1.85; margin-bottom: 16px; }
+    .values-list { list-style: none; margin-top: 28px; display: flex; flex-direction: column; gap: 12px; }
+    .values-list li {
+      display: flex; gap: 12px; align-items: flex-start;
+      font-size: 15px; color: var(--ink);
+    }
+    .value-check { color: var(--teal); font-weight: 700; flex-shrink: 0; }
+
+    /* ── Contact ── */
+    #contact { text-align: center; padding-bottom: 120px; }
+    #contact h2 { margin-bottom: 16px; }
+    #contact .section-intro { margin: 0 auto 40px; }
+    .contact-links { display: flex; justify-content: center; gap: 16px; flex-wrap: wrap; }
+    .contact-link {
+      display: flex; align-items: center; gap: 8px;
+      padding: 13px 24px;
+      border: 1.5px solid var(--line);
+      border-radius: 40px;
+      text-decoration: none; color: var(--ink); font-size: 14px;
+      transition: border-color .25s, color .25s, transform .2s, background .2s;
+    }
+    .contact-link:hover { border-color: var(--coral); color: var(--coral); background: #FFF1EE; transform: translateY(-2px); }
+
+    /* ── Footer ── */
+    footer {
+      padding: 28px 48px;
+      border-top: 1px solid var(--line);
+      display: flex; justify-content: space-between; align-items: center;
+      font-size: 13px; color: var(--muted);
+    }
+
+    /* ── Scroll Reveal ── */
+    .reveal {
+      opacity: 0; transform: translateY(28px);
+      transition: opacity .7s ease, transform .7s ease;
+    }
+    .reveal.visible { opacity: 1; transform: translateY(0); }
+    .reveal-delay-1 { transition-delay: .1s; }
+    .reveal-delay-2 { transition-delay: .2s; }
+    .reveal-delay-3 { transition-delay: .3s; }
+
+    /* ── Think-aloud Tooltip ── */
+    [data-thought] { position: relative; }
+    [data-thought]::after {
+      content: attr(data-thought);
+      position: absolute;
+      bottom: calc(100% + 10px); left: 50%;
+      transform: translateX(-50%) scale(.92);
+      background: var(--ink); color: #fff;
+      padding: 8px 12px; border-radius: 6px;
+      font-size: 12px; font-family: var(--sans); font-style: italic; font-weight: 400;
+      white-space: nowrap; max-width: 240px; text-align: center;
+      pointer-events: none; opacity: 0;
+      transition: opacity .25s ease, transform .25s ease;
+      z-index: 200;
+      line-height: 1.5; white-space: normal;
+    }
+    [data-thought]::before {
+      content: '';
+      position: absolute; bottom: calc(100% + 4px); left: 50%;
+      transform: translateX(-50%);
+      border: 6px solid transparent; border-top-color: var(--ink);
+      opacity: 0; transition: opacity .25s;
+      z-index: 201;
+    }
+    body.annotate-mode [data-thought]:hover::after,
+    body.annotate-mode [data-thought]:hover::before { opacity: 1; transform: translateX(-50%) scale(1); }
+
+    /* ── Responsive ── */
+    @media (max-width: 900px) {
+      nav { padding: 14px 24px; }
+      section { padding: 72px 24px; }
+      #hero { padding: 100px 24px 60px; }
+      .hero-grid { grid-template-columns: 1fr; gap: 48px; }
+      .hero-canvas { display: none; }
+      .process-steps { grid-template-columns: 1fr 1fr; gap: 32px; }
+      .process-steps::before { display: none; }
+      .cases-grid { grid-template-columns: 1fr; }
+      .methods-grid { grid-template-columns: 1fr 1fr; }
+      .insights-grid { grid-template-columns: 1fr; }
+      .about-grid { grid-template-columns: 1fr; }
+      .about-img { aspect-ratio: 2/1; }
+      footer { flex-direction: column; gap: 8px; text-align: center; }
+    }
+    @media (max-width: 560px) {
+      .methods-grid { grid-template-columns: 1fr; }
+      .nav-links { display: none; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Custom cursor -->
+  <div id="cursor"></div>
+
+  <!-- ── Nav ── -->
+  <nav id="navbar">
+    <a href="#hero" class="nav-logo">Amber Grey</a>
+    <ul class="nav-links">
+      <li><a href="#process">Process</a></li>
+      <li><a href="#work">Work</a></li>
+      <li><a href="#methods">Methods</a></li>
+      <li><a href="#about">About</a></li>
+      <li><a href="#contact">Contact</a></li>
+    </ul>
+    <button id="annotate-btn" title="Toggle researcher annotations">
+      <span class="dot"></span>
+      <span id="annotate-label">Researcher Mode</span>
+    </button>
+  </nav>
+
+  <!-- ── Hero ── -->
+  <section id="hero">
+    <div class="hero-grid-bg"></div>
+    <div class="hero-grid">
+      <div class="hero-left">
+
+        <!-- Annotation sticky -->
+        <div class="sticky sticky-y annotation" style="position:absolute; top:-32px; right:-60px; z-index:10;">
+          <strong>🔍 Observation</strong>
+          First impression sets the frame — headline must immediately communicate "why should I care?"
+        </div>
+
+        <p class="hero-tag">UX Researcher & Strategist</p>
+        <h1>
+          I listen to what<br>
+          people <em>don't</em><br>
+          say out loud.
+        </h1>
+        <p class="hero-desc">
+          I design research that uncovers the gap between what users tell you and what they actually do — then translate those findings into decisions that stick.
+        </p>
+        <div class="hero-ctas">
+          <a href="#work" class="btn-primary" data-thought="CTA placement: primary action should feel low-stakes. 'See my work' > 'Hire me'">See My Work</a>
+          <a href="#about" class="btn-ghost" data-thought="Secondary CTA gives exit ramp for skeptics — reduces pressure">About Me</a>
+        </div>
+      </div>
+
+      <!-- Think-aloud stream -->
+      <div class="hero-canvas">
+        <p class="canvas-label">Live Research Thinking</p>
+        <ul class="think-stream">
+          <li>
+            <span class="stream-icon icon-obs">👁️</span>
+            <span class="stream-text">
+              <span class="stream-label">Observe</span>
+              User spent 8 seconds re-reading the nav before clicking anywhere.
+            </span>
+          </li>
+          <li>
+            <span class="stream-icon icon-q">❓</span>
+            <span class="stream-text">
+              <span class="stream-label">Question</span>
+              Is the label "Insights" competing with "Work"? Do both mean the same thing to them?
+            </span>
+          </li>
+          <li>
+            <span class="stream-icon icon-ins">💡</span>
+            <span class="stream-text">
+              <span class="stream-label">Insight</span>
+              Navigation mirrors their mental model — not our org chart.
+            </span>
+          </li>
+          <li>
+            <span class="stream-icon icon-hyp">🧪</span>
+            <span class="stream-text">
+              <span class="stream-label">Hypothesis</span>
+              Merging labels and testing with tree testing should reduce time-on-nav by ~40%.
+            </span>
+          </li>
+          <li>
+            <span class="stream-icon icon-act">→</span>
+            <span class="stream-text">
+              <span class="stream-label">Action</span>
+              Write a research brief. Recruit 8 participants. Run card sort this Thursday.
+            </span>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── Process ── -->
+  <section id="process">
+    <div class="section-inner">
+      <p class="section-label">How I Work</p>
+      <h2 class="reveal">From Confusion<br>to Clarity</h2>
+      <p class="section-intro reveal reveal-delay-1">Research isn't a phase — it's a lens I apply at every stage to make sure the team is solving the right problem before solving the problem right.</p>
+
+      <div class="process-steps">
+        <div class="step" data-thought="Discover: The phase most teams skip because it feels slow. It's actually the fastest path.">
+          <div class="step-icon">🔍</div>
+          <span class="step-num">01</span>
+          <h3>Discover</h3>
+          <p>Contextual inquiry, desk research, stakeholder interviews to map the real problem space.</p>
+        </div>
+        <div class="step" data-thought="Define: Synthesis is a skill. I use affinity mapping and opportunity framing, not just personas.">
+          <div class="step-icon">🗂️</div>
+          <span class="step-num">02</span>
+          <h3>Define</h3>
+          <p>Affinity clustering, journey maps, and opportunity framing to focus the team on what matters.</p>
+        </div>
+        <div class="step" data-thought="Concept validation before high-fidelity design saves the team weeks of rework.">
+          <div class="step-icon">✏️</div>
+          <span class="step-num">03</span>
+          <h3>Concept</h3>
+          <p>Participatory design sessions and concept testing to validate direction early.</p>
+        </div>
+        <div class="step" data-thought="Moderated + unmoderated — I pick the method based on what question we're answering, not habit.">
+          <div class="step-icon">🧪</div>
+          <span class="step-num">04</span>
+          <h3>Evaluate</h3>
+          <p>Usability testing, cognitive walkthroughs, and heuristic reviews that expose real friction.</p>
+        </div>
+        <div class="step" data-thought="Research only works if it changes decisions. I stay in the room until it lands.">
+          <div class="step-icon">📐</div>
+          <span class="step-num">05</span>
+          <h3>Land</h3>
+          <p>Insight repositories, playback sessions, and design critiques that embed findings into product.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── Case Studies ── -->
+  <section id="work">
+    <div class="section-inner">
+      <p class="section-label">Selected Work</p>
+      <h2 class="reveal">Research in the Wild</h2>
+      <p class="section-intro reveal reveal-delay-1">Three projects. Three very different problems. One consistent thread: ask better questions, get better answers.</p>
+
+      <!-- Annotation -->
+      <div class="sticky sticky-g annotation" style="position:absolute; right: 24px; margin-top: -20px; z-index:10;">
+        <strong>📐 Layout Decision</strong>
+        3-column grid: each card is a research artifact type. Scanning = quick calibration.
+      </div>
+
+      <div class="cases-grid">
+
+        <!-- Case 1: Journey Map -->
+        <div class="case-card reveal" data-thought="Card hover = discovery interaction. Micro-delight builds trust.">
+          <div class="case-thumb thumb-1">
+            <div class="affinity">
+              <span class="af-node">Overwhelmed</span>
+              <span class="af-node">Confused</span>
+              <span class="af-node">Just tell me what to do</span>
+              <span class="af-node">Trust issues</span>
+              <span class="af-node">Too many options</span>
+            </div>
+          </div>
+          <div class="case-body">
+            <span class="case-tag tag-teal">Healthcare · 2024</span>
+            <h3>Reducing Anxiety in Patient Onboarding</h3>
+            <p>18 contextual interviews revealed that patients weren't confused by the interface — they were scared. The UI was the least of our problems.</p>
+            <div class="insight-pull">They kept asking "is this normal?" — they needed reassurance, not features.</div>
+            <div class="case-meta">
+              <div class="meta-item">
+                <span class="meta-label">Method</span>
+                <span class="meta-value">Contextual Inquiry</span>
+              </div>
+              <div class="meta-item">
+                <span class="meta-label">Outcome</span>
+                <span class="meta-value">−38% drop-off</span>
+              </div>
+              <div class="meta-item">
+                <span class="meta-label">Team</span>
+                <span class="meta-value">6 people</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Case 2: Heatmap -->
+        <div class="case-card reveal reveal-delay-1">
+          <div class="case-thumb thumb-2">
+            <div class="uheat">
+              <div class="uheat-bg"></div>
+              <div class="uheat-spot" style="width:100px;height:100px;background:rgba(224,122,95,.5);top:10px;left:30px;"></div>
+              <div class="uheat-spot" style="width:70px;height:70px;background:rgba(242,166,90,.4);top:40px;right:20px;"></div>
+              <div class="uheat-spot" style="width:50px;height:50px;background:rgba(61,155,140,.3);bottom:15px;left:60px;"></div>
+              <div class="uheat-spot" style="width:40px;height:40px;background:rgba(224,122,95,.35);bottom:20px;right:50px;"></div>
+            </div>
+          </div>
+          <div class="case-body">
+            <span class="case-tag tag-coral">Fintech · 2023</span>
+            <h3>Why Users Ignored the "Best" Feature</h3>
+            <p>Eye-tracking combined with think-aloud sessions showed the feature wasn't hidden — it was positioned where users expected ads. Banner blindness, not discoverability.</p>
+            <div class="insight-pull">Users' eyes went exactly where we'd put it. They just refused to look there.</div>
+            <div class="case-meta">
+              <div class="meta-item">
+                <span class="meta-label">Method</span>
+                <span class="meta-value">Eye-tracking + TA</span>
+              </div>
+              <div class="meta-item">
+                <span class="meta-label">Outcome</span>
+                <span class="meta-value">+210% engagement</span>
+              </div>
+              <div class="meta-item">
+                <span class="meta-label">Team</span>
+                <span class="meta-value">4 people</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Case 3: Journey map bars -->
+        <div class="case-card reveal reveal-delay-2">
+          <div class="case-thumb thumb-3" style="flex-direction: column; align-items: flex-start; padding: 20px; justify-content: flex-end; gap: 0;">
+            <div style="font-size:11px;color:#7B61C4;font-weight:700;letter-spacing:.08em;text-transform:uppercase;margin-bottom:8px;padding-left:4px;">Emotional Journey</div>
+            <div class="jmap">
+              <div class="jmap-bar" style="height:30%;background:#D0D8FF;"></div>
+              <div class="jmap-bar" style="height:45%;background:#B8C5FF;"></div>
+              <div class="jmap-bar" style="height:65%;background:#9EB2FF;"></div>
+              <div class="jmap-bar" style="height:40%;background:#849FFF;"></div>
+              <div class="jmap-bar" style="height:80%;background:#6A8CFF;"></div>
+              <div class="jmap-bar" style="height:55%;background:#5079FF;"></div>
+              <div class="jmap-bar" style="height:90%;background:#3666FF;"></div>
+              <div class="jmap-bar" style="height:75%;background:#1D53FF;"></div>
+            </div>
+          </div>
+          <div class="case-body">
+            <span class="case-tag tag-purple">EdTech · 2023</span>
+            <h3>Mapping the Learning Confidence Curve</h3>
+            <p>Longitudinal diary study over 6 weeks with 24 students. Confidence wasn't linear — it crashed at week 3 for almost everyone, for reasons that had nothing to do with content.</p>
+            <div class="insight-pull">Week 3 is when they stopped believing it was possible — not when they stopped trying.</div>
+            <div class="case-meta">
+              <div class="meta-item">
+                <span class="meta-label">Method</span>
+                <span class="meta-value">Diary Study</span>
+              </div>
+              <div class="meta-item">
+                <span class="meta-label">Outcome</span>
+                <span class="meta-value">+52% completion</span>
+              </div>
+              <div class="meta-item">
+                <span class="meta-label">Duration</span>
+                <span class="meta-value">6 weeks</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ── Methods ── -->
+  <section id="methods">
+    <div class="section-inner">
+      <p class="section-label">Toolkit</p>
+      <h2 class="reveal">Methods, Not<br>Magic</h2>
+      <p class="section-intro reveal reveal-delay-1">Every method is a question in disguise. I choose based on what we need to learn, not what's most familiar.</p>
+      <div class="methods-grid">
+        <div class="method-card reveal">
+          <div class="method-icon">🗣️</div>
+          <h3>Generative Research</h3>
+          <p>Semi-structured interviews, contextual inquiry, and diary studies to discover what we don't know we don't know.</p>
+          <div class="method-tags">
+            <span class="method-tag">Interviews</span>
+            <span class="method-tag">Ethnography</span>
+            <span class="method-tag">Diary Study</span>
+          </div>
+        </div>
+        <div class="method-card reveal reveal-delay-1">
+          <div class="method-icon">🧪</div>
+          <h3>Evaluative Research</h3>
+          <p>Moderated & unmoderated usability testing, cognitive walkthroughs, and expert reviews to find friction before it ships.</p>
+          <div class="method-tags">
+            <span class="method-tag">Usability Test</span>
+            <span class="method-tag">Think-aloud</span>
+            <span class="method-tag">Heuristics</span>
+          </div>
+        </div>
+        <div class="method-card reveal reveal-delay-2">
+          <div class="method-icon">📊</div>
+          <h3>Quantitative</h3>
+          <p>Surveys, analytics, A/B tests, and card sorting to measure patterns across populations, not just individuals.</p>
+          <div class="method-tags">
+            <span class="method-tag">Surveys</span>
+            <span class="method-tag">Card Sorting</span>
+            <span class="method-tag">Tree Testing</span>
+          </div>
+        </div>
+        <div class="method-card reveal reveal-delay-3">
+          <div class="method-icon">🤝</div>
+          <h3>Participatory</h3>
+          <p>Co-design workshops, design studios, and concept testing that make users active collaborators, not subjects.</p>
+          <div class="method-tags">
+            <span class="method-tag">Co-design</span>
+            <span class="method-tag">Design Sprint</span>
+            <span class="method-tag">Concept Test</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── Insight Quote ── -->
+  <section id="insights">
+    <div class="section-inner">
+      <div class="insights-grid">
+        <div class="reveal">
+          <p class="section-label">Philosophy</p>
+          <p class="big-quote">
+            The most dangerous moment in a project is when everyone in the room agrees. That's when someone needs to ask: "But what do the users think?"
+          </p>
+          <p class="quote-attr">— My actual belief, formed after sitting in too many consensus meetings</p>
+        </div>
+        <div class="stat-stack reveal reveal-delay-1">
+          <div class="stat-item">
+            <div class="stat-num">340+</div>
+            <div class="stat-desc">Research sessions facilitated across 6 industries</div>
+          </div>
+          <div class="stat-item" style="border-left-color: var(--coral);">
+            <div class="stat-num">28</div>
+            <div class="stat-desc">End-to-end research projects shipped to product</div>
+          </div>
+          <div class="stat-item" style="border-left-color: var(--gold);">
+            <div class="stat-num">8 yrs</div>
+            <div class="stat-desc">Turning user confusion into design clarity</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── About ── -->
+  <section id="about">
+    <div class="section-inner">
+      <div class="about-grid">
+        <div class="about-img">
+          <span class="about-img-avatar">👩🏻‍💻</span>
+          <span style="font-style: italic; color: var(--muted); font-size:13px;">Photo — coming soon</span>
+
+          <!-- Floating annotation -->
+          <div class="sticky sticky-p annotation" style="position:absolute; bottom:24px; right:-24px; z-index:10;">
+            <strong>🤔 Self-note</strong>
+            Even the "about" photo is a UX decision — authenticity vs. professionalism tension.
+          </div>
+        </div>
+        <div class="about-philosophy reveal">
+          <p class="section-label">About</p>
+          <h3>I became a researcher because I was a terrible designer.</h3>
+          <p>Early in my career, I kept building things people didn't use. Not because the visuals were wrong — because I'd never actually asked anyone what they needed. The humbling moment came when a user picked up my prototype and said "Oh, I thought this was a game."</p>
+          <p>That was the best thing that ever happened to my career. I stopped guessing and started listening. Now I help teams do the same.</p>
+          <p>I'm based in San Francisco, work across product, service, and systems design, and I'm especially drawn to problems where the emotional stakes are high — health, money, education, belonging.</p>
+          <ul class="values-list">
+            <li><span class="value-check">✦</span> Research that changes decisions (not just confirms them)</li>
+            <li><span class="value-check">✦</span> Synthesis over raw data dumps</li>
+            <li><span class="value-check">✦</span> Equity-centered recruitment practices</li>
+            <li><span class="value-check">✦</span> Making research legible to non-researchers</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── Contact ── -->
+  <section id="contact">
+    <div class="section-inner">
+      <p class="section-label" style="justify-content: center;">Let's Talk</p>
+      <h2 class="reveal">Got a hairy research problem?</h2>
+      <p class="section-intro">I'm currently open to new projects and collaborations. If you're not sure research is what you need — let's have that conversation too.</p>
+      <div class="contact-links">
+        <a href="mailto:maya@example.com" class="contact-link">📬 maya@example.com</a>
+        <a href="#" class="contact-link">💼 LinkedIn</a>
+        <a href="#" class="contact-link">📓 Read on Medium</a>
+        <a href="#" class="contact-link">📄 Download CV</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── Footer ── -->
+  <footer>
+    <span>© 2026 Maya Chen — UX Researcher</span>
+    <span style="font-style:italic; color: var(--muted);">Designed with the same rigor I apply to user research.</span>
+  </footer>
+
+  <!-- ── Scripts ── -->
+  <script>
+    // ── Custom Cursor + Heatmap Trail ──
+    const cursor = document.getElementById('cursor');
+    const heatColors = ['#E07A5F', '#F2A65A', '#3D9B8C', '#7B61C4', '#F2A65A'];
+    let lastHeat = 0;
+    let mouseX = 0, mouseY = 0;
+    let tickCount = 0;
+
+    document.addEventListener('mousemove', e => {
+      mouseX = e.clientX; mouseY = e.clientY;
+      cursor.style.left = mouseX + 'px';
+      cursor.style.top  = mouseY + 'px';
+
+      tickCount++;
+      if (tickCount % 6 === 0) {
+        const dot = document.createElement('div');
+        dot.className = 'heat-dot';
+        dot.style.left = mouseX + 'px';
+        dot.style.top  = mouseY + 'px';
+        dot.style.background = heatColors[Math.floor(Math.random() * heatColors.length)];
+        document.body.appendChild(dot);
+        setTimeout(() => dot.remove(), 3000);
+      }
+    });
+
+    document.querySelectorAll('a, button, .case-card, .method-card, .step').forEach(el => {
+      el.addEventListener('mouseenter', () => cursor.classList.add('hovering'));
+      el.addEventListener('mouseleave', () => cursor.classList.remove('hovering'));
+    });
+
+    // ── Annotate Mode Toggle ──
+    const annotateBtn = document.getElementById('annotate-btn');
+    const annotateLabel = document.getElementById('annotate-label');
+    annotateBtn.addEventListener('click', () => {
+      document.body.classList.toggle('annotate-mode');
+      const on = document.body.classList.contains('annotate-mode');
+      annotateLabel.textContent = on ? 'Exit Researcher Mode' : 'Researcher Mode';
+    });
+
+    // ── Nav scroll shadow ──
+    const navbar = document.getElementById('navbar');
+    window.addEventListener('scroll', () => {
+      navbar.classList.toggle('scrolled', window.scrollY > 20);
+    });
+
+    // ── Scroll Reveal (generic .reveal) ──
+    const revealEls = document.querySelectorAll('.reveal');
+    const revealObs = new IntersectionObserver(entries => {
+      entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); revealObs.unobserve(e.target); } });
+    }, { threshold: 0.12 });
+    revealEls.forEach(el => revealObs.observe(el));
+
+    // ── Process Step Reveal ──
+    const stepEls = document.querySelectorAll('.step');
+    const stepObs = new IntersectionObserver(entries => {
+      entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); stepObs.unobserve(e.target); } });
+    }, { threshold: 0.15 });
+    stepEls.forEach(el => stepObs.observe(el));
+
+    // ── Parallax on hero grid bg ──
+    const heroBg = document.querySelector('.hero-grid-bg');
+    window.addEventListener('scroll', () => {
+      const y = window.scrollY;
+      if (heroBg) heroBg.style.transform = `translateY(${y * 0.2}px)`;
+    }, { passive: true });
+  </script>
+</body>
+</html>

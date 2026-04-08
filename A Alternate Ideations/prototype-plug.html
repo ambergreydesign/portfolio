@@ -1,0 +1,972 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Plug Redesign — Interactive Prototype</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=Cormorant+Garamond:ital,wght@0,600;1,400&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bg:        #0c0a07;
+  --bg-mid:    #12100b;
+  --copper:    #c47a2e;
+  --warm:      #f0d08c;
+  --warm-dim:  rgba(240,208,140,0.12);
+  --text:      #ede4d4;
+  --muted:     rgba(200,185,165,0.5);
+  --border:    rgba(255,255,255,0.07);
+}
+
+html, body { width: 100%; height: 100%; background: var(--bg); font-family: 'DM Sans', sans-serif; color: var(--text); overflow: hidden; }
+
+/* ── NAV ── */
+.nav-back {
+  position: fixed; top: 24px; left: 28px; z-index: 100;
+  display: inline-flex; align-items: center; gap: 9px;
+  background: rgba(255,255,255,0.05); backdrop-filter: blur(12px);
+  border: 1px solid rgba(255,255,255,0.09); border-radius: 100px;
+  padding: 8px 16px 8px 12px; cursor: pointer;
+  color: rgba(240,208,140,0.65); font-size: 9px; font-weight: 400;
+  letter-spacing: 0.22em; text-transform: uppercase; transition: background 0.2s, color 0.2s;
+}
+.nav-back:hover { background: rgba(255,255,255,0.09); color: rgba(240,208,140,0.95); }
+.nav-back-arrow { display: inline-block; width: 14px; height: 1px; background: currentColor; position: relative; flex-shrink: 0; }
+.nav-back-arrow::before { content: ''; position: absolute; left: 0; top: -3px; width: 5px; height: 5px; border-left: 1px solid currentColor; border-bottom: 1px solid currentColor; transform: rotate(45deg); }
+.wordmark { position: fixed; bottom: 20px; left: 20px; font-size: 12px; font-weight: 300; letter-spacing: 0.2em; color: rgba(240,208,140,0.12); pointer-events: none; z-index: 10; }
+
+/* ── EMBEDDED ── */
+.embedded .nav-back, .embedded .wordmark { display: none; }
+.embedded #mode-selector { top: 12px; }
+.embedded .mode-btn { padding: 5px 14px; font-size: 8px; }
+
+/* ── MODE SELECTOR ── */
+#mode-selector {
+  position: fixed; top: 24px; left: 50%; transform: translateX(-50%); z-index: 100;
+  display: flex; gap: 4px; background: rgba(255,255,255,0.05);
+  backdrop-filter: blur(12px); border: 1px solid rgba(255,255,255,0.09);
+  border-radius: 100px; padding: 3px;
+}
+.mode-btn {
+  padding: 7px 20px; border-radius: 100px; border: none; cursor: pointer;
+  background: transparent; color: rgba(240,208,140,0.4);
+  font-family: 'DM Sans', sans-serif; font-size: 9px; font-weight: 600;
+  letter-spacing: 0.16em; text-transform: uppercase; transition: all 0.3s ease;
+}
+.mode-btn:hover { color: rgba(240,208,140,0.7); }
+.mode-btn.active { background: rgba(196,122,46,0.15); color: var(--copper); box-shadow: 0 0 12px rgba(196,122,46,0.08); }
+
+/* ── LAYOUT ── */
+.mode-view {
+  position: absolute; inset: 0;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  opacity: 0; pointer-events: none; transition: opacity 0.4s ease;
+}
+.mode-view.active { opacity: 1; pointer-events: auto; }
+
+/* ═══════════════════════════
+   ORIENTATION CHALLENGE
+═══════════════════════════ */
+#challenge-view { padding-top: 60px; gap: 20px; }
+
+.challenge-header {
+  text-align: center;
+}
+.challenge-phase {
+  font-size: 9px; font-weight: 600; letter-spacing: 0.3em; text-transform: uppercase;
+  color: var(--copper); margin-bottom: 6px;
+}
+.challenge-instruction {
+  font-size: 13px; font-weight: 300; color: rgba(240,208,140,0.5);
+  max-width: 420px; line-height: 1.6; margin: 0 auto;
+}
+.challenge-instruction em { color: rgba(240,208,140,0.85); font-style: italic; }
+
+.challenge-arena {
+  display: flex; gap: 80px; align-items: center; justify-content: center;
+  position: relative;
+}
+
+/* Outlet target */
+.target-wrap {
+  display: flex; flex-direction: column; align-items: center; gap: 12px;
+}
+.target-label {
+  font-size: 8px; font-weight: 500; letter-spacing: 0.26em; text-transform: uppercase;
+  color: rgba(240,208,140,0.35);
+}
+
+.outlet-3d {
+  width: 110px; height: 160px;
+  background: linear-gradient(160deg, #d4d0c8, #b8b4ac);
+  border-radius: 52px;
+  border: 2px solid rgba(255,255,255,0.15);
+  box-shadow: 0 4px 20px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.3);
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center; gap: 14px;
+  position: relative;
+}
+.outlet-3d-slots { display: flex; gap: 28px; }
+.outlet-3d-slot {
+  width: 6px; height: 26px;
+  background: linear-gradient(180deg, #1a1812, #0a0806);
+  border-radius: 3px;
+  box-shadow: inset 0 2px 4px rgba(0,0,0,0.6);
+}
+.outlet-3d-ground {
+  width: 22px; height: 6px;
+  background: linear-gradient(90deg, #1a1812, #0a0806);
+  border-radius: 3px;
+  box-shadow: inset 0 1px 3px rgba(0,0,0,0.5);
+}
+
+/* outlet guide attachment */
+.outlet-guide {
+  position: absolute; bottom: -8px; left: 50%; transform: translateX(-50%);
+  width: 40px; height: 14px;
+  background: linear-gradient(180deg, #9a9590, #7a7570);
+  border-radius: 0 0 14px 14px;
+  box-shadow: 0 3px 8px rgba(0,0,0,0.3);
+  opacity: 0; transition: opacity 0.4s ease;
+}
+.outlet-guide.visible { opacity: 1; }
+
+/* arrow between */
+.challenge-arrow {
+  font-size: 24px; color: rgba(196,122,46,0.3);
+  animation: arrowPulse 2s ease-in-out infinite;
+}
+@keyframes arrowPulse {
+  0%, 100% { opacity: 0.3; transform: translateX(0); }
+  50% { opacity: 0.7; transform: translateX(6px); }
+}
+
+/* Plug (rotatable) */
+.plug-wrap {
+  display: flex; flex-direction: column; align-items: center; gap: 12px;
+}
+.plug-rotate-zone {
+  position: relative;
+  width: 180px; height: 180px;
+  display: flex; align-items: center; justify-content: center;
+}
+
+/* rotation ring */
+.rotate-ring {
+  position: absolute; inset: 0;
+  border: 2px dashed rgba(196,122,46,0.15);
+  border-radius: 50%;
+  transition: border-color 0.3s;
+}
+.rotate-ring.active { border-color: rgba(196,122,46,0.4); }
+.rotate-ring.correct { border-color: rgba(100,200,100,0.5); }
+
+/* degree readout */
+.rotation-readout {
+  position: absolute; bottom: -8px; left: 50%; transform: translateX(-50%);
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 14px; font-weight: 600; color: rgba(240,208,140,0.4);
+  white-space: nowrap;
+}
+
+.plug-3d {
+  width: 68px; height: 96px;
+  position: relative;
+  cursor: grab;
+  transition: filter 0.3s;
+  user-select: none;
+  -webkit-user-select: none;
+}
+.plug-3d:active { cursor: grabbing; }
+
+.plug-3d-body {
+  width: 100%; height: 100%;
+  background: linear-gradient(160deg, #3a3328, #2a2318);
+  border: 2px solid rgba(196,122,46,0.3);
+  border-radius: 14px 14px 8px 8px;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.08);
+  display: flex; flex-direction: column;
+  align-items: center; padding-top: 12px; gap: 14px;
+  position: relative;
+}
+.plug-3d-prongs { display: flex; gap: 20px; }
+.plug-3d-prong {
+  width: 5px; height: 24px;
+  background: linear-gradient(180deg, #e8d8b0, #c4b080);
+  border-radius: 2px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+}
+.plug-3d-ground {
+  width: 16px; height: 5px;
+  background: linear-gradient(90deg, #e8d8b0, #c4b080);
+  border-radius: 3px;
+}
+.plug-3d-cord {
+  position: absolute; bottom: -24px; left: 50%; transform: translateX(-50%);
+  width: 8px; height: 24px;
+  background: linear-gradient(180deg, #2a2318, #1a1610);
+  border-radius: 0 0 4px 4px;
+}
+
+/* plug curve guide */
+.plug-3d-curve {
+  position: absolute; top: -8px; left: 50%; transform: translateX(-50%);
+  width: 36px; height: 14px;
+  background: linear-gradient(180deg, #9a9590, #7a7570);
+  border-radius: 14px 14px 0 0;
+  box-shadow: 0 -3px 10px rgba(0,0,0,0.3);
+  opacity: 0; transition: opacity 0.4s ease;
+}
+.plug-3d-curve.visible { opacity: 1; }
+
+/* grip zone */
+.plug-3d-grip {
+  position: absolute; bottom: 6px; left: 6px; right: 6px;
+  height: 22px;
+  border: 1.5px dashed rgba(196,122,46,0.25);
+  border-radius: 0 0 6px 6px;
+  opacity: 0; transition: opacity 0.4s ease;
+}
+.plug-3d-grip.visible { opacity: 1; }
+
+/* HUD */
+.challenge-hud {
+  display: flex; gap: 40px; align-items: center;
+}
+.hud-item { display: flex; flex-direction: column; align-items: center; gap: 3px; }
+.hud-label { font-size: 8px; font-weight: 500; letter-spacing: 0.26em; text-transform: uppercase; color: rgba(240,208,140,0.35); }
+.hud-value { font-family: 'Cormorant Garamond', serif; font-size: 26px; font-weight: 600; color: var(--warm); }
+
+.challenge-btn {
+  padding: 10px 28px; border-radius: 100px;
+  border: 1px solid rgba(196,122,46,0.25);
+  background: rgba(196,122,46,0.08);
+  color: rgba(240,208,140,0.75);
+  font-family: 'DM Sans', sans-serif; font-size: 10px; font-weight: 500;
+  letter-spacing: 0.14em; text-transform: uppercase;
+  cursor: pointer; transition: all 0.25s;
+}
+.challenge-btn:hover { background: rgba(196,122,46,0.16); color: var(--warm); border-color: rgba(196,122,46,0.4); }
+.challenge-btn.primary { background: rgba(196,122,46,0.2); border-color: rgba(196,122,46,0.4); color: var(--warm); }
+
+/* feedback flash */
+@keyframes correctFlash {
+  0% { box-shadow: 0 0 0 rgba(100,200,100,0); }
+  50% { box-shadow: 0 0 40px rgba(100,200,100,0.25); }
+  100% { box-shadow: 0 0 0 rgba(100,200,100,0); }
+}
+.plug-3d.correct { animation: correctFlash 0.6s ease; }
+.plug-3d.correct .plug-3d-body { border-color: rgba(100,200,100,0.5); }
+
+@keyframes wrongShake {
+  0%, 100% { transform: translateX(0); }
+  20% { transform: translateX(-6px); }
+  40% { transform: translateX(6px); }
+  60% { transform: translateX(-4px); }
+  80% { transform: translateX(4px); }
+}
+.plug-3d.wrong { animation: wrongShake 0.4s ease; }
+
+/* results */
+.challenge-results {
+  position: absolute; inset: 0;
+  background: rgba(12,10,7,0.94); backdrop-filter: blur(10px);
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  opacity: 0; pointer-events: none; transition: opacity 0.4s ease;
+  z-index: 20; padding: 40px; gap: 24px;
+}
+.challenge-results.visible { opacity: 1; pointer-events: auto; }
+
+.results-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 28px; font-weight: 600; color: var(--warm);
+}
+.results-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; width: 100%; max-width: 380px; }
+.result-card {
+  background: rgba(196,122,46,0.06); border: 1px solid rgba(196,122,46,0.15);
+  border-radius: 12px; padding: 18px; text-align: center;
+}
+.result-card-label { font-size: 8px; font-weight: 500; letter-spacing: 0.22em; text-transform: uppercase; color: rgba(240,208,140,0.4); margin-bottom: 6px; }
+.result-card-value { font-family: 'Cormorant Garamond', serif; font-size: 28px; font-weight: 600; color: var(--warm); }
+.result-card-sub { font-size: 10px; font-weight: 300; color: rgba(240,208,140,0.4); margin-top: 4px; }
+.result-card.improved .result-card-value { color: #7dd87d; }
+
+.results-insight {
+  font-size: 13px; font-weight: 300; color: rgba(240,208,140,0.5);
+  text-align: center; max-width: 380px; line-height: 1.65;
+}
+.results-insight em { color: rgba(240,218,160,0.9); font-style: italic; }
+
+/* ═══════════════════════════
+   MODE 2: DESIGN ANATOMY (3D)
+═══════════════════════════ */
+#anatomy-view { padding-top: 70px; }
+
+.anatomy-toggle {
+  display: flex; gap: 4px; background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,255,255,0.09); border-radius: 100px; padding: 3px; margin-bottom: 20px;
+}
+.anatomy-toggle-btn {
+  padding: 6px 18px; border-radius: 100px; border: none; cursor: pointer;
+  background: transparent; color: rgba(240,208,140,0.4);
+  font-family: 'DM Sans', sans-serif; font-size: 9px; font-weight: 500;
+  letter-spacing: 0.12em; text-transform: uppercase; transition: all 0.3s ease;
+}
+.anatomy-toggle-btn:hover { color: rgba(240,208,140,0.7); }
+.anatomy-toggle-btn.active { background: rgba(196,122,46,0.15); color: var(--copper); }
+
+.anatomy-stage {
+  position: relative; width: 780px;
+  display: flex; align-items: center; justify-content: center;
+  perspective: 800px;
+}
+
+.anatomy-scene {
+  display: flex; gap: 100px; align-items: flex-start;
+  transform-style: preserve-3d;
+}
+
+/* 3D Plug Assembly */
+.anat-3d-plug-assembly {
+  display: flex; flex-direction: column; align-items: center; gap: 8px;
+  position: relative;
+  transform: rotateY(-8deg) rotateX(4deg);
+  transform-style: preserve-3d;
+}
+
+.anat-3d-plug {
+  width: 90px; height: 130px; position: relative;
+  transform-style: preserve-3d;
+}
+.anat-3d-plug-face {
+  width: 100%; height: 100%;
+  background: linear-gradient(160deg, #3d362a, #2a2318, #201c14);
+  border: 2px solid rgba(196,122,46,0.3);
+  border-radius: 16px 16px 10px 10px;
+  box-shadow:
+    0 6px 24px rgba(0,0,0,0.5),
+    inset 0 1px 0 rgba(255,255,255,0.1),
+    inset 0 -2px 6px rgba(0,0,0,0.3);
+  display: flex; flex-direction: column;
+  align-items: center; padding-top: 16px; gap: 18px;
+  position: relative;
+}
+
+/* 3D side depth */
+.anat-3d-plug-face::after {
+  content: ''; position: absolute;
+  top: 4px; right: -6px; bottom: 4px; width: 6px;
+  background: linear-gradient(180deg, #1e1a14, #141210);
+  border-radius: 0 4px 4px 0;
+  transform: skewY(-2deg);
+}
+
+.anat-3d-prongs { display: flex; gap: 26px; }
+.anat-3d-prong {
+  width: 6px; height: 30px;
+  background: linear-gradient(180deg, #f0e0b8, #d4c490, #c0b080);
+  border-radius: 2px;
+  box-shadow: 0 3px 8px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.4);
+}
+.anat-3d-ground {
+  width: 20px; height: 6px;
+  background: linear-gradient(90deg, #f0e0b8, #c0b080);
+  border-radius: 4px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+}
+.anat-3d-cord {
+  width: 10px; height: 60px;
+  background: linear-gradient(180deg, #2a2318, #1a1610, #0e0c08);
+  border-radius: 0 0 5px 5px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+}
+
+/* Curve guide add-on (3D) */
+.anat-3d-curve {
+  position: absolute; top: -12px; left: 50%; transform: translateX(-50%);
+  width: 48px; height: 18px;
+  background: linear-gradient(180deg, #b0aba5, #908b85, #787370);
+  border-radius: 18px 18px 4px 4px;
+  box-shadow: 0 -4px 12px rgba(0,0,0,0.25), inset 0 2px 0 rgba(255,255,255,0.2);
+  opacity: 0; transition: opacity 0.5s ease, transform 0.5s ease;
+}
+.anat-3d-curve.visible { opacity: 1; }
+.anat-3d-curve.exploded { transform: translateX(-50%) translateY(-28px); }
+
+/* Grip zone (3D) */
+.anat-3d-grip {
+  position: absolute; bottom: 8px; left: 8px; right: 8px; height: 26px;
+  border: 2px dashed rgba(196,122,46,0.3);
+  border-radius: 0 0 8px 8px;
+  opacity: 0; transition: opacity 0.5s ease;
+}
+.anat-3d-grip.visible { opacity: 1; }
+
+/* 3D Outlet Assembly */
+.anat-3d-outlet-assembly {
+  display: flex; flex-direction: column; align-items: center;
+  position: relative;
+  transform: rotateY(8deg) rotateX(4deg);
+  transform-style: preserve-3d;
+}
+
+.anat-3d-plate {
+  width: 130px; height: 200px;
+  background: linear-gradient(160deg, #e0dcd4, #c8c4bc, #b4b0a8);
+  border-radius: 12px;
+  border: 1px solid rgba(255,255,255,0.3);
+  box-shadow:
+    0 8px 32px rgba(0,0,0,0.4),
+    inset 0 2px 0 rgba(255,255,255,0.5),
+    inset 0 -2px 4px rgba(0,0,0,0.1);
+  display: flex; align-items: center; justify-content: center;
+  position: relative;
+  transform-style: preserve-3d;
+}
+
+/* 3D side depth for plate */
+.anat-3d-plate::after {
+  content: ''; position: absolute;
+  top: 6px; right: -8px; bottom: 6px; width: 8px;
+  background: linear-gradient(180deg, #a09c94, #888480);
+  border-radius: 0 6px 6px 0;
+  transform: skewY(-1deg);
+}
+
+.anat-3d-outlet-face {
+  width: 84px; height: 130px;
+  background: linear-gradient(160deg, #d0ccc4, #b8b4ac);
+  border-radius: 44px;
+  border: 2px solid rgba(180,176,168,0.6);
+  box-shadow: inset 0 4px 12px rgba(0,0,0,0.15), 0 2px 0 rgba(255,255,255,0.3);
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center; gap: 16px;
+}
+.anat-3d-outlet-slots { display: flex; gap: 28px; }
+.anat-3d-outlet-slot {
+  width: 7px; height: 30px;
+  background: linear-gradient(180deg, #1a1812, #080604);
+  border-radius: 3px;
+  box-shadow: inset 0 3px 6px rgba(0,0,0,0.7);
+}
+.anat-3d-outlet-ground {
+  width: 24px; height: 7px;
+  background: linear-gradient(90deg, #1a1812, #080604);
+  border-radius: 4px;
+  box-shadow: inset 0 2px 4px rgba(0,0,0,0.6);
+}
+
+/* Outlet notch guide (3D) */
+.anat-3d-notch {
+  position: absolute; bottom: -10px; left: 50%; transform: translateX(-50%);
+  width: 50px; height: 16px;
+  background: linear-gradient(180deg, #908b85, #787370, #686360);
+  border-radius: 0 0 16px 16px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.15);
+  opacity: 0; transition: opacity 0.5s ease, transform 0.5s ease;
+}
+.anat-3d-notch.visible { opacity: 1; }
+.anat-3d-notch.exploded { transform: translateX(-50%) translateY(24px); }
+
+/* Hotspots */
+.hs {
+  position: absolute; width: 28px; height: 28px;
+  border-radius: 50%;
+  background: rgba(196,122,46,0.15); border: 2px solid rgba(196,122,46,0.45);
+  cursor: pointer; display: flex; align-items: center; justify-content: center;
+  font-size: 11px; font-weight: 700; color: var(--copper);
+  transition: all 0.3s ease; z-index: 5;
+  opacity: 0; transition: opacity 0.5s ease;
+}
+.hs.visible { opacity: 1; }
+.hs:hover { background: rgba(196,122,46,0.3); transform: scale(1.15); box-shadow: 0 0 16px rgba(196,122,46,0.3); }
+.hs.active { background: rgba(196,122,46,0.35); border-color: var(--copper); box-shadow: 0 0 20px rgba(196,122,46,0.3); }
+
+/* connector lines */
+.hs-line {
+  position: absolute; background: rgba(196,122,46,0.2);
+  pointer-events: none; opacity: 0; transition: opacity 0.4s ease;
+}
+.hs-line.visible { opacity: 1; }
+
+/* Detail panel */
+.anat-detail {
+  position: absolute; right: -20px; top: 50%; transform: translateY(-50%);
+  width: 220px; background: rgba(196,122,46,0.05);
+  border: 1px solid rgba(196,122,46,0.15); border-radius: 14px;
+  padding: 22px; opacity: 0; pointer-events: none; transition: opacity 0.35s ease;
+  z-index: 10;
+}
+.anat-detail.visible { opacity: 1; pointer-events: auto; }
+.detail-num { font-size: 10px; font-weight: 500; letter-spacing: 0.2em; text-transform: uppercase; color: rgba(196,122,46,0.45); margin-bottom: 6px; }
+.detail-title { font-family: 'Cormorant Garamond', serif; font-size: 19px; font-weight: 600; color: var(--warm); line-height: 1.2; margin-bottom: 8px; }
+.detail-body { font-size: 12px; font-weight: 300; line-height: 1.7; color: rgba(240,208,140,0.55); }
+
+.standard-msg {
+  font-size: 13px; font-weight: 300; color: rgba(240,208,140,0.3);
+  font-style: italic; margin-top: 20px; text-align: center;
+}
+
+/* explode toggle */
+.explode-toggle {
+  margin-top: 16px; display: flex; align-items: center; gap: 8px;
+  cursor: pointer; opacity: 0; transition: opacity 0.4s;
+}
+.explode-toggle.visible { opacity: 1; }
+.explode-toggle input { accent-color: var(--copper); }
+.explode-toggle label {
+  font-size: 10px; font-weight: 400; letter-spacing: 0.1em;
+  color: rgba(240,208,140,0.5); cursor: pointer; text-transform: uppercase;
+}
+
+@media (max-width: 860px) {
+  .challenge-arena { gap: 40px; flex-wrap: wrap; }
+  .anatomy-scene { gap: 60px; flex-wrap: wrap; justify-content: center; }
+  .anat-detail { position: static; transform: none; margin-top: 20px; width: 100%; max-width: 300px; }
+}
+</style>
+</head>
+<body>
+
+<button class="nav-back" onclick="navigateTo('case-study-plug.html')">
+  <span class="nav-back-arrow"></span>
+  Plug Redesign
+</button>
+<div class="wordmark">Amber Grey</div>
+
+<div id="mode-selector">
+  <button class="mode-btn active" data-mode="challenge">Orientation Challenge</button>
+  <button class="mode-btn" data-mode="anatomy">Design Anatomy</button>
+</div>
+
+<div id="app">
+
+<!-- ═══════════════════════════════
+     MODE 1: ORIENTATION CHALLENGE
+═══════════════════════════════ -->
+<div id="challenge-view" class="mode-view active">
+
+  <div class="challenge-header">
+    <div class="challenge-phase" id="ch-phase">Round 1 of 5 — Standard Plug</div>
+    <p class="challenge-instruction" id="ch-instruction">Rotate the plug to match the outlet's orientation. Click <em>Submit</em> when aligned.</p>
+  </div>
+
+  <div class="challenge-arena">
+    <div class="target-wrap">
+      <div class="target-label">Outlet</div>
+      <div class="outlet-3d" id="ch-outlet" style="transform: rotate(0deg);">
+        <div class="outlet-guide" id="ch-outlet-guide"></div>
+        <div class="outlet-3d-slots">
+          <div class="outlet-3d-slot"></div>
+          <div class="outlet-3d-slot"></div>
+        </div>
+        <div class="outlet-3d-ground"></div>
+      </div>
+    </div>
+
+    <div class="challenge-arrow">&#x279C;</div>
+
+    <div class="plug-wrap">
+      <div class="target-label">Your Plug</div>
+      <div class="plug-rotate-zone" id="ch-rotate-zone">
+        <div class="rotate-ring" id="ch-ring"></div>
+        <div class="plug-3d" id="ch-plug" style="transform: rotate(0deg);">
+          <div class="plug-3d-curve" id="ch-plug-curve"></div>
+          <div class="plug-3d-body">
+            <div class="plug-3d-prongs">
+              <div class="plug-3d-prong"></div>
+              <div class="plug-3d-prong"></div>
+            </div>
+            <div class="plug-3d-ground"></div>
+          </div>
+          <div class="plug-3d-grip" id="ch-plug-grip"></div>
+          <div class="plug-3d-cord"></div>
+        </div>
+        <div class="rotation-readout" id="ch-readout">0&deg;</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="challenge-hud">
+    <div class="hud-item">
+      <div class="hud-label">Time</div>
+      <div class="hud-value" id="ch-time">0.0s</div>
+    </div>
+    <div class="hud-item">
+      <div class="hud-label">Score</div>
+      <div class="hud-value" id="ch-score">0/0</div>
+    </div>
+    <div class="hud-item">
+      <div class="hud-label">Round</div>
+      <div class="hud-value" id="ch-round">1/5</div>
+    </div>
+  </div>
+
+  <button class="challenge-btn primary" id="ch-btn" onclick="handleSubmit()">Start</button>
+
+  <div class="challenge-results" id="ch-results">
+    <div class="results-title">Your Results</div>
+    <div class="results-grid" id="ch-results-grid"></div>
+    <p class="results-insight" id="ch-results-insight"></p>
+    <button class="challenge-btn primary" onclick="resetChallenge()">Try Again</button>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════
+     MODE 2: DESIGN ANATOMY (3D)
+═══════════════════════════════ -->
+<div id="anatomy-view" class="mode-view">
+
+  <div class="anatomy-toggle">
+    <button class="anatomy-toggle-btn" data-design="standard" onclick="setDesignView('standard')">Standard</button>
+    <button class="anatomy-toggle-btn active" data-design="redesigned" onclick="setDesignView('redesigned')">Redesigned</button>
+  </div>
+
+  <div class="anatomy-stage">
+    <div class="anatomy-scene" id="anatomy-scene">
+
+      <!-- 3D Plug -->
+      <div class="anat-3d-plug-assembly">
+        <div class="anat-3d-plug">
+          <div class="anat-3d-curve" id="a-curve"></div>
+          <div class="anat-3d-plug-face">
+            <div class="anat-3d-prongs">
+              <div class="anat-3d-prong"></div>
+              <div class="anat-3d-prong"></div>
+            </div>
+            <div class="anat-3d-ground"></div>
+          </div>
+          <div class="anat-3d-grip" id="a-grip"></div>
+
+          <div class="hs" id="hs1" style="top: -24px; left: 50%; margin-left: -14px;" onclick="showDetail(0)">1</div>
+          <div class="hs" id="hs3" style="bottom: -4px; left: 50%; margin-left: -14px;" onclick="showDetail(2)">3</div>
+        </div>
+        <div class="anat-3d-cord"></div>
+      </div>
+
+      <!-- 3D Outlet -->
+      <div class="anat-3d-outlet-assembly">
+        <div class="anat-3d-plate">
+          <div class="anat-3d-outlet-face">
+            <div class="anat-3d-outlet-slots">
+              <div class="anat-3d-outlet-slot"></div>
+              <div class="anat-3d-outlet-slot"></div>
+            </div>
+            <div class="anat-3d-outlet-ground"></div>
+          </div>
+          <div class="anat-3d-notch" id="a-notch"></div>
+
+          <div class="hs" id="hs2" style="bottom: -20px; left: 50%; margin-left: -14px;" onclick="showDetail(1)">2</div>
+        </div>
+      </div>
+
+      <div class="anat-detail" id="anat-detail">
+        <div class="detail-num" id="d-num"></div>
+        <div class="detail-title" id="d-title"></div>
+        <div class="detail-body" id="d-body"></div>
+      </div>
+
+    </div>
+  </div>
+
+  <p class="standard-msg" id="standard-msg" style="display: none;">Standard plug and outlet — no tactile orientation cues. Zero haptic feedback.</p>
+
+  <div class="explode-toggle" id="explode-toggle">
+    <input type="checkbox" id="explode-cb" onchange="toggleExplode(this.checked)">
+    <label for="explode-cb">Exploded View</label>
+  </div>
+
+</div>
+
+</div>
+
+<script>
+'use strict';
+
+function navigateTo(u) { setTimeout(() => { window.location.href = u; }, 120); }
+if (window.self !== window.top) { document.body.classList.add('embedded'); document.documentElement.classList.add('embedded'); }
+
+/* ── MODE SWITCH ── */
+function setMode(m) {
+  document.querySelectorAll('.mode-btn').forEach(b => b.classList.toggle('active', b.dataset.mode === m));
+  document.querySelectorAll('.mode-view').forEach(v => v.classList.toggle('active', v.id === m + '-view'));
+}
+document.querySelectorAll('.mode-btn').forEach(b => b.addEventListener('click', () => setMode(b.dataset.mode)));
+
+/* ══════════════════════════════
+   ORIENTATION CHALLENGE
+══════════════════════════════ */
+const ROUNDS_PER_PHASE = 5;
+const ANGLES = [0, 45, 90, 135, 180, 225, 270, 315];
+
+let phase = 0;           // 0=not started, 1=standard, 2=redesigned
+let roundNum = 0;        // current round within phase (1-based)
+let targetAngle = 0;     // outlet rotation
+let currentAngle = 0;    // plug rotation
+let rotating = false;
+let startAngle = 0;
+let startTime = 0;
+let timerInterval = null;
+let scores = { std: [], re: [] };
+let times  = { std: [], re: [] };
+
+const chPlug   = document.getElementById('ch-plug');
+const chOutlet = document.getElementById('ch-outlet');
+const chRing   = document.getElementById('ch-ring');
+const chReadout = document.getElementById('ch-readout');
+const chBtn    = document.getElementById('ch-btn');
+const rotZone  = document.getElementById('ch-rotate-zone');
+
+function handleSubmit() {
+  if (phase === 0) { phase = 1; roundNum = 0; nextRound(); return; }
+  if (phase === 3) return;
+  checkAnswer();
+}
+
+function nextRound() {
+  roundNum++;
+  if (roundNum > ROUNDS_PER_PHASE) {
+    if (phase === 1) {
+      phase = 2;
+      roundNum = 0;
+      // Transition to redesigned
+      document.getElementById('ch-plug-curve').classList.add('visible');
+      document.getElementById('ch-plug-grip').classList.add('visible');
+      document.getElementById('ch-outlet-guide').classList.add('visible');
+      document.getElementById('ch-phase').textContent = 'Phase 2 — Redesigned Plug';
+      document.getElementById('ch-instruction').innerHTML = 'Same challenge — now with the <em>tactile curve</em> on the plug and <em>notch guide</em> on the outlet.';
+      chBtn.textContent = 'Start Phase 2';
+      chBtn.onclick = () => { roundNum = 0; nextRound(); chBtn.onclick = handleSubmit; };
+      clearInterval(timerInterval);
+      return;
+    } else {
+      showChallengeResults();
+      return;
+    }
+  }
+
+  // Pick random target angle
+  targetAngle = ANGLES[Math.floor(Math.random() * ANGLES.length)];
+  // Randomize starting plug angle (different from target)
+  do { currentAngle = ANGLES[Math.floor(Math.random() * ANGLES.length)]; } while (currentAngle === targetAngle);
+
+  chOutlet.style.transform = 'rotate(' + targetAngle + 'deg)';
+  chPlug.style.transform = 'rotate(' + currentAngle + 'deg)';
+  chReadout.textContent = currentAngle + '\u00B0';
+  chRing.classList.remove('correct');
+  chRing.classList.add('active');
+  chPlug.classList.remove('correct', 'wrong');
+
+  const phaseLabel = phase === 1 ? 'Standard Plug' : 'Redesigned Plug';
+  document.getElementById('ch-phase').textContent = 'Round ' + roundNum + ' of ' + ROUNDS_PER_PHASE + ' \u2014 ' + phaseLabel;
+  document.getElementById('ch-round').textContent = roundNum + '/' + ROUNDS_PER_PHASE;
+  chBtn.textContent = 'Submit';
+
+  startTime = performance.now();
+  clearInterval(timerInterval);
+  timerInterval = setInterval(() => {
+    document.getElementById('ch-time').textContent = ((performance.now() - startTime) / 1000).toFixed(1) + 's';
+  }, 100);
+}
+
+function checkAnswer() {
+  clearInterval(timerInterval);
+  const elapsed = parseFloat(((performance.now() - startTime) / 1000).toFixed(1));
+  const diff = Math.abs(normalizeAngle(currentAngle) - normalizeAngle(targetAngle));
+  const isCorrect = diff <= 15 || diff >= 345;
+  const key = phase === 1 ? 'std' : 're';
+
+  scores[key].push(isCorrect ? 1 : 0);
+  times[key].push(elapsed);
+
+  const total = scores[key].reduce((a, b) => a + b, 0);
+  document.getElementById('ch-score').textContent = total + '/' + scores[key].length;
+
+  if (isCorrect) {
+    chPlug.classList.add('correct');
+    chRing.classList.add('correct');
+    chRing.classList.remove('active');
+  } else {
+    chPlug.classList.add('wrong');
+  }
+
+  setTimeout(nextRound, 900);
+}
+
+function normalizeAngle(a) { return ((a % 360) + 360) % 360; }
+
+// Rotation interaction
+rotZone.addEventListener('mousedown', startRotate);
+rotZone.addEventListener('touchstart', startRotate, { passive: false });
+
+function startRotate(e) {
+  if (phase === 0 || phase === 3) return;
+  rotating = true;
+  const pt = getEventPoint(e);
+  const rect = rotZone.getBoundingClientRect();
+  const cx = rect.left + rect.width / 2;
+  const cy = rect.top + rect.height / 2;
+  startAngle = Math.atan2(pt.y - cy, pt.x - cx) * 180 / Math.PI - currentAngle;
+  e.preventDefault();
+}
+
+document.addEventListener('mousemove', doRotate);
+document.addEventListener('touchmove', doRotate, { passive: false });
+
+function doRotate(e) {
+  if (!rotating) return;
+  const pt = getEventPoint(e);
+  const rect = rotZone.getBoundingClientRect();
+  const cx = rect.left + rect.width / 2;
+  const cy = rect.top + rect.height / 2;
+  let angle = Math.atan2(pt.y - cy, pt.x - cx) * 180 / Math.PI - startAngle;
+
+  // Snap to 15-degree increments
+  angle = Math.round(angle / 15) * 15;
+  currentAngle = normalizeAngle(angle);
+
+  chPlug.style.transform = 'rotate(' + currentAngle + 'deg)';
+  chReadout.textContent = currentAngle + '\u00B0';
+
+  // Visual feedback for close alignment
+  const diff = Math.abs(normalizeAngle(currentAngle) - normalizeAngle(targetAngle));
+  if (diff <= 15 || diff >= 345) {
+    chRing.classList.add('correct');
+  } else {
+    chRing.classList.remove('correct');
+  }
+
+  e.preventDefault();
+}
+
+document.addEventListener('mouseup', () => { rotating = false; });
+document.addEventListener('touchend', () => { rotating = false; });
+
+function getEventPoint(e) {
+  if (e.touches && e.touches[0]) return { x: e.touches[0].clientX, y: e.touches[0].clientY };
+  return { x: e.clientX, y: e.clientY };
+}
+
+function showChallengeResults() {
+  phase = 3;
+  clearInterval(timerInterval);
+  chRing.classList.remove('active', 'correct');
+
+  const stdCorrect = scores.std.reduce((a, b) => a + b, 0);
+  const reCorrect  = scores.re.reduce((a, b) => a + b, 0);
+  const stdAvgTime = (times.std.reduce((a, b) => a + b, 0) / times.std.length).toFixed(1);
+  const reAvgTime  = (times.re.reduce((a, b) => a + b, 0) / times.re.length).toFixed(1);
+
+  document.getElementById('ch-results-grid').innerHTML = `
+    <div class="result-card">
+      <div class="result-card-label">Standard Accuracy</div>
+      <div class="result-card-value">${stdCorrect}/${ROUNDS_PER_PHASE}</div>
+      <div class="result-card-sub">Phase 1</div>
+    </div>
+    <div class="result-card improved">
+      <div class="result-card-label">Redesigned Accuracy</div>
+      <div class="result-card-value">${reCorrect}/${ROUNDS_PER_PHASE}</div>
+      <div class="result-card-sub">Phase 2</div>
+    </div>
+    <div class="result-card">
+      <div class="result-card-label">Standard Avg Time</div>
+      <div class="result-card-value">${stdAvgTime}s</div>
+      <div class="result-card-sub">Per round</div>
+    </div>
+    <div class="result-card improved">
+      <div class="result-card-label">Redesigned Avg Time</div>
+      <div class="result-card-value">${reAvgTime}s</div>
+      <div class="result-card-sub">Per round</div>
+    </div>
+  `;
+
+  document.getElementById('ch-results-insight').innerHTML =
+    'With the standard plug, orientation is pure guesswork. The redesigned plug\'s <em>tactile curve</em> and the outlet\'s <em>notch guide</em> give your hands the information your eyes normally provide — making orientation <em>instinctive rather than visual.</em>';
+
+  document.getElementById('ch-results').classList.add('visible');
+}
+
+function resetChallenge() {
+  phase = 0; roundNum = 0;
+  scores = { std: [], re: [] };
+  times  = { std: [], re: [] };
+  document.getElementById('ch-plug-curve').classList.remove('visible');
+  document.getElementById('ch-plug-grip').classList.remove('visible');
+  document.getElementById('ch-outlet-guide').classList.remove('visible');
+  chPlug.style.transform = 'rotate(0deg)';
+  chOutlet.style.transform = 'rotate(0deg)';
+  chPlug.classList.remove('correct', 'wrong');
+  chRing.classList.remove('active', 'correct');
+  chReadout.textContent = '0\u00B0';
+  document.getElementById('ch-time').textContent = '0.0s';
+  document.getElementById('ch-score').textContent = '0/0';
+  document.getElementById('ch-round').textContent = '1/5';
+  document.getElementById('ch-phase').textContent = 'Round 1 of 5 \u2014 Standard Plug';
+  document.getElementById('ch-instruction').innerHTML = 'Rotate the plug to match the outlet\'s orientation. Click <em>Submit</em> when aligned.';
+  chBtn.textContent = 'Start';
+  chBtn.onclick = handleSubmit;
+  document.getElementById('ch-results').classList.remove('visible');
+  clearInterval(timerInterval);
+}
+
+/* ══════════════════════════════
+   ANATOMY EXPLORER (3D)
+══════════════════════════════ */
+const detailData = [
+  { num: '01 \u2014 Tactile', title: 'Curved Attachment',
+    body: 'A seamlessly integrated curve clips onto the plug body. The shape maps to prong orientation \u2014 your hand knows which way the plug faces without seeing it. Easily attaches to any existing plug.' },
+  { num: '02 \u2014 Spatial', title: 'Outlet Notch Guide',
+    body: 'A curved guide piece attaches below the outlet face. Sweep a finger to find it, then align the plug\u2019s curve to the notch. Together they form a closed feedback loop for visual-free orientation.' },
+  { num: '03 \u2014 Safety', title: 'Ergonomic Grip Zone',
+    body: 'The lower plug body is redesigned so fingers naturally sit below the prong line. A subtle texture signals where to hold, keeping hands at a safe distance during insertion \u2014 critical when you can\u2019t see.' }
+];
+
+let activeHS = -1;
+
+function showDetail(idx) {
+  if (activeHS === idx) {
+    activeHS = -1;
+    document.getElementById('anat-detail').classList.remove('visible');
+    document.querySelectorAll('.hs').forEach(h => h.classList.remove('active'));
+    return;
+  }
+  activeHS = idx;
+  document.getElementById('d-num').textContent = detailData[idx].num;
+  document.getElementById('d-title').textContent = detailData[idx].title;
+  document.getElementById('d-body').textContent = detailData[idx].body;
+  document.getElementById('anat-detail').classList.add('visible');
+  document.querySelectorAll('.hs').forEach((h, i) => h.classList.toggle('active', i === idx));
+}
+
+function setDesignView(d) {
+  document.querySelectorAll('.anatomy-toggle-btn').forEach(b => b.classList.toggle('active', b.dataset.design === d));
+  const on = d === 'redesigned';
+  document.getElementById('a-curve').classList.toggle('visible', on);
+  document.getElementById('a-notch').classList.toggle('visible', on);
+  document.getElementById('a-grip').classList.toggle('visible', on);
+  document.querySelectorAll('.hs').forEach(h => h.classList.toggle('visible', on));
+  document.getElementById('standard-msg').style.display = on ? 'none' : 'block';
+  document.getElementById('explode-toggle').classList.toggle('visible', on);
+  if (!on) {
+    activeHS = -1;
+    document.getElementById('anat-detail').classList.remove('visible');
+    document.querySelectorAll('.hs').forEach(h => h.classList.remove('active'));
+    document.getElementById('explode-cb').checked = false;
+    toggleExplode(false);
+  }
+}
+
+function toggleExplode(on) {
+  document.getElementById('a-curve').classList.toggle('exploded', on);
+  document.getElementById('a-notch').classList.toggle('exploded', on);
+}
+
+setDesignView('redesigned');
+</script>
+
+</body>
+</html>

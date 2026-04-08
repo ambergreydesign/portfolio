@@ -1,0 +1,627 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GreenSwap — Impact Calculator</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bg:        #060e0e;
+  --bg-alt:    #0a1614;
+  --teal:      #3ba8a0;
+  --teal-dim:  rgba(59,168,160,0.09);
+  --teal-b:    rgba(59,168,160,0.22);
+  --teal-br:   rgba(138,212,204,0.9);
+  --amber:     #c8762e;
+  --amber-dim: rgba(200,118,46,0.08);
+  --amber-b:   rgba(200,118,46,0.22);
+  --amber-br:  rgba(230,160,80,0.9);
+  --text:      rgba(198,228,224,0.88);
+  --text-dim:  rgba(198,228,224,0.38);
+}
+
+html, body { height: 100%; }
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'DM Sans', sans-serif;
+  font-weight: 300;
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+/* ── HEADER ── */
+.header {
+  padding: 28px 40px 22px;
+  border-bottom: 1px solid rgba(255,255,255,0.05);
+}
+.header-label {
+  font-size: 8px; font-weight: 500; letter-spacing: 0.34em;
+  text-transform: uppercase; color: rgba(105,210,200,0.55);
+  margin-bottom: 6px;
+}
+.header-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 24px; font-weight: 600; line-height: 1.1;
+  color: rgba(138,212,204,0.88);
+}
+
+/* ── CONTROLS ── */
+.controls {
+  padding: 14px 40px;
+  display: flex; gap: 40px; align-items: center;
+  border-bottom: 1px solid rgba(255,255,255,0.05);
+  flex-wrap: wrap; background: rgba(59,168,160,0.015);
+}
+.control-group { display: flex; flex-direction: column; gap: 7px; }
+.control-label {
+  font-size: 7.5px; font-weight: 500; letter-spacing: 0.32em;
+  text-transform: uppercase; color: rgba(105,210,200,0.45);
+}
+.btn-row { display: flex; gap: 5px; align-items: center; }
+.btn {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 10.5px; font-weight: 400; letter-spacing: 0.05em;
+  padding: 6px 13px; border-radius: 100px; cursor: pointer;
+  border: 1px solid rgba(59,168,160,0.18);
+  background: transparent; color: rgba(105,210,200,0.5);
+  transition: all 0.18s; line-height: 1;
+}
+.btn:hover  { background: rgba(59,168,160,0.1);  border-color: rgba(59,168,160,0.38); color: rgba(138,212,204,0.9); }
+.btn.active { background: rgba(59,168,160,0.14); border-color: rgba(59,168,160,0.5);  color: rgba(155,235,225,0.95); }
+
+/* ── STEPPER (no label) ── */
+.stepper {
+  display: inline-flex; align-items: center;
+  border: 1px solid rgba(59,168,160,0.22);
+  border-radius: 100px; overflow: hidden;
+  background: rgba(59,168,160,0.04);
+}
+.step-btn {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 16px; font-weight: 300; line-height: 1;
+  width: 32px; height: 32px;
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer; background: transparent;
+  border: none; color: rgba(105,210,200,0.55);
+  transition: background 0.15s, color 0.15s; flex-shrink: 0;
+}
+.step-btn:hover { background: rgba(59,168,160,0.12); color: rgba(138,212,204,0.95); }
+.step-btn:disabled { opacity: 0.2; cursor: default; pointer-events: none; }
+.step-num {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 22px; font-weight: 600; line-height: 1;
+  color: rgba(138,212,204,0.9);
+  min-width: 40px; text-align: center;
+  border-left: 1px solid rgba(59,168,160,0.14);
+  border-right: 1px solid rgba(59,168,160,0.14);
+  padding: 4px 6px;
+}
+
+/* ── VIEW TOGGLE ── */
+.view-toggle {
+  display: flex; gap: 0;
+  border: 1px solid rgba(59,168,160,0.18);
+  border-radius: 100px; overflow: hidden;
+  margin-left: auto;
+}
+.toggle-btn {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 10px; font-weight: 400; letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding: 7px 16px; cursor: pointer;
+  border: none; background: transparent;
+  color: rgba(105,210,200,0.45);
+  transition: all 0.18s; line-height: 1;
+}
+.toggle-btn + .toggle-btn { border-left: 1px solid rgba(59,168,160,0.18); }
+.toggle-btn:hover  { background: rgba(59,168,160,0.08); color: rgba(138,212,204,0.8); }
+.toggle-btn.active { background: rgba(59,168,160,0.14); color: rgba(155,235,225,0.95); }
+
+/* ── METRIC SECTION ── */
+.metric-section { padding: 8px 40px 28px; }
+
+.metric-list { display: flex; flex-direction: column; }
+
+.metric-row {
+  display: grid; grid-template-columns: 200px 1fr;
+  align-items: start; padding: 20px 0;
+  border-bottom: 1px solid rgba(200,100,40,0.08); gap: 36px;
+}
+.metric-row:last-child { border-bottom: none; }
+
+.metric-number {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 56px; font-weight: 600; line-height: 0.88;
+  color: var(--amber-br); text-align: right; padding-top: 3px;
+  transition: color 0.3s;
+}
+.metric-number .unit { font-size: 26px; font-weight: 400; }
+
+.metric-right { display: flex; flex-direction: column; gap: 5px; padding-top: 6px; }
+.metric-name {
+  font-size: 9px; font-weight: 500; letter-spacing: 0.26em;
+  text-transform: uppercase; color: rgba(200,118,46,0.6);
+}
+.metric-sub {
+  font-size: 12px; font-weight: 300; line-height: 1.7;
+  color: var(--text-dim); max-width: 520px;
+}
+
+/* ── VISUAL VIEW ── */
+.visual-view { padding-top: 12px; }
+
+.bag-grid-section { margin-bottom: 24px; }
+
+.bag-grid-header {
+  font-size: 7.5px; font-weight: 500; letter-spacing: 0.3em;
+  text-transform: uppercase; color: rgba(200,118,46,0.45);
+  margin-bottom: 14px;
+}
+
+.bag-grid {
+  display: flex; flex-wrap: wrap; gap: 5px;
+  max-width: 680px;
+}
+
+.bag-icon {
+  width: 16px; height: 18px;
+  border-radius: 3px 3px 4px 4px;
+  position: relative; flex-shrink: 0;
+  transition: opacity 0.4s;
+}
+.bag-icon::before {
+  content: '';
+  position: absolute;
+  left: 50%; top: -6px;
+  transform: translateX(-50%);
+  width: 8px; height: 7px;
+  border-radius: 4px 4px 0 0;
+  border-top-width: 1.5px; border-left-width: 1.5px; border-right-width: 1.5px;
+  border-bottom: none; border-style: solid;
+}
+.bag-icon.bag-lit { background: var(--amber-br); opacity: 0.82; }
+.bag-icon.bag-lit::before { border-color: var(--amber-br); }
+.bag-icon.bag-dim { background: rgba(200,118,46,0.12); opacity: 1; }
+.bag-icon.bag-dim::before { border-color: rgba(200,118,46,0.18); }
+
+.bag-grid-footer {
+  margin-top: 10px;
+  font-size: 10px; font-weight: 300; letter-spacing: 0.06em;
+  color: rgba(198,228,224,0.25);
+}
+
+.vis-stats {
+  display: grid; grid-template-columns: repeat(3,1fr);
+  border: 1px solid rgba(200,100,40,0.1);
+  border-radius: 10px; overflow: hidden;
+}
+.vis-stat {
+  padding: 18px 20px;
+  border-right: 1px solid rgba(200,100,40,0.1);
+  display: flex; flex-direction: column; gap: 5px;
+}
+.vis-stat:last-child { border-right: none; }
+.vis-num {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 38px; font-weight: 600; line-height: 0.9;
+  color: var(--amber-br);
+}
+.vis-num .unit { font-size: 20px; font-weight: 400; }
+.vis-label {
+  font-size: 8.5px; font-weight: 500; letter-spacing: 0.18em;
+  text-transform: uppercase; color: rgba(200,118,46,0.5);
+}
+
+/* ── REFRAME ── */
+.reframe-wrap {
+  margin-top: 24px; padding-top: 20px;
+  border-top: 1px solid rgba(59,168,160,0.12);
+}
+.reframe-line {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(16px, 1.7vw, 21px);
+  font-weight: 400; font-style: italic;
+  color: rgba(138,212,204,0.62); line-height: 1.5;
+}
+
+/* ── TIMELINE ── */
+.timeline-section {
+  border-top: 1px solid rgba(255,255,255,0.05);
+  padding: 20px 40px 16px;
+  background: rgba(0,0,0,0.18);
+}
+.timeline-label {
+  font-size: 7.5px; font-weight: 500; letter-spacing: 0.3em;
+  text-transform: uppercase; color: rgba(198,228,224,0.22);
+  margin-bottom: 14px;
+}
+.tl-grid {
+  display: grid; grid-template-columns: 60px 1fr 1fr 1fr 1fr 1fr;
+  gap: 0; align-items: center;
+}
+.tl-row { display: contents; }
+.tl-row-label {
+  font-size: 9px; font-weight: 400; letter-spacing: 0.06em;
+  color: rgba(198,228,224,0.28); padding-right: 10px;
+  align-self: center; white-space: nowrap;
+}
+.tl-cell { padding: 5px 4px; display: flex; flex-direction: column; gap: 3px; }
+.tl-bar-wrap { height: 6px; border-radius: 100px; background: rgba(255,255,255,0.04); overflow: hidden; }
+.tl-bar { height: 100%; border-radius: 100px; transition: width 0.7s cubic-bezier(0.4,0,0.2,1); min-width: 2px; }
+.tl-bar-amber { background: linear-gradient(90deg, rgba(200,100,40,0.45), rgba(210,90,40,0.8)); }
+.tl-bar-teal  { background: linear-gradient(90deg, rgba(59,168,160,0.45), rgba(100,210,200,0.8)); }
+.tl-val { font-size: 8.5px; font-weight: 400; letter-spacing: 0.04em; white-space: nowrap; }
+.tl-val-amber { color: rgba(200,118,46,0.55); }
+.tl-val-teal  { color: rgba(59,168,160,0.55); }
+.tl-period-label {
+  font-size: 7.5px; font-weight: 500; letter-spacing: 0.12em;
+  text-transform: uppercase; color: rgba(198,228,224,0.2); padding: 0 4px;
+}
+.tl-header { display: contents; }
+
+/* ── SOURCE ── */
+.source {
+  padding: 9px 40px 11px;
+  border-top: 1px solid rgba(255,255,255,0.04);
+  font-size: 8.5px; font-weight: 300; letter-spacing: 0.04em;
+  color: rgba(198,228,224,0.18); line-height: 1.5;
+}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-label">GreenSwap · Impact Calculator</div>
+  <div class="header-title">What does your household's waste stream actually cost?</div>
+</div>
+
+<div class="controls">
+  <div class="control-group">
+    <div class="control-label">Household Size</div>
+    <div class="btn-row">
+      <div class="stepper">
+        <button class="step-btn" id="step-down" aria-label="Remove person">−</button>
+        <div class="step-num" id="step-num">3</div>
+        <button class="step-btn" id="step-up" aria-label="Add person">+</button>
+      </div>
+    </div>
+  </div>
+  <div class="control-group">
+    <div class="control-label">Timeframe</div>
+    <div class="btn-row">
+      <button class="btn" data-period="week">Weekly</button>
+      <button class="btn" data-period="month">Monthly</button>
+      <button class="btn active" data-period="year">Yearly</button>
+      <button class="btn" data-period="decade">10 Years</button>
+      <button class="btn" data-period="lifetime">Lifetime</button>
+    </div>
+  </div>
+
+  <div class="view-toggle">
+    <button class="toggle-btn active" data-view="stats">Stats</button>
+    <button class="toggle-btn" data-view="visual">Visual</button>
+  </div>
+</div>
+
+<!-- ── MIDDLE: STATS VIEW ── -->
+<div class="metric-section" id="view-stats">
+  <div class="metric-list">
+
+    <div class="metric-row">
+      <div class="metric-number" id="m-bags">1,095</div>
+      <div class="metric-right">
+        <div class="metric-name">bags sent to landfill</div>
+        <div class="metric-sub">Single-use. Used for an average of 12 minutes. Each one enters a waste stream with no exit.</div>
+      </div>
+    </div>
+
+    <div class="metric-row">
+      <div class="metric-number" id="m-weight">6.6<span class="unit">kg</span></div>
+      <div class="metric-right">
+        <div class="metric-name">of plastic by weight</div>
+        <div class="metric-sub" id="m-weight-sub">About the weight of a bag of flour — permanently lodged in a landfill.</div>
+      </div>
+    </div>
+
+    <div class="metric-row">
+      <div class="metric-number" id="m-year">2526</div>
+      <div class="metric-right">
+        <div class="metric-name">the year these bags stop persisting</div>
+        <div class="metric-sub">Landfills block UV and oxygen. Plastic bags never biodegrade — they only fragment, contaminating soil and groundwater for 500+ years.</div>
+      </div>
+    </div>
+
+    <div class="metric-row">
+      <div class="metric-number" id="m-particles">109<span class="unit">M</span></div>
+      <div class="metric-right">
+        <div class="metric-name">microplastic particles shed</div>
+        <div class="metric-sub">Each bag fragments into ~100,000 particles that migrate into waterways, enter the food chain, and accumulate in living tissue.</div>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="reframe-wrap">
+    <div class="reframe-line" id="reframe-stats">
+      With GreenSwap, those 1,095 bags stay out of the landfill.
+    </div>
+  </div>
+</div>
+
+<!-- ── MIDDLE: VISUAL VIEW (hidden by default) ── -->
+<div class="metric-section visual-view" id="view-visual" style="display:none">
+
+  <div class="bag-grid-section">
+    <div class="bag-grid-header" id="bag-grid-header">1,095 bags — each icon represents 1 bag</div>
+    <div class="bag-grid" id="bag-grid"></div>
+    <div class="bag-grid-footer" id="bag-grid-footer">100 icons shown · lit = sent to landfill</div>
+  </div>
+
+  <div class="vis-stats">
+    <div class="vis-stat">
+      <div class="vis-num" id="v-weight">6.6<span class="unit">kg</span></div>
+      <div class="vis-label">plastic by weight</div>
+    </div>
+    <div class="vis-stat">
+      <div class="vis-num" id="v-year">2526</div>
+      <div class="vis-label">still persisting in landfill</div>
+    </div>
+    <div class="vis-stat">
+      <div class="vis-num" id="v-particles">109<span class="unit">M</span></div>
+      <div class="vis-label">microplastic particles shed</div>
+    </div>
+  </div>
+
+  <div class="reframe-wrap">
+    <div class="reframe-line" id="reframe-visual">
+      With GreenSwap, those 1,095 bags stay out of the landfill.
+    </div>
+  </div>
+</div>
+
+<!-- ── TIMELINE ── -->
+<div class="timeline-section">
+  <div class="timeline-label">Cumulative plastic weight by timeframe — landfill vs. diverted</div>
+  <div class="tl-grid">
+
+    <div class="tl-header">
+      <div></div>
+      <div class="tl-cell"><div class="tl-period-label">Weekly</div></div>
+      <div class="tl-cell"><div class="tl-period-label">Monthly</div></div>
+      <div class="tl-cell"><div class="tl-period-label">Yearly</div></div>
+      <div class="tl-cell"><div class="tl-period-label">10 Years</div></div>
+      <div class="tl-cell"><div class="tl-period-label">Lifetime</div></div>
+    </div>
+
+    <div class="tl-row">
+      <div class="tl-row-label">Landfill</div>
+      <div class="tl-cell">
+        <div class="tl-bar-wrap"><div class="tl-bar tl-bar-amber" id="a-week"></div></div>
+        <div class="tl-val tl-val-amber" id="av-week">—</div>
+      </div>
+      <div class="tl-cell">
+        <div class="tl-bar-wrap"><div class="tl-bar tl-bar-amber" id="a-month"></div></div>
+        <div class="tl-val tl-val-amber" id="av-month">—</div>
+      </div>
+      <div class="tl-cell">
+        <div class="tl-bar-wrap"><div class="tl-bar tl-bar-amber" id="a-year"></div></div>
+        <div class="tl-val tl-val-amber" id="av-year">—</div>
+      </div>
+      <div class="tl-cell">
+        <div class="tl-bar-wrap"><div class="tl-bar tl-bar-amber" id="a-decade"></div></div>
+        <div class="tl-val tl-val-amber" id="av-decade">—</div>
+      </div>
+      <div class="tl-cell">
+        <div class="tl-bar-wrap"><div class="tl-bar tl-bar-amber" id="a-lifetime"></div></div>
+        <div class="tl-val tl-val-amber" id="av-lifetime">—</div>
+      </div>
+    </div>
+
+    <div class="tl-row">
+      <div class="tl-row-label">Diverted</div>
+      <div class="tl-cell">
+        <div class="tl-bar-wrap"><div class="tl-bar tl-bar-teal" id="t-week"></div></div>
+        <div class="tl-val tl-val-teal" id="tv-week">—</div>
+      </div>
+      <div class="tl-cell">
+        <div class="tl-bar-wrap"><div class="tl-bar tl-bar-teal" id="t-month"></div></div>
+        <div class="tl-val tl-val-teal" id="tv-month">—</div>
+      </div>
+      <div class="tl-cell">
+        <div class="tl-bar-wrap"><div class="tl-bar tl-bar-teal" id="t-year"></div></div>
+        <div class="tl-val tl-val-teal" id="tv-year">—</div>
+      </div>
+      <div class="tl-cell">
+        <div class="tl-bar-wrap"><div class="tl-bar tl-bar-teal" id="t-decade"></div></div>
+        <div class="tl-val tl-val-teal" id="tv-decade">—</div>
+      </div>
+      <div class="tl-cell">
+        <div class="tl-bar-wrap"><div class="tl-bar tl-bar-teal" id="t-lifetime"></div></div>
+        <div class="tl-val tl-val-teal" id="tv-lifetime">—</div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<div class="source">
+  U.S. EPA &amp; industry averages: 365 bags/person/year · avg. 12-min use per bag · 6g per bag · 500+ year landfill persistence · ~100,000 microplastic fragments per bag · GreenSwap reuse multiplier: 8–12× · Lifetime = 75 years
+</div>
+
+<script>
+var BAGS_PER_PERSON_YEAR = 365;
+var BAG_WEIGHT_G         = 6;
+var FRAGMENTS_PER_BAG    = 100000;
+var LIFETIME_YEARS       = 75;
+var DECOMP_YEARS         = 500;
+var TODAY_YEAR           = new Date().getFullYear();
+var GRID_SIZE            = 100;
+
+var PERIODS = { week: 1/52, month: 1/12, year: 1, decade: 10, lifetime: LIFETIME_YEARS };
+
+var currentFamily = 3;
+var currentPeriod = 'year';
+var currentView   = 'stats';
+
+/* ── helpers ── */
+function calcBags(family, period) {
+  return Math.round(BAGS_PER_PERSON_YEAR * family * PERIODS[period]);
+}
+function calcKg(bags)        { return (bags * BAG_WEIGHT_G) / 1000; }
+function calcParticles(bags) { return bags * FRAGMENTS_PER_BAG; }
+
+function fmtBags(n) { return n.toLocaleString('en-US'); }
+
+function fmtKg(kg) {
+  if (kg < 0.1)  return (kg * 1000).toFixed(0) + '<span class="unit">g</span>';
+  if (kg < 1000) return kg.toFixed(kg < 10 ? 1 : 0) + '<span class="unit">kg</span>';
+  return (kg / 1000).toFixed(2) + '<span class="unit">t</span>';
+}
+
+function fmtKgShort(kg) {
+  if (kg < 0.1)  return (kg * 1000).toFixed(0) + 'g';
+  if (kg < 1000) return kg.toFixed(kg < 10 ? 1 : 0) + 'kg';
+  return (kg / 1000).toFixed(2) + 't';
+}
+
+function fmtParticles(n) {
+  if (n >= 1e9) return (n / 1e9).toFixed(1) + '<span class="unit">bn</span>';
+  if (n >= 1e6) return Math.round(n / 1e6) + '<span class="unit">M</span>';
+  if (n >= 1e3) return Math.round(n / 1e3) + '<span class="unit">K</span>';
+  return n.toLocaleString();
+}
+
+function weightSub(kg) {
+  if (kg < 0.05) return "Lighter than a coffee filter — but it will outlast everything you own.";
+  if (kg < 0.5)  return "About the weight of a smartphone — persisting for 500+ years.";
+  if (kg < 2)    return "About the weight of a hardback book — fragmenting into microplastics for centuries.";
+  if (kg < 7)    return "About the weight of a bag of flour — permanently lodged in a landfill.";
+  if (kg < 15)   return "About the weight of a toddler — distributed across landfills and waterways.";
+  if (kg < 50)   return "About the weight of an adult human — in microplastic contamination.";
+  if (kg < 200)  return "The weight of a full-grown lion — in plastic that will never truly go away.";
+  if (kg < 1000) return "Several hundred kilos of plastic — persisting well past 2500.";
+  return (kg / 1000).toFixed(1) + " metric tonnes — a generational legacy of microplastic contamination.";
+}
+
+function reframeLine(bags) {
+  return "With GreenSwap, those " + fmtBags(bags) + " bags stay out of the landfill.";
+}
+
+/* ── bag grid ── */
+function renderBagGrid(bags) {
+  var grid   = document.getElementById('bag-grid');
+  var header = document.getElementById('bag-grid-header');
+  var footer = document.getElementById('bag-grid-footer');
+
+  var multiplier = bags > GRID_SIZE ? Math.ceil(bags / GRID_SIZE) : 1;
+  var litCount   = bags >= GRID_SIZE ? GRID_SIZE : bags;
+
+  grid.innerHTML = '';
+  for (var i = 0; i < GRID_SIZE; i++) {
+    var el = document.createElement('div');
+    el.className = 'bag-icon ' + (i < litCount ? 'bag-lit' : 'bag-dim');
+    grid.appendChild(el);
+  }
+
+  header.textContent = fmtBags(bags) + ' bags';
+  if (multiplier === 1) {
+    footer.textContent = litCount + ' of ' + litCount + ' bags shown · each icon = 1 bag';
+  } else {
+    footer.textContent = GRID_SIZE + ' icons shown · each icon = ~' + multiplier.toLocaleString() + ' bags';
+  }
+}
+
+/* ── main update ── */
+function update() {
+  var bags       = calcBags(currentFamily, currentPeriod);
+  var kg         = calcKg(bags);
+  var particles  = calcParticles(bags);
+  var decompYear = TODAY_YEAR + DECOMP_YEARS;
+  var reframe    = reframeLine(bags);
+
+  /* stats view */
+  document.getElementById('m-bags').textContent        = fmtBags(bags);
+  document.getElementById('m-weight').innerHTML        = fmtKg(kg);
+  document.getElementById('m-weight-sub').textContent  = weightSub(kg);
+  document.getElementById('m-year').textContent        = decompYear;
+  document.getElementById('m-particles').innerHTML     = fmtParticles(particles);
+  document.getElementById('reframe-stats').textContent = reframe;
+
+  /* visual view */
+  document.getElementById('v-weight').innerHTML        = fmtKg(kg);
+  document.getElementById('v-year').textContent        = decompYear;
+  document.getElementById('v-particles').innerHTML     = fmtParticles(particles);
+  document.getElementById('reframe-visual').textContent = reframe;
+  renderBagGrid(bags);
+
+  /* timeline */
+  updateTimeline(currentFamily);
+}
+
+/* ── timeline bars ── */
+function updateTimeline(family) {
+  var keys    = ['week', 'month', 'year', 'decade', 'lifetime'];
+  var weights = keys.map(function(k) { return calcKg(calcBags(family, k)); });
+  var maxW    = weights[weights.length - 1];
+
+  keys.forEach(function(k, i) {
+    var pct   = Math.max(1.5, (weights[i] / maxW) * 94);
+    var label = fmtKgShort(weights[i]);
+    var aBar  = document.getElementById('a-' + k);
+    var tBar  = document.getElementById('t-' + k);
+    var aVal  = document.getElementById('av-' + k);
+    var tVal  = document.getElementById('tv-' + k);
+    if (aBar) aBar.style.width = pct + '%';
+    if (tBar) tBar.style.width = pct + '%';
+    if (aVal) aVal.textContent = label;
+    if (tVal) tVal.textContent = label;
+  });
+}
+
+/* ── stepper ── */
+function updateStepper() {
+  document.getElementById('step-num').textContent   = currentFamily;
+  document.getElementById('step-down').disabled     = currentFamily <= 1;
+  document.getElementById('step-up').disabled       = currentFamily >= 12;
+}
+
+document.getElementById('step-down').addEventListener('click', function() {
+  if (currentFamily > 1) { currentFamily--; updateStepper(); update(); }
+});
+document.getElementById('step-up').addEventListener('click', function() {
+  if (currentFamily < 12) { currentFamily++; updateStepper(); update(); }
+});
+
+/* ── period buttons ── */
+document.querySelectorAll('[data-period]').forEach(function(btn) {
+  btn.addEventListener('click', function() {
+    document.querySelectorAll('[data-period]').forEach(function(b) { b.classList.remove('active'); });
+    btn.classList.add('active');
+    currentPeriod = btn.dataset.period;
+    update();
+  });
+});
+
+/* ── view toggle ── */
+document.querySelectorAll('[data-view]').forEach(function(btn) {
+  btn.addEventListener('click', function() {
+    document.querySelectorAll('[data-view]').forEach(function(b) { b.classList.remove('active'); });
+    btn.classList.add('active');
+    currentView = btn.dataset.view;
+    document.getElementById('view-stats').style.display  = currentView === 'stats'  ? '' : 'none';
+    document.getElementById('view-visual').style.display = currentView === 'visual' ? '' : 'none';
+  });
+});
+
+/* ── init ── */
+updateStepper();
+update();
+</script>
+</body>
+</html>

@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MaterGenesis — Creation Story</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400;1,500&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bg: #0a0910;
+  --text: #e0d6c8;
+  --pink: #eac6ce;
+  --amber: #dca25b;
+  --muted: rgba(200, 185, 165, 0.45);
+  --dim: rgba(200, 185, 165, 0.2);
+}
+
+html, body { height: 100%; }
+body {
+  font-family: 'DM Sans', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  overflow: hidden;
+}
+
+/* ── AMBIENT BACKGROUND ── */
+.ambient {
+  position: fixed; inset: 0; z-index: 0;
+  pointer-events: none;
+  overflow: hidden;
+}
+.orb {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(80px);
+  opacity: 0;
+  transition: opacity 1.8s ease, transform 1.8s ease;
+}
+.orb-1 { width: 400px; height: 400px; top: -10%; left: -10%; background: rgba(123, 94, 167, 0.12); }
+.orb-2 { width: 500px; height: 500px; bottom: -15%; right: -10%; background: rgba(196, 122, 46, 0.10); }
+.orb-3 { width: 300px; height: 300px; top: 40%; left: 50%; background: rgba(107, 143, 74, 0.08); transform: translate(-50%, -50%); }
+
+/* ── STEP TRACKER ── */
+.tracker {
+  position: fixed; top: 28px; right: 32px; z-index: 100;
+  display: flex; gap: 8px; align-items: center;
+}
+.tracker-dot {
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.1);
+  transition: background 0.5s ease, transform 0.3s ease;
+  cursor: pointer;
+}
+.tracker-dot.active { background: var(--amber); transform: scale(1.3); }
+.tracker-dot.visited { background: rgba(220,162,91,0.35); }
+.tracker-count {
+  font-size: 10px; font-weight: 400;
+  letter-spacing: 0.16em; color: var(--dim);
+  margin-left: 8px;
+}
+
+/* ── STEP PANELS ── */
+.step {
+  position: fixed; inset: 0; z-index: 10;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  padding: 60px 48px;
+  text-align: center;
+  opacity: 0;
+  transform: translateY(24px);
+  pointer-events: none;
+  transition: opacity 0.75s cubic-bezier(0.25, 0.46, 0.45, 0.94),
+              transform 0.75s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+.step.active {
+  opacity: 1; transform: translateY(0);
+  pointer-events: all;
+}
+.step.exiting {
+  opacity: 0; transform: translateY(-20px);
+}
+
+.step-kicker {
+  font-size: 9px; font-weight: 500;
+  letter-spacing: 0.32em; text-transform: uppercase;
+  color: var(--amber); margin-bottom: 28px;
+  opacity: 0; transform: translateY(10px);
+  transition: opacity 0.6s ease 0.2s, transform 0.6s ease 0.2s;
+}
+.step.active .step-kicker { opacity: 1; transform: translateY(0); }
+
+.step-text {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(24px, 4vw, 44px);
+  font-weight: 400; font-style: italic;
+  line-height: 1.5;
+  color: var(--pink);
+  max-width: 720px;
+  text-wrap: balance;
+  opacity: 0; transform: translateY(10px);
+  transition: opacity 0.7s ease 0.35s, transform 0.7s ease 0.35s;
+}
+.step.active .step-text { opacity: 1; transform: translateY(0); }
+
+.step-body {
+  font-size: 14px; font-weight: 400;
+  line-height: 1.9; letter-spacing: 0.03em;
+  color: var(--muted);
+  max-width: 540px; margin-top: 28px;
+  opacity: 0; transform: translateY(10px);
+  transition: opacity 0.6s ease 0.55s, transform 0.6s ease 0.55s;
+}
+.step.active .step-body { opacity: 1; transform: translateY(0); }
+
+/* ── NAVIGATION ── */
+.nav-row {
+  position: fixed; bottom: 40px; left: 0; right: 0;
+  display: flex; justify-content: center; gap: 16px;
+  z-index: 100;
+}
+.nav-btn {
+  background: rgba(255,255,255,0.06);
+  backdrop-filter: blur(14px);
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 100px;
+  padding: 11px 28px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 11px; font-weight: 400;
+  letter-spacing: 0.18em; text-transform: uppercase;
+  color: rgba(200,185,165,0.7);
+  cursor: pointer;
+  transition: background 0.25s ease, color 0.25s ease, border-color 0.25s ease, opacity 0.3s ease;
+}
+.nav-btn:hover {
+  background: rgba(255,255,255,0.11);
+  color: var(--text);
+  border-color: rgba(255,255,255,0.18);
+}
+.nav-btn.hidden { opacity: 0; pointer-events: none; }
+.nav-btn.primary {
+  background: rgba(220,162,91,0.12);
+  border-color: rgba(220,162,91,0.3);
+  color: var(--amber);
+}
+.nav-btn.primary:hover {
+  background: rgba(220,162,91,0.22);
+  border-color: rgba(220,162,91,0.5);
+}
+
+/* ── PROMPT BUILDER (final step) ── */
+.prompt-builder {
+  max-width: 560px; width: 100%;
+  margin-top: 32px;
+  opacity: 0; transform: translateY(10px);
+  transition: opacity 0.6s ease 0.65s, transform 0.6s ease 0.65s;
+}
+.step.active .prompt-builder { opacity: 1; transform: translateY(0); }
+
+.pb-label {
+  font-size: 9px; font-weight: 500;
+  letter-spacing: 0.22em; text-transform: uppercase;
+  color: var(--amber); margin-bottom: 12px;
+  text-align: left;
+}
+.pb-textarea {
+  width: 100%; min-height: 100px;
+  background: rgba(255,255,255,0.03);
+  border: 1px solid rgba(220,162,91,0.2);
+  border-radius: 12px;
+  padding: 18px 20px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 14px; font-weight: 400;
+  line-height: 1.7; color: var(--text);
+  resize: vertical;
+  transition: border-color 0.25s ease;
+}
+.pb-textarea::placeholder { color: var(--dim); }
+.pb-textarea:focus {
+  outline: none;
+  border-color: rgba(220,162,91,0.45);
+}
+.pb-hint {
+  font-size: 11px; color: var(--dim);
+  margin-top: 10px; text-align: left;
+  letter-spacing: 0.02em;
+}
+
+/* ── MOBILE ── */
+@media (max-width: 600px) {
+  .step { padding: 80px 28px 120px; }
+  .step-text { font-size: clamp(20px, 5vw, 32px); }
+  .tracker { top: 18px; right: 18px; }
+  .nav-row { bottom: 24px; }
+}
+</style>
+</head>
+<body>
+
+<div class="ambient">
+  <div class="orb orb-1"></div>
+  <div class="orb orb-2"></div>
+  <div class="orb orb-3"></div>
+</div>
+
+<div class="tracker" id="tracker"></div>
+
+<!-- STEP 0: OPENING -->
+<div class="step" id="step-0">
+  <div class="step-kicker">The MaterGenesis Creation Story</div>
+  <div class="step-text">In the beginning, there was a vast and tranquil void &mdash; a canvas of endless potential.</div>
+  <div class="step-body">This is the origin story of a world that never broke. A world where women were always equal, honored as life givers and spiritual leaders. Enter the narrative.</div>
+</div>
+
+<!-- STEP 1: THE MOTHER -->
+<div class="step" id="step-1">
+  <div class="step-kicker">The Primordial</div>
+  <div class="step-text">Within this boundless expanse of nothingness, there existed a primordial consciousness &mdash; a divine essence that embodied the very essence of creation.</div>
+  <div class="step-body">This consciousness was known as "The Mother" &mdash; the embodiment of the creative force itself. Not a figure on a throne, but an energy woven into everything that would come to exist.</div>
+</div>
+
+<!-- STEP 2: NATURE -->
+<div class="step" id="step-2">
+  <div class="step-kicker">Ecology &middot; The Natural World</div>
+  <div class="step-text">The Mother's first act was not to build, but to listen &mdash; to feel the rhythm of a world waiting to be born.</div>
+  <div class="step-body">In this timeline, ecology was never separate from spirituality. Women as stewards of worship sought enlightenment through deep connection with the natural world. The focus was not on asserting dominance over nature but rather harmonizing with it. Species that went extinct in our world thrived here.</div>
+</div>
+
+<!-- STEP 3: BELIEF -->
+<div class="step" id="step-3">
+  <div class="step-kicker">Religion &middot; Belief Systems</div>
+  <div class="step-text">Worship was not an act of submission, but of recognition &mdash; that the sacred lives in the soil, in the river, in the breath between words.</div>
+  <div class="step-body">Religious beliefs and practices centered around goddesses symbolizing life-giving and nurturing aspects. Rituals celebrated the divine feminine, and spiritual guidance was provided by women and men equally. Matriarchal mythology featured role models embodying wisdom, compassion, and nurturing.</div>
+</div>
+
+<!-- STEP 4: ART -->
+<div class="step" id="step-4">
+  <div class="step-kicker">Art &middot; Creative Expression</div>
+  <div class="step-text">Creativity was never a gift reserved for the few. It was a language everyone spoke &mdash; a way of being in the world.</div>
+  <div class="step-body">Art institutions prioritized equitable representation. Education was interdisciplinary and spiritually integrated. Community-based collaboration replaced the myth of the solitary genius. Art criticism moved from hierarchical judgment to equitable interpretation.</div>
+</div>
+
+<!-- STEP 5: THE QUESTION -->
+<div class="step" id="step-5">
+  <div class="step-kicker">Your Turn</div>
+  <div class="step-text">Now imagine your own scene in the MaterGenesis world.</div>
+  <div class="step-body">The original capstone project ended with a workshop where participants crafted their own MidJourney prompts from this creation story. What would you imagine?</div>
+  <div class="prompt-builder">
+    <div class="pb-label">Write Your Prompt</div>
+    <textarea class="pb-textarea" placeholder="IMAGE: [your scene] | STYLE: [aesthetic] | MOOD: [feeling] | SCENE: In an imagined world where women are equals in leadership, revered as life givers, and honored as spiritual wisdom holders..."></textarea>
+    <div class="pb-hint">Describe any scene from this alternate world. What do you see?</div>
+  </div>
+</div>
+
+<div class="nav-row">
+  <button class="nav-btn hidden" id="btn-back" onclick="goBack()">Back</button>
+  <button class="nav-btn primary" id="btn-next" onclick="goNext()">Begin</button>
+</div>
+
+<script>
+'use strict';
+
+const TOTAL_STEPS = 6;
+let currentStep = 0;
+
+// Orb configs per step
+const orbStates = [
+  [{ o: 0.4, x: -10, y: -10 }, { o: 0.2, x: 90, y: 85 }, { o: 0.1, x: 50, y: 50 }],
+  [{ o: 0.6, x: -5, y: -5 }, { o: 0.3, x: 85, y: 80 }, { o: 0.15, x: 45, y: 45 }],
+  [{ o: 0.2, x: -15, y: -8 }, { o: 0.15, x: 88, y: 82 }, { o: 0.55, x: 48, y: 42 }],  // ecology = green
+  [{ o: 0.5, x: -8, y: -12 }, { o: 0.2, x: 92, y: 78 }, { o: 0.15, x: 52, y: 55 }],  // religion = purple
+  [{ o: 0.15, x: -12, y: -6 }, { o: 0.55, x: 85, y: 85 }, { o: 0.2, x: 55, y: 48 }],  // art = amber
+  [{ o: 0.3, x: -8, y: -8 }, { o: 0.3, x: 88, y: 82 }, { o: 0.3, x: 50, y: 50 }]
+];
+
+function renderTracker() {
+  const tracker = document.getElementById('tracker');
+  let html = '';
+  for (let i = 0; i < TOTAL_STEPS; i++) {
+    const cls = i === currentStep ? 'active' : i < currentStep ? 'visited' : '';
+    html += `<div class="tracker-dot ${cls}" onclick="goTo(${i})"></div>`;
+  }
+  html += `<span class="tracker-count">${currentStep + 1}/${TOTAL_STEPS}</span>`;
+  tracker.innerHTML = html;
+}
+
+function updateOrbs() {
+  const orbs = document.querySelectorAll('.orb');
+  const state = orbStates[currentStep] || orbStates[0];
+  orbs.forEach((orb, i) => {
+    const s = state[i];
+    orb.style.opacity = s.o;
+    orb.style.left = s.x + '%';
+    orb.style.top = s.y + '%';
+  });
+}
+
+function updateNav() {
+  const back = document.getElementById('btn-back');
+  const next = document.getElementById('btn-next');
+  back.classList.toggle('hidden', currentStep === 0);
+  if (currentStep === TOTAL_STEPS - 1) {
+    next.textContent = 'Start Over';
+  } else if (currentStep === 0) {
+    next.textContent = 'Begin';
+  } else {
+    next.textContent = 'Continue';
+  }
+}
+
+function goTo(step) {
+  if (step === currentStep || step < 0 || step >= TOTAL_STEPS) return;
+  const oldEl = document.getElementById('step-' + currentStep);
+  const newEl = document.getElementById('step-' + step);
+
+  oldEl.classList.remove('active');
+  oldEl.classList.add('exiting');
+  setTimeout(() => oldEl.classList.remove('exiting'), 600);
+
+  currentStep = step;
+  setTimeout(() => newEl.classList.add('active'), 120);
+
+  renderTracker();
+  updateOrbs();
+  updateNav();
+}
+
+function goNext() {
+  if (currentStep === TOTAL_STEPS - 1) {
+    goTo(0);
+  } else {
+    goTo(currentStep + 1);
+  }
+}
+
+function goBack() {
+  goTo(currentStep - 1);
+}
+
+// Keyboard nav
+document.addEventListener('keydown', e => {
+  if (e.key === 'ArrowRight' || e.key === ' ') { e.preventDefault(); goNext(); }
+  if (e.key === 'ArrowLeft') goBack();
+});
+
+// Init
+renderTracker();
+updateOrbs();
+updateNav();
+document.getElementById('step-0').classList.add('active');
+</script>
+
+</body>
+</html>

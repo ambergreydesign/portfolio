@@ -1,0 +1,845 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Dissonance Loop</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,600;1,400;1,500&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bg:             #131f15;
+  --text:           #f2ead8;
+  --text-muted:     rgba(242, 234, 216, 0.70);
+  --text-dim:       rgba(242, 234, 216, 0.32);
+  --magenta:        #cc6cf0;
+  --magenta-soft:   rgba(204, 108, 240, 0.16);
+  --magenta-border: rgba(204, 108, 240, 0.30);
+  --amber:          #e2aa62;
+  --green-soft:     #68b078;
+  --border:         rgba(255, 255, 255, 0.12);
+}
+
+html, body {
+  height: 100%; background: var(--bg);
+  color: var(--text); font-family: 'DM Sans', sans-serif;
+  overflow: hidden;
+}
+
+/* ── AMBIENT ── */
+.ambient-bg {
+  position: fixed; inset: 0; z-index: 0; pointer-events: none;
+  background:
+    radial-gradient(ellipse 65% 55% at 18% 38%, rgba(28,48,32,0.75), transparent),
+    radial-gradient(ellipse 45% 38% at 82% 72%, rgba(20,36,24,0.6), transparent),
+    var(--bg);
+}
+.ambient-orb {
+  position: fixed; border-radius: 50%; z-index: 0; pointer-events: none;
+  animation: orbPulse 9s ease-in-out infinite;
+}
+.ambient-orb-1 {
+  top: 25%; left: 8%; width: 340px; height: 340px;
+  background: radial-gradient(circle, rgba(204,108,240,0.055) 0%, transparent 68%);
+}
+.ambient-orb-2 {
+  bottom: 20%; right: 10%; width: 280px; height: 280px;
+  background: radial-gradient(circle, rgba(104,176,120,0.045) 0%, transparent 70%);
+  animation-delay: -4.5s;
+}
+@keyframes orbPulse {
+  0%,100% { transform: scale(1); opacity: 0.6; }
+  50%      { transform: scale(1.18); opacity: 1; }
+}
+
+/* ── BACK BUTTON ── */
+.back-btn {
+  position: fixed; top: 20px; left: 22px;
+  font-size: 10px; font-weight: 400;
+  letter-spacing: 0.2em; text-transform: uppercase;
+  color: var(--text-dim); cursor: pointer;
+  background: none; border: none;
+  transition: color 0.25s ease, opacity 0.4s ease;
+  z-index: 200; opacity: 0; pointer-events: none;
+}
+.back-btn.visible { opacity: 1; pointer-events: all; }
+.back-btn:hover { color: var(--text-muted); }
+
+/* ── STEP TRACKER ── */
+.step-tracker {
+  position: fixed; top: 20px; right: 24px;
+  z-index: 200; display: flex; align-items: center; gap: 7px;
+  opacity: 0; transition: opacity 0.5s ease;
+}
+.step-tracker.visible { opacity: 1; }
+.step-dot {
+  width: 5px; height: 5px; border-radius: 50%;
+  background: var(--text-dim);
+  transition: background 0.45s ease, transform 0.45s ease;
+}
+.step-dot.done   { background: rgba(191,85,224,0.32); }
+.step-dot.active { background: var(--magenta); transform: scale(1.4); }
+
+.framework-ghost {
+  position: fixed; top: 42px; right: 24px;
+  font-size: 8px; font-weight: 500;
+  letter-spacing: 0.3em; text-transform: uppercase;
+  color: var(--text-dim); z-index: 200;
+  opacity: 0; transition: opacity 0.5s ease;
+}
+.framework-ghost.visible { opacity: 1; }
+
+/* ── ALL PANELS ── */
+.step-panel {
+  position: fixed; inset: 0;
+  display: flex; align-items: center; justify-content: center;
+  padding: 72px 52px 52px;
+  opacity: 0; pointer-events: none;
+  transition: opacity 0.7s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  z-index: 10;
+}
+.step-panel.active { opacity: 1; pointer-events: all; }
+.step-content { max-width: 600px; width: 100%; }
+
+/* ── PICKER ── */
+#picker { flex-direction: column; align-items: center; justify-content: center; padding: 60px 52px; }
+.picker-kicker {
+  font-size: 9px; font-weight: 500; letter-spacing: 0.34em;
+  text-transform: uppercase; color: var(--magenta); margin-bottom: 20px; text-align: center;
+}
+.picker-heading {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(30px, 4vw, 50px); font-weight: 600;
+  line-height: 1.15; color: var(--text); margin-bottom: 12px; text-align: center;
+}
+.picker-sub {
+  font-size: 13px; font-weight: 300; color: var(--text-muted);
+  letter-spacing: 0.02em; text-align: center; margin-bottom: 48px; line-height: 1.7;
+}
+.scenario-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; width: 100%; max-width: 600px; }
+.scenario-card {
+  background: rgba(255,255,255,0.055); border: 1px solid var(--border);
+  border-radius: 16px; padding: 28px 26px;
+  cursor: pointer; text-align: left; transition: all 0.3s ease;
+  position: relative; overflow: hidden;
+}
+.scenario-card::before {
+  content: ''; position: absolute; inset: 0;
+  opacity: 0; transition: opacity 0.3s ease; border-radius: 16px;
+}
+.scenario-card.bear::before   { background: radial-gradient(ellipse 80% 70% at 20% 30%, rgba(204,108,240,0.12), transparent); }
+.scenario-card.gorilla::before { background: radial-gradient(ellipse 80% 70% at 20% 30%, rgba(104,176,120,0.12), transparent); }
+.scenario-card:hover { transform: translateY(-3px); }
+.scenario-card.bear:hover   { border-color: rgba(191,85,224,0.38); box-shadow: 0 12px 40px rgba(191,85,224,0.08); }
+.scenario-card.gorilla:hover { border-color: rgba(90,155,106,0.38); box-shadow: 0 12px 40px rgba(90,155,106,0.08); }
+.scenario-card:hover::before { opacity: 1; }
+.card-animal { font-size: 9px; font-weight: 500; letter-spacing: 0.28em; text-transform: uppercase; margin-bottom: 12px; display: block; }
+.bear .card-animal    { color: rgba(191,85,224,0.7); }
+.gorilla .card-animal { color: rgba(90,155,106,0.8); }
+.card-title { font-family: 'Cormorant Garamond', serif; font-size: 26px; font-weight: 600; color: var(--text); line-height: 1.15; margin-bottom: 10px; }
+.card-location { font-size: 10px; font-weight: 400; letter-spacing: 0.22em; text-transform: uppercase; color: var(--text-dim); margin-bottom: 14px; display: block; }
+.card-tease { font-size: 12.5px; font-weight: 300; line-height: 1.72; color: var(--text-muted); font-style: italic; }
+.card-enter { display: block; margin-top: 20px; font-size: 9px; font-weight: 400; letter-spacing: 0.22em; text-transform: uppercase; color: var(--text-dim); transition: color 0.25s ease; }
+.scenario-card:hover .card-enter { color: var(--text-muted); }
+
+/* ── SHARED TYPOGRAPHY ── */
+.step-kicker { font-size: 9px; font-weight: 500; letter-spacing: 0.32em; text-transform: uppercase; color: var(--text-dim); margin-bottom: 28px; }
+.step-heading { font-family: 'Cormorant Garamond', serif; font-size: clamp(28px, 3.8vw, 46px); font-weight: 600; line-height: 1.18; color: var(--text); margin-bottom: 22px; }
+.step-body { font-size: 14px; font-weight: 300; line-height: 1.92; color: var(--text-muted); letter-spacing: 0.02em; margin-bottom: 10px; }
+.step-body em { font-style: normal; color: var(--text); font-weight: 400; }
+
+/* ── SCENE (STEP 1) ── */
+.scene-block { font-family: 'Cormorant Garamond', serif; font-size: clamp(16px, 2vw, 21px); font-style: italic; font-weight: 400; line-height: 1.9; color: var(--text-muted); margin-bottom: 14px; }
+.scene-block em { font-style: normal; color: var(--text); }
+.scene-tag { font-family: 'DM Sans', sans-serif; font-size: 9px; font-weight: 400; letter-spacing: 0.35em; text-transform: uppercase; color: var(--text-dim); margin-bottom: 36px; display: block; }
+
+/* Bear pace indicator */
+.pace-indicator { display: flex; align-items: center; gap: 12px; margin: 20px 0 28px; color: var(--text-dim); font-size: 10px; letter-spacing: 0.18em; }
+.pace-bar { flex: 1; height: 1px; background: var(--text-dim); animation: paceBar 3.4s ease-in-out infinite; transform-origin: left; }
+@keyframes paceBar { 0%,100% { transform: scaleX(1); opacity: 0.25; } 50% { transform: scaleX(0.28); opacity: 0.55; } }
+
+/* Gorilla impact indicator */
+.impact-ring {
+  width: 36px; height: 36px; border-radius: 50%;
+  border: 1px solid rgba(232,223,208,0.12);
+  margin: 18px 0 24px;
+  animation: impactRing 5s ease-out infinite;
+}
+@keyframes impactRing {
+  0%   { transform: scale(1);   opacity: 0.45; }
+  35%  { transform: scale(2.2); opacity: 0; }
+  36%  { transform: scale(1);   opacity: 0.45; }
+  100% { transform: scale(1);   opacity: 0.45; }
+}
+
+/* Witness cards (gorilla step 1) */
+.witness-row { display: flex; flex-direction: column; gap: 8px; margin: 18px 0 22px; }
+.witness-card {
+  background: rgba(255,255,255,0.07); border: 1px solid var(--border);
+  border-radius: 10px; padding: 12px 16px;
+}
+.witness-role { font-size: 8px; font-weight: 500; letter-spacing: 0.24em; text-transform: uppercase; color: var(--text-dim); margin-bottom: 4px; }
+.witness-quote { font-family: 'Cormorant Garamond', serif; font-size: 16px; font-style: italic; color: var(--text-muted); line-height: 1.4; }
+
+/* ── STEP 2 — generic container ── */
+.system-line { font-size: 14px; font-weight: 300; line-height: 1.88; color: var(--text-muted); letter-spacing: 0.02em; margin-bottom: 6px; }
+.timer-line { font-size: 12px; color: var(--text-dim); font-style: italic; letter-spacing: 0.04em; margin-bottom: 26px; }
+.timer-num { font-style: normal; font-variant-numeric: tabular-nums; }
+
+/* Emotion / role grid */
+.choice-q { font-family: 'Cormorant Garamond', serif; font-size: clamp(22px, 2.8vw, 32px); font-weight: 600; color: var(--text); margin-bottom: 20px; line-height: 1.25; }
+.choice-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 9px; margin-bottom: 20px; }
+.choice-btn {
+  background: rgba(255,255,255,0.07); border: 1px solid var(--border);
+  border-radius: 10px; padding: 15px 18px;
+  cursor: pointer; color: var(--text-muted);
+  font-family: 'DM Sans', sans-serif; font-size: 13px; font-weight: 400;
+  letter-spacing: 0.025em; text-align: left; transition: all 0.25s ease;
+}
+.choice-btn:hover { background: var(--magenta-soft); border-color: var(--magenta-border); color: var(--text); }
+.choice-btn.selected { background: rgba(191,85,224,0.13); border-color: rgba(191,85,224,0.5); color: var(--text); }
+.choice-label { display: block; font-weight: 500; margin-bottom: 3px; }
+.choice-sub { font-size: 11px; color: var(--text-dim); font-style: italic; font-weight: 300; }
+
+.system-response {
+  font-size: 12.5px; line-height: 1.78; color: var(--magenta); letter-spacing: 0.025em;
+  font-style: italic; padding: 14px 16px; border-left: 1px solid var(--magenta-border);
+  margin-bottom: 22px; opacity: 0; transform: translateY(8px);
+  transition: opacity 0.55s ease, transform 0.55s ease;
+}
+.system-response.visible { opacity: 1; transform: translateY(0); }
+
+/* ── CONTEXT (STEP 3) ── */
+.context-scene { font-family: 'Cormorant Garamond', serif; font-size: clamp(17px, 2.1vw, 23px); font-style: italic; font-weight: 400; line-height: 1.75; color: var(--text); margin-bottom: 24px; }
+
+/* Fact card */
+.fact-card {
+  background: linear-gradient(140deg, #1e3022, #162618);
+  border: 1px solid var(--magenta-border);
+  border-radius: 13px; padding: 22px 26px; margin-bottom: 18px;
+}
+.fact-item { display: flex; gap: 14px; align-items: flex-start; padding: 10px 0; border-bottom: 1px solid rgba(255,255,255,0.05); }
+.fact-item:last-child { border-bottom: none; }
+.fact-dot { width: 4px; height: 4px; border-radius: 50%; background: var(--magenta); margin-top: 7px; flex-shrink: 0; opacity: 0.7; }
+.fact-text { font-size: 13px; font-weight: 400; line-height: 1.7; color: var(--text-muted); }
+.fact-text em { font-style: normal; color: var(--text); font-weight: 500; }
+
+/* ── CHOICE (STEP 4) ── */
+.response-cards { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin: 20px 0 16px; }
+.response-card { border-radius: 12px; padding: 18px 20px; cursor: pointer; transition: all 0.28s ease; border: 1px solid var(--border); background: rgba(255,255,255,0.02); }
+.response-card.dismiss { background: linear-gradient(140deg, #26201a, #1c1812); border-color: rgba(226,170,98,0.22); }
+.response-card.honor   { background: linear-gradient(140deg, #1a2e1e, #152216); border-color: rgba(104,176,120,0.24); }
+.response-card:hover { transform: translateY(-2px); }
+.response-card.dismiss:hover { border-color: rgba(220,162,91,0.36); }
+.response-card.honor:hover   { border-color: rgba(90,155,106,0.4); }
+.response-card.selected.dismiss { border-color: rgba(220,162,91,0.6); box-shadow: 0 0 22px rgba(220,162,91,0.1); }
+.response-card.selected.honor   { border-color: rgba(90,155,106,0.65); box-shadow: 0 0 22px rgba(90,155,106,0.12); }
+.card-tag { font-size: 8px; font-weight: 500; letter-spacing: 0.28em; text-transform: uppercase; margin-bottom: 10px; display: block; }
+.dismiss .card-tag { color: rgba(220,162,91,0.55); }
+.honor   .card-tag { color: rgba(90,155,106,0.75); }
+.card-text { font-size: 12.5px; font-weight: 400; line-height: 1.72; color: var(--text-muted); font-style: italic; }
+.consequence { font-size: 11px; letter-spacing: 0.05em; text-align: center; padding: 8px 0 18px; opacity: 0; transition: opacity 0.55s ease; }
+.consequence.visible { opacity: 1; }
+.consequence.honor   { color: rgba(90,155,106,0.75); }
+.consequence.dismiss { color: rgba(220,162,91,0.6); }
+
+/* ── CLOSURE (STEP 5) ── */
+.closure-label { font-size: 10px; font-weight: 500; letter-spacing: 0.34em; text-transform: uppercase; color: var(--magenta); margin-bottom: 18px; }
+.closure-title { font-family: 'Cormorant Garamond', serif; font-size: clamp(26px, 3.4vw, 42px); font-weight: 600; line-height: 1.18; color: var(--text); margin-bottom: 20px; }
+.closure-body { font-size: 13.5px; font-weight: 300; line-height: 1.9; color: var(--text-muted); letter-spacing: 0.02em; margin-bottom: 28px; }
+.closure-body em { font-style: normal; color: var(--text); font-weight: 400; }
+
+/* Loop diagram */
+.loop-diagram { display: flex; align-items: flex-start; gap: 0; margin-bottom: 24px; position: relative; }
+.loop-step { flex: 1; text-align: center; position: relative; }
+.loop-step:not(:last-child)::after {
+  content: ''; position: absolute; top: 13px; left: 50%;
+  width: 100%; height: 1px;
+  background: linear-gradient(to right, var(--magenta-border), transparent); z-index: 0;
+}
+.loop-node { width: 26px; height: 26px; border-radius: 50%; border: 1px solid var(--magenta-border); background: var(--bg); display: flex; align-items: center; justify-content: center; margin: 0 auto 7px; font-size: 9px; font-weight: 500; color: var(--magenta); position: relative; z-index: 1; transition: border-color 0.3s ease, color 0.3s ease; }
+.loop-node.broken { border-color: rgba(220,162,91,0.45); color: var(--amber); }
+.loop-node-label { font-size: 7.5px; font-weight: 500; letter-spacing: 0.18em; text-transform: uppercase; color: var(--text-dim); line-height: 1.3; }
+.loop-node-label.broken { color: rgba(220,162,91,0.45); }
+
+.closure-quote { font-family: 'Cormorant Garamond', serif; font-size: clamp(15px, 1.8vw, 19px); font-style: italic; font-weight: 400; color: rgba(232,223,208,0.35); line-height: 1.65; margin-bottom: 18px; }
+
+.end-actions { display: flex; gap: 24px; align-items: center; flex-wrap: wrap; }
+.restart-link { font-size: 10px; font-weight: 400; letter-spacing: 0.2em; text-transform: uppercase; color: var(--text-dim); cursor: pointer; background: none; border: none; transition: color 0.25s ease; }
+.restart-link:hover { color: var(--text-muted); }
+
+/* ── CTA ── */
+.cta-wrap { margin-top: 28px; }
+.cta-btn {
+  display: inline-flex; align-items: center; gap: 10px;
+  background: transparent; border: 1px solid var(--magenta-border);
+  border-radius: 100px; padding: 11px 22px;
+  cursor: pointer; color: rgba(232,223,208,0.6);
+  font-family: 'DM Sans', sans-serif; font-size: 10px; font-weight: 400;
+  letter-spacing: 0.22em; text-transform: uppercase;
+  opacity: 0; transform: translateY(10px);
+  transition: opacity 0.5s ease, transform 0.5s ease, background 0.25s ease, color 0.25s ease, border-color 0.25s ease;
+}
+.cta-btn.show { opacity: 1; transform: translateY(0); }
+.cta-btn:hover { background: var(--magenta-soft); border-color: rgba(191,85,224,0.5); color: var(--text); }
+.cta-arrow { display: inline-block; width: 14px; height: 1px; background: currentColor; position: relative; flex-shrink: 0; }
+.cta-arrow::after { content: ''; position: absolute; right: 0; top: -3px; width: 6px; height: 6px; border-right: 1px solid currentColor; border-top: 1px solid currentColor; transform: rotate(45deg); }
+
+/* ── SPEAKER BLOCK ── */
+.speaker-block {
+  background: linear-gradient(140deg, #1a2e1e, #152216);
+  border: 1px solid rgba(104,176,120,0.28);
+  border-radius: 13px; padding: 20px 24px; margin-bottom: 22px;
+  position: relative;
+}
+.speaker-label {
+  font-size: 8px; font-weight: 500; letter-spacing: 0.28em; text-transform: uppercase;
+  color: rgba(104,176,120,0.65); margin-bottom: 12px; display: flex; align-items: center; gap: 8px;
+}
+.speaker-label::before {
+  content: ''; display: inline-block; width: 6px; height: 6px; border-radius: 50%;
+  background: rgba(104,176,120,0.65); flex-shrink: 0;
+  animation: speakerPulse 2.4s ease-in-out infinite;
+}
+@keyframes speakerPulse {
+  0%,100% { opacity: 0.65; transform: scale(1); }
+  50%      { opacity: 1;    transform: scale(1.3); }
+}
+.speaker-text {
+  font-size: 13px; font-weight: 300; line-height: 1.84; color: var(--text-muted); font-style: italic;
+}
+.speaker-text em { font-style: normal; color: var(--text); font-weight: 400; }
+
+.closure-fact {
+  font-size: 12px; font-weight: 300; line-height: 1.7;
+  color: var(--text-dim); font-style: italic;
+  border-top: 1px solid var(--border); padding-top: 18px; margin-top: 4px;
+}
+.closure-fact em { font-style: normal; color: rgba(242,234,216,0.45); }
+
+/* ── FADE ANIMATIONS ── */
+.fade-up-1 { animation: fadeUp 0.7s ease 0.15s both; }
+.fade-up-2 { animation: fadeUp 0.7s ease 0.30s both; }
+.fade-up-3 { animation: fadeUp 0.7s ease 0.45s both; }
+.fade-up-4 { animation: fadeUp 0.7s ease 0.60s both; }
+.fade-up-5 { animation: fadeUp 0.7s ease 0.75s both; }
+.fade-up-6 { animation: fadeUp 0.7s ease 0.90s both; }
+@keyframes fadeUp { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: translateY(0); } }
+.step-panel:not(.active) [class*="fade-up-"] { animation: none; }
+</style>
+</head>
+<body>
+
+<div class="ambient-bg"></div>
+<div class="ambient-orb ambient-orb-1"></div>
+<div class="ambient-orb ambient-orb-2"></div>
+
+<button class="back-btn" id="back-btn" onclick="goBack()">← Back</button>
+
+<div class="step-tracker" id="step-tracker">
+  <div class="step-dot" id="dot-1"></div>
+  <div class="step-dot" id="dot-2"></div>
+  <div class="step-dot" id="dot-3"></div>
+  <div class="step-dot" id="dot-4"></div>
+  <div class="step-dot" id="dot-5"></div>
+</div>
+<div class="framework-ghost" id="framework-ghost"></div>
+
+<!-- ══════════════════ PICKER ══════════════════ -->
+<div class="step-panel active" id="picker">
+  <div style="width:100%;max-width:600px;display:flex;flex-direction:column;align-items:center;">
+    <div class="picker-kicker fade-up-1">The Dissonance Loop</div>
+    <h1 class="picker-heading fade-up-2">Where are you standing?</h1>
+    <p class="picker-sub fade-up-3">Choose a scenario. Walk through the framework from inside it.</p>
+    <div class="scenario-grid fade-up-4">
+      <button class="scenario-card bear" onclick="selectScenario('bear')">
+        <span class="card-animal">Polar Bear</span>
+        <div class="card-title">The Bear<br>Paces</div>
+        <span class="card-location">Polar Bear Habitat · 2:17 pm</span>
+        <p class="card-tease">Left. Fourteen feet. Turn. Right. Fourteen feet. Turn. The sign reads: Conservation Ambassador.</p>
+        <span class="card-enter">Enter this scenario →</span>
+      </button>
+      <button class="scenario-card gorilla" onclick="selectScenario('gorilla')">
+        <span class="card-animal">Gorilla</span>
+        <div class="card-title">The Gorilla<br>Hits the Glass</div>
+        <span class="card-location">Great Ape House · 11:42 am</span>
+        <p class="card-tease">The sound moves through your chest before you have time to think. The room erupts. No sign explains what just happened.</p>
+        <span class="card-enter">Enter this scenario →</span>
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════ STEP 1 ══════════════════ -->
+<div class="step-panel" id="step-1">
+  <div class="step-content" id="step-1-content"></div>
+</div>
+
+<!-- ══════════════════ STEP 2 ══════════════════ -->
+<div class="step-panel" id="step-2">
+  <div class="step-content" id="step-2-content"></div>
+</div>
+
+<!-- ══════════════════ STEP 3 ══════════════════ -->
+<div class="step-panel" id="step-3">
+  <div class="step-content" id="step-3-content"></div>
+</div>
+
+<!-- ══════════════════ STEP 4 ══════════════════ -->
+<div class="step-panel" id="step-4">
+  <div class="step-content" id="step-4-content"></div>
+</div>
+
+<!-- ══════════════════ STEP 5 ══════════════════ -->
+<div class="step-panel" id="step-5">
+  <div class="step-content">
+    <div class="closure-label fade-up-1">The Dissonance Loop</div>
+    <div class="closure-title fade-up-2" id="closure-title"></div>
+    <div class="closure-body  fade-up-3" id="closure-body"></div>
+    <div class="loop-diagram fade-up-4">
+      <div class="loop-step"><div class="loop-node">S</div><div class="loop-node-label">Signal</div></div>
+      <div class="loop-step"><div class="loop-node">C</div><div class="loop-node-label">Contain&shy;ment</div></div>
+      <div class="loop-step"><div class="loop-node">C</div><div class="loop-node-label">Context</div></div>
+      <div class="loop-step"><div class="loop-node" id="choice-node">C</div><div class="loop-node-label" id="choice-label">Choice</div></div>
+      <div class="loop-step"><div class="loop-node" id="closure-node">C</div><div class="loop-node-label" id="closure-label">Closure</div></div>
+    </div>
+    <div class="closure-quote fade-up-5" id="closure-quote"></div>
+    <div class="end-actions fade-up-5">
+      <button class="restart-link" onclick="goToPicker()">← Try another scenario</button>
+      <button class="restart-link" onclick="restartSame()" style="opacity:0.55;">Replay this one</button>
+    </div>
+  </div>
+</div>
+
+<script>
+'use strict';
+
+/* ══ STATE ══════════════════════════════════ */
+let currentStep    = 0;
+let activeScenario = null;
+let selectedChoice = null; // covers both emotion and role
+let selectedPath   = null;
+let timerInterval  = null;
+let timerStart     = null;
+
+const labels = ['Signal','Containment','Context','Choice','Closure'];
+
+/* ══ SCENARIO DATA ══════════════════════════ */
+const SCENARIOS = {
+
+  /* ─────────────── POLAR BEAR ─────────────── */
+  bear: {
+    step1: `
+      <span class="scene-tag fade-up-1">Polar Bear Habitat · 2:17 pm</span>
+      <div class="scene-block fade-up-2">
+        The bear paces.<br><br>
+        <em>Left. Fourteen feet. Turn.<br>
+        Right. Fourteen feet. Turn.</em><br><br>
+        She has been doing this for eleven minutes.
+        You know this because you have been watching.
+      </div>
+      <div class="pace-indicator fade-up-3">
+        <span>←</span><div class="pace-bar"></div><span>→</span>
+      </div>
+      <div class="scene-block fade-up-4" style="margin-bottom:0;">
+        The sign reads: <em>"Conservation Ambassador"</em><br>
+        The placard reads: <em>"Protecting Arctic habitats for future generations."</em><br><br>
+        Everyone else has moved on to the giraffes.<br>You haven't.
+      </div>
+      <div class="cta-wrap fade-up-5">
+        <button class="cta-btn show" onclick="goTo(2)">I noticed <span class="cta-arrow"></span></button>
+      </div>`,
+
+    step2: {
+      question: 'What are you feeling?',
+      systemLine: 'Most visitors spend under twelve seconds at this exhibit.<br>You\'ve been here for —',
+      choices: [
+        { key:'unsettled', label:'Unsettled',  sub:'something feels wrong' },
+        { key:'sad',       label:'Sad',        sub:'honest, quiet grief' },
+        { key:'confused',  label:'Confused',   sub:'the signs don\'t add up' },
+        { key:'curious',   label:'Curious',    sub:'you want to understand' }
+      ],
+      responses: {
+        unsettled: "Unsettled. The system holds that — without explaining it away.",
+        sad:       "Sad. That's an honest response. The system holds it.",
+        confused:  "Confused. You're asking the right question. The system holds it.",
+        curious:   "Curious. That's how good systems begin. The system holds it."
+      }
+    },
+
+    step3: `
+      <div class="step-kicker fade-up-1">What the system knows</div>
+      <div class="context-scene fade-up-2">
+        That behavior has a name.<br>
+        <em>Stereotypy</em> — repetitive, invariant movement<br>caused by captivity stress.
+      </div>
+      <div class="step-body fade-up-3">
+        It's not enrichment behavior. It's not curiosity.<br>
+        It's what happens when an apex predator lives in 2 acres
+        and has learned there's nowhere new to go.
+      </div>
+      <div class="step-body fade-up-4">
+        The sign behind you uses the word <em>Ambassador</em>.<br>
+        The animal in front of you is exhibiting a trauma response.
+      </div>
+      <div class="step-body fade-up-5" style="font-style:italic;color:var(--text-dim);font-size:13px;">
+        Both things are true at the same time.<br>Most systems are only designed to hold one of them.
+      </div>
+      <div class="cta-wrap fade-up-6">
+        <button class="cta-btn show" onclick="goTo(4)">I understand <span class="cta-arrow"></span></button>
+      </div>`,
+
+    step4: `
+      <div class="step-kicker fade-up-1">Now the system has to respond</div>
+      <div class="step-heading fade-up-2" style="font-size:clamp(22px,2.8vw,34px);margin-bottom:10px;">
+        You're still standing there.<br>A staff member approaches.
+      </div>
+      <div class="step-body fade-up-2" style="margin-bottom:0;">How does the system respond?</div>
+      <div class="response-cards fade-up-3">
+        <button class="response-card dismiss" onclick="selectPath(this,'dismiss')">
+          <span class="card-tag">Option A</span>
+          <div class="card-text">"Oh, don't worry — she loves her habitat! She gets enrichment activities every day. She's a very happy bear."</div>
+        </button>
+        <button class="response-card honor" onclick="selectPath(this,'honor')">
+          <span class="card-tag">Option B</span>
+          <div class="card-text">"That pacing is called stereotypy — it's a stress response. We're working with behavior specialists. You're right to notice."</div>
+        </button>
+      </div>
+      <div class="consequence" id="consequence"></div>
+      <div class="cta-wrap">
+        <button class="cta-btn" id="cta-4" onclick="goTo(5)">See how this ends <span class="cta-arrow"></span></button>
+      </div>`,
+
+    closureHonor:   "The loop doesn't promise resolution. It promises honesty.",
+    closureDismiss: "The pacing continues. The trust dissolves. This is what the Dissonance Loop is designed to prevent.",
+    bodyHonor: `You noticed something real. The system held it — without rushing to reassure you.<br><br>
+      Context arrived not to resolve the discomfort, but to <em>name it honestly</em>. A choice was made to honor the signal rather than bury it. And something — not everything, not perfectly — <em>closed</em>.`,
+    bodyDismiss: `You felt the signal. The system contained it. Context arrived.<br><br>
+      Then the system did what most institutions do — it smoothed the discomfort over.
+      The bear became a <em>"happy bear."</em> The gap between the sign and the behavior disappeared into a smile.<br><br>
+      The visitor leaves. The trust dissolves.`
+  },
+
+  /* ─────────────── GORILLA ─────────────── */
+  gorilla: {
+    step1: `
+      <span class="scene-tag fade-up-1">Great Ape House · 11:42 am</span>
+      <div class="scene-block fade-up-2">
+        The gorilla hits the glass.<br><br>
+        The sound moves through your chest before you have time to think.
+      </div>
+      <div class="scene-block fade-up-3">
+        A man in his 40s beats his own chest back. He looks proud.<br>
+        A child, maybe six, says: <em>"That is a bad gorilla!"</em><br>
+        The crowd screams. Phones go up. People back away from the glass.
+      </div>
+      <div class="scene-block fade-up-4" style="margin-bottom:0;">
+        The gorilla stands for a moment. Then walks away.<br><br>
+        You look at the signs on the wall.<br>
+        <em>None of them explain what you just saw.</em>
+      </div>
+      <div class="cta-wrap fade-up-5">
+        <button class="cta-btn show" onclick="goTo(2)">I noticed <span class="cta-arrow"></span></button>
+      </div>`,
+
+    step2: {
+      question: 'What are you feeling?',
+      systemLine: 'The room is still processing what just happened.<br>You\'ve been here for —',
+      choices: [
+        { key:'scared',   label:'Scared',   sub:'your body reacted before you did' },
+        { key:'confused', label:'Confused',  sub:'you don\'t know what you just saw' },
+        { key:'sad',      label:'Sad',       sub:'something felt heavier than the room noticed' },
+        { key:'worried',  label:'Worried',   sub:'about the animal, the child, this place' }
+      ],
+      responses: {
+        scared:   "Scared. That's your nervous system doing its job. The system holds it — without telling you there's nothing to be afraid of.",
+        confused:  "Confused. You saw something happen that no sign explained. The system holds that gap.",
+        sad:      "Sad. You noticed something the rest of the room moved past. The system holds it.",
+        worried:  "Worried. About the animal, or the child, or what this place is for. The system holds that too."
+      }
+    },
+
+    step3: `
+      <div class="step-kicker fade-up-1">What settled in the silence</div>
+      <div class="context-scene fade-up-2">
+        In the space between the impact and the explanation —<br>
+        <em>something settled.</em>
+      </div>
+      <div class="step-body fade-up-3">
+        What you witnessed has a name: <em>displaying.</em> A ritualized behavior
+        with a specific audience, a specific purpose, and a specific meaning —
+        none of which the room received.
+      </div>
+      <div class="step-body fade-up-4">
+        The child called it bad. The man made it a challenge.
+        The crowd adjusted its distance.<br><br>
+        Each person filled the gap with what they already carried.
+        The behavior became what they needed it to be.
+      </div>
+      <div class="step-body fade-up-5" style="font-style:italic;color:var(--text-dim);font-size:13px;">
+        That's not a failure of the animal.<br>
+        That's a failure of the exhibit.
+      </div>
+      <div class="cta-wrap fade-up-6">
+        <button class="cta-btn show" onclick="goTo(4)">I understand <span class="cta-arrow"></span></button>
+      </div>`,
+
+    step4: `
+      <div class="step-kicker fade-up-1">The exhibit has an opportunity</div>
+      <div class="step-heading fade-up-2" style="font-size:clamp(22px,2.8vw,34px);margin-bottom:10px;">
+        People are still processing.<br>The next group is filing in.
+      </div>
+      <div class="step-body fade-up-2" style="margin-bottom:0;">Does the system intervene?</div>
+      <div class="response-cards fade-up-3">
+        <button class="response-card dismiss" onclick="selectPath(this,'dismiss')">
+          <span class="card-tag">Option A — No intervention</span>
+          <div class="card-text">The crowd moves on to the next exhibit. The moment passes. People are left with their projections of the behavior.</div>
+        </button>
+        <button class="response-card honor" onclick="selectPath(this,'honor')">
+          <span class="card-tag">Option B — A sign. An explanation.</span>
+          <div class="card-text">You notice an interactive panel to the side and see there is a section on gorilla behaviors.</div>
+        </button>
+      </div>
+      <div class="consequence" id="consequence"></div>
+      <div class="cta-wrap">
+        <button class="cta-btn" id="cta-4" onclick="goTo(5)">See how this ends <span class="cta-arrow"></span></button>
+      </div>`,
+
+    closureHonor:   "The loop doesn't fix what's wrong with the exhibit. It gives people the tools to hold it honestly.",
+    closureDismiss: "In the absence of explanation, the loudest interpretation wins. This is what the Dissonance Loop is designed to prevent.",
+    bodyHonor: `<div class="speaker-block">
+        <div class="speaker-label">Interactive panel — Great Ape House</div>
+        <div class="speaker-text">
+          These gorillas are part of a <em>bachelor troop</em> — a group of males without a family unit.
+          They establish hierarchy through displays like beating their chest or hitting the glass.
+          This behavior is called <em>displaying</em> — a ritualized sequence directed at other gorillas, not at you.
+          The glass was incidental.<br><br>
+          In all of recorded human history, there is <em>no confirmed case of a gorilla killing a human being.</em>
+        </div>
+      </div>
+      The man learned that what he saw was a display directed at other gorillas — not a challenge to him.
+      His chest-beat meant nothing to the animal. He'll still tell the story. But <em>differently</em>.<br><br>
+      The child was told, before her frame could harden, that gorillas do this when they're
+      communicating with each other. She didn't leave thinking gorillas are bad.
+      She left thinking gorillas are <em>complicated in interesting ways</em>.<br><br>
+      The visitor who looked for a sign — <em>finally found one.</em>
+      <div class="closure-fact">In all of recorded human history, there is <em>no confirmed case of a gorilla killing a human being.</em></div>`,
+    bodyDismiss: `The man's story solidified: he challenged a gorilla and held his ground.<br><br>
+      The child's frame became truth. <em>That was a bad gorilla.</em> She'll carry it for years.<br><br>
+      The next group filed in. The gorilla, if he displayed again, would be met with the same vacuum. The same screaming. The same proud chest-beating. The same small child with a new name for something she didn't understand.`
+  }
+};
+
+/* ══ STEP 2 BUILDER ════════════════════════════ */
+let activeStep2Responses = {};
+
+function buildStep2(scenario) {
+  const s2 = scenario.step2;
+  activeStep2Responses = s2.responses; // stored at module level — avoids apostrophe issues in data attributes
+  const choiceBtns = s2.choices.map(c => `
+    <button class="choice-btn" data-key="${c.key}" onclick="selectChoice(this)">
+      <span class="choice-label">${c.label}</span>
+      <span class="choice-sub">${c.sub}</span>
+    </button>`).join('');
+
+  return `
+    <div class="system-line fade-up-1">${s2.systemLine}</div>
+    <div class="timer-line fade-up-1"><span class="timer-num" id="timer-display">0:00</span> and counting.</div>
+    <div class="choice-q fade-up-2">${s2.question}</div>
+    <div class="choice-grid fade-up-3">${choiceBtns}</div>
+    <div class="system-response" id="system-response"></div>
+    <div class="cta-wrap">
+      <button class="cta-btn" id="cta-2" onclick="goTo(3)">Keep going <span class="cta-arrow"></span></button>
+    </div>`;
+}
+
+/* ══ SCENARIO SELECTION ════════════════════════ */
+function selectScenario(key) {
+  activeScenario = key;
+  const sc = SCENARIOS[key];
+
+  document.getElementById('step-1-content').innerHTML = sc.step1;
+  document.getElementById('step-2-content').innerHTML = buildStep2(sc);
+  document.getElementById('step-3-content').innerHTML = sc.step3;
+  document.getElementById('step-4-content').innerHTML = sc.step4;
+
+  document.getElementById('step-tracker').classList.add('visible');
+  document.getElementById('framework-ghost').classList.add('visible');
+
+  selectedChoice = null;
+  selectedPath   = null;
+
+  goTo(1);
+}
+
+/* ══ TRACKER ═══════════════════════════════════ */
+function updateTracker(step) {
+  for (let i = 1; i <= 5; i++) {
+    const dot = document.getElementById(`dot-${i}`);
+    dot.className = 'step-dot';
+    if (i < step)  dot.classList.add('done');
+    if (i === step) dot.classList.add('active');
+  }
+  document.getElementById('framework-ghost').textContent = labels[step - 1];
+}
+
+/* ══ NAVIGATION ════════════════════════════════ */
+function goTo(step) {
+  const currentId = currentStep === 0 ? 'picker' : `step-${currentStep}`;
+  document.getElementById(currentId).classList.remove('active');
+
+  if (currentStep === 2 && timerInterval) {
+    clearInterval(timerInterval); timerInterval = null;
+  }
+
+  currentStep = step;
+  updateTracker(step);
+  document.getElementById('back-btn').classList.add('visible');
+
+  setTimeout(() => {
+    document.getElementById(`step-${step}`).classList.add('active');
+    if (step === 2) startTimer();
+    if (step === 5) buildClosure();
+  }, 80);
+}
+
+function goBack() {
+  if (currentStep <= 1) { goToPicker(); return; }
+
+  const prevStep = currentStep - 1;
+
+  // Going back to step 2 — reset choice so it's fresh
+  if (currentStep === 3) {
+    selectedChoice = null;
+    document.getElementById('step-2-content').innerHTML = buildStep2(SCENARIOS[activeScenario]);
+    if (timerInterval) { clearInterval(timerInterval); timerInterval = null; }
+  }
+
+  // Going back to step 4 — reset path so it's fresh
+  if (currentStep === 5) {
+    selectedPath = null;
+    document.getElementById('step-4-content').innerHTML = SCENARIOS[activeScenario].step4;
+  }
+
+  document.getElementById(`step-${currentStep}`).classList.remove('active');
+  currentStep = prevStep;
+  updateTracker(prevStep);
+
+  setTimeout(() => {
+    document.getElementById(`step-${prevStep}`).classList.add('active');
+    if (prevStep === 2) startTimer();
+  }, 80);
+}
+
+function goToPicker() {
+  const currentId = currentStep === 0 ? 'picker' : `step-${currentStep}`;
+  document.getElementById(currentId).classList.remove('active');
+  if (timerInterval) { clearInterval(timerInterval); timerInterval = null; }
+  document.getElementById('step-tracker').classList.remove('visible');
+  document.getElementById('framework-ghost').classList.remove('visible');
+  document.getElementById('back-btn').classList.remove('visible');
+  activeScenario = null; selectedChoice = null; selectedPath = null; currentStep = 0;
+  setTimeout(() => { document.getElementById('picker').classList.add('active'); }, 80);
+}
+
+function restartSame() {
+  if (!activeScenario) return;
+  const key = activeScenario;
+  const sc = SCENARIOS[key];
+
+  // Re-inject step 2 and 4 to clear state
+  document.getElementById('step-2-content').innerHTML = buildStep2(sc);
+  document.getElementById('step-4-content').innerHTML = sc.step4;
+
+  selectedChoice = null; selectedPath = null;
+  if (timerInterval) { clearInterval(timerInterval); timerInterval = null; }
+
+  const currentId = `step-${currentStep}`;
+  document.getElementById(currentId).classList.remove('active');
+  currentStep = 1;
+  updateTracker(1);
+  setTimeout(() => { document.getElementById('step-1').classList.add('active'); }, 80);
+}
+
+/* ══ TIMER ═════════════════════════════════════ */
+function startTimer() {
+  timerStart = Date.now();
+  timerInterval = setInterval(() => {
+    const elapsed = Math.floor((Date.now() - timerStart) / 1000);
+    const mins = Math.floor(elapsed / 60);
+    const secs = elapsed % 60;
+    const el = document.getElementById('timer-display');
+    if (el) el.textContent = `${mins}:${secs.toString().padStart(2,'0')}`;
+  }, 1000);
+}
+
+/* ══ CHOICE SELECTION (step 2) ═════════════════ */
+function selectChoice(btn) {
+  const isFirst = !selectedChoice;
+  selectedChoice = btn.dataset.key;
+
+  // Update selection highlight — all buttons stay clickable
+  document.querySelectorAll('.choice-btn').forEach(b => b.classList.remove('selected'));
+  btn.classList.add('selected');
+
+  // Update system response
+  const resp = document.getElementById('system-response');
+  resp.textContent = activeStep2Responses[selectedChoice] || '';
+  resp.classList.add('visible');
+
+  // Only trigger CTA reveal on first selection
+  if (isFirst) {
+    setTimeout(() => { document.getElementById('cta-2').classList.add('show'); }, 600);
+  }
+}
+
+/* ══ PATH SELECTION (step 4) ═══════════════════ */
+function selectPath(card, path) {
+  if (selectedPath) return;
+  selectedPath = path;
+  document.querySelectorAll('.response-card').forEach(c => {
+    c.style.opacity = c === card ? '1' : '0.38'; c.disabled = true;
+  });
+  card.classList.add('selected');
+  const cons = document.getElementById('consequence');
+  if (path === 'honor') {
+    cons.textContent = 'The signal was honored. The loop continues.';
+    cons.classList.add('visible','honor');
+  } else {
+    cons.textContent = 'The signal was smoothed over. The loop breaks here.';
+    cons.classList.add('visible','dismiss');
+  }
+  setTimeout(() => { document.getElementById('cta-4').classList.add('show'); }, 700);
+}
+
+/* ══ CLOSURE ═══════════════════════════════════ */
+function buildClosure() {
+  const sc      = SCENARIOS[activeScenario] || SCENARIOS.bear;
+  const title   = document.getElementById('closure-title');
+  const body    = document.getElementById('closure-body');
+  const quote   = document.getElementById('closure-quote');
+  const choiceN = document.getElementById('choice-node');
+  const choiceL = document.getElementById('choice-label');
+  const closN   = document.getElementById('closure-node');
+  const closL   = document.getElementById('closure-label');
+
+  if (selectedPath === 'honor') {
+    title.textContent  = 'The loop completed.';
+    body.innerHTML     = sc.bodyHonor;
+    quote.textContent  = sc.closureHonor;
+    choiceN.classList.remove('broken'); choiceL.classList.remove('broken');
+    closN.classList.remove('broken');   closL.classList.remove('broken');
+  } else {
+    title.textContent  = 'The loop broke at Choice.';
+    body.innerHTML     = sc.bodyDismiss;
+    quote.textContent  = sc.closureDismiss;
+    choiceN.classList.add('broken'); choiceL.classList.add('broken');
+    closN.classList.add('broken');   closL.classList.add('broken');
+  }
+}
+</script>
+</body>
+</html>

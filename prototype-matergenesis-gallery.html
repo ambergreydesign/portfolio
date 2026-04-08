@@ -1,0 +1,490 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MaterGenesis — Image Gallery</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,600;1,400&family=DM+Sans:wght@300;400;500;700&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bg: #0a0910;
+  --text: #e0d6c8;
+  --pink: #eac6ce;
+  --amber: #dca25b;
+  --muted: rgba(200, 185, 165, 0.5);
+  --dim: rgba(200, 185, 165, 0.2);
+  --border: rgba(255, 255, 255, 0.06);
+  --ecology: #6b8f4a;
+  --religion: #7b5ea7;
+  --art: #c47a2e;
+  --world: #4a8f8f;
+}
+
+html { background: var(--bg); }
+body {
+  font-family: 'DM Sans', sans-serif;
+  color: var(--text);
+  overflow-x: hidden;
+}
+
+/* ── HEADER ── */
+.header {
+  text-align: center;
+  padding: 48px 32px 24px;
+}
+.header-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(28px, 4vw, 44px);
+  font-weight: 600; color: var(--pink);
+  margin-bottom: 8px;
+}
+.header-sub {
+  font-size: 13px; color: var(--muted);
+  letter-spacing: 0.03em;
+}
+
+/* ── FILTER BAR ── */
+.filter-bar {
+  display: flex; justify-content: center;
+  gap: 8px; padding: 16px 24px 24px;
+  position: sticky; top: 0; z-index: 50;
+  background: linear-gradient(to bottom, var(--bg) 60%, transparent);
+  padding-bottom: 32px;
+}
+.filter-btn {
+  padding: 8px 20px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 11px; font-weight: 500;
+  letter-spacing: 0.14em; text-transform: uppercase;
+  background: rgba(255,255,255,0.04);
+  border: 1px solid var(--border);
+  border-radius: 100px;
+  color: var(--muted); cursor: pointer;
+  transition: all 0.25s ease;
+}
+.filter-btn:hover { background: rgba(255,255,255,0.07); color: var(--text); }
+.filter-btn.active { color: var(--amber); border-color: rgba(220,162,91,0.35); background: rgba(220,162,91,0.08); }
+.filter-btn[data-f="ecology"].active { color: var(--ecology); border-color: rgba(107,143,74,0.35); background: rgba(107,143,74,0.08); }
+.filter-btn[data-f="religion"].active { color: var(--religion); border-color: rgba(123,94,167,0.35); background: rgba(123,94,167,0.08); }
+.filter-btn[data-f="art"].active { color: var(--art); border-color: rgba(196,122,46,0.35); background: rgba(196,122,46,0.08); }
+.filter-btn[data-f="world"].active { color: var(--world); border-color: rgba(74,143,143,0.35); background: rgba(74,143,143,0.08); }
+
+/* ── METHOD BANNER ── */
+.method-banner {
+  max-width: 800px; margin: 0 auto 8px;
+  padding: 0 24px;
+}
+.method-card {
+  background: rgba(255,255,255,0.02);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 28px 32px;
+  display: grid; grid-template-columns: 1fr 1fr 1fr 1fr;
+  gap: 24px;
+}
+.method-step {}
+.method-num {
+  font-size: 8px; font-weight: 500;
+  letter-spacing: 0.22em; text-transform: uppercase;
+  color: var(--amber); margin-bottom: 8px; opacity: 0.7;
+}
+.method-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 16px; font-weight: 600;
+  color: var(--pink); margin-bottom: 6px; line-height: 1.2;
+}
+.method-desc {
+  font-size: 11px; font-weight: 400;
+  line-height: 1.65; color: var(--muted);
+}
+.method-intro {
+  max-width: 620px; margin: 0 auto;
+  padding: 0 24px 20px;
+  text-align: center;
+  font-size: 12px; line-height: 1.75;
+  color: var(--muted); letter-spacing: 0.02em;
+}
+@media (max-width: 700px) {
+  .method-card { grid-template-columns: 1fr 1fr; }
+}
+@media (max-width: 480px) {
+  .method-card { grid-template-columns: 1fr; padding: 20px 22px; }
+}
+
+.filter-count {
+  font-size: 11px; color: var(--dim);
+  text-align: center; margin-top: -16px;
+  padding-bottom: 16px;
+  letter-spacing: 0.06em;
+}
+
+/* ── GRID ── */
+.gallery {
+  column-count: 4; column-gap: 10px;
+  padding: 0 24px 80px;
+  max-width: 1200px; margin: 0 auto;
+}
+
+.gallery-item {
+  break-inside: avoid;
+  margin-bottom: 10px;
+  border-radius: 8px;
+  overflow: hidden;
+  position: relative;
+  cursor: pointer;
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+.gallery-item:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 12px 36px rgba(0,0,0,0.5);
+}
+.gallery-item img {
+  width: 100%; display: block;
+  transition: transform 0.4s ease;
+}
+.gallery-item:hover img { transform: scale(1.03); }
+
+.gallery-item .overlay {
+  position: absolute; bottom: 0; left: 0; right: 0;
+  padding: 24px 14px 12px;
+  background: linear-gradient(to top, rgba(10,9,16,0.92) 0%, transparent 100%);
+  opacity: 0; transition: opacity 0.3s ease;
+}
+.gallery-item:hover .overlay { opacity: 1; }
+.overlay-domain {
+  font-size: 8px; font-weight: 500;
+  letter-spacing: 0.22em; text-transform: uppercase;
+  margin-bottom: 4px;
+}
+.overlay-domain.ecology { color: var(--ecology); }
+.overlay-domain.religion { color: var(--religion); }
+.overlay-domain.art { color: var(--art); }
+.overlay-domain.world { color: var(--world); }
+.overlay-num {
+  font-size: 11px; font-weight: 400;
+  color: rgba(200,185,165,0.6); letter-spacing: 0.04em;
+}
+
+/* ── LIGHTBOX ── */
+.lightbox {
+  position: fixed; inset: 0; z-index: 500;
+  display: flex; align-items: center; justify-content: center;
+  opacity: 0; pointer-events: none;
+  transition: opacity 0.3s ease;
+}
+.lightbox.open { opacity: 1; pointer-events: all; }
+.lightbox-backdrop {
+  position: absolute; inset: 0;
+  background: rgba(6, 5, 10, 0.92);
+  backdrop-filter: blur(16px);
+  cursor: pointer;
+}
+.lightbox-inner {
+  position: relative; z-index: 1;
+  max-width: min(90vw, 900px);
+  max-height: 85vh;
+  display: flex; flex-direction: column;
+  align-items: center;
+  transform: scale(0.95) translateY(10px);
+  transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+.lightbox.open .lightbox-inner { transform: scale(1) translateY(0); }
+.lightbox-img {
+  max-width: 100%; max-height: 72vh;
+  border-radius: 12px;
+  box-shadow: 0 32px 80px rgba(0,0,0,0.6);
+  display: block;
+}
+.lightbox-meta {
+  margin-top: 16px; text-align: center;
+}
+.lightbox-domain {
+  font-size: 9px; font-weight: 500;
+  letter-spacing: 0.24em; text-transform: uppercase;
+  margin-bottom: 6px;
+}
+.lightbox-label {
+  font-size: 14px; color: var(--pink);
+  font-family: 'Cormorant Garamond', serif;
+  font-weight: 600;
+}
+.lightbox-close {
+  position: absolute; top: -40px; right: 0;
+  background: rgba(255,255,255,0.08);
+  border: 1px solid rgba(255,255,255,0.12);
+  border-radius: 50%; width: 32px; height: 32px;
+  display: flex; align-items: center; justify-content: center;
+  color: rgba(200,185,165,0.8); font-size: 16px;
+  cursor: pointer; font-family: 'DM Sans', sans-serif;
+  transition: background 0.2s, color 0.2s;
+}
+.lightbox-close:hover { background: rgba(255,255,255,0.15); color: #fff; }
+
+.lightbox-nav {
+  position: absolute; top: 50%; transform: translateY(-50%);
+  background: rgba(255,255,255,0.06);
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 50%; width: 40px; height: 40px;
+  display: flex; align-items: center; justify-content: center;
+  color: rgba(200,185,165,0.7); font-size: 18px;
+  cursor: pointer; font-family: 'DM Sans', sans-serif;
+  transition: background 0.2s, color 0.2s;
+}
+.lightbox-nav:hover { background: rgba(255,255,255,0.12); color: #fff; }
+.lightbox-prev { left: -60px; }
+.lightbox-next { right: -60px; }
+
+/* ── RESPONSIVE ── */
+@media (max-width: 900px) { .gallery { column-count: 3; } }
+@media (max-width: 600px) {
+  .gallery { column-count: 2; padding: 0 12px 60px; }
+  .header { padding: 32px 20px 16px; }
+  .lightbox-prev { left: 8px; }
+  .lightbox-next { right: 8px; }
+}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-title">Visions of MaterGenesis</div>
+  <div class="header-sub">AI-generated imagery across Art, Ecology, and Religion &mdash; MidJourney, 2023</div>
+</div>
+
+<div class="method-banner">
+  <div class="method-card">
+    <div class="method-step">
+      <div class="method-num">Step 1</div>
+      <div class="method-title">Literature Review</div>
+      <div class="method-desc">Research into matriarchal societies, ecology, belief systems, and creative expression formed the knowledge base.</div>
+    </div>
+    <div class="method-step">
+      <div class="method-num">Step 2</div>
+      <div class="method-title">Concept Map</div>
+      <div class="method-desc">A branching map with "Matriarchal World" at center. Each branch produced sub-categories and prompt-ready details.</div>
+    </div>
+    <div class="method-step">
+      <div class="method-num">Step 3</div>
+      <div class="method-title">ChatGPT Prompts</div>
+      <div class="method-desc">ChatGPT was taught to construct MidJourney prompts from each map branch, using IMAGE | STYLE | MOOD | SCENE structure.</div>
+    </div>
+    <div class="method-step">
+      <div class="method-num">Step 4</div>
+      <div class="method-title">MidJourney Output</div>
+      <div class="method-desc">Each prompt generated 4 images. Individual crops were selected and assembled in Photoshop for the final collection.</div>
+    </div>
+  </div>
+</div>
+<div class="method-intro">Every image below traces back to a concept map branch, through a ChatGPT-refined prompt, to a MidJourney visualization. Prompts were iteratively refined to minimize AI bias and ensure alignment with the project's core themes.</div>
+
+<div class="filter-bar">
+  <button class="filter-btn active" data-f="all" onclick="setFilter('all')">All</button>
+  <button class="filter-btn" data-f="world" onclick="setFilter('world')">World</button>
+  <button class="filter-btn" data-f="art" onclick="setFilter('art')">Art</button>
+  <button class="filter-btn" data-f="ecology" onclick="setFilter('ecology')">Ecology</button>
+  <button class="filter-btn" data-f="religion" onclick="setFilter('religion')">Religion</button>
+</div>
+<div class="filter-count" id="filter-count"></div>
+
+<div class="gallery" id="gallery"></div>
+
+<!-- LIGHTBOX -->
+<div class="lightbox" id="lightbox">
+  <div class="lightbox-backdrop" onclick="closeLightbox()"></div>
+  <div class="lightbox-inner">
+    <button class="lightbox-close" onclick="closeLightbox()">&#10005;</button>
+    <button class="lightbox-nav lightbox-prev" onclick="navLightbox(-1)">&#8249;</button>
+    <button class="lightbox-nav lightbox-next" onclick="navLightbox(1)">&#8250;</button>
+    <img class="lightbox-img" id="lb-img" src="" alt="">
+    <div class="lightbox-meta">
+      <div class="lightbox-domain" id="lb-domain"></div>
+      <div class="lightbox-label" id="lb-label"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+'use strict';
+
+const QUAD = 'A Images/Matergenesis/MidJourney Images/quad/';
+const VID = 'A Images/Matergenesis/Video Images/';
+const VIDE = 'A Images/Matergenesis/Video Images/edited/';
+
+const IMAGES = [];
+
+// ── WORLD (Video Images — homes, scenes, daily life) ──
+const worldImages = [
+  { file: VID + 'house 1.webp', label: 'Organic Home I', desc: 'Architecture grown with forests, not over them' },
+  { file: VID + 'house 2.webp', label: 'Organic Home II', desc: 'Woven structures nestled in untouched landscapes' },
+  { file: VID + 'house 3.webp', label: 'Organic Home III', desc: 'Living spaces designed around nature, not against it' },
+  { file: VID + 'house4.webp', label: 'Organic Home IV', desc: 'Community dwellings integrated with the terrain' },
+  { file: VID + 'house pano.webp', label: 'Home Panorama', desc: 'A neighborhood where architecture and ecology are one system' },
+  { file: VID + 'ambersophia_httpss.mj.run31OwdxSK3fM_IMAGE_Office_Space__STYLE__53f0a1e5-f41e-4025-832b-6dd9da0f57c7.webp', label: 'Office Space', desc: 'Workspaces designed for harmony and collaboration' },
+  { file: VID + 'ambersophia_IMAGE_Harmony__STYLE_Utopian__SCENE_Imagine_a_wor_1c5f5e15-47f7-46f1-9b8f-d6188da194d1_0.webp', label: 'Utopian Harmony', desc: 'IMAGE: Harmony | STYLE: Utopian' },
+  { file: VID + 'ambersophia_IMAGE_Harmony__STYLE_Utopian__SCENE_Imagine_a_world_99c05bdc-3ef9-4250-bda9-13d753500dc8.webp', label: 'Utopian Scene', desc: 'A world imagined through equity and balance' },
+  { file: VID + 'ambersophia_IMAGE_Equality__STYLE_Contemporary__SCENE_Step_in_299ae4a3-8f03-481e-9e68-e68f5a70d672_0.webp', label: 'Equality', desc: 'IMAGE: Equality | STYLE: Contemporary' },
+  { file: VID + 'ambersophia_IMAGE_Equality__STYLE_Contemporary__SCENE_Step_in_00bb198a-f5d4-48ca-956c-d4c96efd4303_3.webp', label: 'Contemporary Equity', desc: 'Stepping into a world of structural equality' },
+  { file: VID + 'ambersophia_MAGE_Fashion__STYLE_Empowerment__MOOD_Sustainable_e75f9c2b-2264-472e-aa03-718eb6bc28b8_1.webp', label: 'Sustainable Fashion', desc: 'IMAGE: Fashion | STYLE: Empowerment | MOOD: Sustainable' },
+  { file: VID + 'ambersophia_MAGE_Fashion__STYLE_Empowerment__MOOD_Sustainable___803dcfd8-5283-437a-b03d-3f2e055a45ab.webp', label: 'Empowered Fashion', desc: 'Fashion designed for empowerment, not objectification' },
+  { file: VID + 'ambersophia_imagine_what_the_land_that_is_fort_worth_texas_wo_9139bb85-e2cd-4944-88bc-efcd405ef0db_2.webp', label: 'Fort Worth Reimagined', desc: 'What the land of Fort Worth, Texas would look like in MaterGenesis' },
+  { file: VID + 'ambersophia_IMAGE_Sustainable_Energy__STYLE_Eco-Friendly__MOO_e43bb676-96b9-4579-adf5-3937581459dc_0.webp', label: 'Sustainable Energy I', desc: 'IMAGE: Sustainable Energy | STYLE: Eco-Friendly' },
+  { file: VID + 'ambersophia_IMAGE_Sustainable_Energy__STYLE_Eco-Friendly__MOO_e43bb676-96b9-4579-adf5-3937581459dc_1.webp', label: 'Sustainable Energy II', desc: 'Innovation in eco-friendly energy systems' },
+  { file: VID + 'ambersophia_IMAGE_Environmental_Decision-Making__STYLE_Gender_31599023-11d7-4a88-b6f0-835fcec2931f_3.webp', label: 'Environmental Governance', desc: 'Gender-inclusive environmental decision-making' },
+  { file: VIDE + 'FaRMING.webp', label: 'Community Farming', desc: 'Women-led sustainable agriculture and community food systems' },
+  { file: VIDE + 'Science.webp', label: 'Science', desc: 'Scientific inquiry in a world of equitable knowledge' },
+  { file: VIDE + 'Fire.webp', label: 'Fire Ritual', desc: 'Sacred fire practices in the MaterGenesis world' },
+  { file: VIDE + 'forrest.webp', label: 'Sacred Forest', desc: 'Ancient forests preserved through spiritual stewardship' },
+  { file: VIDE + 'market.webp', label: 'Market', desc: 'Community markets built on reciprocity, not extraction' },
+  { file: VIDE + 'ft worth overview.webp', label: 'Fort Worth Overview', desc: 'The Texas landscape reimagined without industrial exploitation' },
+  { file: VIDE + 'space mother.webp', label: 'The Mother', desc: 'The primordial consciousness — the divine creative force' },
+];
+worldImages.forEach(w => IMAGES.push({ domain: 'world', file: w.file, label: w.label, desc: w.desc }));
+
+// ── ART (quad + video images) ──
+for (let i = 1; i <= 16; i++) {
+  IMAGES.push({ domain: 'art', file: QUAD + `ART_${i}.1.webp`, label: `Art ${i}` });
+}
+const artVid = [
+  { file: VID + 'ambersophia_IMAGE_Inclusive_Art_Institutions__STYLE_Equitable_ea706a3f-47bb-47fc-b276-590c4f6dbb38_2.webp', label: 'Inclusive Institutions' },
+  { file: VID + 'ambersophia_IMAGE_Collaboration_and_Community_Art__STYLE_Coll_52d89d94-4739-4e75-94ad-94de61c9036f_1.webp', label: 'Community Art' },
+  { file: VID + 'ambersophia_IMAGE_Art_Criticism__STYLE_Balanced_Recognition___9c5344c0-507d-4203-a606-c7aef1d64827_0.webp', label: 'Art Criticism' },
+  { file: VID + 'ambersophia_IMAGE_Art_Education__STYLE_Equality_and_Balance___a076ed54-deb7-4e98-a0b6-31a203e037b5_3.webp', label: 'Art Education' },
+  { file: VID + 'ambersophia_IMAGE_Art_Preservation_and_Conservation__STYLE_Ge_0d00509a-62c2-4a84-866d-3a41b63639a9_1.webp', label: 'Art Preservation' },
+  { file: VID + 'ambersophia_IMAGE_Art_Institutions_and_Education__STYLE_Inter_7b882ed6-15a9-47a1-a93f-c8f6c763da12_0.webp', label: 'Interdisciplinary Education' },
+  { file: VID + 'ambersophia_IMAGE_Innovative_Art_Techniques__STYLE_Spiritual__3d49f8d4-4fc9-48bb-9555-182ab483288b_0.webp', label: 'Innovative Techniques I' },
+  { file: VID + 'ambersophia_IMAGE_Innovative_Art_Techniques__STYLE_Spiritual__3d49f8d4-4fc9-48bb-9555-182ab483288b_1.webp', label: 'Innovative Techniques II' },
+  { file: VID + 'ambersophia_IMAGE_Artistic_Themes__STYLE_Spiritual_Harmony__M_bc503d9c-2145-4b1d-825b-ae5abd4bf86f_1.webp', label: 'Spiritual Harmony' },
+  { file: VID + 'ambersophia_IMAGE_Redefining_Beauty__STYLE_Spiritual__Nature-_fa86256e-7998-4347-94a4-93a1423822f0_0.webp', label: 'Redefining Beauty I' },
+  { file: VID + 'ambersophia_IMAGE_Redefining_Beauty__STYLE_Spiritual__Nature-_fa86256e-7998-4347-94a4-93a1423822f0_1.webp', label: 'Redefining Beauty II' },
+];
+artVid.forEach(a => IMAGES.push({ domain: 'art', file: a.file, label: a.label }));
+
+// ── ECOLOGY (quad + video images) ──
+for (let i = 1; i <= 7; i++) {
+  if (i === 4) continue; // removed — not ecology
+  IMAGES.push({ domain: 'ecology', file: QUAD + `ECO_${i}.1.webp`, label: `Ecology ${i}` });
+}
+[11, 12, 13, 14, 17, 19, 23, 28, 31, 32, 33, 40, 43, 44, 45].forEach(i => {
+  IMAGES.push({ domain: 'ecology', file: QUAD + `ECO_${i}.1.webp`, label: `Ecology ${i}` });
+});
+const ecoVid = [
+  { file: VID + 'ambersophia_IMAGE_Conservation__STYLE_Realistic__SCENE_Step_i_ac445bf3-f3df-48cb-a717-0e79b4af5026_0.webp', label: 'Conservation' },
+  { file: VID + 'ambersophia_IMAGE_Nature_Spirituality__STYLE_Enhanced_Connect_6864fa15-6580-4788-b2b4-c79289aa0dfc_0.webp', label: 'Nature Spirituality I' },
+  { file: VID + 'ambersophia_IMAGE_Nature_Spirituality__STYLE_Enhanced_Connect_6864fa15-6580-4788-b2b4-c79289aa0dfc_2.webp', label: 'Nature Spirituality II' },
+  { file: VID + 'ambersophia_pack_of_wild_thylacine_in_its_natural_habitat_in__19ccf01e-70f5-45b3-a90c-cea4af4dd3c1_0.webp', label: 'Thylacine Pack I' },
+  { file: VID + 'ambersophia_pack_of_wild_thylacine_in_its_natural_habitat_in__19ccf01e-70f5-45b3-a90c-cea4af4dd3c1_1.webp', label: 'Thylacine Pack II' },
+  { file: VID + 'ambersophia_herd_of_Asian_Sumatran_Rhino_in_its_natural_habit_784e029c-a905-4689-99d4-07c2e8c1158c_2.webp', label: 'Sumatran Rhino Herd' },
+  { file: VID + 'ambersophia_Thylacine_in_its_natural_habitat_PARAMETERS_--ar__14fd9f63-8d6a-4031-ad0b-78dee880cdbe_1.webp', label: 'Thylacine Habitat' },
+  { file: VID + 'ambersophia_IMAGE_Scene__STYLE_Realistic__SCENE_In_an_imagine_aa507013-673d-4318-b950-e89ce91c06e7_1.webp', label: 'Species Scene I' },
+  { file: VID + 'ambersophia_IMAGE_Scene__STYLE_Realistic__SCENE_In_an_imagine_aa507013-673d-4318-b950-e89ce91c06e7_3.webp', label: 'Species Scene II' },
+  { file: VID + 'ambersophia_IMAGE_Scene__STYLE_Realistic__SCENE_In_an_imagine_cdac7557-a286-4aba-970a-7dd5c55e6c34_2.webp', label: 'Habitat Scene' },
+  { file: VID + 'ambersophia_IMAGE_Scene__STYLE_Realistic__SCENE_Portray_a_vib_18fb4dcd-88b5-4ee9-a7a1-341cb5b56ccd_1.webp', label: 'Vibrant Ecosystem' },
+  { file: VID + 'ambersophia_IMAGE_Scene__STYLE_Realistic__SCENE_In_an_imagine_eb2f5c79-ae69-4d6c-a2b1-0b9783bfc1a2_0.webp', label: 'Island Haven I' },
+  { file: VID + 'ambersophia_IMAGE_Scene__STYLE_Realistic__SCENE_In_an_imagine_eb2f5c79-ae69-4d6c-a2b1-0b9783bfc1a2_2.webp', label: 'Island Haven II' },
+  { file: VID + 'ambersophia_IMAGE_Scene__STYLE_Realistic__SCENE_In_an_imagine_0ab6c616-7b48-4a3d-afbc-a057d6698d97_0.webp', label: 'River Dolphins I' },
+  { file: VID + 'ambersophia_IMAGE_Scene__STYLE_Realistic__SCENE_In_an_imagine_0ab6c616-7b48-4a3d-afbc-a057d6698d97_1.webp', label: 'River Dolphins II' },
+  { file: VID + 'ambersophia_IMAGE_Nature__STYLE_Spiritual__SCENE_In_a_world_whe_76587461-58b4-4a05-8d73-72fcef71e9a9.webp', label: 'Sacred Nature' },
+  { file: VID + 'ambersophia_IMAGE_Nature__STYLE_Healing__SCENE_In_a_world_whe_ebb81aa1-2e00-4b2a-9520-5b314baafb80_2.webp', label: 'Healing Nature' },
+  { file: VIDE + 'farming-8f5f-46e1-a2dc-35ce908f0e33.webp', label: 'Sustainable Farming' },
+];
+ecoVid.forEach(e => IMAGES.push({ domain: 'ecology', file: e.file, label: e.label }));
+
+// ── RELIGION (quad + video images) ──
+for (let i = 1; i <= 29; i++) {
+  if (i === 25) continue;
+  IMAGES.push({ domain: 'religion', file: QUAD + `RELIGION_${i}.1.webp`, label: `Religion ${i}` });
+}
+const relVid = [
+  { file: VID + 'ambersophia_IMAGE_spiritual_leader__STYLE_wisdom__MOOD_harmon_464ce8c6-4a61-4174-b37e-40900fc664a7_0.webp', label: 'Spiritual Leader I' },
+  { file: VID + 'ambersophia_IMAGE_spiritual_leader__STYLE_wisdom__MOOD_harmon_464ce8c6-4a61-4174-b37e-40900fc664a7_1.webp', label: 'Spiritual Leader II' },
+  { file: VID + 'ambersophia_IMAGE_Ritual__STYLE_Naturalistic__SCENE_In_an_ima_196ae764-aafc-4a1c-870a-f36a843af252_0.webp', label: 'Naturalistic Ritual' },
+  { file: VID + 'ambersophia_IMAGE_Divine_Worship__STYLE_Goddess-Centered__MOO_2362b6ab-0acc-4537-8e7e-9dfa00d92138_1.webp', label: 'Divine Worship' },
+  { file: VID + 'ambersophia_IMAGE_Matriarchal_Myth__STYLE_Empowering__MOOD_Re_996fb27e-40cd-4b73-9f37-6dc462594155_1.webp', label: 'Matriarchal Myth' },
+  { file: VID + 'ambersophia_IMAGE_Healthcare__STYLE_Harmony__MOOD_Healing__SC_f354d89d-a49d-4421-8224-da3ecfa7cf8b_2.webp', label: 'Spiritual Healthcare I' },
+  { file: VID + 'ambersophia_IMAGE_Healthcare__STYLE_Harmony__MOOD_Healing__SC_f354d89d-a49d-4421-8224-da3ecfa7cf8b_3.webp', label: 'Spiritual Healthcare II' },
+  { file: VID + 'ambersophia_Title_Framing_Feminine_Wisdom_Description_Journey_ed4cc2e1-cdf0-4c29-95d2-d621e1c0bf15_2.webp', label: 'Feminine Wisdom I' },
+  { file: VID + 'ambersophia_Title_Framing_Feminine_Wisdom_Description_Journey_ed4cc2e1-cdf0-4c29-95d2-d621e1c0bf15_3.webp', label: 'Feminine Wisdom II' },
+  { file: VID + 'ambersophia_Diverse_Pantheon__GENRE_Spirituality__MOOD_Harmony__af20eed4-1165-4c09-a35c-223aabe270f4.webp', label: 'Diverse Pantheon I' },
+  { file: VID + 'ambersophia_Diverse_Pantheon__GENRE_Spirituality__MOOD_Harmony__b0536e6c-25ce-405e-ac21-b0a00b7b3907.webp', label: 'Diverse Pantheon II' },
+  { file: VID + 'ambersophia_painting_of_goddess_mother_creating_eve_in_the_st_2f1239e2-bb23-4a86-afdb-5565d033b9a8_0.webp', label: 'Goddess Creating Eve I' },
+  { file: VID + 'ambersophia_painting_of_goddess_mother_creating_eve_in_the_st_2f1239e2-bb23-4a86-afdb-5565d033b9a8_1.webp', label: 'Goddess Creating Eve II' },
+  { file: VID + 'ambersophia_painting_of_the_creation_of_the_cosmos_by_the_sophi_c134028b-98bf-416c-903b-24e5c382d52f.webp', label: 'Creation of the Cosmos' },
+  { file: VID + 'ambersophia_christian_art_reimagined_for_goddess_and_female_c_442d0696-7662-4187-8188-ce9af0bb18dc_2.webp', label: 'Reimagined Sacred Art' },
+  { file: VID + 'ambersophia_a_divine_dark_skinned_essence_designing_a_fair_sk_2cba2163-51ad-4e32-a538-e1a916eb893e_2.webp', label: 'Divine Essence' },
+  { file: VID + 'ambersophia_a_divine_essence_resonating_with_the_very_pulse_o_f3554a03-98d7-4973-a137-b858190f1135_3.webp', label: 'Pulse of Creation' },
+  { file: VID + 'ambersophia_a_wast_and_tranquil_void_galaxy_--v_5_ad12257d-786f-41ab-86b9-1fdcc14a42dc_3.webp', label: 'The Void' },
+  { file: VID + 'ambersophia_In_the_timeless_expanse_of_a_tranquil_void_a_canvas_83227bfa-1454-4d8a-b1ed-fc19cf21a5c3.webp', label: 'Tranquil Void' },
+  { file: VID + 'ambersophia_The_cycles_of_life_were_a_reflection_of_The_Mothe_e822bee4-85b2-404e-b803-0aeeaf01375b_0.webp', label: 'Cycles of Life I' },
+  { file: VID + 'ambersophia_The_cycles_of_life_were_a_reflection_of_The_Mothe_e822bee4-85b2-404e-b803-0aeeaf01375b_2.webp', label: 'Cycles of Life II' },
+  { file: VID + 'ambersophia_IMAGE_Nature__STYLE_Spiritual__SCENE_In_a_world_w_67a075d9-a22a-431f-8477-24012d1b5972_3.webp', label: 'Spiritual Nature' },
+]
+relVid.forEach(r => IMAGES.push({ domain: 'religion', file: r.file, label: r.label }));
+
+const DOMAIN_COLORS = { art: '#c47a2e', ecology: '#6b8f4a', religion: '#7b5ea7', world: '#4a8f8f' };
+
+let currentFilter = 'all';
+let filteredImages = [...IMAGES];
+let lightboxIndex = -1;
+
+function setFilter(f) {
+  currentFilter = f;
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.toggle('active', b.dataset.f === f));
+  renderGallery();
+}
+
+function renderGallery() {
+  filteredImages = currentFilter === 'all' ? [...IMAGES] : IMAGES.filter(img => img.domain === currentFilter);
+
+  document.getElementById('filter-count').textContent = filteredImages.length + ' images';
+
+  const gallery = document.getElementById('gallery');
+  gallery.innerHTML = filteredImages.map((img, i) => `
+    <div class="gallery-item" onclick="openLightbox(${i})">
+      <img src="${img.file}" alt="${img.label}" loading="lazy">
+      <div class="overlay">
+        <div class="overlay-domain ${img.domain}">${img.domain}</div>
+        <div class="overlay-num">${img.label}</div>
+      </div>
+    </div>
+  `).join('');
+}
+
+function openLightbox(index) {
+  lightboxIndex = index;
+  const img = filteredImages[index];
+  document.getElementById('lb-img').src = img.file;
+  const domainEl = document.getElementById('lb-domain');
+  domainEl.textContent = img.domain;
+  domainEl.className = 'lightbox-domain ' + img.domain;
+  domainEl.style.color = DOMAIN_COLORS[img.domain] || '#dca25b';
+  document.getElementById('lb-label').textContent = img.label + (img.desc ? ' — ' + img.desc : '');
+  document.getElementById('lightbox').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeLightbox() {
+  document.getElementById('lightbox').classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+function navLightbox(dir) {
+  let next = lightboxIndex + dir;
+  if (next < 0) next = filteredImages.length - 1;
+  if (next >= filteredImages.length) next = 0;
+  openLightbox(next);
+}
+
+document.addEventListener('keydown', e => {
+  if (!document.getElementById('lightbox').classList.contains('open')) return;
+  if (e.key === 'Escape') closeLightbox();
+  if (e.key === 'ArrowRight') navLightbox(1);
+  if (e.key === 'ArrowLeft') navLightbox(-1);
+});
+
+renderGallery();
+</script>
+
+</body>
+</html>

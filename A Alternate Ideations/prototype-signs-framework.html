@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The SIGNS Framework</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,600;1,400;1,500&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bg:             #131f15;
+  --text:           #f2ead8;
+  --text-muted:     rgba(242,234,216,0.70);
+  --text-dim:       rgba(242,234,216,0.32);
+  --magenta:        #cc6cf0;
+  --magenta-soft:   rgba(204,108,240,0.10);
+  --magenta-border: rgba(204,108,240,0.28);
+  --amber:          #e2aa62;
+  --amber-soft:     rgba(226,170,98,0.08);
+  --amber-border:   rgba(226,170,98,0.22);
+  --green:          #68b078;
+  --green-soft:     rgba(104,176,120,0.08);
+  --green-border:   rgba(104,176,120,0.24);
+  --border:         rgba(255,255,255,0.10);
+}
+
+html, body {
+  min-height: 100%;
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'DM Sans', sans-serif;
+  overflow-x: hidden;
+}
+
+/* ── AMBIENT ── */
+.ambient-bg {
+  position: fixed; inset: 0; z-index: 0; pointer-events: none;
+  background:
+    radial-gradient(ellipse 65% 55% at 18% 38%, rgba(28,48,32,0.75), transparent),
+    radial-gradient(ellipse 45% 38% at 82% 72%, rgba(20,36,24,0.6), transparent),
+    var(--bg);
+}
+
+/* ── PAGE WRAP ── */
+.page-wrap {
+  position: relative; z-index: 1;
+  max-width: 780px; margin: 0 auto;
+  padding: 48px 40px 64px;
+}
+
+/* ── HEADER ── */
+.page-kicker {
+  font-size: 9px; font-weight: 500; letter-spacing: 0.36em;
+  text-transform: uppercase; color: var(--magenta); margin-bottom: 14px;
+}
+.page-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(28px, 4vw, 46px); font-weight: 600;
+  line-height: 1.12; color: var(--text); margin-bottom: 10px;
+}
+.page-sub {
+  font-size: 13px; font-weight: 300; color: var(--text-muted);
+  letter-spacing: 0.02em; line-height: 1.7; margin-bottom: 40px;
+}
+
+/* ── SIGNS MAP ── */
+.signs-map {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 7px;
+  margin-bottom: 24px;
+}
+
+.map-tile {
+  position: relative; overflow: hidden;
+  background: rgba(255,255,255,0.04);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 16px 14px 14px;
+  cursor: pointer; text-align: left;
+  transition: border-color 0.28s ease, transform 0.28s ease, background 0.28s ease;
+}
+.map-tile::before {
+  content: ''; position: absolute; inset: 0; opacity: 0;
+  border-radius: 12px; transition: opacity 0.28s ease;
+  background: var(--magenta-soft);
+}
+.map-tile::after {
+  content: ''; position: absolute;
+  bottom: 0; left: 50%; transform: translateX(-50%);
+  width: 0; height: 2px;
+  background: var(--magenta); border-radius: 1px;
+  transition: width 0.3s ease;
+}
+.map-tile:hover {
+  transform: translateY(-2px);
+  border-color: var(--magenta-border);
+}
+.map-tile:hover::before { opacity: 0.7; }
+.map-tile.active { border-color: rgba(204,108,240,0.42); }
+.map-tile.active::before { opacity: 1; }
+.map-tile.active::after  { width: 22px; }
+
+.tile-letter {
+  display: block;
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 30px; font-weight: 600; line-height: 1;
+  color: var(--text-dim); margin-bottom: 10px;
+  transition: color 0.28s ease;
+}
+.map-tile.active .tile-letter,
+.map-tile:hover .tile-letter { color: var(--magenta); }
+
+.tile-from {
+  display: block; font-size: 9px; font-weight: 500;
+  letter-spacing: 0.12em; text-transform: uppercase;
+  color: rgba(226,170,98,0.60); margin-bottom: 2px;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.tile-arrow-txt {
+  display: block; font-size: 8px; color: var(--text-dim); margin-bottom: 2px;
+}
+.tile-to {
+  display: block; font-size: 9px; font-weight: 500;
+  letter-spacing: 0.12em; text-transform: uppercase;
+  color: rgba(104,176,120,0.72);
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+
+/* ── CONNECTOR LINE ── */
+.connector {
+  height: 1px;
+  background: linear-gradient(to right, transparent, var(--border), transparent);
+  margin-bottom: 24px;
+}
+
+/* ── DETAIL AREA ── */
+.detail-content {
+  display: grid;
+  grid-template-columns: 1fr 44px 1fr;
+  align-items: start;
+  gap: 0;
+  transition: opacity 0.3s ease, transform 0.3s ease;
+}
+.detail-content.fading {
+  opacity: 0;
+  transform: translateY(7px);
+}
+
+/* ── PANELS ── */
+.panel {
+  border-radius: 14px;
+  padding: 22px 22px 18px;
+}
+.before-panel {
+  background: linear-gradient(150deg, rgba(38,30,18,0.85), rgba(28,22,13,0.80));
+  border: 1px solid var(--amber-border);
+}
+.after-panel {
+  background: linear-gradient(150deg, rgba(18,32,20,0.85), rgba(13,24,15,0.80));
+  border: 1px solid var(--green-border);
+}
+
+.panel-label {
+  font-size: 7.5px; font-weight: 500; letter-spacing: 0.3em;
+  text-transform: uppercase; margin-bottom: 10px; display: block;
+}
+.before-panel .panel-label { color: rgba(226,170,98,0.58); }
+.after-panel  .panel-label { color: rgba(104,176,120,0.65); }
+
+.panel-word {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(20px, 2.6vw, 28px); font-weight: 600;
+  line-height: 1.1; color: var(--text); margin-bottom: 12px;
+}
+
+.panel-desc {
+  font-size: 12.5px; font-weight: 300; line-height: 1.84;
+  color: var(--text-muted); letter-spacing: 0.015em; margin-bottom: 16px;
+}
+.panel-desc em { font-style: normal; color: var(--text); font-weight: 400; }
+
+.example-block {
+  border-top: 1px solid rgba(255,255,255,0.06);
+  padding-top: 14px;
+}
+.example-label {
+  display: block; font-size: 7px; font-weight: 500;
+  letter-spacing: 0.28em; text-transform: uppercase; margin-bottom: 7px;
+}
+.before-panel .example-label { color: rgba(226,170,98,0.40); }
+.after-panel  .example-label { color: rgba(104,176,120,0.45); }
+
+.example-text {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 14.5px; font-style: italic; font-weight: 400;
+  line-height: 1.68; color: rgba(242,234,216,0.50);
+}
+.example-text em { font-style: normal; color: rgba(242,234,216,0.72); }
+
+/* ── TRANSFORM COLUMN ── */
+.transform-col {
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: flex-start;
+  padding-top: 48px; gap: 5px;
+}
+.transform-letter {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 38px; font-weight: 600;
+  color: var(--magenta); opacity: 0.15; line-height: 1;
+}
+.transform-arrow {
+  font-size: 10px; color: var(--text-dim);
+  letter-spacing: 0.08em;
+}
+
+/* ── FADE ANIMATIONS ── */
+.fade-up-1 { animation: fadeUp 0.65s ease 0.10s both; }
+.fade-up-2 { animation: fadeUp 0.65s ease 0.22s both; }
+.fade-up-3 { animation: fadeUp 0.65s ease 0.34s both; }
+.fade-up-4 { animation: fadeUp 0.65s ease 0.46s both; }
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(13px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+</style>
+</head>
+<body>
+
+<div class="ambient-bg"></div>
+
+<div class="page-wrap">
+
+  <!-- HEADER -->
+  <div class="fade-up-1">
+    <div class="page-kicker">ReWilded</div>
+    <h1 class="page-title">The SIGNS Framework</h1>
+    <p class="page-sub">Five transformations. From how zoos operate today — to how they could.</p>
+  </div>
+
+  <!-- MAP ROW -->
+  <div class="signs-map fade-up-2" id="signs-map">
+    <button class="map-tile active" onclick="selectPair(0)">
+      <span class="tile-letter">S</span>
+      <span class="tile-from">Spectacle</span>
+      <span class="tile-arrow-txt">→</span>
+      <span class="tile-to">Story</span>
+    </button>
+    <button class="map-tile" onclick="selectPair(1)">
+      <span class="tile-letter">I</span>
+      <span class="tile-from">Information</span>
+      <span class="tile-arrow-txt">→</span>
+      <span class="tile-to">Interaction</span>
+    </button>
+    <button class="map-tile" onclick="selectPair(2)">
+      <span class="tile-letter">G</span>
+      <span class="tile-from">Gaps</span>
+      <span class="tile-arrow-txt">→</span>
+      <span class="tile-to">Guidance</span>
+    </button>
+    <button class="map-tile" onclick="selectPair(3)">
+      <span class="tile-letter">N</span>
+      <span class="tile-from">Neglect</span>
+      <span class="tile-arrow-txt">→</span>
+      <span class="tile-to">Nurture</span>
+    </button>
+    <button class="map-tile" onclick="selectPair(4)">
+      <span class="tile-letter">S</span>
+      <span class="tile-from">Stigma</span>
+      <span class="tile-arrow-txt">→</span>
+      <span class="tile-to">Support</span>
+    </button>
+  </div>
+
+  <!-- CONNECTOR -->
+  <div class="connector fade-up-3"></div>
+
+  <!-- DETAIL -->
+  <div class="fade-up-4">
+    <div class="detail-content" id="detail-content">
+      <!-- injected by JS -->
+    </div>
+  </div>
+
+</div>
+
+<script>
+'use strict';
+
+const PAIRS = [
+  {
+    letter: 'S',
+    from: 'Spectacle',
+    to: 'Story',
+    beforeDesc: `Animals perform within systems designed for reaction. The moment of impact — the charge at the glass, the roar, the splash — is the exhibit's primary output. <em>Context is secondary, if present at all.</em>`,
+    beforeExample: `A gorilla strikes the glass. The crowd screams. Phones go up. No sign explains what displaying means, or why. The behavior becomes what each person already believed.`,
+    afterDesc: `Every behavior is a sentence in a longer narrative. The exhibit creates the conditions for that sentence to land — <em>before the moment, during it, and after it passes.</em>`,
+    afterExample: `An interactive panel activates. "These gorillas are part of a bachelor troop. This behavior is called displaying — directed at other gorillas, not at you."`
+  },
+  {
+    letter: 'I',
+    from: 'Information',
+    to: 'Interaction',
+    beforeDesc: `Plaques describe. Signs instruct. The visitor reads — or doesn't. Knowledge is delivered at the exhibit, not built inside the visitor. <em>The institution speaks in one direction.</em>`,
+    beforeExample: `A QR code links to a PDF. Engagement time: near zero. Average time spent at a standard exhibit sign: under eight seconds.`,
+    afterDesc: `The exhibit responds to the visitor. Touch. Choose. Witness something change. <em>The visitor becomes a participant in meaning-making</em> — not a recipient of it.`,
+    afterExample: `The Dissonance Loop walks you through what you felt, what the system knew, and what could have been said — in the moment it mattered.`
+  },
+  {
+    letter: 'G',
+    from: 'Gaps',
+    to: 'Guidance',
+    beforeDesc: `The exhibit ends where the complexity begins. Welfare concerns go unnamed. Behavioral signals go unexplained. <em>Visitors fill the silence with whatever they carried in.</em>`,
+    beforeExample: `The polar bear paces. Left. Fourteen feet. Turn. Right. Fourteen feet. The sign reads: Conservation Ambassador. No sign mentions stereotypy.`,
+    afterDesc: `The exhibit moves toward honest complexity. Staff are empowered to name difficult things. <em>Guidance doesn't simplify — it accompanies the visitor through what's real.</em>`,
+    afterExample: `"That pacing is called stereotypy — it's a stress response. We're working with behavior specialists. You're right to notice."`
+  },
+  {
+    letter: 'N',
+    from: 'Neglect',
+    to: 'Nurture',
+    beforeDesc: `Welfare metrics stay internal. Enrichment is often performed for visitors, not designed for animals. <em>The institution's relationship to its animals is invisible to the people inside it.</em>`,
+    beforeExample: `GWI research: 38% of surveyed institutions reported zero philanthropic giving during the study period. The gap between stated mission and measurable investment is rarely made visible.`,
+    afterDesc: `Care is made visible. Welfare science becomes part of the exhibit. Visitors understand that the institution's relationship with its animals is <em>ongoing, imperfect, and genuinely committed.</em>`,
+    afterExample: `A welfare transparency panel shows enrichment schedules, behavioral milestones, and honest notes on challenges. The institution makes itself accountable.`
+  },
+  {
+    letter: 'S',
+    from: 'Stigma',
+    to: 'Support',
+    beforeDesc: `"Dangerous." "Unpredictable." "Wild." The language of threat builds distance — between visitor and animal, and between institution and accountability. <em>It shapes how visitors interpret everything they see.</em>`,
+    beforeExample: `"That is a bad gorilla." A child's frame — formed in the silence of an exhibit that offered no other language. She'll carry it for years.`,
+    afterDesc: `The exhibit builds vocabulary for connection. Behaviors are named. Context is given. <em>Visitors leave with language for what they witnessed</em> — and a reason to care about what happens to it.`,
+    afterExample: `"Displaying is how gorillas communicate. In all of recorded human history, there is no confirmed case of a gorilla killing a human being." A child's frame, redirected.`
+  }
+];
+
+let activePair = 0;
+let isTransitioning = false;
+
+function renderDetail(idx) {
+  const p = PAIRS[idx];
+  document.getElementById('detail-content').innerHTML = `
+    <div class="panel before-panel">
+      <span class="panel-label">The Zoo Today</span>
+      <div class="panel-word">${p.from}</div>
+      <div class="panel-desc">${p.beforeDesc}</div>
+      <div class="example-block">
+        <span class="example-label">In practice</span>
+        <div class="example-text">${p.beforeExample}</div>
+      </div>
+    </div>
+    <div class="transform-col">
+      <div class="transform-letter">${p.letter}</div>
+      <div class="transform-arrow">→</div>
+    </div>
+    <div class="panel after-panel">
+      <span class="panel-label">The ReWilded Approach</span>
+      <div class="panel-word">${p.to}</div>
+      <div class="panel-desc">${p.afterDesc}</div>
+      <div class="example-block">
+        <span class="example-label">In practice</span>
+        <div class="example-text">${p.afterExample}</div>
+      </div>
+    </div>
+  `;
+}
+
+function selectPair(idx) {
+  if (idx === activePair || isTransitioning) return;
+  isTransitioning = true;
+
+  document.querySelectorAll('.map-tile').forEach((t, i) => {
+    t.classList.toggle('active', i === idx);
+  });
+
+  const content = document.getElementById('detail-content');
+  content.classList.add('fading');
+
+  setTimeout(() => {
+    activePair = idx;
+    renderDetail(idx);
+    content.classList.remove('fading');
+    isTransitioning = false;
+  }, 300);
+}
+
+// Init
+renderDetail(0);
+</script>
+</body>
+</html>

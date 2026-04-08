@@ -1,0 +1,478 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The SIGNS Framework</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,600;1,400;1,500&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bg:             #131f15;
+  --text:           #f2ead8;
+  --text-muted:     rgba(242,234,216,0.70);
+  --text-dim:       rgba(242,234,216,0.32);
+  --magenta:        #cc6cf0;
+  --magenta-soft:   rgba(204,108,240,0.10);
+  --magenta-border: rgba(204,108,240,0.28);
+  --amber:          #e2aa62;
+  --amber-soft:     rgba(226,170,98,0.09);
+  --amber-border:   rgba(226,170,98,0.22);
+  --green:          #68b078;
+  --green-soft:     rgba(104,176,120,0.09);
+  --green-border:   rgba(104,176,120,0.22);
+  --border:         rgba(255,255,255,0.10);
+}
+
+html, body {
+  height: 100%; overflow: hidden;
+  background: var(--bg); color: var(--text);
+  font-family: 'DM Sans', sans-serif;
+}
+
+/* ── AMBIENT ── */
+.ambient-bg {
+  position: fixed; inset: 0; z-index: 0; pointer-events: none;
+  background:
+    radial-gradient(ellipse 65% 55% at 18% 38%, rgba(28,48,32,0.75), transparent),
+    radial-gradient(ellipse 45% 38% at 82% 72%, rgba(20,36,24,0.6), transparent),
+    var(--bg);
+}
+
+/* ── LETTER WATERMARK ── */
+.letter-bg {
+  position: fixed; top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(240px, 44vw, 520px);
+  font-weight: 600; line-height: 1;
+  color: var(--text); opacity: 0.04;
+  pointer-events: none; user-select: none;
+  z-index: 0;
+  transition: opacity 0.4s ease;
+}
+
+/* ── CHROME ── */
+.top-label {
+  position: fixed; top: 22px; left: 24px;
+  font-size: 9px; font-weight: 500; letter-spacing: 0.32em;
+  text-transform: uppercase; color: var(--text-dim); z-index: 100;
+}
+.pair-count {
+  position: fixed; top: 22px; right: 24px;
+  font-size: 9px; font-weight: 400; letter-spacing: 0.24em;
+  color: var(--text-dim); z-index: 100;
+  transition: opacity 0.3s ease;
+}
+
+/* ── SIDE ARROWS ── */
+.nav-arrow {
+  position: fixed; top: 50%; transform: translateY(-50%);
+  background: none; border: none; cursor: pointer;
+  color: var(--text-dim); font-size: 10px;
+  letter-spacing: 0.2em; text-transform: uppercase;
+  padding: 20px 18px; z-index: 100;
+  opacity: 0; pointer-events: none;
+  transition: color 0.25s ease, opacity 0.35s ease;
+}
+.nav-arrow.visible { opacity: 1; pointer-events: all; }
+.nav-arrow:hover   { color: var(--text-muted); }
+.nav-prev { left: 10px; }
+.nav-next { right: 10px; }
+
+/* ── APP WRAP ── */
+.app-wrap {
+  position: relative; z-index: 1;
+  height: 100%; display: flex;
+  flex-direction: column; align-items: center; justify-content: center;
+  padding: 64px 80px 52px;
+}
+
+.stage {
+  width: 100%; max-width: 680px;
+}
+
+/* ── STAGE CONTENT (fading wrapper) ── */
+.stage-content {
+  transition: opacity 0.28s ease, transform 0.28s ease;
+}
+.stage-content.fading {
+  opacity: 0; transform: translateY(6px);
+}
+
+/* ── WORDS ROW ── */
+.words-row {
+  display: grid;
+  grid-template-columns: 1fr 56px 1fr;
+  align-items: center;
+  margin-bottom: 22px;
+}
+
+.word {
+  background: none; border: none; cursor: pointer;
+  padding: 6px 0; text-align: left;
+}
+.word-after { text-align: right; }
+
+.word-label {
+  display: block; font-size: 8px; font-weight: 500;
+  letter-spacing: 0.28em; text-transform: uppercase;
+  margin-bottom: 8px; transition: color 0.35s ease;
+}
+.word-before .word-label { color: rgba(226,170,98,0.40); }
+.word-after  .word-label { color: rgba(104,176,120,0.42); }
+.word-before.active .word-label { color: rgba(226,170,98,0.65); }
+.word-after.active  .word-label { color: rgba(104,176,120,0.68); }
+
+.word-text {
+  display: block;
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(26px, 3.6vw, 44px);
+  font-weight: 600; line-height: 1.1;
+  transition: color 0.35s ease;
+}
+.word-before .word-text { color: rgba(226,170,98,0.28); }
+.word-after  .word-text { color: rgba(104,176,120,0.28); }
+.word-before.active .word-text { color: var(--amber); }
+.word-after.active  .word-text { color: var(--green); }
+.word-before:hover:not(.active) .word-text { color: rgba(226,170,98,0.52); }
+.word-after:hover:not(.active)  .word-text { color: rgba(104,176,120,0.52); }
+
+.word-underline {
+  display: block; height: 1px; margin-top: 8px;
+  border-radius: 1px;
+  transform: scaleX(0); transition: transform 0.38s cubic-bezier(0.25,0.46,0.45,0.94);
+}
+.word-before .word-underline { background: var(--amber); transform-origin: left; }
+.word-after  .word-underline { background: var(--green);  transform-origin: right; }
+.word-before.active .word-underline,
+.word-after.active  .word-underline { transform: scaleX(1); }
+
+/* ── AXIS ── */
+.stage-axis {
+  display: flex; align-items: center; justify-content: center;
+}
+.axis-btn {
+  background: none; border: 1px solid var(--border);
+  border-radius: 50%; width: 36px; height: 36px;
+  cursor: pointer; font-size: 14px; color: var(--text-dim);
+  display: flex; align-items: center; justify-content: center;
+  transition: color 0.25s ease, border-color 0.25s ease,
+              transform 0.25s ease, background 0.25s ease;
+  animation: axisHint 2.8s ease-in-out 2s 3;
+}
+.axis-btn:hover {
+  color: var(--text); border-color: var(--magenta-border);
+  background: var(--magenta-soft); transform: scale(1.12);
+}
+@keyframes axisHint {
+  0%,100% { transform: scale(1);    opacity: 0.32; }
+  50%      { transform: scale(1.22); opacity: 0.75; }
+}
+
+/* ── SEPARATOR ── */
+.separator {
+  height: 1px; margin-bottom: 20px;
+  background: linear-gradient(to right, transparent, var(--border), transparent);
+}
+
+/* ── CONTENT AREA ── */
+.content-area {
+  display: grid;
+  min-height: 250px;
+}
+.content-panel {
+  grid-area: 1 / 1;
+  border-radius: 14px; padding: 20px 22px 18px;
+  opacity: 0; pointer-events: none;
+  transform: translateY(10px);
+  transition: opacity 0.42s ease, transform 0.42s ease;
+}
+.content-panel.active {
+  opacity: 1; pointer-events: all; transform: translateY(0);
+}
+.before-panel {
+  background: linear-gradient(150deg, rgba(38,30,18,0.88), rgba(28,22,13,0.82));
+  border: 1px solid var(--amber-border);
+}
+.after-panel {
+  background: linear-gradient(150deg, rgba(18,32,20,0.88), rgba(13,24,15,0.82));
+  border: 1px solid var(--green-border);
+}
+
+.panel-state-label {
+  display: block; font-size: 7.5px; font-weight: 500;
+  letter-spacing: 0.3em; text-transform: uppercase; margin-bottom: 12px;
+}
+.before-panel .panel-state-label { color: rgba(226,170,98,0.52); }
+.after-panel  .panel-state-label { color: rgba(104,176,120,0.58); }
+
+.panel-desc {
+  font-size: 12.5px; font-weight: 300; line-height: 1.88;
+  color: var(--text-muted); letter-spacing: 0.015em; margin-bottom: 16px;
+}
+.panel-desc em { font-style: normal; color: var(--text); font-weight: 400; }
+
+.panel-example {
+  border-top: 1px solid rgba(255,255,255,0.06); padding-top: 13px;
+}
+.example-eyebrow {
+  display: block; font-size: 7px; font-weight: 500;
+  letter-spacing: 0.28em; text-transform: uppercase; margin-bottom: 7px;
+}
+.before-panel .example-eyebrow { color: rgba(226,170,98,0.38); }
+.after-panel  .example-eyebrow { color: rgba(104,176,120,0.40); }
+.example-quote {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 15px; font-style: italic; line-height: 1.65;
+  color: rgba(242,234,216,0.48);
+}
+.example-quote em { font-style: normal; color: rgba(242,234,216,0.70); }
+
+/* ── BOTTOM NAV ── */
+.bottom-nav {
+  display: flex; gap: 8px; align-items: center;
+  justify-content: center; margin-top: 24px;
+}
+.nav-dot {
+  width: 32px; height: 32px; border-radius: 50%;
+  background: rgba(255,255,255,0.04);
+  border: 1px solid var(--border);
+  cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 15px; font-weight: 600; color: var(--text-dim);
+  transition: all 0.28s ease;
+  position: relative;
+}
+.nav-dot:hover { border-color: var(--magenta-border); color: var(--text-muted); }
+.nav-dot.active {
+  background: var(--magenta-soft);
+  border-color: rgba(204,108,240,0.45);
+  color: var(--magenta);
+}
+.nav-dot-label {
+  position: absolute; bottom: -18px; left: 50%;
+  transform: translateX(-50%);
+  font-family: 'DM Sans', sans-serif;
+  font-size: 7px; font-weight: 400; letter-spacing: 0.2em;
+  text-transform: uppercase; color: var(--text-dim);
+  white-space: nowrap; opacity: 0;
+  transition: opacity 0.22s ease;
+  pointer-events: none;
+}
+.nav-dot.active .nav-dot-label,
+.nav-dot:hover .nav-dot-label { opacity: 1; }
+</style>
+</head>
+<body>
+
+<div class="ambient-bg"></div>
+<div class="letter-bg" id="letter-bg">S</div>
+
+<div class="top-label">The SIGNS Framework</div>
+<div class="pair-count" id="pair-count">01 / 05</div>
+
+<button class="nav-arrow nav-prev" id="nav-prev" onclick="navigate(-1)">←</button>
+<button class="nav-arrow nav-next" id="nav-next" onclick="navigate(1)">→</button>
+
+<div class="app-wrap">
+  <div class="stage">
+
+    <div class="stage-content" id="stage-content">
+
+      <!-- Words row -->
+      <div class="words-row">
+        <button class="word word-before active" id="word-before" onclick="setActive('before')">
+          <span class="word-label">The Zoo Today</span>
+          <span class="word-text" id="word-before-text">Spectacle</span>
+          <span class="word-underline"></span>
+        </button>
+
+        <div class="stage-axis">
+          <button class="axis-btn" onclick="toggleActive()" title="See the transformation">→</button>
+        </div>
+
+        <button class="word word-after" id="word-after" onclick="setActive('after')">
+          <span class="word-label">ReWilded</span>
+          <span class="word-text" id="word-after-text">Story</span>
+          <span class="word-underline"></span>
+        </button>
+      </div>
+
+      <div class="separator"></div>
+
+      <!-- Content area -->
+      <div class="content-area">
+        <div class="content-panel before-panel active" id="panel-before">
+          <span class="panel-state-label">The Zoo Today</span>
+          <p class="panel-desc" id="desc-before"></p>
+          <div class="panel-example">
+            <span class="example-eyebrow">In practice</span>
+            <div class="example-quote" id="example-before"></div>
+          </div>
+        </div>
+        <div class="content-panel after-panel" id="panel-after">
+          <span class="panel-state-label">The ReWilded Approach</span>
+          <p class="panel-desc" id="desc-after"></p>
+          <div class="panel-example">
+            <span class="example-eyebrow">In practice</span>
+            <div class="example-quote" id="example-after"></div>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /stage-content -->
+
+    <!-- Bottom nav -->
+    <div class="bottom-nav" id="bottom-nav"></div>
+
+  </div>
+</div>
+
+<script>
+'use strict';
+
+const PAIRS = [
+  {
+    letter: 'S',
+    from: 'Spectacle',
+    to: 'Story',
+    navLabel: 'Spectacle → Story',
+    beforeDesc: `Animals perform within systems designed for reaction. The moment of impact — the charge at the glass, the roar, the splash — is the exhibit's primary output. <em>Context is secondary, if present at all.</em>`,
+    beforeExample: `A gorilla strikes the glass. The crowd screams. Phones go up. No sign explains what displaying means, or why. The behavior becomes what each person already believed.`,
+    afterDesc: `Every behavior is a sentence in a longer narrative. The exhibit creates the conditions for that sentence to land — <em>before the moment, during it, and after it passes.</em>`,
+    afterExample: `An interactive panel activates. "These gorillas are part of a bachelor troop. This behavior is called displaying — directed at other gorillas, not at you."`
+  },
+  {
+    letter: 'I',
+    from: 'Information',
+    to: 'Interaction',
+    navLabel: 'Information → Interaction',
+    beforeDesc: `Plaques describe. Signs instruct. The visitor reads — or doesn't. Knowledge is delivered at the exhibit, not built inside the visitor. <em>The institution speaks in one direction.</em>`,
+    beforeExample: `A QR code links to a PDF. Engagement time: near zero. Average time spent at a standard exhibit sign: under eight seconds.`,
+    afterDesc: `The exhibit responds to the visitor. Touch. Choose. Witness something change. <em>The visitor becomes a participant in meaning-making</em> — not a recipient of it.`,
+    afterExample: `The Dissonance Loop walks you through what you felt, what the system knew, and what could have been said — in the moment it mattered.`
+  },
+  {
+    letter: 'G',
+    from: 'Gaps',
+    to: 'Guidance',
+    navLabel: 'Gaps → Guidance',
+    beforeDesc: `The exhibit ends where the complexity begins. Welfare concerns go unnamed. Behavioral signals go unexplained. <em>Visitors fill the silence with whatever they carried in.</em>`,
+    beforeExample: `The polar bear paces. Left. Fourteen feet. Turn. Right. Fourteen feet. The sign reads: Conservation Ambassador. No sign mentions stereotypy.`,
+    afterDesc: `The exhibit moves toward honest complexity. Staff are empowered to name difficult things. <em>Guidance doesn't simplify — it accompanies the visitor through what's real.</em>`,
+    afterExample: `"That pacing is called stereotypy — it's a stress response. We're working with behavior specialists. You're right to notice."`
+  },
+  {
+    letter: 'N',
+    from: 'Neglect',
+    to: 'Nurture',
+    navLabel: 'Neglect → Nurture',
+    beforeDesc: `Welfare metrics stay internal. Enrichment is often performed for visitors, not designed for animals. <em>The institution's relationship to its animals is invisible to the people inside it.</em>`,
+    beforeExample: `GWI research: 38% of surveyed institutions reported zero philanthropic giving during the study period. The gap between stated mission and investment is rarely made visible.`,
+    afterDesc: `Care is made visible. Welfare science becomes part of the exhibit. Visitors understand that the institution's relationship with its animals is <em>ongoing, imperfect, and genuinely committed.</em>`,
+    afterExample: `A welfare transparency panel shows enrichment schedules, behavioral milestones, and honest notes on challenges. The institution makes itself accountable.`
+  },
+  {
+    letter: 'S',
+    from: 'Stigma',
+    to: 'Support',
+    navLabel: 'Stigma → Support',
+    beforeDesc: `"Dangerous." "Unpredictable." "Wild." The language of threat builds distance — between visitor and animal. <em>It shapes how visitors interpret everything they see.</em>`,
+    beforeExample: `"That is a bad gorilla." A child's frame — formed in the silence of an exhibit that offered no other language. She'll carry it for years.`,
+    afterDesc: `The exhibit builds vocabulary for connection. Behaviors are named. Context is given. <em>Visitors leave with language for what they witnessed</em> — and a reason to care about what happens to it.`,
+    afterExample: `"Displaying is how gorillas communicate. In all of recorded human history, there is no confirmed case of a gorilla killing a human being." A child's frame, redirected.`
+  }
+];
+
+let currentPair  = 0;
+let activeState  = 'before';
+let isTransitioning = false;
+
+/* ── BUILD NAV DOTS ── */
+function buildNav() {
+  const nav = document.getElementById('bottom-nav');
+  nav.innerHTML = PAIRS.map((p, i) => `
+    <button class="nav-dot${i === 0 ? ' active' : ''}" onclick="goToPair(${i})">
+      ${p.letter}
+      <span class="nav-dot-label">${p.navLabel}</span>
+    </button>`
+  ).join('');
+}
+
+/* ── POPULATE CONTENT ── */
+function updateContent(idx) {
+  const p = PAIRS[idx];
+  document.getElementById('letter-bg').textContent       = p.letter;
+  document.getElementById('word-before-text').textContent = p.from;
+  document.getElementById('word-after-text').textContent  = p.to;
+  document.getElementById('desc-before').innerHTML        = p.beforeDesc;
+  document.getElementById('example-before').innerHTML     = p.beforeExample;
+  document.getElementById('desc-after').innerHTML         = p.afterDesc;
+  document.getElementById('example-after').innerHTML      = p.afterExample;
+  document.getElementById('pair-count').textContent       =
+    `0${idx + 1} / 0${PAIRS.length}`;
+}
+
+/* ── SET ACTIVE SIDE ── */
+function setActive(state) {
+  activeState = state;
+  const wBefore = document.getElementById('word-before');
+  const wAfter  = document.getElementById('word-after');
+  const pBefore = document.getElementById('panel-before');
+  const pAfter  = document.getElementById('panel-after');
+
+  wBefore.classList.toggle('active', state === 'before');
+  wAfter.classList.toggle('active',  state === 'after');
+  pBefore.classList.toggle('active', state === 'before');
+  pAfter.classList.toggle('active',  state === 'after');
+}
+
+function toggleActive() {
+  setActive(activeState === 'before' ? 'after' : 'before');
+}
+
+/* ── NAV ARROWS ── */
+function updateArrows(idx) {
+  document.getElementById('nav-prev').classList.toggle('visible', idx > 0);
+  document.getElementById('nav-next').classList.toggle('visible', idx < PAIRS.length - 1);
+}
+
+/* ── NAVIGATE TO PAIR ── */
+function goToPair(idx) {
+  if (idx === currentPair || isTransitioning) return;
+  isTransitioning = true;
+
+  document.querySelectorAll('.nav-dot').forEach((d, i) =>
+    d.classList.toggle('active', i === idx));
+
+  const content = document.getElementById('stage-content');
+  content.classList.add('fading');
+
+  setTimeout(() => {
+    currentPair = idx;
+    updateContent(idx);
+    setActive('before');
+    updateArrows(idx);
+    content.classList.remove('fading');
+    isTransitioning = false;
+  }, 280);
+}
+
+function navigate(dir) {
+  const next = currentPair + dir;
+  if (next >= 0 && next < PAIRS.length) goToPair(next);
+}
+
+/* ── INIT ── */
+buildNav();
+updateContent(0);
+setActive('before');
+updateArrows(0);
+</script>
+</body>
+</html>

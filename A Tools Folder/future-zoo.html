@@ -1,0 +1,431 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Future Zoo — ReWilded</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,600;1,400;1,500&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html, body {
+  width: 100%; height: 100%;
+  overflow: hidden;
+  background: #060e0a;
+  font-family: 'DM Sans', sans-serif;
+}
+
+/* ── SCENE CONTAINER ── */
+.scene-track {
+  position: fixed; inset: 0;
+}
+
+.scene {
+  position: absolute; inset: 0;
+  opacity: 0;
+  transition: opacity 1.2s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  pointer-events: none;
+  display: flex;
+  align-items: flex-end;
+  justify-content: flex-start;
+}
+.scene.active {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+/* ── VIDEO / IMAGE BG ── */
+.scene-media {
+  position: absolute; inset: 0;
+  z-index: 0;
+}
+.scene-media video,
+.scene-media img {
+  width: 100%; height: 100%;
+  object-fit: cover;
+  object-position: center;
+}
+
+/* gradient overlay */
+.scene-media::after {
+  content: '';
+  position: absolute; inset: 0;
+  z-index: 1;
+}
+
+/* different gradient per scene type */
+.scene.scene-intro .scene-media::after {
+  background: linear-gradient(
+    to bottom,
+    rgba(6, 14, 10, 0.2) 0%,
+    rgba(6, 14, 10, 0.55) 40%,
+    rgba(6, 14, 10, 0.92) 100%
+  );
+}
+.scene:not(.scene-intro) .scene-media::after {
+  background: linear-gradient(
+    to bottom,
+    rgba(6, 14, 10, 0.1) 0%,
+    rgba(6, 14, 10, 0.35) 30%,
+    rgba(6, 14, 10, 0.88) 75%,
+    #060e0a 100%
+  );
+}
+
+/* ── TEXT CONTENT ── */
+.scene-content {
+  position: relative;
+  z-index: 2;
+  padding: 0 80px 88px;
+  max-width: 720px;
+}
+
+.scene-eyebrow {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 9px;
+  font-weight: 500;
+  letter-spacing: 0.32em;
+  text-transform: uppercase;
+  color: rgba(191, 85, 224, 0.8);
+  margin-bottom: 18px;
+}
+
+.scene-text {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(26px, 3.2vw, 42px);
+  font-weight: 400;
+  font-style: italic;
+  line-height: 1.45;
+  color: rgba(234, 198, 206, 0.9);
+}
+
+/* intro scene — bottom-left, larger text */
+.scene.scene-intro .scene-text {
+  font-size: clamp(30px, 4vw, 56px);
+  color: #eac6ce;
+  font-weight: 600;
+  font-style: normal;
+}
+
+/* closing scene — bottom-left like other scenes */
+.scene.scene-closing .scene-content {
+  max-width: 720px;
+}
+.scene-closing-tag {
+  display: block;
+  margin-top: 32px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.35em;
+  text-transform: uppercase;
+  color: rgba(191, 85, 224, 0.6);
+}
+
+/* ── LOCATION BADGE ── */
+.scene-location {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 10px;
+  font-weight: 400;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: rgba(220, 162, 91, 0.65);
+  margin-bottom: 14px;
+}
+
+/* ── PROGRESS DOTS ── */
+.progress-bar {
+  position: fixed;
+  bottom: 32px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 12px;
+  z-index: 100;
+}
+.progress-dot {
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: rgba(200, 185, 165, 0.2);
+  border: 1px solid rgba(200, 185, 165, 0.15);
+  cursor: pointer;
+  transition: background 0.4s ease, transform 0.3s ease, border-color 0.4s ease;
+}
+.progress-dot.active {
+  background: rgba(234, 198, 206, 0.7);
+  border-color: rgba(234, 198, 206, 0.4);
+  transform: scale(1.35);
+}
+.progress-dot:hover {
+  background: rgba(200, 185, 165, 0.45);
+  border-color: rgba(200, 185, 165, 0.3);
+}
+
+/* ── NAV ARROWS ── */
+.nav-arrow {
+  position: fixed;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 100;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 50%;
+  width: 48px; height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  color: rgba(200, 185, 165, 0.4);
+  transition: background 0.25s ease, color 0.25s ease, border-color 0.25s ease, opacity 0.4s ease;
+}
+.nav-arrow:hover {
+  background: rgba(255, 255, 255, 0.08);
+  color: rgba(200, 185, 165, 0.85);
+  border-color: rgba(255, 255, 255, 0.15);
+}
+.nav-arrow.hidden { opacity: 0; pointer-events: none; }
+.nav-prev { left: 24px; }
+.nav-next { right: 24px; }
+
+.nav-arrow svg {
+  width: 18px; height: 18px;
+  stroke: currentColor;
+  fill: none;
+  stroke-width: 1.5;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+/* ── SCENE COUNTER ── */
+.scene-counter {
+  position: fixed;
+  top: 28px; right: 32px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 10px;
+  font-weight: 400;
+  letter-spacing: 0.18em;
+  color: rgba(200, 185, 165, 0.3);
+  z-index: 100;
+}
+
+/* ── TEXT ENTRANCE ANIMATION ── */
+.scene.active .scene-content {
+  animation: textEnter 0.9s cubic-bezier(0.25, 0.46, 0.45, 0.94) 0.35s both;
+}
+@keyframes textEnter {
+  from { opacity: 0; transform: translateY(18px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ── MOBILE ── */
+@media (max-width: 680px) {
+  .scene-content { padding: 0 28px 72px; }
+  .scene.scene-intro .scene-content,
+  .scene.scene-closing .scene-content { padding: 0 28px; }
+  .nav-arrow { width: 40px; height: 40px; }
+  .nav-prev { left: 12px; }
+  .nav-next { right: 12px; }
+  .progress-bar { bottom: 20px; gap: 10px; }
+}
+</style>
+</head>
+<body>
+
+<div class="scene-counter"><span id="counter-current">1</span> / <span id="counter-total">7</span></div>
+
+<!-- Nav arrows -->
+<button class="nav-arrow nav-prev hidden" id="nav-prev" aria-label="Previous">
+  <svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"></polyline></svg>
+</button>
+<button class="nav-arrow nav-next" id="nav-next" aria-label="Next">
+  <svg viewBox="0 0 24 24"><polyline points="9 6 15 12 9 18"></polyline></svg>
+</button>
+
+<!-- Progress dots -->
+<div class="progress-bar" id="progress-bar"></div>
+
+<!-- ════════ SCENES ════════ -->
+<div class="scene-track">
+
+  <!-- 1 · INTRO — Giraffe Coffee Shop -->
+  <div class="scene scene-intro active" data-video="../A Images/Video/Future Zoo/Giraffe Coffee Shop.mp4" data-poster="../A Images/Video/Future Zoo/Giraffe Coffe Shop.webp">
+    <div class="scene-media">
+      <video autoplay muted loop playsinline poster="../A Images/Video/Future Zoo/Giraffe Coffe Shop.webp">
+        <source src="../A Images/Video/Future Zoo/Giraffe Coffee Shop.mp4" type="video/mp4">
+      </video>
+    </div>
+    <div class="scene-content">
+      <div class="scene-eyebrow">Ideation · ReWilded</div>
+      <p class="scene-text">What could the zoo experience look like in 50 to 100 years?</p>
+    </div>
+  </div>
+
+  <!-- 2 · WELCOME — Aerial Footage -->
+  <div class="scene" data-video="../A Images/Video/Future Zoo/Aerial view.mp4" data-poster="../A Images/Video/Future Zoo/Aeriel View.webp">
+    <div class="scene-media">
+      <video muted loop playsinline poster="../A Images/Video/Future Zoo/Aeriel View.webp">
+        <source src="../A Images/Video/Future Zoo/Aerial view.mp4" type="video/mp4">
+      </video>
+    </div>
+    <div class="scene-content">
+      <div class="scene-location">The Rewilded Park</div>
+      <p class="scene-text">Welcome to the zoo of the future, where instead of rushing to see every animal in a day, we slow down to experience a single species, deeply.</p>
+    </div>
+  </div>
+
+  <!-- 3 · GIRAFFE HUB -->
+  <div class="scene" data-video="../A Images/Video/Future Zoo/Giraffe Hub.mp4" data-poster="../A Images/Video/Future Zoo/Giraffe Hub.webp">
+    <div class="scene-media">
+      <video muted loop playsinline poster="../A Images/Video/Future Zoo/Giraffe Hub.webp">
+        <source src="../A Images/Video/Future Zoo/Giraffe Hub.mp4" type="video/mp4">
+      </video>
+    </div>
+    <div class="scene-content">
+      <div class="scene-location">Giraffe Hub · Entrance</div>
+      <p class="scene-text">Each encounter begins at its own entrance, just off a central rewilded park. Today you are entering the giraffe hub, a space for hands-on, species-specific, sensory learning.</p>
+    </div>
+  </div>
+
+  <!-- 4 · TREEHOUSE CAFÉ -->
+  <div class="scene" data-video="../A Images/Video/Future Zoo/Treehouse  Cafe.mp4" data-poster="../A Images/Video/Future Zoo/Treehouse Cafe.webp">
+    <div class="scene-media">
+      <video muted loop playsinline poster="../A Images/Video/Future Zoo/Treehouse Cafe.webp">
+        <source src="../A Images/Video/Future Zoo/Treehouse  Cafe.mp4" type="video/mp4">
+      </video>
+    </div>
+    <div class="scene-content">
+      <div class="scene-location">Treehouse Café · Rooftop</div>
+      <p class="scene-text">Up the stairs we find rooftop dining offering adult-friendly, awe-filled encounters, as giraffes pass by without a script.</p>
+    </div>
+  </div>
+
+  <!-- 5 · TACTILE PLAYGROUND -->
+  <div class="scene" data-video="../A Images/Video/Future Zoo/Giraffe Themed Tactile Playground.mp4" data-poster="../A Images/Video/Future Zoo/Giraffe Themed Tactile Playground.webp">
+    <div class="scene-media">
+      <video muted loop playsinline poster="../A Images/Video/Future Zoo/Giraffe Themed Tactile Playground.webp">
+        <source src="../A Images/Video/Future Zoo/Giraffe Themed Tactile Playground.mp4" type="video/mp4">
+      </video>
+    </div>
+    <div class="scene-content">
+      <div class="scene-location">Kinetic Playground · Outdoors</div>
+      <p class="scene-text">Beyond the main building, young explorers engage in kinetic learning, with ropes courses and play designed to deepen species understanding.</p>
+    </div>
+  </div>
+
+  <!-- 6 · Central Park -->
+  <div class="scene" data-video="../A Images/Video/Future Zoo/Central Park .mp4" data-poster="../A Images/Video/Future Zoo/Central Park.webp">
+    <div class="scene-media">
+      <video muted loop playsinline poster="../A Images/Video/Future Zoo/Central Park.webp">
+        <source src="../A Images/Video/Future Zoo/Central Park .mp4" type="video/mp4">
+      </video>
+    </div>
+    <div class="scene-content">
+      <div class="scene-location">Central Park · Savannah</div>
+      <p class="scene-text">Wandering deeper, the back of each module opens to natural terrain. Today, it's giraffes grazing across the savannah. Next time, you might choose the gorilla hub. Or a majestic encounter with our elephants.</p>
+    </div>
+  </div>
+
+  <!-- 7 · CLOSING — Reverence ReWilded -->
+  <div class="scene scene-closing" data-video="../A Images/Video/Future Zoo/Reverence ReWilded.mp4" data-poster="../A Images/Video/Future Zoo/Central Park.webp">
+    <div class="scene-media">
+      <video muted loop playsinline poster="../A Images/Video/Future Zoo/Central Park.webp">
+        <source src="../A Images/Video/Future Zoo/Reverence ReWilded.mp4" type="video/mp4">
+      </video>
+    </div>
+    <div class="scene-content">
+      <p class="scene-text">This is no checklist zoo. This is reverence, ReWilded.</p>
+    </div>
+  </div>
+
+</div>
+
+<script>
+'use strict';
+
+const scenes  = document.querySelectorAll('.scene');
+const total   = scenes.length;
+const bar     = document.getElementById('progress-bar');
+const prev    = document.getElementById('nav-prev');
+const next    = document.getElementById('nav-next');
+const cCur    = document.getElementById('counter-current');
+let current   = 0;
+let locked    = false;
+
+// build dots
+scenes.forEach((_, i) => {
+  const d = document.createElement('div');
+  d.className = 'progress-dot' + (i === 0 ? ' active' : '');
+  d.addEventListener('click', () => goTo(i));
+  bar.appendChild(d);
+});
+const dots = bar.querySelectorAll('.progress-dot');
+
+function goTo(idx) {
+  if (locked || idx === current || idx < 0 || idx >= total) return;
+  locked = true;
+
+  // pause old video
+  const oldVid = scenes[current].querySelector('video');
+  if (oldVid) { oldVid.pause(); }
+
+  scenes[current].classList.remove('active');
+  dots[current].classList.remove('active');
+
+  current = idx;
+
+  scenes[current].classList.add('active');
+  dots[current].classList.add('active');
+  cCur.textContent = current + 1;
+
+  // play new video
+  const newVid = scenes[current].querySelector('video');
+  if (newVid) {
+    newVid.currentTime = 0;
+    newVid.play().catch(() => {});
+  }
+
+  // arrow visibility
+  prev.classList.toggle('hidden', current === 0);
+  next.classList.toggle('hidden', current === total - 1);
+
+  setTimeout(() => { locked = false; }, 1000);
+}
+
+prev.addEventListener('click', () => goTo(current - 1));
+next.addEventListener('click', () => goTo(current + 1));
+
+// keyboard
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'ArrowRight' || e.key === 'ArrowDown') goTo(current + 1);
+  if (e.key === 'ArrowLeft'  || e.key === 'ArrowUp')   goTo(current - 1);
+});
+
+// touch swipe
+let touchX = 0;
+document.addEventListener('touchstart', (e) => { touchX = e.touches[0].clientX; }, { passive: true });
+document.addEventListener('touchend', (e) => {
+  const dx = e.changedTouches[0].clientX - touchX;
+  if (Math.abs(dx) > 50) {
+    dx < 0 ? goTo(current + 1) : goTo(current - 1);
+  }
+}, { passive: true });
+
+// scroll / wheel
+let wheelCooldown = false;
+document.addEventListener('wheel', (e) => {
+  if (wheelCooldown) return;
+  wheelCooldown = true;
+  if (e.deltaY > 0) goTo(current + 1);
+  else if (e.deltaY < 0) goTo(current - 1);
+  setTimeout(() => { wheelCooldown = false; }, 1200);
+}, { passive: true });
+
+// start first video
+const firstVid = scenes[0].querySelector('video');
+if (firstVid) firstVid.play().catch(() => {});
+</script>
+
+</body>
+</html>

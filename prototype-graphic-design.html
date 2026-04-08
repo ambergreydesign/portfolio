@@ -1,0 +1,721 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>The Grey Gazette — Amber Grey Studio</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400;1,700&family=Lora:ital,wght@0,400;0,500;0,600;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+
+:root{
+  --paper:#f5f0e8;
+  --ink:#1a1a18;
+  --ink-light:#3a3a35;
+  --ink-muted:#6b6b62;
+  --rule:#c8c0b0;
+  --accent:#8b2020;
+  --col-gap:28px;
+}
+
+html{
+  background:#0b1c26;
+  background-image:linear-gradient(rgba(31,15,56,0.5),rgba(31,15,56,0.5)),url('Studio_Edited.webp');
+  background-size:cover;background-position:center top;background-attachment:fixed;
+}
+body{
+  font-family:'Lora',serif;color:var(--ink);
+  display:flex;justify-content:center;
+  padding:40px 20px 80px;min-height:100vh;
+}
+
+/* ── back button (floats over everything) ── */
+.back-link{
+  position:fixed;top:28px;left:32px;display:inline-flex;align-items:center;gap:10px;
+  background:rgba(255,255,255,0.06);backdrop-filter:blur(14px) saturate(1.2);
+  border:1px solid rgba(255,255,255,0.1);border-radius:100px;padding:9px 18px 9px 14px;
+  cursor:pointer;color:rgba(200,185,165,0.75);font-family:'DM Sans',sans-serif;
+  font-size:10px;font-weight:400;letter-spacing:0.22em;text-transform:uppercase;
+  transition:background .25s,color .25s;z-index:200;text-decoration:none;
+}
+.back-link:hover{background:rgba(255,255,255,0.11);color:rgba(200,185,165,1)}
+.back-arrow{display:inline-block;width:16px;height:1px;background:currentColor;position:relative;flex-shrink:0}
+.back-arrow::before{content:'';position:absolute;left:0;top:-3px;width:6px;height:6px;border-left:1px solid currentColor;border-bottom:1px solid currentColor;transform:rotate(45deg)}
+
+/* ── newspaper container ── */
+.newspaper{
+  width:min(960px,100%);
+  background:var(--paper);
+  box-shadow:0 20px 80px rgba(0,0,0,0.5),0 0 0 1px rgba(0,0,0,0.05);
+  padding:0;
+  position:relative;
+}
+/* paper texture */
+.newspaper::before{
+  content:'';position:absolute;inset:0;pointer-events:none;
+  background:repeating-linear-gradient(0deg,transparent,transparent 1px,rgba(0,0,0,0.01) 1px,rgba(0,0,0,0.01) 2px);
+  mix-blend-mode:multiply;
+}
+
+/* ── MASTHEAD ── */
+.masthead{
+  text-align:center;padding:28px 40px 20px;
+  border-bottom:4px double var(--rule);
+}
+.masthead-date{
+  font-family:'DM Sans',sans-serif;font-size:9px;font-weight:400;
+  letter-spacing:0.2em;text-transform:uppercase;color:var(--ink-muted);
+  margin-bottom:6px;
+}
+.masthead-title{
+  font-family:'Playfair Display',serif;font-size:clamp(36px,6vw,64px);
+  font-weight:900;color:var(--ink);line-height:1;
+  letter-spacing:-0.02em;margin-bottom:4px;
+}
+.masthead-sub{
+  font-family:'Lora',serif;font-size:11px;font-style:italic;
+  color:var(--ink-muted);letter-spacing:0.04em;
+}
+.masthead-rule{
+  width:100%;height:1px;background:var(--rule);margin-top:12px;
+}
+
+/* ── FRONT PAGE ── */
+.front-page{padding:0 40px 40px}
+
+/* section headers */
+.section-label{
+  font-family:'DM Sans',sans-serif;font-size:8px;font-weight:500;
+  letter-spacing:0.25em;text-transform:uppercase;color:var(--accent);
+  padding:12px 0 8px;border-bottom:1px solid var(--rule);margin-bottom:16px;
+}
+
+/* headline grid */
+.headline-grid{
+  display:grid;
+  grid-template-columns:1.4fr 1px 1fr;
+  gap:0 var(--col-gap);
+  margin-bottom:24px;
+}
+.col-rule{background:var(--rule)}
+
+/* lead story */
+.lead-story{cursor:pointer;padding-right:8px}
+.lead-story:hover .lead-hed{color:var(--accent)}
+.lead-img{
+  width:100%;border:1px solid var(--rule);margin-bottom:12px;
+  display:block;
+}
+.lead-vid{
+  width:100%;border:1px solid var(--rule);margin-bottom:12px;display:block;
+}
+.lead-hed{
+  font-family:'Playfair Display',serif;font-size:clamp(22px,3vw,32px);
+  font-weight:700;line-height:1.2;color:var(--ink);
+  margin-bottom:8px;transition:color .2s;
+}
+.lead-deck{
+  font-size:13px;line-height:1.6;color:var(--ink-light);
+  margin-bottom:8px;
+}
+.lead-byline{
+  font-family:'DM Sans',sans-serif;font-size:8px;font-weight:400;
+  letter-spacing:0.15em;text-transform:uppercase;color:var(--ink-muted);
+}
+
+/* sidebar stories */
+.sidebar-stories{padding-left:8px}
+.sidebar-item{
+  padding:12px 0;border-bottom:1px solid var(--rule);
+  cursor:pointer;display:flex;gap:14px;align-items:flex-start;
+}
+.sidebar-item:last-child{border-bottom:none}
+.sidebar-item:hover .sidebar-hed{color:var(--accent)}
+.sidebar-thumb{
+  width:80px;height:60px;object-fit:cover;border:1px solid var(--rule);
+  flex-shrink:0;
+}
+.sidebar-text{flex:1;min-width:0}
+.sidebar-hed{
+  font-family:'Playfair Display',serif;font-size:14px;font-weight:700;
+  line-height:1.3;color:var(--ink);transition:color .2s;margin-bottom:4px;
+}
+.sidebar-deck{
+  font-size:11px;line-height:1.5;color:var(--ink-muted);
+}
+
+/* bottom strip */
+.bottom-strip{
+  display:grid;grid-template-columns:repeat(4,1fr);gap:var(--col-gap);
+  border-top:2px solid var(--ink);padding-top:16px;
+  margin-top:8px;
+}
+.strip-item{cursor:pointer}
+.strip-item:hover .strip-hed{color:var(--accent)}
+.strip-img{
+  width:100%;aspect-ratio:4/3;object-fit:cover;
+  border:1px solid var(--rule);margin-bottom:8px;display:block;
+}
+.strip-hed{
+  font-family:'Playfair Display',serif;font-size:12px;font-weight:700;
+  line-height:1.3;color:var(--ink);transition:color .2s;margin-bottom:4px;
+}
+.strip-cat{
+  font-family:'DM Sans',sans-serif;font-size:7px;font-weight:400;
+  letter-spacing:0.18em;text-transform:uppercase;color:var(--accent);
+}
+
+/* ── ARTICLE VIEW ── */
+.article-view{
+  position:fixed;inset:0;z-index:100;
+  display:flex;justify-content:center;
+  background:rgba(11,28,38,0.85);backdrop-filter:blur(12px);
+  overflow-y:auto;padding:40px 20px 80px;
+  opacity:0;pointer-events:none;
+  transition:opacity .35s ease;
+}
+.article-view.open{opacity:1;pointer-events:auto}
+
+.article-paper{
+  width:min(720px,100%);background:var(--paper);
+  box-shadow:0 20px 80px rgba(0,0,0,0.5);
+  padding:48px;position:relative;
+  transform:translateY(20px);
+  transition:transform .4s cubic-bezier(.25,.46,.45,.94);
+}
+.article-view.open .article-paper{transform:translateY(0)}
+
+.article-close{
+  position:absolute;top:20px;right:20px;
+  width:32px;height:32px;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;
+  border:1px solid var(--rule);border-radius:50%;
+  transition:background .2s;background:transparent;
+}
+.article-close:hover{background:rgba(0,0,0,0.05)}
+.article-close::before,.article-close::after{
+  content:'';position:absolute;width:14px;height:1px;background:var(--ink-muted);
+}
+.article-close::before{transform:rotate(45deg)}
+.article-close::after{transform:rotate(-45deg)}
+
+.article-cat{
+  font-family:'DM Sans',sans-serif;font-size:8px;font-weight:500;
+  letter-spacing:0.25em;text-transform:uppercase;color:var(--accent);
+  margin-bottom:12px;
+}
+.article-hed{
+  font-family:'Playfair Display',serif;font-size:clamp(28px,4vw,42px);
+  font-weight:900;line-height:1.15;color:var(--ink);
+  margin-bottom:8px;
+}
+.article-deck{
+  font-family:'Lora',serif;font-size:15px;font-style:italic;
+  color:var(--ink-light);line-height:1.5;margin-bottom:16px;
+}
+.article-rule{
+  width:60px;height:2px;background:var(--accent);margin-bottom:20px;
+}
+.article-img{
+  width:100%;border:1px solid var(--rule);margin-bottom:24px;display:block;
+}
+.article-vid{
+  width:100%;border:1px solid var(--rule);margin-bottom:24px;display:block;
+}
+.article-body{
+  columns:2;column-gap:var(--col-gap);
+  font-size:13px;line-height:1.75;color:var(--ink-light);
+}
+.article-body p{margin-bottom:14px;text-indent:1.5em}
+.article-body p:first-child{text-indent:0}
+.article-body p:first-child::first-letter{
+  font-family:'Playfair Display',serif;font-size:42px;font-weight:900;
+  float:left;line-height:1;margin:0 8px 0 0;color:var(--ink);
+}
+.article-nav{
+  display:flex;justify-content:space-between;align-items:center;
+  margin-top:32px;padding-top:16px;border-top:1px solid var(--rule);
+}
+.article-nav-btn{
+  font-family:'DM Sans',sans-serif;font-size:9px;font-weight:400;
+  letter-spacing:0.15em;text-transform:uppercase;color:var(--ink-muted);
+  cursor:pointer;padding:6px 12px;border:1px solid var(--rule);border-radius:3px;
+  transition:color .2s,border-color .2s;background:transparent;
+}
+.article-nav-btn:hover{color:var(--ink);border-color:var(--ink)}
+.article-counter{
+  font-family:'DM Sans',sans-serif;font-size:8px;letter-spacing:0.12em;color:var(--ink-muted);
+}
+
+/* ── more stories grid ── */
+.more-section{
+  padding:0 40px 40px;
+}
+.more-grid{
+  display:grid;grid-template-columns:repeat(3,1fr);gap:20px;
+}
+.more-item{cursor:pointer}
+.more-item:hover .strip-hed{color:var(--accent)}
+
+/* ── responsive ── */
+@media(max-width:768px){
+  body{padding:20px 8px 60px}
+  .newspaper{width:100%}
+  .masthead{padding:20px 20px 16px}
+  .front-page{padding:0 20px 20px}
+  .headline-grid{grid-template-columns:1fr;gap:20px}
+  .col-rule{display:none}
+  .sidebar-stories{padding-left:0}
+  .bottom-strip{grid-template-columns:1fr 1fr;gap:16px}
+  .article-paper{padding:28px 20px}
+  .article-body{columns:1}
+  .more-grid{grid-template-columns:1fr 1fr}
+  .more-section{padding:0 20px 20px}
+  .back-link{top:8px;left:8px}
+}
+@media(max-width:480px){
+  .bottom-strip{grid-template-columns:1fr}
+  .more-grid{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+
+<a class="back-link" onclick="event.preventDefault();if(document.querySelector('.article-view.open')){closeArticle()}else{window.location.href='graphic-design.html'}">
+  <span class="back-arrow"></span><span id="backLabel">Gallery</span>
+</a>
+
+<div class="newspaper" id="newspaper">
+  <!-- masthead -->
+  <div class="masthead">
+    <div class="masthead-date">Volume I &middot; Visual Arts Edition &middot; 2026</div>
+    <h1 class="masthead-title">The Grey Gazette</h1>
+    <div class="masthead-sub">A curated collection of graphic design, illustration &amp; visual commentary</div>
+    <div class="masthead-rule"></div>
+  </div>
+
+  <!-- front page content built by JS -->
+  <div class="front-page" id="frontPage"></div>
+</div>
+
+<!-- article overlay -->
+<div class="article-view" id="articleView">
+  <div class="article-paper" id="articlePaper">
+    <div class="article-close" onclick="closeArticle()"></div>
+    <div id="articleContent"></div>
+    <div class="article-nav">
+      <button class="article-nav-btn" onclick="navArticle(-1)">← Previous</button>
+      <span class="article-counter" id="articleCounter"></span>
+      <button class="article-nav-btn" onclick="navArticle(1)">Next →</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const IMG = 'A Images/Graphic Design/';
+
+/* ── PIECE DATA ── */
+const pieces = [
+  { id:'elephant', title:'Elephant', cat:'Illustration', img:IMG+'Elephant.webp',
+    hed:'The Weight of Beauty',
+    deck:'How ornamentation becomes armor in a world that demands presence.',
+    body:'This piece explores the intersection of natural grandeur and decorative excess. The elephant, already a symbol of memory and majesty, becomes something more when crowned with an impossible garden of mandala-like flowers. Each petal carries its own geometry — a meditation on how living things accumulate beauty as a form of survival. The dark background pushes the subject forward, demanding the viewer confront its scale. There is no hiding from something this adorned, this certain of itself. In graphic design, we often strip away to find clarity. Here the opposite is true — meaning arrives through accumulation, through the patient layering of pattern upon pattern until the creature becomes both itself and something entirely new.' },
+
+  { id:'up-in-the-air', title:'It\'s Up in the Air', cat:'Illustration', img:IMG+'It\'s up in the air.webp',
+    hed:'Spinning Toward Uncertain Ground',
+    deck:'A menagerie of anxiety, rendered in the language of children\'s illustration.',
+    body:'The spinning wheel centers the composition like a clock no one asked for. Around it, animals gather — not in harmony, but in a shared state of nervous anticipation. The guinea pig\'s glasses suggest intelligence without power. The tiger cub clings to what it can. And the syringe descends from above like a verdict. This piece uses the visual grammar of picture books to smuggle in something sharper: the feeling of being small in systems designed for bigger things. The palette stays cheerful, the lines stay clean, but the content refuses to match. That dissonance is the point.' },
+
+  { id:'women-who-invent', title:'Women Who Invent', cat:'Social Commentary', img:IMG+'Women Who Invent.webp',
+    hed:'Invention as Inheritance',
+    deck:'Celebrating the women whose creations shaped the world we forgot to credit.',
+    body:'Designed as a feature spread for The Collegian, this piece centers a woman looking upward — past the headline, past the page itself. Her gaze suggests futures being calculated in real time. The typography borrows from mid-century newspaper mastheads, grounding the content in journalistic tradition while the illustration pushes toward something more mythic. The hands reaching from above suggest both guidance and the invisible labor of mentorship. Each element of the composition serves double duty: informing and inspiring, documenting and dreaming.' },
+
+  { id:'hopeful-pride', title:'Hopeful Pride', cat:'Identity & Culture', img:IMG+'Hopeful Pride.webp',
+    hed:'The Colors We Carry',
+    deck:'Pride rendered not as spectacle, but as intimate gesture.',
+    body:'Two hands form a heart shape around a rainbow flag — a simple gesture that carries enormous weight. The piece avoids the typical maximalism of pride imagery in favor of something quieter and more personal. The brown skin tones are deliberate, centering queer people of color in a narrative that often erases them. Scattered petals float through the frame like confetti that hasn\'t landed yet, suspending the moment between celebration and hope. The composition is clean, almost minimal, letting the gesture speak without decoration getting in the way.' },
+
+  { id:'black-women', title:'Black Women in History', cat:'Social Commentary', img:IMG+'Black Women in History.webp',
+    hed:'Portraits of the Uncredited',
+    deck:'Four women. Four contributions. One long overdue headline.',
+    body:'This illustration gathers its subjects like a family portrait that history refused to take. Each woman is rendered with specificity — their clothing, their posture, their direct gaze at the viewer. There is no abstraction here, no soft-focus historical romanticism. These are individuals, not symbols, and the piece insists you see them that way. The typography wraps around and between the figures, integrating text and image in a way that mirrors how these women\'s stories are inseparable from the larger narrative. The color palette is warm and grounded, refusing the cold distance of archival imagery.' },
+
+  { id:'building', title:'Building', cat:'Design', img:IMG+'Building.webp',
+    hed:'Structures of Thought',
+    deck:'Architecture as metaphor, perspective as argument.',
+    body:'A study in perspective and the quiet drama of constructed space. The building rises with mathematical certainty, but the rendering keeps things human — slight variations in tone, shadows that suggest time of day rather than eternal daylight. In design, we build structures both literal and conceptual. This piece sits at that intersection, asking whether the spaces we create shape us or simply reflect what we already are. The minimal palette strips away distraction, letting form do the talking.' },
+
+  { id:'cultural-rep', title:'Cultural Representation', cat:'Identity & Culture', img:IMG+'Cultural Representation.webp',
+    hed:'The Spectrum of Self',
+    deck:'Skin tones as landscape, identity as terrain.',
+    body:'Layered silhouettes in graduating skin tones create a topographic map of identity. No single figure stands alone — each is defined by and against the others, a visual argument for identity as relational rather than fixed. The dark background converts the figures into a kind of mountain range, geological rather than biographical. Time is embedded in the layers: these are not simultaneous presences but accumulated histories, each generation building on the contour of the last. The piece asks a deceptively simple question: where does one identity end and another begin?' },
+
+  { id:'bend-over', title:'Bend Over', cat:'Illustration', img:IMG+'Bend Over.webp',
+    hed:'Flexibility as Resistance',
+    deck:'The body bends but does not break.',
+    body:'A figure contorts itself with athletic precision — not in pain, but in controlled defiance. The pose suggests both vulnerability and extraordinary strength, the kind of flexibility that comes from necessity rather than choice. The rendering is bold, graphic, high-contrast, refusing the softness that figure work often defaults to. This is a body as argument, as evidence, as a counter-narrative to every expectation placed upon it.' },
+
+  { id:'home-design', title:'Home Design', cat:'Design', img:IMG+'Home Design.webp',
+    hed:'The Interior Life',
+    deck:'Designing the spaces where we become ourselves.',
+    body:'A living room rendered with the precision of an architectural illustration but the warmth of memory. The mid-century modern furniture sits in pools of carefully calibrated light. Plants soften the geometry. A clock marks time that the room itself seems to ignore. This is interior design as aspiration — not the space as it is, but as it wants to be. Every element has been chosen, considered, placed with intention. The result is a room that feels simultaneously lived-in and impossibly perfect, which is perhaps the central tension of all design.' },
+
+  { id:'card-front', title:'Greeting Card Front', cat:'Design', img:IMG+'Greeting Card Front.webp',
+    hed:'Nacho Average Birthday',
+    deck:'When design meets delight: a greeting card that earns its exclamation point.',
+    body:'A nacho chip with attitude — glasses slightly askew, surrounded by the debris of its own celebration. The pun lands because the execution commits fully. The character has weight and texture, the cheese drips with convincing viscosity, and the typography plays straight man to the visual comedy. Good greeting card design is harder than it looks: it needs to communicate instantly, entertain briefly, and leave a warm residue. This one succeeds on all three counts.' },
+
+  { id:'card-back', title:'Greeting Card Back', cat:'Design', img:IMG+'Greeting Card Back.webp',
+    hed:'The Queso You Didn\'t Know',
+    deck:'The inside joke continues — because the best cards reward a second look.',
+    body:'The back of the card extends the visual pun with the same character in a new predicament, proving that the concept has legs (despite being a tortilla chip). The typography shifts to match the interior context — more intimate, as if the card is now talking just to you. Design continuity between front and back is something many cards neglect, treating the interior as afterthought. Here it feels like a conversation between two sides of the same joke.' },
+
+  { id:'pied-trumpet', title:'Pied Trumpet', cat:'Illustration', img:IMG+'Pied Trumpet.webp',
+    hed:'The Instrument Speaks',
+    deck:'Brass and light, rendered with photographic devotion.',
+    body:'A tuba — or is it a sousaphone? — rendered with an almost obsessive attention to reflected light. Every curve of brass catches a different quality of illumination, turning the instrument into a landscape of its own. The background falls away to nothing, isolating the subject like a portrait. There is respect in this kind of rendering, a willingness to spend time with an object until it reveals its own vocabulary of form. The result is an illustration that feels more present than a photograph — more considered, more seen.' },
+
+  { id:'pregnancy', title:'Losing a Pregnancy', cat:'Social Commentary', img:IMG+'Loosing a Pregnancy.webp',
+    hed:'The Conversation We Whisper',
+    deck:'Breaking silence with ink and vulnerability.',
+    body:'Published as a personal essay feature, this piece handles its subject with the seriousness it demands and the tenderness it deserves. The illustration uses soft colors and botanical elements to create a frame for difficult content — not to soften it, but to give it a space where it can breathe. The layout follows newspaper convention while the content breaks every unspoken rule about what newspapers discuss. The pull quotes are chosen carefully, letting the writer\'s voice carry the weight that images alone cannot.' },
+
+  { id:'blk-history', title:'Black History Month', cat:'Identity & Culture', img:IMG+'Black History Month.webp',
+    hed:'History in Present Tense',
+    deck:'Designing a celebration that acknowledges the work still undone.',
+    body:'A commissioned piece for Black History Month that refuses the usual approach of historical portraiture in favor of something more contemporary and confrontational. The design language is modern, the palette is bold, and the message is clear: this history is not safely in the past. It lives in the present, demands attention in the present, and shapes the future in ways we are still learning to see. The typography does heavy lifting, integrating date and declaration into a single visual statement.' },
+
+  { id:'collegian', title:'Collegian Logo', cat:'Design', img:IMG+'Collegian Logo.webp',
+    hed:'Identity in Letterforms',
+    deck:'Branding a student newspaper with the gravity it deserves.',
+    body:'A logo is a promise compressed into marks. This redesign for The Collegian balances editorial authority with the energy of a student publication — no small feat. The letterforms carry weight without stuffiness, suggest tradition without nostalgia. A successful newspaper masthead needs to work at every scale, in every context, and convey credibility before a single word of copy is read. This one does that work quietly and well.' },
+
+  { id:'oceana', title:'Oceana Animation', cat:'Design', vid:IMG+'Oceana Animation.mp4',
+    hed:'Motion as Message',
+    deck:'When design begins to move, new conversations become possible.',
+    body:'Animation adds a temporal dimension to graphic design — suddenly there is before and after, cause and effect, rhythm and pause. This piece for Oceana explores what happens when the static tools of visual communication are set in motion. The result is something that carries information differently: not all at once, like a poster, but in sequence, like music. Each frame is designed, but the meaning lives in the transitions between them.' },
+
+  { id:'reflective', title:'Reflective', cat:'Publications', img:IMG+'Reflective.webp',
+    hed:'Looking Back to See Forward',
+    deck:'A publication design that uses reflection as both method and metaphor.',
+    body:'The reflective journal piece takes its title literally and figuratively. The layout creates visual echoes — elements that mirror and reverse, text that reads forward while the design structure looks back. Publication design at its best is invisible architecture: the reader moves through content without noticing the framework that guides them. Here, that framework is made visible as part of the content itself, turning design decisions into part of the narrative.' },
+
+  { id:'womens-history', title:'Women\'s History Month', cat:'Social Commentary', img:IMG+'Women\'s History Month 2021.webp',
+    hed:'Votes, Voices, Victory',
+    deck:'Silhouettes of progress against the long arc of history.',
+    body:'The suffrage imagery is deliberate — a reminder that the freedoms we inherit were purchased with stubbornness and courage. The silhouetted figures march across the composition like a timeline made physical, each woman carrying a different posture of determination. The "Votes for Women" banner anchors the piece in historical specificity while the illustration style keeps it contemporary. This is history as living document, not museum exhibit, and the design choices reflect that urgency throughout.' },
+
+  { id:'menu-anim', title:'Menu Animation', cat:'Design', vid:IMG+'Menu Animation.mp4',
+    hed:'The Choreography of Choice',
+    deck:'Interface design as performance — every transition tells a story.',
+    body:'A menu is a moment of decision, and this animation treats it accordingly. Each element enters with considered timing, creating a rhythm that guides the eye without demanding attention. The best interface animations are the ones you barely notice — they simply make the experience feel right, feel intentional, feel designed rather than assembled. This piece demonstrates that principle through restraint: nothing moves that doesn\'t need to, and everything that moves does so with purpose.' },
+
+  { id:'battery', title:'Battery', cat:'Design', img:IMG+'Battery.webp',
+    hed:'Power Contained',
+    deck:'An everyday object, examined until it becomes extraordinary.',
+    body:'The battery is perhaps the most overlooked piece of industrial design we interact with daily. This illustration strips away brand and context to examine the object purely as form — cylinder, terminal, label. The rendering reveals textures and reflections that the eye normally skips, arguing that attention itself is a form of design. When we look closely enough at anything, it becomes interesting. The designer\'s job is to make that looking irresistible.' },
+
+  { id:'breonna', title:'Breonna Taylor', cat:'Social Commentary', img:IMG+'Breonna Taylor.webp',
+    hed:'Say Her Name',
+    deck:'Portraiture as protest, design as memorial.',
+    body:'Some images carry obligations. This portrait of Breonna Taylor refuses both the sanitized distance of news photography and the aestheticized grief of memorial art. Instead, it presents a person — specific, individual, irreplaceable. The design choices serve that specificity: no abstraction, no symbolism standing in for the human being at the center. The piece asks the viewer to sit with presence rather than absence, to remember a life rather than only a death. That is its quiet, insistent power.' },
+
+  { id:'ballet', title:'Ballet', cat:'Illustration', img:IMG+'Ballet.webp',
+    hed:'Discipline Made Visible',
+    deck:'The dancer\'s body as a record of accumulated practice.',
+    body:'The figure holds a position that looks effortless and costs everything. Ballet illustration walks a tightrope between idealization and documentation — lean too far in either direction and you lose the truth. This piece finds balance by focusing on the geometry of the pose rather than the emotion of the performance. The body becomes an arrangement of angles and tensions, beautiful precisely because of its structural clarity. The simplified palette removes the theater and leaves only the architecture of movement.' },
+
+  { id:'magazine', title:'Magazine Video', cat:'Publications', vid:IMG+'Magazine Video.mp4',
+    hed:'The Page in Motion',
+    deck:'When print design learns to breathe, flip, and unfold.',
+    body:'A magazine is a designed sequence — each spread sets up the next, each page turn is a small act of revelation. This video captures that sequential quality and amplifies it, letting the reader experience the flow of editorial design in time rather than space. The pacing is deliberate: fast enough to convey energy, slow enough to let each layout register. It is a love letter to print design, delivered in a digital medium.' },
+
+  { id:'back-to-life', title:'Back to Life', cat:'Illustration', img:IMG+'Back to Life.webp',
+    hed:'Return and Renewal',
+    deck:'Finding the way back when the path has overgrown.',
+    body:'The title says it plainly: back to life. But the illustration complicates that simplicity with layered imagery that suggests the return is never to the same place you left. The journey back is its own destination, shaped by everything encountered along the way. The visual language mixes organic and geometric forms, natural and constructed, as if the piece itself is negotiating between where it\'s been and where it\'s going.' },
+
+  { id:'painting-dark', title:'Painting with the Dark', cat:'Illustration', img:IMG+'Painting with the dark.webp',
+    hed:'What Shadow Reveals',
+    deck:'An exploration of negative space as creative territory.',
+    body:'Most painting adds light. This piece argues for the opposite — that darkness is not absence but material, not emptiness but possibility. The composition uses shadow as a constructive element, building form out of what isn\'t there rather than what is. It is a technique as old as chiaroscuro but applied here with contemporary directness. The result is an image that feels excavated rather than constructed, discovered rather than designed, as if the picture was always there, waiting for the light to be removed.' },
+
+  { id:'butterfly', title:'Butterfly Animation', cat:'Illustration', vid:IMG+'Butterfly animation.mov',
+    hed:'Metamorphosis in Motion',
+    deck:'The oldest story, told through the newest medium.',
+    body:'A butterfly\'s transformation is the original special effect — a creature that redesigns itself completely, emerging as something its earlier form couldn\'t imagine. This animation captures that impossibility through frame-by-frame illustration, honoring the craft of traditional animation while leveraging digital tools for precision. Each wing beat is both movement and ornament, function and beauty, physics and poetry.' },
+
+  { id:'candy', title:'Candy', cat:'Illustration', img:IMG+'Candy.webp',
+    hed:'Sugar Coated',
+    deck:'Pop art meets confection in a study of guilty pleasures.',
+    body:'Candy is color before it is flavor — a lesson that graphic designers understand intuitively. This piece renders its subject with the same seriousness usually reserved for product photography, elevating the trivial to the considered. The bright palette and clean rendering argue that delight is its own justification, that not every design problem needs a serious solution. Sometimes the job is simply to make something look as good as it tastes.' },
+
+  { id:'body', title:'Body', cat:'Illustration', img:IMG+'Body.webp',
+    hed:'The Form We Inhabit',
+    deck:'Anatomy as autobiography, rendered without apology.',
+    body:'The body is the first material we work with and the last we understand. This illustration approaches its subject with clinical directness softened by artistic sensitivity — a combination that reflects the lived experience of inhabiting a form that is simultaneously yours and a mystery. The rendering strips away context, presenting the body as subject rather than object, inviting contemplation rather than consumption.' },
+
+  { id:'big-pharma', title:'Big Pharma', cat:'Social Commentary', img:IMG+'Big Pharma.webp',
+    hed:'The Prescription Problem',
+    deck:'When healing becomes an industry, who profits from our pain?',
+    body:'A visual essay on the pharmaceutical industrial complex, rendered with the clarity that the subject demands and the pharmaceutical industry avoids. The imagery is direct — no metaphors softening the critique, no visual euphemisms standing in for plain speaking. The design borrows from the visual language of pharmaceutical advertising itself, turning the industry\'s own aesthetic tools against it. The result is commentary that is simultaneously inside and outside its subject, a critique wearing its target\'s clothing.' },
+
+  { id:'in-the-machine', title:'In the Machine', cat:'Publications', img:IMG+'IN THE MACHINE.webp',
+    hed:'Finding Purpose in the Algorithm',
+    deck:'A student discovers that computers don\'t argue back — they just do what you tell them.',
+    body:'This Collegian feature spread uses the brutalist aesthetic of early computing — blocky type, circuit-board geometries, pixel-adjacent rendering — to tell a deeply human story about finding belonging through technology. The layout is dense by design, mirroring the immersive experience of learning to code: everything matters, nothing is decorative, each element serves a function. The pull quote lands with the weight of personal revelation, breaking the grid to command attention.' },
+
+  { id:'choking', title:'Choking on Words', cat:'Social Commentary', img:IMG+'Choking on Words.webp',
+    hed:'When Language Fails',
+    deck:'The violence of silence, the silence of violence.',
+    body:'Some things cannot be said. This piece lives in that impossibility, visualizing the physical sensation of words that cannot escape — the tightness, the frustration, the suffocation of unexpressed truth. The illustration is visceral without being graphic, suggesting rather than depicting, which makes it more uncomfortable rather than less. The design choices are stripped back, letting the central image carry the full emotional weight without typographic or decorative competition.' },
+
+  { id:'permit-less', title:'Permit-less Carry', cat:'Social Commentary', img:IMG+'Permit-less Carry.webp',
+    hed:'What We Allow',
+    deck:'Policy rendered as visual argument.',
+    body:'Gun legislation is usually discussed in abstractions — statistics, amendments, precedents. This piece brings the conversation back to the physical: the object itself, unadorned and unavoidable. The design strips away political rhetoric to present the essential question visually: what does it mean to carry this without permission? The composition is deliberately uncomfortable, which is precisely the point. Good editorial design doesn\'t resolve tensions — it presents them clearly enough for the viewer to feel their weight.' },
+
+  { id:'ballerina', title:'Ballerina in the Maze', cat:'Illustration', img:IMG+'Ballerina in the Maze.webp',
+    hed:'Grace Under Pressure',
+    deck:'A dancer navigates the labyrinth of expectation.',
+    body:'Published as a feature in The Collegian, this piece uses the ballerina as a metaphor for navigating complex systems with grace — the maze being academic, social, personal, all at once. The butterflies emerging from the brain suggest thoughts taking flight, ideas escaping the labyrinth of overthinking. The composition balances the editorial conventions of newspaper layout with the freedom of illustration, creating a spread that informs and inspires in equal measure. The figure\'s upward reach drives the eye toward possibility rather than constraint.' },
+
+  { id:'slowing-down', title:'Slowing Down', cat:'Illustration', img:IMG+'Slowing Down.webp',
+    hed:'The Velocity of Stillness',
+    deck:'An argument for the radical act of doing less.',
+    body:'In a culture that equates speed with virtue, slowing down requires its own kind of courage. This piece visualizes deceleration as a physical experience — forms elongating, colors deepening, edges softening as velocity drops. The composition creates a sensation of time becoming thick, of moments expanding to fill the space that rushing usually compresses. It is a visual exhale, a designed pause, a reminder that clarity often arrives only after we stop looking for it.' },
+
+  { id:'us-gov', title:'Property of U.S. GOV', cat:'Social Commentary', img:IMG+'Property of U.S. GOV.webp',
+    hed:'Ownership and the Owned',
+    deck:'Who belongs to whom in a nation built on belonging?',
+    body:'The title stamps its claim with bureaucratic finality — property of. Two words that reduce humanity to inventory, people to assets, lives to line items. The piece confronts this reduction directly, using the visual language of government documentation to critique the system that produces it. The design is cold by intention, administrative by choice, creating a discomfort that is the entire point. Some truths need to be presented without warmth to be felt with clarity.' },
+
+  { id:'guinea-piggy', title:'Guinea Piggy', cat:'Illustration', img:IMG+'GuineaPiggy.webp',
+    hed:'Small Creatures, Big Feelings',
+    deck:'An illustration that proves scale has nothing to do with significance.',
+    body:'The guinea pig sits at the center of its own small drama, surrounded by the apparatus of a larger world that barely notices it. The glasses add intelligence without agency — this creature sees everything and controls nothing, which is perhaps why it resonates so deeply as a stand-in for the human condition. The illustration style is warm and detailed, granting its tiny subject the dignity of careful observation. In design, paying attention to the small things is how you earn the right to attempt the big ones.' },
+
+  { id:'failure', title:'Failure', cat:'Design', img:IMG+'Failure.webp',
+    hed:'The Curriculum Nobody Teaches',
+    deck:'What we learn when everything we planned falls apart.',
+    body:'Failure is the most consistent teacher in any creative practice and the least acknowledged. This piece confronts that silence directly, making visible what portfolios usually hide: the iterations that didn\'t work, the concepts that collapsed, the executions that fell short of intention. The design is deliberately rough, unfinished, honest — qualities that are hard to achieve intentionally, which is its own kind of lesson about the relationship between craft and authenticity.' },
+
+  { id:'this-stinks', title:'This Stinks', cat:'Social Commentary', img:IMG+'This Stinks.webp',
+    hed:'The Eloquence of Complaint',
+    deck:'Sometimes the most precise critique is the simplest.',
+    body:'There is a directness to declaring that something stinks — no diplomatic hedging, no academic framework, no polite circumlocution. Just the plain assessment: this is bad and it smells. The piece leans into that directness with visual humor that doesn\'t undercut the critique but amplifies it. The design commits fully to its own joke, which is what separates effective visual commentary from mere cleverness. It stinks, and saying so clearly is its own form of integrity.' },
+
+  { id:'oyster', title:'Oyster Farming', cat:'Publications', img:IMG+'Oyster Farming.webp',
+    hed:'The Architecture of Cultivation',
+    deck:'Harvesting patience from the ocean floor.',
+    body:'Oyster farming is design at geological pace — creating conditions, waiting for results, accepting that the timeline belongs to the organism rather than the farmer. This publication piece applies the same patience to its layout, giving the subject room to unfold across spreads without rushing toward conclusion. The imagery is detailed and specific, treating the oyster with the same respect a portrait photographer gives a human face. The result is editorial design that teaches by modeling the quality it describes: careful, sustained attention.' },
+
+  { id:'art-therapy', title:'Art Therapy', cat:'Illustration', img:IMG+'Art Therapy.webp',
+    hed:'Healing Through Making',
+    deck:'When the act of creation becomes the cure.',
+    body:'Art therapy operates on a principle that every designer knows intuitively: making things changes the maker. This illustration captures that transformative process without reducing it to before-and-after simplicity. The visual language is layered, suggesting that healing happens not in clean sequences but in messy, overlapping, non-linear accumulations. The piece is itself a kind of therapy — created with care, offered with generosity, designed to be felt rather than merely seen.' },
+
+  { id:'painter', title:'Painter', cat:'Illustration', img:IMG+'Painter.webp',
+    hed:'The One Who Sees',
+    deck:'A portrait of the artist at work — which is to say, at attention.',
+    body:'The painter sees differently. Not better, not more — differently. This illustration captures that quality of attention: the particular way an artist looks at the world as if it might rearrange itself into meaning at any moment. The rendering is accomplished without being showy, detailed without being fussy, confident without being aggressive. These are the visual qualities of mature craft, and the piece demonstrates them while depicting someone who embodies them.' },
+
+  { id:'prime-fam', title:'Prime Family Values', cat:'Social Commentary', img:IMG+'Prime Family Values.webp',
+    hed:'The Algorithm of Belonging',
+    deck:'When corporate convenience replaces community connection.',
+    body:'Prime shipping promises everything in two days except the things that actually matter. This piece examines the seductive efficiency of corporate domesticity — the way convenience platforms reshape family life in their own image. The design uses the visual language of advertising to critique advertising\'s effects, a strategy that requires the viewer to hold two contradictory readings simultaneously. That productive confusion is intentional: it mirrors the experience of being a consumer who knows they\'re being consumed.' },
+
+  { id:'glass-is', title:'The Glass Is', cat:'Illustration', img:IMG+'The Glass Is.webp',
+    hed:'Half Full of Questions',
+    deck:'Optimism and pessimism walk into a bar. Neither orders water.',
+    body:'The eternal question of the glass — half full or half empty — is really a question about the observer rather than the observed. This piece visualizes that philosophical divide with a lightness that belies its depth. The design is clean and immediate, delivering its insight quickly enough to function as humor and slowly enough to linger as philosophy. The best editorial illustrations do exactly this: they make you laugh first and think second, which ensures you do both.' },
+
+  { id:'appropriation', title:'Appropriation', cat:'Identity & Culture', img:IMG+'Appropriation.webp',
+    hed:'The Line Between Appreciation and Theft',
+    deck:'Who gets to borrow, and what is lost in translation?',
+    body:'Cultural appropriation is a design problem as much as a moral one — it involves choices about what to take, how to use it, and who benefits from the transaction. This piece addresses those choices visually, making the mechanics of appropriation visible rather than leaving them implicit. The result is an image that functions as both critique and education, showing its work rather than simply declaring its conclusion. In a media landscape full of hot takes, that methodical approach has its own kind of power.' },
+
+  { id:'herstory', title:'HerStory', cat:'Identity & Culture', img:IMG+'HerStory.webp',
+    hed:'Rewriting the Record',
+    deck:'When the default narrative doesn\'t include you, you write your own.',
+    body:'History with the default pronoun corrected. The typography alone makes the argument — that small substitution carrying decades of feminist scholarship and centuries of erasure. The design amplifies the wordplay without overwhelming it, letting the linguistic insight do its work while the visual framework provides context and weight. It is an elegant example of how graphic design can make ideas physical, turning abstract arguments into objects you can hold, share, and remember.' },
+
+  { id:'chess', title:'Chess Match', cat:'Illustration', img:IMG+'Chess Match.webp',
+    hed:'Every Move Matters',
+    deck:'Strategy rendered as still life, competition as composition.',
+    body:'Chess is the original strategy game, and this illustration treats it with corresponding seriousness. The pieces are rendered with dimensional weight, casting shadows that suggest the stakes extend beyond the board. The composition borrows from Dutch still life painting — that tradition of arranging objects to tell stories about mortality, power, and the passage of time. Here those themes are compressed into 64 squares and 32 pieces, each one a character in a drama that has been playing out for 1,500 years.' },
+
+  { id:'harris-pence', title:'Harris Pence Kombat', cat:'Social Commentary', img:IMG+'Harris Pence Kombat.webp',
+    hed:'Democracy as Spectacle',
+    deck:'When the debate stage becomes an arena, everyone is watching.',
+    body:'The visual reference is unmistakable — political debate reframed as fighting game, complete with the genre\'s visual vocabulary of health bars and character select screens. The commentary lands because the comparison feels less like satire and more like documentary. The design commits fully to the video game aesthetic, which paradoxically makes the political content more visible rather than less. By changing the frame, we see the content differently — which is what the best graphic design always does.' },
+
+  { id:'victim-shame', title:'Victim Shame', cat:'Social Commentary', img:IMG+'Victim Shame.webp',
+    hed:'The Second Violence',
+    deck:'When the system that should protect you asks what you were wearing.',
+    body:'Victim blaming is a design of language — a careful construction of questions that redistribute responsibility from perpetrator to survivor. This piece makes that linguistic architecture visible, exposing the design of shame itself. The visual approach is unflinching without being exploitative, direct without being cruel. It walks a razor\'s edge that only careful, empathetic design can navigate — saying what needs to be said in a way that honors rather than further harms. That restraint is itself a form of respect.' },
+];
+
+const categories = {
+  'Illustration': { color:'#2a5a3a' },
+  'Social Commentary': { color:'#8b2020' },
+  'Design': { color:'#2a4a6a' },
+  'Identity & Culture': { color:'#6a3a6a' },
+  'Publications': { color:'#5a4a2a' },
+};
+
+let currentArticleIdx = -1;
+
+/* ── BUILD FRONT PAGE ── */
+function buildFrontPage() {
+  const fp = document.getElementById('frontPage');
+  const lead = pieces[0]; // Elephant as lead story
+
+  // LEAD + SIDEBAR
+  const grid = document.createElement('div');
+  grid.className = 'headline-grid';
+
+  // lead story
+  const leadEl = document.createElement('div');
+  leadEl.className = 'lead-story';
+  leadEl.onclick = () => openArticle(0);
+  leadEl.innerHTML = `
+    ${lead.img ? `<img class="lead-img" src="${lead.img}" alt="${lead.title}">` : `<video class="lead-vid" src="${lead.vid}" muted loop playsinline autoplay></video>`}
+    <div class="lead-hed">${lead.hed}</div>
+    <div class="lead-deck">${lead.deck}</div>
+    <div class="lead-byline">By Amber Grey &middot; Visual Arts</div>
+  `;
+
+  // column rule
+  const rule = document.createElement('div');
+  rule.className = 'col-rule';
+
+  // sidebar
+  const sidebar = document.createElement('div');
+  sidebar.className = 'sidebar-stories';
+  for (let i = 1; i <= 5; i++) {
+    const p = pieces[i];
+    const item = document.createElement('div');
+    item.className = 'sidebar-item';
+    item.onclick = () => openArticle(i);
+    item.innerHTML = `
+      ${p.img ? `<img class="sidebar-thumb" src="${p.img}" alt="${p.title}">` : ''}
+      <div class="sidebar-text">
+        <div class="sidebar-hed">${p.hed}</div>
+        <div class="sidebar-deck">${p.deck}</div>
+      </div>
+    `;
+    sidebar.appendChild(item);
+  }
+
+  grid.appendChild(leadEl);
+  grid.appendChild(rule);
+  grid.appendChild(sidebar);
+  fp.appendChild(grid);
+
+  // CATEGORY SECTIONS
+  const catOrder = ['Illustration','Social Commentary','Design','Identity & Culture','Publications'];
+  let pieceIdx = 6; // start after lead + sidebar stories
+
+  catOrder.forEach(cat => {
+    const catPieces = pieces.filter((p,i) => i >= 6 && p.cat === cat);
+    if (catPieces.length === 0) return;
+
+    const label = document.createElement('div');
+    label.className = 'section-label';
+    label.textContent = cat;
+    fp.appendChild(label);
+
+    const strip = document.createElement('div');
+    strip.className = 'bottom-strip';
+    catPieces.slice(0, 4).forEach(p => {
+      const idx = pieces.indexOf(p);
+      const item = document.createElement('div');
+      item.className = 'strip-item';
+      item.onclick = () => openArticle(idx);
+      item.innerHTML = `
+        ${p.img ? `<img class="strip-img" src="${p.img}" alt="${p.title}">` : `<video class="strip-img" src="${p.vid}" muted loop playsinline autoplay style="object-fit:cover"></video>`}
+        <div class="strip-hed">${p.hed}</div>
+        <div class="strip-cat">${p.cat}</div>
+      `;
+      strip.appendChild(item);
+    });
+    fp.appendChild(strip);
+
+    // remaining as more grid
+    if (catPieces.length > 4) {
+      const more = document.createElement('div');
+      more.className = 'more-grid';
+      more.style.marginTop = '16px';
+      catPieces.slice(4).forEach(p => {
+        const idx = pieces.indexOf(p);
+        const item = document.createElement('div');
+        item.className = 'more-item';
+        item.onclick = () => openArticle(idx);
+        item.innerHTML = `
+          ${p.img ? `<img class="strip-img" src="${p.img}" alt="${p.title}">` : `<video class="strip-img" src="${p.vid}" muted loop playsinline autoplay style="object-fit:cover"></video>`}
+          <div class="strip-hed">${p.hed}</div>
+          <div class="strip-cat">${p.cat}</div>
+        `;
+        more.appendChild(item);
+      });
+      fp.appendChild(more);
+    }
+  });
+}
+
+/* ── ARTICLE VIEW ── */
+function openArticle(idx) {
+  currentArticleIdx = idx;
+  renderArticle();
+  document.getElementById('articleView').classList.add('open');
+  document.getElementById('articleView').scrollTop = 0;
+  document.getElementById('backLabel').textContent = 'Back';
+}
+
+function closeArticle() {
+  document.getElementById('articleView').classList.remove('open');
+  document.getElementById('backLabel').textContent = 'Gallery';
+  currentArticleIdx = -1;
+}
+
+function navArticle(dir) {
+  const next = currentArticleIdx + dir;
+  if (next < 0 || next >= pieces.length) return;
+  currentArticleIdx = next;
+  renderArticle();
+  document.getElementById('articleView').scrollTop = 0;
+}
+
+function renderArticle() {
+  const p = pieces[currentArticleIdx];
+  const el = document.getElementById('articleContent');
+  el.innerHTML = `
+    <div class="article-cat">${p.cat}</div>
+    <h1 class="article-hed">${p.hed}</h1>
+    <div class="article-deck">${p.deck}</div>
+    <div class="article-rule"></div>
+    ${p.img ? `<img class="article-img" src="${p.img}" alt="${p.title}">` : `<video class="article-vid" src="${p.vid}" muted loop playsinline autoplay controls></video>`}
+    <div class="article-body"><p>${p.body}</p></div>
+  `;
+  document.getElementById('articleCounter').textContent =
+    (currentArticleIdx + 1) + ' of ' + pieces.length;
+}
+
+/* ── KEYBOARD ── */
+document.addEventListener('keydown', e => {
+  if (currentArticleIdx >= 0) {
+    if (e.key === 'Escape') closeArticle();
+    if (e.key === 'ArrowRight') navArticle(1);
+    if (e.key === 'ArrowLeft') navArticle(-1);
+  }
+});
+
+/* ── INIT ── */
+buildFrontPage();
+</script>
+</body>
+</html>

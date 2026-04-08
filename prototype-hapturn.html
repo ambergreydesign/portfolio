@@ -1,0 +1,781 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HapTurn · Demo</title>
+<style>
+  *, *::before, *::after { box-sizing:border-box; margin:0; padding:0; }
+
+  :root {
+    --teal:   #0d9488;
+    --cyan:   #5eead4;
+    --cglow:  rgba(94,234,212,.55);
+    --bg:     #060f0e;
+    --bgp:    #081514;
+    --bgc:    #0b1e1c;
+    --text:   #e0f5f2;
+    --muted:  rgba(94,234,212,.50);
+    --border: rgba(94,234,212,.12);
+  }
+
+  html, body { width:100%; height:100%; overflow:hidden; background:var(--bg);
+    font-family:-apple-system,BlinkMacSystemFont,'SF Pro Display','Segoe UI',sans-serif;
+    color:var(--text); }
+
+  #shell { display:flex; flex-direction:column; width:100%; height:100%; }
+
+  /* STATUS */
+  #statusBar {
+    height:34px; flex-shrink:0;
+    background:rgba(6,15,14,.97); border-bottom:1px solid var(--border);
+    display:flex; align-items:center; justify-content:space-between;
+    padding:0 18px; font-size:11px; color:var(--muted); letter-spacing:.04em;
+  }
+  .s-l { display:flex; align-items:center; gap:10px; }
+  .s-r { display:flex; align-items:center; gap:12px; }
+  .dot { width:6px; height:6px; border-radius:50%; background:var(--cyan);
+    box-shadow:0 0 5px var(--cglow); animation:blink 2s ease-in-out infinite; }
+  @keyframes blink { 0%,100%{opacity:.6} 50%{opacity:1} }
+
+  /* MAIN */
+  #main { flex:1; display:flex; overflow:hidden; min-height:0; }
+
+  /* MAP */
+  #mapPanel { flex:1; position:relative; background:#061110; overflow:hidden; }
+  #mapSvg   { width:100%; height:100%; }
+
+  .road  { stroke:rgba(94,234,212,.09); stroke-width:1.5; fill:none; }
+  .roadM { stroke:rgba(94,234,212,.18); stroke-width:3; fill:none; }
+  .rlbl  { font-size:8px; fill:rgba(94,234,212,.28); letter-spacing:.05em; }
+
+  .blk  { fill:rgba(94,234,212,.04); stroke:rgba(94,234,212,.07); stroke-width:.8; }
+  .blkL { fill:rgba(94,234,212,.07); }
+
+  #routeLine {
+    fill:none; stroke:var(--teal); stroke-width:3.5;
+    stroke-dasharray:10 5; animation:dash .75s linear infinite;
+    filter:drop-shadow(0 0 4px rgba(13,148,136,.55));
+    transition:opacity .35s ease;
+  }
+  @keyframes dash { to{ stroke-dashoffset:-15 } }
+
+  #routeTraveled { fill:none; stroke:rgba(13,148,136,.22); stroke-width:2; stroke-dasharray:4 7; }
+
+  .dest-group { transition:opacity .4s ease; }
+  .dest-pulse { fill:none; stroke:var(--cyan); stroke-width:1.5; animation:ring 1.7s ease-out infinite; }
+  @keyframes ring { 0%{r:8;opacity:.55} 100%{r:22;opacity:0} }
+  .dest-dot    { fill:var(--cyan); filter:drop-shadow(0 0 6px var(--cglow)); }
+  .dest-bg     { fill:rgba(6,15,14,.86); stroke:rgba(94,234,212,.22); stroke-width:.8; }
+  .dest-txt    { font-size:7.5px; fill:rgba(94,234,212,.80); letter-spacing:.06em; }
+
+  .wp-ring { fill:none; stroke:rgba(94,234,212,.28); stroke-width:1.5; }
+  .wp-dot  { fill:rgba(94,234,212,.45); }
+
+  #vehicle { filter:drop-shadow(0 0 9px var(--cglow)); }
+
+  #mapFlash { position:absolute; inset:0; pointer-events:none; opacity:0;
+    background:radial-gradient(ellipse 50% 35% at 50% 50%,rgba(94,234,212,.07) 0%,transparent 70%);
+    transition:opacity .12s ease; }
+  #mapFlash.on { opacity:1; }
+
+  #toast { position:absolute; bottom:14px; left:50%; transform:translateX(-50%);
+    background:rgba(6,15,14,.92); border:1px solid rgba(94,234,212,.28);
+    border-radius:18px; padding:6px 18px;
+    font-size:11px; color:var(--cyan); letter-spacing:.06em;
+    opacity:0; pointer-events:none; white-space:nowrap;
+    transition:opacity .3s ease; backdrop-filter:blur(8px); }
+  #toast.show { opacity:1; }
+
+  /* DIVIDER */
+  #divider { width:1px; flex-shrink:0;
+    background:linear-gradient(180deg,transparent,var(--border) 20%,var(--border) 80%,transparent); }
+
+  /* RIGHT PANEL */
+  #rightPanel {
+    width: clamp(280px, 44%, 440px);
+    flex-shrink:0; background:var(--bgp);
+    display:flex; flex-direction:column; align-items:center;
+    padding: clamp(10px, 1.8vh, 18px) 20px clamp(8px, 1.4vh, 14px);
+    gap: clamp(6px, 1vh, 10px);
+    overflow: hidden;
+    min-height:0;
+  }
+  .plbl { font-size:9.5px; letter-spacing:.14em; color:var(--muted);
+    text-transform:uppercase; align-self:flex-start; }
+
+  /* WHEEL — scales to viewport height so it always fits */
+  #wheelWrap {
+    width:  min(248px, 28vh);
+    height: min(248px, 28vh);
+    flex-shrink:0;
+  }
+  #wheelSvg  { width:100%; height:100%; overflow:visible; }
+
+  .marc { fill:none; stroke-width:11; stroke-linecap:round; stroke:rgba(94,234,212,.10);
+    transition:stroke .07s ease, filter .07s ease; }
+  .marc.on     { stroke:var(--cyan); filter:drop-shadow(0 0 10px var(--cglow)) drop-shadow(0 0 22px rgba(94,234,212,.38)); }
+  .marc.strong { stroke:var(--cyan); filter:drop-shadow(0 0 14px var(--cglow)) drop-shadow(0 0 30px rgba(94,234,212,.5)); }
+
+  .wrim   { fill:none; stroke:rgba(94,234,212,.20); stroke-width:3; }
+  .wspoke { stroke:rgba(94,234,212,.13); stroke-width:2; stroke-linecap:round; }
+  .wgrip  { fill:none; stroke:rgba(94,234,212,.07); stroke-width:8; }
+  .whub   { fill:rgba(94,234,212,.09); stroke:rgba(94,234,212,.20); stroke-width:1.5; }
+  .mlbl   { font-size:9px; fill:rgba(94,234,212,.38); letter-spacing:.07em; text-anchor:middle;
+    transition:fill .1s; }
+  .mlbl.on { fill:var(--cyan); font-weight:700; }
+
+  @keyframes shiver {
+    0%  {transform:rotate(0deg)}   14%{transform:rotate(-2deg)}
+    28% {transform:rotate(2deg)}   42%{transform:rotate(-1.4deg)}
+    56% {transform:rotate(1.4deg)} 72%{transform:rotate(-.7deg)}
+    86% {transform:rotate(.7deg)} 100%{transform:rotate(0deg)}
+  }
+  #wheelSvg.shiver { animation:shiver .4s ease-in-out; transform-origin:91px 91px; }
+
+  /* MOTOR COLUMN LABELS */
+  .motor-cols {
+    width:100%; display:flex; justify-content:space-between;
+    font-size:8px; letter-spacing:.12em; color:rgba(94,234,212,.28);
+    text-transform:uppercase; padding:0 4px; margin-bottom:-2px;
+  }
+
+  /* PATTERN BUTTONS (spatial grid) */
+  #btnGrid {
+    width:100%; display:grid;
+    grid-template-columns:1fr 1fr; gap:6px; flex-shrink:0;
+  }
+  .btnP {
+    height: clamp(36px, 5.2vh, 46px);
+    background:rgba(94,234,212,.055); border:1px solid var(--border);
+    border-radius:9px; color:var(--muted); font-size:12px; font-weight:500;
+    letter-spacing:.03em; cursor:pointer; white-space:nowrap; padding:0 8px;
+    transition:background .15s, border-color .15s, color .15s, box-shadow .15s;
+  }
+  .btnP:hover { background:rgba(94,234,212,.11); border-color:rgba(94,234,212,.28); color:var(--cyan); }
+  .btnP:active { transform:scale(.97); }
+  .btnP.firing { background:rgba(94,234,212,.15); border-color:var(--cyan); color:var(--cyan);
+    box-shadow:0 0 10px rgba(94,234,212,.20); }
+  .btnP.full { grid-column:1 / -1; }
+  .btnP.left  { border-left-color:rgba(94,234,212,.22); }
+  .btnP.right { border-right-color:rgba(94,234,212,.22); }
+
+  /* INFO CARD — flex-shrink allows it to compress when space is tight */
+  #infoCard { width:100%; background:var(--bgc); border:1px solid var(--border);
+    border-radius:10px; padding:11px 14px; transition:border-color .2s;
+    flex-shrink:1; min-height:0; overflow:hidden; }
+  #infoCard.on { border-color:rgba(94,234,212,.38); }
+  #pName { font-size:13px; font-weight:600; color:var(--text); margin-bottom:3px; }
+  #pDesc { font-size:11px; color:var(--muted); line-height:1.5; }
+
+  /* WAVEFORM — flex-shrink allows it to compress */
+  #wfWrap { width:100%; background:var(--bgc); border:1px solid var(--border);
+    border-radius:10px; padding:9px 14px 8px;
+    flex-shrink:1; min-height:0; overflow:hidden; }
+  .wflbl { font-size:9px; letter-spacing:.1em; color:rgba(94,234,212,.26);
+    margin-bottom:5px; text-transform:uppercase; }
+  #wfSvg { width:100%; height:34px; display:block; }
+
+  /* NAV BAR */
+  #navBar {
+    height:52px; flex-shrink:0;
+    background:rgba(13,148,136,.12);
+    border-top:1px solid rgba(13,148,136,.25);
+    border-bottom:1px solid rgba(13,148,136,.15);
+    display:flex; align-items:center; padding:0 16px; gap:12px;
+  }
+  #navIcon { width:30px; height:30px; border-radius:50%;
+    background:rgba(13,148,136,.22); border:1px solid rgba(94,234,212,.28);
+    display:flex; align-items:center; justify-content:center;
+    font-size:13px; flex-shrink:0;
+    transition:background .2s, border-color .2s, box-shadow .2s; }
+  #navIcon.alert { background:rgba(94,234,212,.20); border-color:rgba(94,234,212,.55);
+    box-shadow:0 0 10px rgba(94,234,212,.25); }
+  #navInstr { flex:1; font-size:12.5px; font-weight:500; color:var(--text); line-height:1.3; }
+  #navInstr .sub { font-size:10.5px; font-weight:400; color:var(--muted); }
+  #etaBlock { text-align:right; flex-shrink:0; }
+  #etaTime  { font-size:13px; font-weight:600; color:var(--cyan); }
+  #etaDist  { font-size:9.5px; color:var(--muted); }
+
+  /* CONTROL BAR */
+  #ctrlBar {
+    height:52px; flex-shrink:0;
+    background:rgba(5,12,11,.98); border-top:1px solid var(--border);
+    display:flex; align-items:center; justify-content:center; gap:18px;
+    padding:0 20px;
+  }
+  #btnDemo {
+    height:38px; padding:0 24px;
+    background:var(--teal); border:none; border-radius:19px;
+    color:#fff; font-size:13px; font-weight:600; letter-spacing:.04em; cursor:pointer;
+    display:flex; align-items:center; gap:7px;
+    transition:background .2s, box-shadow .2s, transform .1s;
+    box-shadow:0 0 14px rgba(13,148,136,.38);
+  }
+  #btnDemo:hover { background:#0f9e91; box-shadow:0 0 22px rgba(13,148,136,.52); }
+  #btnDemo:active { transform:scale(.97); }
+  #btnDemo.running { background:rgba(13,148,136,.18); border:1px solid rgba(94,234,212,.32);
+    color:var(--cyan); box-shadow:none; }
+  .ctrl-hint { font-size:10.5px; color:rgba(94,234,212,.28); letter-spacing:.03em; }
+</style>
+</head>
+<body>
+<div id="shell">
+
+  <!-- STATUS BAR -->
+  <div id="statusBar">
+    <div class="s-l"><div class="dot"></div><span>HapTurn · Active Session</span></div>
+    <div class="s-r"><span id="clock">9:41 AM</span><span>📶</span></div>
+  </div>
+
+  <!-- MAIN -->
+  <div id="main">
+
+    <!-- MAP -->
+    <div id="mapPanel">
+      <div id="mapFlash"></div>
+      <svg id="mapSvg" viewBox="0 0 620 400" preserveAspectRatio="xMinYMid slice">
+        <rect width="620" height="400" fill="#061110"/>
+
+        <!-- city blocks: row 1 (y 0–86) -->
+        <rect class="blk"  x="8"   y="6"   width="72"  height="72"/>
+        <rect class="blk"  x="96"  y="6"   width="80"  height="72"/>
+        <rect class="blkL" x="188" y="6"   width="88"  height="72"/>
+        <rect class="blk"  x="300" y="6"   width="78"  height="72"/>
+        <rect class="blkL" x="394" y="6"   width="100" height="72"/>
+        <rect class="blk"  x="510" y="6"   width="104" height="72"/>
+        <!-- row 2 (y 96–180) -->
+        <rect class="blkL" x="8"   y="96"  width="72"  height="82"/>
+        <rect class="blk"  x="96"  y="96"  width="80"  height="82"/>
+        <rect class="blk"  x="188" y="96"  width="88"  height="82"/>
+        <rect class="blk"  x="300" y="96"  width="78"  height="82"/>
+        <rect class="blkL" x="394" y="96"  width="100" height="82"/>
+        <rect class="blk"  x="510" y="96"  width="104" height="82"/>
+        <!-- row 3 (y 196–280) -->
+        <rect class="blk"  x="8"   y="196" width="72"  height="82"/>
+        <rect class="blkL" x="96"  y="196" width="80"  height="82"/>
+        <rect class="blk"  x="188" y="196" width="88"  height="82"/>
+        <rect class="blk"  x="300" y="196" width="78"  height="82"/>
+        <rect class="blkL" x="394" y="196" width="100" height="82"/>
+        <rect class="blk"  x="510" y="196" width="104" height="82"/>
+        <!-- row 4 (y 290–394) -->
+        <rect class="blkL" x="8"   y="290" width="72"  height="104"/>
+        <rect class="blk"  x="96"  y="290" width="80"  height="104"/>
+        <rect class="blkL" x="188" y="290" width="88"  height="104"/>
+        <rect class="blk"  x="300" y="290" width="78"  height="104"/>
+        <rect class="blk"  x="394" y="290" width="100" height="104"/>
+        <rect class="blkL" x="510" y="290" width="104" height="104"/>
+
+        <!-- secondary roads -->
+        <line class="road" x1="0"   y1="88"  x2="620" y2="88"/>
+        <line class="road" x1="0"   y1="282" x2="620" y2="282"/>
+        <line class="road" x1="80"  y1="0"   x2="80"  y2="400"/>
+        <line class="road" x1="178" y1="0"   x2="178" y2="400"/>
+        <line class="road" x1="388" y1="0"   x2="388" y2="400"/>
+        <line class="road" x1="510" y1="0"   x2="510" y2="400"/>
+
+        <!-- PRIMARY roads -->
+        <line class="roadM" x1="284" y1="0"   x2="284" y2="400"/>  <!-- NW 23rd Ave -->
+        <line class="roadM" x1="0"   y1="186" x2="620" y2="186"/>  <!-- NW Burnside  -->
+
+        <!-- street name labels -->
+        <!-- NW 23rd Ave -->
+        <text class="rlbl" x="287" y="52"  transform="rotate(90,287,52)">NW 23rd Ave</text>
+        <text class="rlbl" x="287" y="348" transform="rotate(90,287,348)">NW 23rd Ave</text>
+        <!-- NW Burnside -->
+        <text class="rlbl" x="340" y="182">NW Burnside St</text>
+        <!-- NW 18th Ave (at x=80) -->
+        <text class="rlbl" x="83"  y="140" transform="rotate(90,83,140)">NW 18th Ave</text>
+        <text class="rlbl" x="83"  y="350" transform="rotate(90,83,350)">NW 18th Ave</text>
+        <!-- NW Glisan St (at y=282) -->
+        <text class="rlbl" x="108" y="278">NW Glisan St</text>
+
+        <!-- traveled path (drawn by JS) -->
+        <path id="routeTraveled" d=""/>
+
+        <!-- route line (initial = north on 23rd → left on Burnside → original dest) -->
+        <path id="routeLine" d="M 284,396 L 284,186 L 50,186"/>
+
+        <!-- primary turn waypoint: NW 23rd × Burnside -->
+        <circle class="wp-ring" cx="284" cy="186" r="7"/>
+        <circle class="wp-dot"  cx="284" cy="186" r="2.5"/>
+
+        <!-- reroute waypoints (hidden until reroute) -->
+        <g id="wpReroute" opacity="0" style="transition:opacity .4s ease">
+          <circle class="wp-ring" cx="80" cy="186" r="6"/>
+          <circle class="wp-dot"  cx="80" cy="186" r="2.5"/>
+          <circle class="wp-ring" cx="80" cy="282" r="6"/>
+          <circle class="wp-dot"  cx="80" cy="282" r="2.5"/>
+        </g>
+
+        <!-- ORIGINAL destination at (50, 186) -->
+        <g id="destOrig" class="dest-group">
+          <circle class="dest-pulse" cx="50" cy="186" r="8"/>
+          <circle class="dest-dot"   cx="50" cy="186" r="6"/>
+          <rect class="dest-bg" x="6"  y="170" width="38" height="12" rx="2"/>
+          <text class="dest-txt"  x="9"  y="179">DEST</text>
+        </g>
+
+        <!-- NEW destination at (56, 282) — hidden until reroute -->
+        <g id="destNew" class="dest-group" opacity="0">
+          <circle class="dest-pulse" cx="56" cy="282" r="8"/>
+          <circle class="dest-dot"   cx="56" cy="282" r="6"/>
+          <rect class="dest-bg" x="67" y="275" width="72" height="12" rx="2"/>
+          <text class="dest-txt" x="70" y="284">NEW DESTINATION</text>
+        </g>
+
+        <!-- start marker -->
+        <circle cx="284" cy="392" r="5" fill="rgba(94,234,212,.24)" stroke="rgba(94,234,212,.44)" stroke-width="1.2"/>
+        <text x="292" y="395" font-size="8" fill="rgba(94,234,212,.40)" letter-spacing=".05em">START</text>
+
+        <!-- vehicle -->
+        <g id="vehicle">
+          <rect x="-8" y="-14" width="16" height="24" rx="4" fill="var(--cyan)" opacity=".94"/>
+          <rect x="-5.5" y="-18" width="11" height="9" rx="2" fill="rgba(94,234,212,.72)"/>
+          <circle cx="-4.5" cy="-14" r="2.2" fill="rgba(255,255,230,.9)">
+            <animate attributeName="opacity" values=".9;1;.9" dur="1.1s" repeatCount="indefinite"/>
+          </circle>
+          <circle cx="4.5" cy="-14" r="2.2" fill="rgba(255,255,230,.9)">
+            <animate attributeName="opacity" values=".9;1;.9" dur="1.1s" repeatCount="indefinite"/>
+          </circle>
+        </g>
+      </svg>
+      <div id="toast"></div>
+    </div>
+
+    <div id="divider"></div>
+
+    <!-- RIGHT PANEL -->
+    <div id="rightPanel">
+      <div class="plbl">Haptic Motor Preview</div>
+
+      <!-- wheel -->
+      <div id="wheelWrap">
+        <svg id="wheelSvg" viewBox="0 0 182 182" xmlns="http://www.w3.org/2000/svg">
+          <!-- LEFT arc: 9→12 o'clock -->
+          <path id="arcL" class="marc" d="M 18,91 A 73,73 0 0,1 91,18"/>
+          <!-- RIGHT arc: 12→3 o'clock -->
+          <path id="arcR" class="marc" d="M 91,18 A 73,73 0 0,1 164,91"/>
+          <circle class="wrim"   cx="91" cy="91" r="77"/>
+          <path   class="wgrip"  d="M 30,133 A 73,73 0 0,0 152,133"/>
+          <line   class="wspoke" x1="91" y1="91" x2="91" y2="22"/>
+          <line   class="wspoke" x1="91" y1="91" x2="33" y2="130"/>
+          <line   class="wspoke" x1="91" y1="91" x2="149" y2="130"/>
+          <circle cx="91" cy="91" r="46" fill="none" stroke="rgba(94,234,212,.06)" stroke-width="1"/>
+          <circle class="whub"   cx="91" cy="91" r="17"/>
+          <circle cx="91" cy="91" r="4.5" fill="rgba(94,234,212,.28)"/>
+          <text class="mlbl" id="lblL" x="34"  y="59">L MOTOR</text>
+          <text class="mlbl" id="lblR" x="148" y="59">R MOTOR</text>
+        </svg>
+      </div>
+
+      <!-- spatial column labels -->
+      <div class="motor-cols">
+        <span>← Left actions</span>
+        <span>Right actions →</span>
+      </div>
+
+      <!-- pattern button grid -->
+      <div id="btnGrid">
+        <button class="btnP left"  data-p="leftTurn"  onclick="firePattern('leftTurn')">↰ Left Turn</button>
+        <button class="btnP right" data-p="rightTurn" onclick="firePattern('rightTurn')">↱ Right Turn</button>
+        <button class="btnP left"  data-p="laneLeft"  onclick="firePattern('laneLeft')">⇐ Lane Left</button>
+        <button class="btnP right" data-p="laneRight" onclick="firePattern('laneRight')">Lane Right ⇒</button>
+        <button class="btnP full"  data-p="reroute"   onclick="firePattern('reroute')">⟳ Reroute</button>
+      </div>
+
+      <!-- info card -->
+      <div id="infoCard">
+        <div id="pName">Idle · No Pattern</div>
+        <div id="pDesc">Press a pattern or tap Demo Drive to experience haptic cues.</div>
+      </div>
+
+      <!-- waveform -->
+      <div id="wfWrap">
+        <div class="wflbl">Motor Output</div>
+        <svg id="wfSvg" xmlns="http://www.w3.org/2000/svg"></svg>
+      </div>
+    </div>
+  </div><!-- /main -->
+
+  <!-- NAV BAR -->
+  <div id="navBar">
+    <div id="navIcon">🗺️</div>
+    <div id="navInstr">
+      <div id="navMain">Head north on NW 23rd Ave</div>
+      <div class="sub" id="navSub">Turn left on NW Burnside · 0.8 mi</div>
+    </div>
+    <div id="etaBlock">
+      <div id="etaTime">8 min</div>
+      <div id="etaDist">0.8 mi</div>
+    </div>
+  </div>
+
+  <!-- CONTROL BAR -->
+  <div id="ctrlBar">
+    <button id="btnDemo" onclick="demoToggle()">▶ Demo Drive</button>
+    <span class="ctrl-hint">or try a pattern →</span>
+  </div>
+
+</div><!-- /shell -->
+
+<script>
+// ── Clock ─────────────────────────────────────────────────────────
+(function tick(){
+  var d=new Date(), h=d.getHours(), m=d.getMinutes(), ap=h>=12?'PM':'AM';
+  h=h%12||12;
+  document.getElementById('clock').textContent=h+':'+('0'+m).slice(-2)+' '+ap;
+  setTimeout(tick,20000);
+})();
+
+// ── Waveform ──────────────────────────────────────────────────────
+var wfEl=document.getElementById('wfSvg'), BARS=30, BW=7, BG=2, bars=[];
+for(var i=0;i<BARS;i++){
+  var r=document.createElementNS('http://www.w3.org/2000/svg','rect');
+  var bh=3+Math.random()*4.5;
+  r.setAttribute('x',i*(BW+BG)+1); r.setAttribute('width',BW); r.setAttribute('rx',2);
+  r.setAttribute('height',bh); r.setAttribute('y',38-bh);
+  r.setAttribute('fill','rgba(94,234,212,.18)');
+  wfEl.appendChild(r); bars.push({el:r,base:bh});
+}
+var wfRaf=null, wfT=0;
+function wfIdle(){
+  wfT+=0.028;
+  bars.forEach(function(b,i){
+    // layered sine waves for an organic idle pulse
+    var h=b.base + Math.sin(wfT+i*.42)*2.5 + Math.sin(wfT*0.6+i*.18)*1.2;
+    b.el.setAttribute('height',h); b.el.setAttribute('y',38-h);
+    b.el.setAttribute('fill','rgba(94,234,212,.20)');
+  });
+  wfRaf=requestAnimationFrame(wfIdle);
+}
+function wfBurst(strong){
+  cancelAnimationFrame(wfRaf);
+  var k=strong?1:.55;
+  bars.forEach(function(b,i){
+    // gentle envelope: higher in the middle, tapers at edges
+    var env=0.5+0.5*Math.sin(Math.PI*i/(bars.length-1));
+    var h=b.base + env * 11 * k + Math.random()*4*k;
+    b.el.setAttribute('height',h); b.el.setAttribute('y',38-h);
+    b.el.setAttribute('fill','rgba(94,234,212,.88)');
+  });
+  setTimeout(wfIdle,110);
+}
+wfIdle();
+
+// ── Patterns ──────────────────────────────────────────────────────
+var PAT={
+  leftTurn:{
+    name:'↰ Left Turn · Warning',
+    desc:'Left motor fires 3 escalating pulses — left turn ahead.',
+    L:[1,0,1,0,1,0,0,0],R:[0,0,0,0,0,0,0,0],strong:false},
+  leftTurn2:{
+    name:'↰ Left Turn · 200 m',
+    desc:'Left motor intensifies — the left turn is approaching quickly.',
+    L:[1,1,0,1,1,0,0,0],R:[0,0,0,0,0,0,0,0],strong:false},
+  leftTurnNow:{
+    name:'↰ Turn LEFT — Now',
+    desc:'Left motor fires a strong continuous burst — turn left immediately.',
+    L:[1,1,1,1,1,1,0,0],R:[0,0,0,0,0,0,0,0],strong:true},
+  rightTurn:{
+    name:'↱ Right Turn · Warning',
+    desc:'Right motor pulses — right turn ahead.',
+    L:[0,0,0,0,0,0,0,0],R:[1,0,1,0,1,0,0,0],strong:false},
+  rightTurnNow:{
+    name:'↱ Turn RIGHT — Now',
+    desc:'Right motor fires a strong continuous burst — turn right immediately.',
+    L:[0,0,0,0,0,0,0,0],R:[1,1,1,1,1,1,0,0],strong:true},
+  reroute:{
+    name:'⟳ Reroute · New Path Found',
+    desc:'Both motors alternate rapidly — route has changed, recalculating.',
+    L:[1,0,1,0,1,0,1,0],R:[0,1,0,1,0,1,0,1],strong:false},
+  laneLeft:{
+    name:'⇐ Lane Change Left',
+    desc:'Left motor double-pulse sweep — safe to merge left.',
+    L:[1,1,0,0,1,1,0,0],R:[0,0,0,0,0,0,0,0],strong:false},
+  laneRight:{
+    name:'⇒ Lane Change Right',
+    desc:'Right motor double-pulse sweep — safe to merge right.',
+    L:[0,0,0,0,0,0,0,0],R:[1,1,0,0,1,1,0,0],strong:false}
+};
+
+// ── Arc + UI helpers ──────────────────────────────────────────────
+function setArc(s,on,strong){
+  var el=document.getElementById(s==='L'?'arcL':'arcR');
+  var lb=document.getElementById(s==='L'?'lblL':'lblR');
+  el.classList.remove('on','strong'); lb.classList.remove('on');
+  if(on){ el.classList.add(strong?'strong':'on'); lb.classList.add('on'); }
+}
+function clearArcs(){ setArc('L',false); setArc('R',false); }
+
+function shiver(){
+  var ws=document.getElementById('wheelSvg');
+  ws.classList.remove('shiver'); void ws.offsetWidth; ws.classList.add('shiver');
+  ws.addEventListener('animationend',function h(){ ws.classList.remove('shiver'); ws.removeEventListener('animationend',h); });
+}
+function mapFlash(){
+  var mf=document.getElementById('mapFlash'); mf.classList.add('on');
+  setTimeout(function(){ mf.classList.remove('on'); },100);
+}
+function showToast(msg){
+  var t=document.getElementById('toast'); t.textContent=msg; t.classList.add('show');
+  clearTimeout(t._h); t._h=setTimeout(function(){ t.classList.remove('show'); },2500);
+}
+function setCard(name,desc,active){
+  document.getElementById('pName').textContent=name;
+  document.getElementById('pDesc').textContent=desc;
+  document.getElementById('infoCard').classList.toggle('on',!!active);
+}
+function setNav(main,sub,icon,eta,dist,alert){
+  document.getElementById('navMain').textContent=main;
+  document.getElementById('navSub').textContent=sub;
+  document.getElementById('navIcon').textContent=icon;
+  document.getElementById('etaTime').textContent=eta;
+  document.getElementById('etaDist').textContent=dist;
+  document.getElementById('navIcon').classList.toggle('alert',!!alert);
+}
+
+// ── Fire pattern ──────────────────────────────────────────────────
+var ptimer=null;
+function firePattern(key,cb){
+  var p=PAT[key]; if(!p)return;
+  setCard(p.name,p.desc,true);
+  document.querySelectorAll('.btnP').forEach(function(b){ b.classList.remove('firing'); });
+  var btn=document.querySelector('.btnP[data-p="'+key+'"]');
+  if(btn) btn.classList.add('firing');
+  clearTimeout(ptimer); clearArcs();
+  var beat=0, STEP=115;
+  function tick(){
+    if(beat>=p.L.length){
+      clearArcs();
+      if(btn) btn.classList.remove('firing');
+      setCard('Idle · No Pattern','Press a pattern or tap Demo Drive to experience haptic cues.',false);
+      if(cb) cb(); return;
+    }
+    var lOn=p.L[beat],rOn=p.R[beat];
+    setArc('L',!!lOn,p.strong); setArc('R',!!rOn,p.strong);
+    if(lOn||rOn){ wfBurst(p.strong); mapFlash(); if(p.strong) shiver(); }
+    beat++; ptimer=setTimeout(tick,STEP);
+  }
+  tick();
+}
+
+// ── Vehicle path (4 segments) ─────────────────────────────────────
+// S1=206: north  (284,396)→(284,186)   NW 23rd heading north
+// S2=204: west   (284,186)→(80,186)    NW Burnside heading west
+// S3= 96: south  (80,186)→(80,282)     NW 18th Ave heading south
+// S4= 36: west   (80,282)→(44,282)     NW Glisan heading west → dest
+// TOTAL=542   SPEED=34px/s → ~16s
+
+var S1=206, S2=204, S3=96, S4=24, TOTAL=530, SPEED=34, BL=22;
+
+function ss(t){ return t*t*(3-2*t); }
+
+function carAt(d){
+  d=Math.min(d,TOTAL);
+  var x,y,rot;
+
+  if(d<=S1){
+    x=284; y=396-d;
+    var fe=S1-d;
+    rot = fe<BL ? -90*ss(1-fe/BL)*0.5 : 0;
+    return{x:x,y:y,rot:rot};
+  }
+  var d2=d-S1;
+  if(d2<=S2){
+    x=284-d2; y=186;
+    if(d2<BL)         rot=-45-45*ss(d2/BL);
+    else if(S2-d2<BL) rot=-90-90*ss(1-(S2-d2)/BL)*0.5;
+    else              rot=-90;
+    return{x:x,y:y,rot:rot};
+  }
+  var d3=d-S1-S2;
+  if(d3<=S3){
+    x=80; y=186+d3;
+    if(d3<BL)         rot=-135-45*ss(d3/BL);
+    else if(S3-d3<BL) rot=-180+90*ss(1-(S3-d3)/BL)*0.5;
+    else              rot=-180;
+    return{x:x,y:y,rot:rot};
+  }
+  var d4=d-S1-S2-S3;
+  x=80-d4; y=282;
+  rot = d4<BL ? -135+45*ss(d4/BL) : -90;
+  return{x:x,y:y,rot:rot};
+}
+
+function placeVehicle(d){
+  var p=carAt(d);
+  document.getElementById('vehicle')
+    .setAttribute('transform','translate('+p.x.toFixed(1)+','+p.y.toFixed(1)+') rotate('+p.rot.toFixed(1)+')');
+}
+
+// ── Route/dest update on reroute ──────────────────────────────────
+function triggerRouteChange(){
+  var pos=carAt(distTraveled);
+  var cx=Math.round(pos.x);
+
+  // Fade out, swap path, fade in
+  var rl=document.getElementById('routeLine');
+  rl.style.opacity='0.1';
+  setTimeout(function(){
+    rl.setAttribute('d','M '+cx+',186 L 80,186 L 80,282 L 44,282');
+    rl.style.opacity='1';
+  },340);
+
+  // Swap destination markers + show reroute waypoints
+  document.getElementById('destOrig').style.opacity='0';
+  document.getElementById('destNew').style.opacity='1';
+  document.getElementById('wpReroute').style.opacity='1';
+}
+
+// ── Traveled path ─────────────────────────────────────────────────
+function updateTraveled(d){
+  var pts=['M 284,396'];
+  var s1=Math.min(d,S1);           pts.push('L 284,'+(396-s1));
+  if(d>S1){ var s2=Math.min(d-S1,S2);    pts.push('L '+(284-s2)+',186'); }
+  if(d>S1+S2){ var s3=Math.min(d-S1-S2,S3); pts.push('L 80,'+(186+s3)); }
+  if(d>S1+S2+S3){ var s4=Math.min(d-S1-S2-S3,S4); pts.push('L '+(80-s4)+',282'); }
+  document.getElementById('routeTraveled').setAttribute('d',pts.join(' '));
+}
+
+// ── Demo events (distance-triggered) ─────────────────────────────
+// S1 ends (Burnside turn) at dist=206
+// S2 ends (NW 18th turn) at dist=410
+// S3 ends (Glisan turn)   at dist=506
+// S4 ends (arrived)       at dist=542
+var EVENTS=[
+  { dist:96,
+    fn:function(){
+      setNav('Turn left on NW Burnside St','In 400 m — haptic cue sent ↰','↰','6 min','0.60 mi',true);
+      showToast('400 m · Turn left on Burnside');
+      firePattern('leftTurn');
+    }
+  },
+  { dist:148,
+    fn:function(){
+      setNav('Turn left on NW Burnside St','In 200 m — haptic cue sent ↰','↰','4 min','0.42 mi',true);
+      showToast('200 m · Left turn ahead');
+      firePattern('leftTurn2');
+    }
+  },
+  { dist:198,
+    fn:function(){
+      setNav('Turn LEFT now','NW Burnside St — haptic cue sent ↰','↰','3 min','0.28 mi',true);
+      showToast('Turn LEFT now · Burnside');
+      firePattern('leftTurnNow');
+    }
+  },
+  { dist:288,
+    fn:function(){
+      setNav('⟳ Rerouting…','Construction on Burnside · via NW 18th Ave ⟳','⟳','5 min','0.46 mi',true);
+      showToast('Construction ahead · New route');
+      triggerRouteChange();
+      firePattern('reroute');
+    }
+  },
+  // ── Left turn warning: NW 18th Ave (turn at dist=410) ──────────
+  { dist:348,
+    fn:function(){
+      setNav('Turn left on NW 18th Ave','In 400 m — haptic cue sent ↰','↰','4 min','0.38 mi',true);
+      showToast('400 m · Turn left on NW 18th');
+      firePattern('leftTurn');
+    }
+  },
+  { dist:400,
+    fn:function(){
+      setNav('Turn LEFT now','NW 18th Ave — haptic cue sent ↰','↰','3 min','0.20 mi',true);
+      showToast('Turn LEFT now · NW 18th Ave');
+      firePattern('leftTurnNow');
+    }
+  },
+  // ── Right turn warning: NW Glisan St (turn at dist=506) ────────
+  { dist:456,
+    fn:function(){
+      setNav('Turn right on NW Glisan St','Approaching — haptic cue sent ↱','↱','2 min','0.12 mi',true);
+      showToast('Turn right on NW Glisan');
+      firePattern('rightTurn');
+    }
+  },
+  { dist:500,
+    fn:function(){
+      setNav('Turn RIGHT now','NW Glisan St — haptic cue sent ↱','↱','1 min','0.06 mi',true);
+      showToast('Turn RIGHT now · NW Glisan');
+      firePattern('rightTurnNow');
+    }
+  },
+  { dist:530,
+    fn:function(){
+      setNav('🏁 Arriving at destination','Demo complete · HapTurn guided you safely','🏁','0 min','0.0 mi',false);
+      showToast('Arrived · Demo complete');
+    }
+  }
+];
+
+// ── Animation loop ────────────────────────────────────────────────
+var animOn=false, animRAF=null, distTraveled=0, lastTS=null, firedIdx=0;
+
+function animFrame(ts){
+  if(!animOn) return;
+  if(!lastTS) lastTS=ts;
+  var dt=Math.min((ts-lastTS)/1000,.1); lastTS=ts;
+  distTraveled+=SPEED*dt;
+  if(distTraveled>TOTAL) distTraveled=TOTAL;
+  placeVehicle(distTraveled);
+  updateTraveled(distTraveled);
+  while(firedIdx<EVENTS.length && distTraveled>=EVENTS[firedIdx].dist){
+    EVENTS[firedIdx].fn(); firedIdx++;
+  }
+  if(distTraveled<TOTAL){
+    animRAF=requestAnimationFrame(animFrame);
+  } else {
+    setTimeout(function(){ if(animOn) stopDemo(true); },3200);
+  }
+}
+
+function demoToggle(){ animOn ? stopDemo(false) : startDemo(); }
+
+function startDemo(){
+  distTraveled=0; firedIdx=0; lastTS=null;
+  placeVehicle(0); updateTraveled(0);
+
+  document.getElementById('routeLine').style.opacity='1';
+  document.getElementById('routeLine').setAttribute('d','M 284,396 L 284,186 L 50,186');
+  document.getElementById('routeTraveled').setAttribute('d','');
+  document.getElementById('destOrig').style.opacity='1';
+  document.getElementById('destNew').style.opacity='0';
+  document.getElementById('wpReroute').style.opacity='0';
+
+  clearArcs();
+  setCard('Idle · No Pattern','Press a pattern or tap Demo Drive to experience haptic cues.',false);
+  setNav('Head north on NW 23rd Ave','Turn left on NW Burnside · 0.8 mi','⬆️','8 min','0.8 mi',false);
+  document.querySelectorAll('.btnP').forEach(function(b){ b.classList.remove('firing'); });
+
+  animOn=true;
+  var btn=document.getElementById('btnDemo');
+  btn.textContent='⏹ Stop Demo'; btn.classList.add('running');
+  animRAF=requestAnimationFrame(animFrame);
+}
+
+function stopDemo(completed){
+  animOn=false; cancelAnimationFrame(animRAF);
+  var btn=document.getElementById('btnDemo');
+  btn.textContent='▶ Demo Drive'; btn.classList.remove('running');
+  if(!completed){
+    placeVehicle(0); updateTraveled(0);
+    document.getElementById('routeLine').style.opacity='1';
+    document.getElementById('routeLine').setAttribute('d','M 284,396 L 284,186 L 50,186');
+    document.getElementById('routeTraveled').setAttribute('d','');
+    document.getElementById('destOrig').style.opacity='1';
+    document.getElementById('destNew').style.opacity='0';
+    document.getElementById('wpReroute').style.opacity='0';
+    clearArcs();
+    setCard('Idle · No Pattern','Press a pattern or tap Demo Drive to experience haptic cues.',false);
+    setNav('Head north on NW 23rd Ave','Turn left on NW Burnside · 0.8 mi','⬆️','8 min','0.8 mi',false);
+    document.querySelectorAll('.btnP').forEach(function(b){ b.classList.remove('firing'); });
+  }
+}
+
+placeVehicle(0);
+</script>
+</body>
+</html>

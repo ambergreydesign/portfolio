@@ -1,0 +1,1822 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>dotCALM — Ecosystem Prototype</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=Cormorant+Garamond:ital,wght@0,600;1,400&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bg:      #07080f;
+  --bg-mid:  #0c0d18;
+  --blue:    #7aabde;
+  --lav:     #9490d4;
+  --lav-dim: rgba(148,144,212,0.12);
+  --ice:     #c4d8f0;
+  --text:    #dde6f4;
+  --muted:   rgba(200,185,165,0.5);
+  --border:  rgba(255,255,255,0.07);
+}
+
+html, body {
+  width: 100%;
+  height: 100%;
+  background: var(--bg);
+  font-family: 'DM Sans', sans-serif;
+  color: var(--text);
+  overflow: hidden;
+}
+
+/* ── BACK NAV ── */
+.nav-back {
+  position: fixed; top: 24px; left: 28px; z-index: 100;
+  display: inline-flex; align-items: center; gap: 9px;
+  background: rgba(255,255,255,0.05);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(255,255,255,0.09);
+  border-radius: 100px; padding: 8px 16px 8px 12px;
+  cursor: pointer; color: rgba(200,185,165,0.65);
+  font-size: 9px; font-weight: 400; letter-spacing: 0.22em; text-transform: uppercase;
+  transition: background 0.2s, color 0.2s;
+}
+.nav-back:hover { background: rgba(255,255,255,0.09); color: rgba(200,185,165,0.95); }
+.nav-back-arrow { display: inline-block; width: 14px; height: 1px; background: currentColor; position: relative; flex-shrink: 0; }
+.nav-back-arrow::before { content: ''; position: absolute; left: 0; top: -3px; width: 5px; height: 5px; border-left: 1px solid currentColor; border-bottom: 1px solid currentColor; transform: rotate(45deg); }
+
+/* ── LAYOUT ── */
+#app {
+  width: 100%; min-width: 900px;
+  height: 100vh;
+  display: flex; flex-direction: column;
+  overflow: hidden;
+}
+
+/* Stage fills remaining viewport height below controls */
+#stage-wrap {
+  width: 100%;
+  flex: 1; min-height: 0;
+  display: flex; overflow: hidden; position: relative;
+  margin-top: 56px; /* clear fixed .nav-back button */
+}
+
+/* ── PANELS ── */
+.panel {
+  flex: 1; min-width: 400px;
+  height: 100%;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: flex-start;
+  padding: 0 40px;
+  position: relative; overflow: hidden;
+}
+
+.panel-left {
+  border-right: 1px solid var(--border);
+}
+
+/* Subtle background glows */
+.panel-left::before {
+  content: ''; position: absolute; inset: 0; pointer-events: none;
+  background: radial-gradient(ellipse 70% 60% at 50% 50%, rgba(122,171,222,0.06) 0%, transparent 70%);
+}
+.panel-right::before {
+  content: ''; position: absolute; inset: 0; pointer-events: none;
+  background: radial-gradient(ellipse 70% 60% at 50% 50%, rgba(148,144,212,0.07) 0%, transparent 70%);
+}
+
+.panel-label {
+  position: absolute; top: 22px;
+  font-size: 8px; font-weight: 600; letter-spacing: 0.3em; text-transform: uppercase;
+}
+.panel-left .panel-label { color: rgba(122,171,222,0.5); }
+.panel-right .panel-label { color: rgba(148,144,212,0.55); }
+
+/* ── CONNECTION LINE ── */
+#connection-line {
+  position: absolute; top: 0; bottom: 0;
+  left: 50%; transform: translateX(-50%);
+  width: 1px; pointer-events: none; z-index: 10;
+  overflow: hidden;
+}
+#connection-line::before {
+  content: ''; position: absolute; inset: 0;
+  background: linear-gradient(to bottom, transparent 0%, rgba(122,171,222,0.0) 30%, rgba(122,171,222,0.25) 50%, rgba(148,144,212,0.0) 70%, transparent 100%);
+  transition: opacity 0.6s ease;
+  opacity: 0;
+}
+#connection-line.active::before { opacity: 1; }
+
+/* Signal pulse travelling down the line */
+#signal-pulse {
+  position: absolute; left: 50%; transform: translateX(-50%);
+  width: 6px; height: 6px; border-radius: 50%;
+  background: var(--lav);
+  box-shadow: 0 0 8px rgba(148,144,212,0.8), 0 0 20px rgba(148,144,212,0.4);
+  opacity: 0;
+  top: 50%;
+}
+#signal-pulse.travel { animation: travelPulse 0.9s cubic-bezier(0.4,0,0.2,1) forwards; }
+@keyframes travelPulse {
+  0%   { top: 50%; opacity: 0; }
+  10%  { opacity: 1; }
+  100% { top: 50%; opacity: 0; }
+}
+
+/* ═══════════════════════════
+   WEARABLE SIDE (LEFT)
+═══════════════════════════ */
+#wearable-wrap {
+  display: flex; flex-direction: column;
+  align-items: center; gap: 0;
+  padding-top: 52px; /* clears panel-label; aligns HR with phone top on right */
+  position: relative; z-index: 1;
+  width: 100%;
+}
+
+/* Heart rate display */
+#hr-display {
+  display: flex; flex-direction: column; align-items: center; gap: 4px;
+}
+#hr-number {
+  font-size: 62px; font-weight: 700; line-height: 1;
+  color: var(--text); letter-spacing: -0.02em;
+  transition: color 0.6s ease;
+  font-variant-numeric: tabular-nums;
+}
+#hr-number.elevated  { color: #c97a7a; }
+#hr-number.settling  { color: #d4a46a; }
+#hr-number.calm      { color: #7ac8b0; }
+#hr-label { font-size: 9px; font-weight: 500; letter-spacing: 0.26em; text-transform: uppercase; color: rgba(200,185,165,0.35); }
+
+/* Wearable band illustration */
+#band-wrap {
+  position: relative;
+  width: 230px; height: 230px;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+  margin-top: 19px;
+}
+
+/* Breathing ring layers */
+.ring-layer {
+  position: absolute; border-radius: 50%;
+  border: 1.5px solid rgba(122,171,222,0.15);
+  transition: border-color 0.8s ease, transform 0.8s ease;
+}
+#ring-outer { width: 97.5%; height: 97.5%; }
+#ring-mid   { width: 77.5%; height: 77.5%; }
+#ring-inner { width: 60%;   height: 60%; }
+
+/* Resting animation — slow, barely-there at baseline */
+#band-wrap.resting #ring-outer { animation: breatheOuter 7s cubic-bezier(0.45,0.05,0.55,0.95) infinite; border-color: rgba(122,171,222,0.12); }
+#band-wrap.resting #ring-mid   { animation: breatheMid   7s cubic-bezier(0.45,0.05,0.55,0.95) infinite 0.8s; border-color: rgba(122,171,222,0.16); }
+#band-wrap.resting #ring-inner { animation: breatheInner 7s cubic-bezier(0.45,0.05,0.55,0.95) infinite 1.6s; border-color: rgba(122,171,222,0.22); }
+
+/* Guided breathing animation — intentional, 4-second cycle */
+#band-wrap.breathing #ring-outer { animation: breatheOuter 4s cubic-bezier(0.45,0.05,0.55,0.95) infinite; border-color: rgba(122,171,222,0.3); }
+#band-wrap.breathing #ring-mid   { animation: breatheMid   4s cubic-bezier(0.45,0.05,0.55,0.95) infinite 0.3s; border-color: rgba(122,171,222,0.45); }
+#band-wrap.breathing #ring-inner { animation: breatheInner 4s cubic-bezier(0.45,0.05,0.55,0.95) infinite 0.6s; border-color: rgba(122,171,222,0.65); }
+
+/* Settled breathing — calm 8-year-old at rest, 6-second cycle */
+#band-wrap.breathing-calm #ring-outer { animation: breatheOuter 6s cubic-bezier(0.45,0.05,0.55,0.95) infinite; border-color: rgba(122,200,176,0.2); }
+#band-wrap.breathing-calm #ring-mid   { animation: breatheMid   6s cubic-bezier(0.45,0.05,0.55,0.95) infinite 0.4s; border-color: rgba(122,200,176,0.3); }
+#band-wrap.breathing-calm #ring-inner { animation: breatheInner 6s cubic-bezier(0.45,0.05,0.55,0.95) infinite 0.8s; border-color: rgba(122,200,176,0.45); }
+
+@keyframes breatheOuter {
+  0%, 100% { transform: scale(1);    opacity: 0.6; }
+  50%       { transform: scale(1.12); opacity: 1; }
+}
+@keyframes breatheMid {
+  0%, 100% { transform: scale(1);    opacity: 0.7; }
+  50%       { transform: scale(1.14); opacity: 1; }
+}
+@keyframes breatheInner {
+  0%, 100% { transform: scale(1);    opacity: 0.8; }
+  50%       { transform: scale(1.16); opacity: 1; }
+}
+
+/* Settling breathing — orange, 3-second cycle (between alert and calm) */
+#band-wrap.breathing-settling #ring-outer { animation: breatheOuter 3s cubic-bezier(0.45,0.05,0.55,0.95) infinite; border-color: rgba(212,164,106,0.2); }
+#band-wrap.breathing-settling #ring-mid   { animation: breatheMid   3s cubic-bezier(0.45,0.05,0.55,0.95) infinite 0.25s; border-color: rgba(212,164,106,0.3); }
+#band-wrap.breathing-settling #ring-inner { animation: breatheInner 3s cubic-bezier(0.45,0.05,0.55,0.95) infinite 0.5s; border-color: rgba(212,164,106,0.45); }
+
+/* Alert ring pulse */
+#band-wrap.alert #ring-outer { border-color: rgba(200,120,120,0.4); animation: alertPulse 1.2s ease-in-out infinite; }
+#band-wrap.alert #ring-mid   { border-color: rgba(200,120,120,0.55); animation: alertPulse 1.2s ease-in-out infinite 0.2s; }
+#band-wrap.alert #ring-inner { border-color: rgba(200,120,120,0.7); animation: alertPulse 1.2s ease-in-out infinite 0.4s; }
+@keyframes alertPulse {
+  0%, 100% { transform: scale(1); }
+  50%       { transform: scale(1.08); }
+}
+
+/* Center device face */
+#band-center {
+  width: 74px; height: 74px;
+  border-radius: 18px;
+  background: linear-gradient(145deg, rgba(30,35,65,0.9), rgba(15,18,40,0.95));
+  border: 1px solid rgba(122,171,222,0.2);
+  box-shadow: 0 4px 24px rgba(0,0,0,0.55), inset 0 1px 0 rgba(255,255,255,0.06);
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  gap: 6px; position: relative; z-index: 2;
+  overflow: hidden;
+  transition: border-color 0.6s ease;
+}
+
+/* ── HEARTBEAT RIPPLE VIS ── */
+#hb-vis {
+  position: absolute; inset: 0; border-radius: inherit;
+  display: flex; align-items: center; justify-content: center;
+  pointer-events: none;
+}
+
+/* Core pulse dot */
+.hb-core {
+  position: absolute;
+  width: 7px; height: 7px; border-radius: 50%;
+  background: rgba(122,171,222,0.8);
+  box-shadow: 0 0 8px rgba(122,171,222,0.55);
+  animation: hbCorePulse 1.5s ease-in-out infinite;
+  z-index: 1;
+  transition: background 0.6s ease, box-shadow 0.6s ease;
+}
+
+/* Expanding rings */
+.hb-ring {
+  position: absolute;
+  width: 16px; height: 16px; border-radius: 50%;
+  border: 1.5px solid rgba(122,171,222,0.75);
+  animation: hbRipple 1.5s cubic-bezier(0.1, 0, 0.15, 1) infinite;
+  transition: border-color 0.6s ease;
+}
+.hb-ring.r2 { animation-delay: 0.38s; }
+
+@keyframes hbRipple {
+  0%   { transform: scale(0.45); opacity: 0.9; }
+  100% { transform: scale(4.2);  opacity: 0; }
+}
+@keyframes hbCorePulse {
+  0%, 100% { transform: scale(1);    opacity: 0.75; }
+  7%        { transform: scale(1.55); opacity: 1;    }
+  28%       { transform: scale(1);   opacity: 0.75; }
+}
+
+/* Alert: faster cadence, reddish */
+#band-center.alert-state .hb-core {
+  background: rgba(200,120,120,0.85);
+  box-shadow: 0 0 10px rgba(200,120,120,0.55);
+  animation-duration: 0.68s;
+}
+#band-center.alert-state .hb-ring {
+  border-color: rgba(200,120,120,0.7);
+  animation-duration: 0.68s;
+}
+#band-center.alert-state .hb-ring.r2 { animation-delay: 0.17s; }
+
+/* Calm/settled: green tint — syncs to 4s breathing cycle when in breathing mode */
+#band-center.calm-state .hb-core {
+  background: rgba(122,200,176,0.85);
+  box-shadow: 0 0 8px rgba(122,200,176,0.5);
+  animation: hbCoreBreathing 4s cubic-bezier(0.45,0.05,0.55,0.95) infinite;
+}
+#band-center.calm-state .hb-ring {
+  border-color: rgba(122,200,176,0.65);
+  animation: hbRippleBreathing 4s cubic-bezier(0.45,0.05,0.55,0.95) infinite;
+}
+#band-center.calm-state .hb-ring.r2 { animation-delay: 0.5s; }
+
+/* Settling: orange tint, faster than calm but slower than alert — nudge just received */
+#band-center.settling-state .hb-core {
+  background: rgba(212,164,106,0.85);
+  box-shadow: 0 0 9px rgba(212,164,106,0.5);
+  animation: hbCoreBreathing 3s cubic-bezier(0.45,0.05,0.55,0.95) infinite;
+}
+#band-center.settling-state .hb-ring {
+  border-color: rgba(212,164,106,0.6);
+  animation: hbRippleBreathing 3s cubic-bezier(0.45,0.05,0.55,0.95) infinite;
+}
+#band-center.settling-state .hb-ring.r2 { animation-delay: 0.4s; }
+#band-center.settling-state {
+  border-color: rgba(212,164,106,0.4);
+  box-shadow: 0 4px 20px rgba(0,0,0,0.5), 0 0 16px rgba(212,164,106,0.12), inset 0 1px 0 rgba(255,255,255,0.06);
+}
+
+/* Breathing-synced heartbeat keyframes — expand on inhale, contract on exhale */
+@keyframes hbCoreBreathing {
+  0%, 100% { transform: scale(1);   opacity: 0.6; }
+  50%       { transform: scale(1.6); opacity: 1;   }
+}
+@keyframes hbRippleBreathing {
+  0%        { transform: scale(0.6); opacity: 0.7; }
+  50%       { transform: scale(3.0); opacity: 0.3; }
+  100%      { transform: scale(0.6); opacity: 0;   }
+}
+
+/* Settled calm — same shape, 6s cycle for slower resting breath */
+#band-center.calm-settled .hb-core {
+  background: rgba(122,200,176,0.75);
+  box-shadow: 0 0 8px rgba(122,200,176,0.4);
+  animation: hbCoreBreathing 6s cubic-bezier(0.45,0.05,0.55,0.95) infinite;
+}
+#band-center.calm-settled .hb-ring {
+  border-color: rgba(122,200,176,0.5);
+  animation: hbRippleBreathing 6s cubic-bezier(0.45,0.05,0.55,0.95) infinite;
+}
+#band-center.calm-settled .hb-ring.r2 { animation-delay: 0.7s; }
+#band-center.calm-settled {
+  border-color: rgba(122,200,180,0.5);
+  box-shadow: 0 4px 20px rgba(0,0,0,0.5), 0 0 20px rgba(122,200,180,0.15), inset 0 1px 0 rgba(255,255,255,0.06);
+}
+
+/* ECG and status dot: hidden in calm/resting, visible in alert */
+#band-ecg {
+  opacity: 0; transition: opacity 0.45s ease; position: relative; z-index: 2;
+}
+#band-status-dot {
+  display: none;
+}
+#band-center.alert-state #band-ecg   { opacity: 1; }
+#band-center.alert-state {
+  border-color: rgba(200,120,120,0.5);
+  box-shadow: 0 4px 20px rgba(0,0,0,0.5), 0 0 20px rgba(200,120,120,0.15), inset 0 1px 0 rgba(255,255,255,0.06);
+}
+#band-center.calm-state {
+  border-color: rgba(122,200,180,0.5);
+  box-shadow: 0 4px 20px rgba(0,0,0,0.5), 0 0 20px rgba(122,200,180,0.15), inset 0 1px 0 rgba(255,255,255,0.06);
+}
+
+/* Heartbeat line inside band */
+#band-ecg {
+  width: 52px; height: 16px;
+}
+
+#band-status-dot {
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: rgba(122,171,222,0.5);
+  transition: background 0.5s ease;
+}
+#band-status-dot.elevated { background: #c97a7a; animation: dotPulse 1s ease-in-out infinite; }
+#band-status-dot.calm     { background: #7ac8b0; }
+@keyframes dotPulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
+
+/* Wearable status text — pinned near bottom of panel */
+#wearable-status {
+  position: absolute; bottom: 24px;
+  left: 50%; transform: translateX(-50%);
+  width: 260px;
+  font-size: 12px; font-weight: 400; letter-spacing: 0.04em;
+  color: var(--muted); text-align: center; line-height: 1.6;
+  transition: opacity 0.4s ease;
+  z-index: 2;
+}
+#wearable-status strong { color: var(--ice); font-weight: 500; }
+
+/* Haptic feedback indicator — hidden; info conveyed by wearable-status text */
+#haptic-indicator {
+  display: none;
+}
+#haptic-dots { display: flex; gap: 4px; }
+.haptic-dot {
+  width: 5px; height: 5px; border-radius: 50%;
+  background: var(--blue); opacity: 0;
+}
+.haptic-dot:nth-child(1) { animation: none; }
+.haptic-dot:nth-child(2) { animation: none; }
+.haptic-dot:nth-child(3) { animation: none; }
+#haptic-indicator.active .haptic-dot:nth-child(1) { animation: hapticDot 0.8s ease-out 0.0s both; }
+#haptic-indicator.active .haptic-dot:nth-child(2) { animation: hapticDot 0.8s ease-out 0.15s both; }
+#haptic-indicator.active .haptic-dot:nth-child(3) { animation: hapticDot 0.8s ease-out 0.3s both; }
+@keyframes hapticDot {
+  0%   { opacity: 0; transform: scale(0.5); }
+  40%  { opacity: 1; transform: scale(1.2); }
+  100% { opacity: 0; transform: scale(0.8); }
+}
+#haptic-label { font-size: 9px; letter-spacing: 0.2em; text-transform: uppercase; color: rgba(122,171,222,0.55); }
+
+/* ── BREATHING GUIDE (on wearable) — absolute, overlays ring area ── */
+#breathe-guide {
+  margin-top: 16px;
+  display: flex; flex-direction: column; align-items: center; gap: 8px;
+  opacity: 0; transition: opacity 0.7s ease;
+  pointer-events: none;
+}
+#breathe-guide.show { opacity: 1; }
+
+.breathe-ring-svg {
+  width: 64px; height: 64px;
+  animation: breatheGuideScale 4s cubic-bezier(0.45,0.05,0.55,0.95) infinite;
+}
+@keyframes breatheGuideScale {
+  0%,100% { transform: scale(0.78); }
+  50%      { transform: scale(1.08); }
+}
+
+.breathe-ring-svg circle.br-outer {
+  stroke: rgba(122,171,222,0.35);
+  animation: breatheGuideOpacity 4s ease-in-out infinite;
+}
+.breathe-ring-svg circle.br-inner {
+  stroke: rgba(122,171,222,0.55);
+  animation: breatheGuideOpacity 4s ease-in-out infinite 0.4s;
+}
+@keyframes breatheGuideOpacity {
+  0%,100% { opacity: 0.4; }
+  50%      { opacity: 1;   }
+}
+
+.breathe-word {
+  font-size: 9px; letter-spacing: 0.26em; text-transform: uppercase;
+  color: rgba(122,171,222,0.6);
+}
+.breathe-word .w-in  { display: inline-block; opacity: 0; margin-right: 6px; }
+.breathe-word .w-out { display: inline-block; opacity: 0; }
+
+/* Animations only run when guide is visible — ensures they start in sync */
+#breathe-guide.show .breathe-word .w-in  { animation: breatheWordIn  4s ease-in-out infinite; }
+#breathe-guide.show .breathe-word .w-out { animation: breatheWordOut 4s ease-in-out infinite; }
+@keyframes breatheWordIn  { 0%{opacity:1;} 5%{opacity:1;} 42%{opacity:0;} 100%{opacity:0;} }
+@keyframes breatheWordOut { 0%{opacity:0;} 48%{opacity:0;} 55%{opacity:1;} 95%{opacity:1;} 100%{opacity:0;} }
+
+/* Settling variant — 3s cycle, slightly faster than default */
+#breathe-guide.show .breathe-word.settling .w-in  { animation: breatheWordIn 3s ease-in-out infinite; }
+#breathe-guide.show .breathe-word.settling .w-out { animation: breatheWordOut 3s ease-in-out infinite; }
+
+/* Slow variant for settled calm state */
+#breathe-guide.show .breathe-word.slow .w-in  { animation: breatheWordInSlow  6s ease-in-out infinite; }
+#breathe-guide.show .breathe-word.slow .w-out { animation: breatheWordOutSlow 6s ease-in-out infinite; }
+@keyframes breatheWordInSlow  { 0%{opacity:1;} 5%{opacity:1;} 42%{opacity:0;} 100%{opacity:0;} }
+@keyframes breatheWordOutSlow { 0%{opacity:0;} 48%{opacity:0;} 55%{opacity:1;} 95%{opacity:1;} 100%{opacity:0;} }
+
+/* ═══════════════════════════
+   APP SIDE (RIGHT)
+═══════════════════════════ */
+#app-wrap {
+  position: relative; z-index: 1;
+  display: flex; flex-direction: column;
+  align-items: center;
+  padding-top: 52px; /* matches wearable-wrap so phone top aligns with HR */
+}
+
+/* Phone frame */
+#phone-frame {
+  width: 190px;
+  aspect-ratio: 9 / 19.5;
+  background: #eeecf8;
+  border-radius: 28px;
+  border: 1.5px solid rgba(139,135,200,0.45);
+  box-shadow: 0 0 0 5px rgba(12,10,30,0.65), 0 20px 60px rgba(0,0,0,0.6);
+  overflow: hidden;
+  display: flex; flex-direction: column;
+  position: relative;
+}
+.p-island { width: 48px; height: 8px; background: rgba(12,10,30,0.6); border-radius: 100px; margin: 9px auto 2px; flex-shrink: 0; }
+.p-status  { display: flex; justify-content: space-between; padding: 2px 12px 3px; font-size: 7px; font-weight: 700; color: #5c5a8a; flex-shrink: 0; }
+.p-search  { margin: 3px 8px 0; background: rgba(255,255,255,0.55); border-radius: 8px; padding: 4px 10px; font-size: 8px; color: #9896c8; display: flex; justify-content: space-between; flex-shrink: 0; }
+.p-content { flex: 1; margin: 6px 8px 4px; background: rgba(255,255,255,0.45); border-radius: 14px; padding: 14px 12px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 9px; box-shadow: inset 0 2px 6px rgba(120,100,200,0.08), 2px 2px 8px rgba(180,160,220,0.1), -2px -2px 6px rgba(255,255,255,0.65); }
+.p-actions { padding: 4px 8px 3px; display: flex; flex-direction: column; gap: 5px; flex-shrink: 0; }
+.p-btn { width: 100%; padding: 7px; border-radius: 12px; background: rgba(255,255,255,0.65); color: #5c5a8a; font-family: 'DM Sans', sans-serif; font-size: 9px; font-weight: 600; text-align: center; box-shadow: 2px 2px 5px rgba(120,100,200,0.1), -1px -1px 3px rgba(255,255,255,0.8); }
+.p-btn.primary { background: #7a77b8; color: white; box-shadow: 1px 3px 10px rgba(100,80,180,0.4); }
+.p-nav { background: rgba(238,236,248,0.95); padding: 5px 0 9px; display: flex; justify-content: space-around; border-top: 1px solid rgba(139,135,200,0.12); flex-shrink: 0; }
+.p-nav-icon { font-size: 12px; color: rgba(92,90,138,0.35); width: 20px; height: 20px; display: flex; align-items: center; justify-content: center; }
+.p-nav-icon.active { color: #5c5080; }
+
+/* Phone content elements */
+.p-title  { font-family: 'DM Sans', sans-serif; font-size: 12px; font-weight: 600; color: #4a4880; text-align: center; line-height: 1.4; }
+.p-heart  { width: 38px; height: 38px; background: #7a77b8; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-size: 11px; font-weight: 700; box-shadow: 0 3px 12px rgba(100,80,180,0.45); flex-shrink: 0; }
+.p-opt    { width: 100%; padding: 6px 9px; border-radius: 10px; background: rgba(255,255,255,0.65); color: #5c5a8a; font-size: 9px; font-weight: 600; text-align: center; box-shadow: 2px 2px 5px rgba(120,100,200,0.1), -1px -1px 3px rgba(255,255,255,0.8); }
+.p-buzz   { width: 100%; padding: 6px 9px; border-radius: 100px; background: rgba(139,135,200,0.12); border: 1px solid rgba(139,135,200,0.28); color: #8b87c8; font-size: 9px; font-weight: 600; text-align: center; }
+.p-success { font-size: 11px; font-weight: 600; color: #5c7a5c; text-align: center; line-height: 1.5; }
+.p-check  { width: 36px; height: 36px; border-radius: 50%; background: rgba(92,122,92,0.15); border: 1.5px solid rgba(92,150,92,0.4); display: flex; align-items: center; justify-content: center; font-size: 16px; }
+.p-profile { display: flex; flex-direction: column; align-items: center; gap: 5px; }
+.p-avatar { width: 40px; height: 40px; border-radius: 50%; background: linear-gradient(145deg, #b8b2d8, #9490c8); display: flex; align-items: center; justify-content: center; font-size: 18px; }
+.p-name   { font-size: 11px; font-weight: 600; color: #4a4880; }
+.p-vitals { width: 100%; display: flex; flex-direction: column; gap: 5px; }
+.p-vital-row { display: flex; align-items: center; gap: 6px; font-size: 8.5px; color: #6a68a0; }
+.p-vital-icon { font-size: 11px; }
+.p-lockscreen { position: absolute; inset: 0; z-index: 20; background: linear-gradient(160deg, #8280b8, #6a68a0); display: flex; flex-direction: column; align-items: center; justify-content: flex-start; padding: 0 0 30px; opacity: 0; transition: opacity 0.4s ease; pointer-events: none; border-radius: inherit; }
+.p-lockscreen.show { opacity: 1; pointer-events: all; }
+.p-lock-island { width: 48px; height: 8px; background: rgba(255,255,255,0.2); border-radius: 100px; margin: 9px auto 2px; flex-shrink: 0; }
+.p-lock-status { display: flex; justify-content: space-between; width: 100%; padding: 2px 12px 6px; font-size: 7px; font-weight: 700; color: rgba(255,255,255,0.75); flex-shrink: 0; }
+.p-lock-time { font-size: 48px; font-weight: 200; color: white; letter-spacing: -0.02em; line-height: 1; margin-top: 14px; }
+.p-lock-date { font-size: 10px; color: rgba(255,255,255,0.7); margin-top: 4px; }
+.p-lock-spacer { flex: 1; }
+
+.p-notification { background: rgba(255,255,255,0.18); backdrop-filter: blur(10px); border-radius: 12px; padding: 10px 14px; width: 85%; display: flex; gap: 9px; align-items: center; }
+.p-notif-icon { width: 28px; height: 28px; background: #7a77b8; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 12px; flex-shrink: 0; }
+.p-notif-text { font-size: 9px; color: white; line-height: 1.4; }
+.p-notif-text strong { font-weight: 600; }
+
+/* Screen transitions */
+.phone-screen { position: absolute; inset: 0; display: flex; flex-direction: column; opacity: 0; transition: opacity 0.35s ease; pointer-events: none; }
+.phone-screen.active { opacity: 1; pointer-events: all; }
+
+/* Caregiver status */
+#caregiver-status {
+  position: absolute; bottom: 24px;
+  left: 50%; transform: translateX(-50%);
+  width: 260px;
+  font-size: 12px; font-weight: 400; letter-spacing: 0.04em;
+  color: var(--muted); text-align: center; line-height: 1.6;
+  min-height: 36px; transition: opacity 0.4s ease;
+  z-index: 2;
+}
+#caregiver-status strong { color: var(--ice); font-weight: 500; }
+
+/* ═══════════════════════════
+   BOTTOM CONTROLS
+═══════════════════════════ */
+#controls {
+  flex-shrink: 0;
+  padding: 16px 48px 20px;
+  display: flex; flex-direction: column; align-items: center; gap: 16px;
+  border-top: 1px solid var(--border);
+  background: linear-gradient(to top, rgba(7,8,15,0.8) 0%, transparent 100%);
+}
+
+/* Step dots */
+#step-dots { display: flex; gap: 10px; align-items: center; }
+.step-dot {
+  width: 6px; height: 6px; border-radius: 50%;
+  background: rgba(255,255,255,0.12);
+  transition: background 0.35s ease, transform 0.35s ease;
+}
+.step-dot.active {
+  background: var(--blue);
+  transform: scale(1.4);
+}
+.step-dot.done { background: rgba(122,171,222,0.35); }
+
+/* Step title */
+#step-title {
+  font-size: 10px; font-weight: 500; letter-spacing: 0.2em; text-transform: uppercase;
+  color: rgba(200,185,165,0.45); text-align: center; min-height: 16px;
+}
+
+/* Next button */
+#btn-next {
+  padding: 0 44px; height: 44px;
+  background: rgba(122,171,222,0.10);
+  border: 1.5px solid rgba(122,171,222,0.28);
+  border-radius: 22px; cursor: pointer;
+  color: var(--blue); font-family: 'DM Sans', sans-serif;
+  font-size: 11px; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase;
+  display: flex; align-items: center; gap: 10px;
+  transition: background 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+}
+#btn-next:hover { background: rgba(122,171,222,0.18); border-color: rgba(122,171,222,0.55); box-shadow: 0 0 20px rgba(122,171,222,0.15); }
+#btn-next:disabled { opacity: 0.35; cursor: default; }
+
+#btn-restart {
+  display: none; padding: 0 44px; height: 44px;
+  background: rgba(148,144,212,0.10);
+  border: 1.5px solid rgba(148,144,212,0.3);
+  border-radius: 22px; cursor: pointer;
+  color: var(--lav); font-family: 'DM Sans', sans-serif;
+  font-size: 11px; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase;
+  transition: background 0.2s, border-color 0.2s;
+}
+#btn-restart:hover { background: rgba(148,144,212,0.18); border-color: rgba(148,144,212,0.55); }
+#btn-restart.show { display: flex; align-items: center; gap: 8px; }
+
+/* Page exit */
+#page-exit { position: fixed; inset: 0; background: #07080f; opacity: 0; pointer-events: none; transition: opacity 0.28s ease-in; z-index: 9999; }
+#page-exit.active { opacity: 1; }
+
+/* ═══════════════════════════
+   AMBIENT PARTICLES
+═══════════════════════════ */
+#particles { position: fixed; inset: 0; pointer-events: none; overflow: hidden; }
+.particle {
+  position: absolute; border-radius: 50%;
+  animation: floatUp linear infinite;
+}
+@keyframes floatUp {
+  0%   { transform: translateY(0) translateX(0); opacity: 0; }
+  10%  { opacity: var(--op); }
+  90%  { opacity: var(--op); }
+  100% { transform: translateY(-80px) translateX(var(--dx)); opacity: 0; }
+}
+
+/* ECG line animation */
+@keyframes ecgScroll { from { stroke-dashoffset: 200; } to { stroke-dashoffset: 0; } }
+#ecg-path { stroke-dasharray: 200; stroke-dashoffset: 200; }
+#ecg-path.animating { animation: ecgScroll 2.5s linear infinite; }
+
+/* ═══════════════════════════
+   MODE SELECTOR (top center)
+═══════════════════════════ */
+#mode-selector {
+  position: fixed; top: 24px; left: 50%; transform: translateX(-50%);
+  z-index: 100;
+  display: flex; gap: 4px;
+  background: rgba(255,255,255,0.05);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(255,255,255,0.09);
+  border-radius: 100px; padding: 3px;
+}
+.mode-btn {
+  padding: 7px 20px;
+  border-radius: 100px; border: none; cursor: pointer;
+  background: transparent;
+  color: rgba(200,185,165,0.4);
+  font-family: 'DM Sans', sans-serif;
+  font-size: 9px; font-weight: 600; letter-spacing: 0.16em; text-transform: uppercase;
+  transition: all 0.3s ease;
+}
+.mode-btn:hover { color: rgba(200,185,165,0.7); }
+.mode-btn.active {
+  background: rgba(122,171,222,0.12);
+  color: var(--blue);
+  box-shadow: 0 0 12px rgba(122,171,222,0.08);
+}
+
+/* ═══════════════════════════
+   HAPTIC VIBRATION SYSTEM
+═══════════════════════════ */
+
+/* Vibration shake on wearable band */
+@keyframes vibrateShort {
+  0%, 100% { transform: translateX(0); }
+  8%  { transform: translateX(-4px) rotate(-1deg); }
+  16% { transform: translateX(4px) rotate(1deg); }
+  24% { transform: translateX(-3.5px) rotate(-0.8deg); }
+  32% { transform: translateX(3.5px) rotate(0.8deg); }
+  42% { transform: translateX(-2px); }
+  52% { transform: translateX(2px); }
+  65% { transform: translateX(-1px); }
+  78% { transform: translateX(0); }
+}
+@keyframes vibrateLong {
+  0%, 100% { transform: translateX(0); }
+  5%  { transform: translateX(-2.5px) rotate(-0.5deg); }
+  10% { transform: translateX(2.5px) rotate(0.5deg); }
+  15% { transform: translateX(-2px); }
+  20% { transform: translateX(2px); }
+  25% { transform: translateX(-2px) rotate(-0.3deg); }
+  30% { transform: translateX(2px) rotate(0.3deg); }
+  35% { transform: translateX(-1.5px); }
+  40% { transform: translateX(1.5px); }
+  50% { transform: translateX(-1px); }
+  60% { transform: translateX(1px); }
+  70% { transform: translateX(0); }
+}
+
+/* Vibration glow pulse on the band/phone during buzz */
+@keyframes vibeGlow {
+  0%   { box-shadow: 0 4px 24px rgba(0,0,0,0.55), 0 0 0 rgba(148,144,212,0); }
+  30%  { box-shadow: 0 4px 24px rgba(0,0,0,0.55), 0 0 18px rgba(148,144,212,0.35); }
+  100% { box-shadow: 0 4px 24px rgba(0,0,0,0.55), 0 0 0 rgba(148,144,212,0); }
+}
+
+#band-center.vibe-short,
+#band-center.vibe-long { transition: none !important; }
+#band-center.vibe-short { animation: vibrateShort 0.45s ease-in-out forwards; }
+#band-center.vibe-long  { animation: vibrateLong 0.6s ease-in-out forwards; }
+
+/* Phone vibration */
+@keyframes phoneVibe {
+  0%, 100% { transform: translateX(0); }
+  10% { transform: translateX(-1.5px); }
+  20% { transform: translateX(1.5px); }
+  30% { transform: translateX(-1.5px); }
+  40% { transform: translateX(1.5px); }
+  50% { transform: translateX(-1px); }
+  60% { transform: translateX(1px); }
+  70% { transform: translateX(0); }
+}
+@keyframes phoneVibeLong {
+  0%, 100% { transform: translateX(0); }
+  5%  { transform: translateX(-2px); }
+  10% { transform: translateX(2px); }
+  15% { transform: translateX(-2px); }
+  20% { transform: translateX(2px); }
+  25% { transform: translateX(-1.5px); }
+  30% { transform: translateX(1.5px); }
+  40% { transform: translateX(-1px); }
+  50% { transform: translateX(1px); }
+  60% { transform: translateX(0); }
+}
+#phone-frame.vibe-short { animation: phoneVibe 0.3s ease-in-out; }
+#phone-frame.vibe-long  { animation: phoneVibeLong 0.6s ease-in-out; }
+
+/* Phone haptic mode — matches Figma neumorphic layout */
+.haptic-content {
+  flex: 1;
+  margin: 4px 7px 0;
+  background: #f5f5fa;
+  border-radius: 10px;
+  display: flex; flex-direction: column;
+  align-items: center;
+  padding: 10px 10px 14px;
+  box-shadow: inset -2px -2px 5px rgba(255,255,255,0.5),
+              inset 2px 2px 5px rgba(170,170,204,0.25),
+              inset 4px 4px 10px rgba(170,170,204,0.45),
+              inset -4px -4px 10px rgba(255,255,255,0.8);
+}
+.haptic-label {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 10px; font-weight: 400;
+  color: #505073; text-align: center;
+  margin-bottom: auto;
+  padding-top: 4px;
+}
+.haptic-square {
+  width: 82%; aspect-ratio: 4/3;
+  border-radius: 10px;
+  background: #f5f5fa;
+  margin-bottom: 6px;
+  box-shadow: -3px -3px 6px rgba(255,255,255,0.5),
+              3px 3px 6px rgba(170,170,204,0.25),
+              5px 5px 12px rgba(170,170,204,0.45),
+              -5px -5px 12px rgba(255,255,255,0.9);
+}
+
+/* ── DIRECTIONAL GLOW SIGNAL ── */
+#direction-signal {
+  position: absolute;
+  top: 50%; transform: translateY(-50%);
+  left: 38%; right: 38%;
+  height: 60px;
+  pointer-events: none; z-index: 15;
+  overflow: visible;
+  visibility: hidden;
+}
+#direction-signal.active { visibility: visible; }
+
+/* The signal is a glow orb with a fading trail behind it */
+#signal-glow {
+  position: absolute;
+  width: 24px; height: 24px;
+  border-radius: 50%;
+  top: 50%; transform: translate(-50%, -50%);
+  background: radial-gradient(circle, rgba(200,200,255,0.6) 0%, rgba(148,144,212,0.35) 35%, transparent 70%);
+  filter: blur(3px);
+  opacity: 0;
+  pointer-events: none;
+}
+#signal-tail {
+  position: absolute;
+  top: 50%; transform: translateY(-50%);
+  height: 2px; border-radius: 1px;
+  opacity: 0;
+  width: 0;
+  pointer-events: none;
+}
+
+/* Phone → Band: glow leads LEFT, tail trails to the right */
+#signal-glow.to-left  { animation: glowLeft 1.6s cubic-bezier(0.3,0,0.2,1) both; }
+#signal-tail.to-left  { animation: tailLeft 1.6s cubic-bezier(0.3,0,0.2,1) both;
+  background: linear-gradient(to right, transparent, rgba(148,144,212,0.25));
+}
+
+/* Band → Phone: glow leads RIGHT, tail trails to the left */
+#signal-glow.to-right { animation: glowRight 1.6s cubic-bezier(0.3,0,0.2,1) both; }
+#signal-tail.to-right { animation: tailRight 1.6s cubic-bezier(0.3,0,0.2,1) both;
+  background: linear-gradient(to left, transparent, rgba(148,144,212,0.25));
+}
+
+@keyframes glowLeft {
+  0%   { left: 95%; opacity: 0; }
+  8%   { opacity: 1; }
+  88%  { opacity: 0.8; }
+  100% { left: 5%; opacity: 0; }
+}
+@keyframes tailLeft {
+  0%   { left: 95%; width: 0; opacity: 0; }
+  8%   { opacity: 0.6; }
+  50%  { left: 50%; width: 45%; opacity: 0.5; }
+  88%  { opacity: 0.3; }
+  100% { left: 5%; width: 0; opacity: 0; }
+}
+@keyframes glowRight {
+  0%   { left: 5%; opacity: 0; }
+  8%   { opacity: 1; }
+  88%  { opacity: 0.8; }
+  100% { left: 95%; opacity: 0; }
+}
+@keyframes tailRight {
+  0%   { left: 5%; width: 0; opacity: 0; }
+  8%   { opacity: 0.6; }
+  50%  { left: 5%; width: 45%; opacity: 0.5; }
+  88%  { opacity: 0.3; }
+  100% { left: 95%; width: 0; opacity: 0; }
+}
+
+/* ── HAPTIC SQUARE VIBRATION (sender mode) ── */
+.haptic-square.vibe-short { animation: squareVibe 0.3s ease-in-out; }
+.haptic-square.vibe-long  { animation: squareVibeLong 0.6s ease-in-out; }
+@keyframes squareVibe {
+  0%, 100% { transform: translateX(0); }
+  15% { transform: translateX(-1.5px) rotate(-0.4deg); }
+  30% { transform: translateX(1.5px) rotate(0.4deg); }
+  45% { transform: translateX(-1px); }
+  60% { transform: translateX(1px); }
+  75% { transform: translateX(0); }
+}
+@keyframes squareVibeLong {
+  0%, 100% { transform: translateX(0); }
+  8%  { transform: translateX(-2px) rotate(-0.4deg); }
+  16% { transform: translateX(2px) rotate(0.4deg); }
+  24% { transform: translateX(-1.5px); }
+  32% { transform: translateX(1.5px); }
+  40% { transform: translateX(-1px) rotate(-0.2deg); }
+  48% { transform: translateX(1px) rotate(0.2deg); }
+  56% { transform: translateX(-0.5px); }
+  64% { transform: translateX(0); }
+}
+
+/* ═══════════════════════════
+   SANDBOX MODE — INTERACTIVE
+═══════════════════════════ */
+/* Clickable states */
+.sandbox-active #band-center {
+  cursor: pointer;
+}
+.sandbox-active .haptic-square {
+  cursor: pointer;
+}
+/* Hide heartbeat ripple in sandbox — watch face stays calm until clicked */
+.sandbox-active #hb-vis {
+  display: none;
+}
+
+/* Press flash on watch face */
+@keyframes watchPress {
+  0%   { box-shadow: 0 4px 24px rgba(0,0,0,0.55), inset 0 1px 0 rgba(255,255,255,0.06), 0 0 0 rgba(148,144,212,0); }
+  30%  { box-shadow: 0 4px 24px rgba(0,0,0,0.55), inset 0 1px 0 rgba(255,255,255,0.06), 0 0 16px rgba(148,144,212,0.45); }
+  100% { box-shadow: 0 4px 24px rgba(0,0,0,0.55), inset 0 1px 0 rgba(255,255,255,0.06), 0 0 0 rgba(148,144,212,0); }
+}
+#band-center.press-flash {
+  animation: watchPress 0.4s ease-out;
+  transition: none !important;
+}
+
+/* Press flash on haptic square */
+@keyframes squarePress {
+  0%   { box-shadow: -3px -3px 6px rgba(255,255,255,0.5), 3px 3px 6px rgba(170,170,204,0.25), 5px 5px 12px rgba(170,170,204,0.45), -5px -5px 12px rgba(255,255,255,0.9); }
+  30%  { box-shadow: 0 0 4px rgba(170,170,204,0.3), 1px 1px 3px rgba(170,170,204,0.2), 2px 2px 6px rgba(170,170,204,0.3), -2px -2px 6px rgba(255,255,255,0.7); }
+  100% { box-shadow: -3px -3px 6px rgba(255,255,255,0.5), 3px 3px 6px rgba(170,170,204,0.25), 5px 5px 12px rgba(170,170,204,0.45), -5px -5px 12px rgba(255,255,255,0.9); }
+}
+.haptic-square.press-flash {
+  animation: squarePress 0.35s ease-out;
+}
+
+/* ═══════════════════════════
+   WORDMARK
+═══════════════════════════ */
+.wordmark { position: fixed; bottom: 20px; right: 24px; font-size: 9px; font-weight: 300; letter-spacing: 0.2em; color: rgba(210,195,172,0.12); pointer-events: none; }
+</style>
+</head>
+<body>
+
+<div id="page-exit"></div>
+<div id="particles"></div>
+<div class="wordmark">Amber Grey</div>
+
+<button class="nav-back" onclick="navigateTo('case-study-dotcalm.html')">
+  <span class="nav-back-arrow"></span>
+  dotCALM
+</button>
+
+<div id="mode-selector">
+  <button class="mode-btn active" data-mode="care">Care Reminder</button>
+  <button class="mode-btn" data-mode="haptic">Haptic Language</button>
+  <button class="mode-btn" data-mode="sandbox">Try It</button>
+</div>
+
+<div id="app">
+  <div id="stage-wrap">
+
+    <!-- Connection line -->
+    <div id="connection-line"><div id="signal-pulse"></div></div>
+    <!-- Directional glow signal (haptic mode) -->
+    <div id="direction-signal">
+      <div id="signal-tail"></div>
+      <div id="signal-glow"></div>
+    </div>
+
+    <!-- LEFT: WEARABLE / CHILD -->
+    <div class="panel panel-left">
+      <div class="panel-label">The Wearable · Lizzy</div>
+
+      <div id="wearable-wrap">
+
+        <div id="hr-display">
+          <div id="hr-number">85</div>
+          <div id="hr-label">BPM</div>
+        </div>
+
+        <div id="band-wrap">
+          <div class="ring-layer" id="ring-outer"></div>
+          <div class="ring-layer" id="ring-mid"></div>
+          <div class="ring-layer" id="ring-inner"></div>
+          <div id="band-center">
+            <!-- Heartbeat ripple visualization -->
+            <div id="hb-vis">
+              <div class="hb-ring r1"></div>
+              <div class="hb-ring r2"></div>
+              <div class="hb-core"></div>
+            </div>
+            <!-- ECG (alert state only) -->
+            <svg id="band-ecg" viewBox="0 0 52 16" fill="none">
+              <path id="ecg-path" d="M0,8 L10,8 L13,4 L17,12 L20,8 L28,8 L31,3 L34,13 L37,8 L52,8"
+                stroke="rgba(122,171,222,0.55)" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+            <div id="band-status-dot"></div>
+          </div>
+        </div>
+
+        <div id="haptic-indicator">
+          <div id="haptic-dots">
+            <div class="haptic-dot"></div>
+            <div class="haptic-dot"></div>
+            <div class="haptic-dot"></div>
+          </div>
+          <div id="haptic-label">Haptic received</div>
+        </div>
+
+        <div id="breathe-guide">
+          <div class="breathe-word">
+            <span class="w-in">inhale</span><span class="w-out">exhale</span>
+          </div>
+        </div>
+
+      </div>
+      <div id="wearable-status">All vitals normal.<br><strong>Lizzy is calm.</strong></div>
+    </div>
+
+    <!-- RIGHT: COMPANION APP / CAREGIVER -->
+    <div class="panel panel-right">
+      <div class="panel-label" id="right-label">Companion App · Sarah</div>
+
+      <div id="app-wrap">
+        <div id="phone-frame">
+
+          <!-- Lock screen — resting or alert -->
+          <div class="p-lockscreen" id="screen-lock">
+            <div class="p-lock-island"></div>
+            <div class="p-lock-status"><span>AT&T 🔔</span><span>▲▲■</span></div>
+            <div class="p-lock-time" id="lock-time">9:40</div>
+            <div class="p-lock-date">Monday, December 9</div>
+            <div class="p-lock-spacer"></div>
+            <div class="p-notification" id="lock-notif" style="opacity:0;">
+              <div class="p-notif-icon">🔵</div>
+              <div class="p-notif-text">
+                <strong>dotCALM</strong><br>
+                You have a new alert for Lizzy. Please review.
+              </div>
+            </div>
+          </div>
+
+          <!-- Normal screens inside the phone -->
+          <div class="p-island"></div>
+          <div class="p-status"><span>9:41</span><span>▲▲■</span></div>
+          <div class="p-search"><span>Search</span><span>◎</span></div>
+
+          <!-- Screen 0: Home (calm) -->
+          <div class="phone-screen active" id="s0">
+            <div class="p-content" style="flex:1;">
+              <div class="p-profile">
+                <div class="p-avatar">👧</div>
+                <div class="p-name">Lizzy</div>
+              </div>
+              <div style="background:rgba(92,154,124,0.14);border:1px solid rgba(92,154,124,0.3);border-radius:100px;padding:3px 10px;display:flex;align-items:center;gap:5px;">
+                <span style="font-size:7px;color:#5c9a7c;">●</span>
+                <span style="font-size:8px;font-weight:600;color:#5c9a7c;letter-spacing:0.08em;">All calm</span>
+              </div>
+              <div class="p-vitals">
+                <div class="p-vital-row"><span class="p-vital-icon">♡</span><span>85 bpm · Normal</span></div>
+                <div class="p-vital-row"><span class="p-vital-icon">≋</span><span>Avg 88 bpm</span></div>
+                <div class="p-vital-row"><span class="p-vital-icon">↺</span><span>Breathing: 18 rpm</span></div>
+              </div>
+              <svg width="100%" height="18" viewBox="0 0 120 18"><polyline points="0,9 15,9 18,6 21,12 24,9 40,9 43,7 46,11 49,9 70,9 73,6 76,12 79,9 120,9" fill="none" stroke="rgba(92,154,124,0.35)" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </div>
+            <div class="p-actions">
+              <div class="p-btn" style="opacity:0.5;text-align:center;font-size:8px;">View History</div>
+            </div>
+            <div class="p-nav">
+              <div class="p-nav-icon active">⌂</div><div class="p-nav-icon">♡</div><div class="p-nav-icon">❧</div><div class="p-nav-icon">◯</div><div class="p-nav-icon">◻</div>
+            </div>
+          </div>
+
+          <!-- Screen 1: Alert (elevated) -->
+          <div class="phone-screen" id="s1">
+            <div class="p-content" style="flex:1;">
+              <div class="p-title">Lizzy's heart rate is <strong>elevated</strong></div>
+              <div class="p-heart">118</div>
+              <svg width="100%" height="18" viewBox="0 0 120 18"><polyline points="0,9 8,9 11,3 15,15 19,9 30,9 34,4 38,15 42,9 55,9 59,3 63,15 67,9 80,9 84,4 88,14 92,9 120,9" fill="none" stroke="rgba(200,100,100,0.5)" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </div>
+            <div class="p-actions">
+              <div class="p-btn primary">Help</div>
+              <div class="p-btn">Ignore</div>
+            </div>
+            <div class="p-nav">
+              <div class="p-nav-icon active">⌂</div><div class="p-nav-icon">♡</div><div class="p-nav-icon">❧</div><div class="p-nav-icon">◯</div><div class="p-nav-icon">◻</div>
+            </div>
+          </div>
+
+          <!-- Screen 2: How to help -->
+          <div class="phone-screen" id="s2">
+            <div class="p-content" style="flex:1;">
+              <div class="p-title">How would you like to help Lizzy?</div>
+              <div class="p-opt">send message</div>
+              <div class="p-opt">send reminder</div>
+            </div>
+            <div class="p-actions">
+              <div class="p-btn primary">Help</div>
+              <div class="p-btn">Back</div>
+            </div>
+            <div class="p-nav">
+              <div class="p-nav-icon active">⌂</div><div class="p-nav-icon">♡</div><div class="p-nav-icon">❧</div><div class="p-nav-icon">◯</div><div class="p-nav-icon">◻</div>
+            </div>
+          </div>
+
+          <!-- Screen 3: Choose reminder -->
+          <div class="phone-screen" id="s3">
+            <div class="p-content" style="flex:1;">
+              <div class="p-title">Choose a reminder to send</div>
+              <div class="p-opt" style="background:rgba(122,171,222,0.15);border:1px solid rgba(122,171,222,0.3);color:#7aabde;">deep breath</div>
+              <div class="p-opt">send message</div>
+              <div class="p-opt">tools</div>
+            </div>
+            <div class="p-actions">
+              <div class="p-btn primary">Help</div>
+              <div class="p-btn">Back</div>
+            </div>
+            <div class="p-nav">
+              <div class="p-nav-icon active">⌂</div><div class="p-nav-icon">♡</div><div class="p-nav-icon">❧</div><div class="p-nav-icon">◯</div><div class="p-nav-icon">◻</div>
+            </div>
+          </div>
+
+          <!-- Screen 4: Sent confirmation -->
+          <div class="phone-screen" id="s4">
+            <div class="p-content" style="flex:1;">
+              <div class="p-check">✓</div>
+              <div class="p-success">Congratulations,<br>your reminder has been sent!</div>
+            </div>
+            <div class="p-actions">
+              <div class="p-btn primary">Help</div>
+              <div class="p-btn">Back</div>
+            </div>
+            <div class="p-nav">
+              <div class="p-nav-icon active">⌂</div><div class="p-nav-icon">♡</div><div class="p-nav-icon">❧</div><div class="p-nav-icon">◯</div><div class="p-nav-icon">◻</div>
+            </div>
+          </div>
+
+          <!-- Screen 5: Back to home (calm) -->
+          <div class="phone-screen" id="s5">
+            <div class="p-content" style="flex:1;">
+              <div class="p-profile">
+                <div class="p-avatar">👧</div>
+                <div class="p-name">Lizzy</div>
+              </div>
+              <div class="p-vitals">
+                <div class="p-vital-row"><span class="p-vital-icon" style="color:#5c9a7c;">♡</span><span style="color:#5c9a7c;">88 bpm · Settling</span></div>
+                <div class="p-vital-row"><span class="p-vital-icon">≋</span><span>Avg 88 bpm</span></div>
+                <div class="p-vital-row"><span class="p-vital-icon">↺</span><span>Breathing: 16 rpm</span></div>
+              </div>
+              <svg width="100%" height="18" viewBox="0 0 120 18"><polyline points="0,9 15,9 18,6 21,12 24,9 40,9 43,7 46,11 49,9 70,9 73,6 76,12 79,9 120,9" fill="none" stroke="rgba(92,154,124,0.4)" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </div>
+            <div class="p-actions">
+              <div class="p-btn primary" style="background:rgba(92,154,124,0.7);">Nudge Sent ✓</div>
+              <div class="p-btn">Back</div>
+            </div>
+            <div class="p-nav">
+              <div class="p-nav-icon active">⌂</div><div class="p-nav-icon">♡</div><div class="p-nav-icon">❧</div><div class="p-nav-icon">◯</div><div class="p-nav-icon">◻</div>
+            </div>
+          </div>
+
+          <!-- Haptic shared screen -->
+          <div class="phone-screen" id="haptic-phone" style="background:#eeecf8;">
+            <div class="p-island"></div>
+            <div class="p-status"><span>9:41</span><span>▲▲■</span></div>
+            <div class="p-search"><span>Search</span><span>◎</span></div>
+            <div class="haptic-content">
+              <div class="haptic-label">Tap below</div>
+              <div class="haptic-square" id="haptic-square"></div>
+            </div>
+            <div class="p-actions">
+              <div class="p-btn primary">Help</div>
+              <div class="p-btn">Back</div>
+            </div>
+            <div class="p-nav">
+              <div class="p-nav-icon active">⌂</div><div class="p-nav-icon">♡</div><div class="p-nav-icon">❧</div><div class="p-nav-icon">◯</div><div class="p-nav-icon">◻</div>
+            </div>
+          </div>
+
+        </div><!-- /phone-frame -->
+
+      </div>
+      <div id="caregiver-status"><strong>Lizzy</strong> is doing well.<br>No alerts active.</div>
+    </div>
+  </div><!-- /stage-wrap -->
+
+  <!-- CONTROLS -->
+  <div id="controls">
+    <div id="step-title">Baseline · All is calm</div>
+    <div id="step-dots">
+      <div class="step-dot active" data-step="0"></div>
+      <div class="step-dot" data-step="1"></div>
+      <div class="step-dot" data-step="2"></div>
+      <div class="step-dot" data-step="3"></div>
+      <div class="step-dot" data-step="4"></div>
+      <div class="step-dot" data-step="5"></div>
+    </div>
+    <div style="display:flex;gap:12px;align-items:center;">
+      <button id="btn-next">Next →</button>
+      <button id="btn-restart" class="">↺ Restart</button>
+    </div>
+  </div>
+</div>
+
+<script>
+'use strict';
+
+/* ─── STEP DEFINITIONS — AUTOMATED CARE ─── */
+const CARE_STEPS = [
+  {
+    title: 'Baseline · All is calm',
+    wearableStatus: 'All vitals normal.<br><strong>Lizzy is calm.</strong>',
+    caregiverStatus: '<strong>Lizzy</strong> is doing well.<br>No alerts active.',
+    hrTarget: 85,
+    hrClass: '',
+    bandClass: 'resting',
+    bandCenterClass: '',
+    dotClass: '',
+    phoneScreen: 's0',
+    lockscreen: 'resting',
+    ecg: false,
+    haptic: false,
+    connection: false,
+    breatheGuide: false,
+    nextLabel: 'Next →',
+  },
+  {
+    title: 'Detection · Sensory load rising',
+    wearableStatus: 'Heart rate <strong>elevated</strong> to 110 bpm.<br>Pre-escalation detected.',
+    caregiverStatus: 'Alert incoming.<br><strong>Notification sent to Sarah.</strong>',
+    hrTarget: 110,
+    hrClass: 'elevated',
+    bandClass: 'alert',
+    bandCenterClass: 'alert-state',
+    dotClass: 'elevated',
+    phoneScreen: 's0',
+    lockscreen: true,
+    ecg: true,
+    haptic: false,
+    connection: false,
+    breatheGuide: false,
+    waveDirection: 'to-right',
+    nextLabel: 'Sarah opens app →',
+  },
+  {
+    title: 'Alert · Caregiver notified',
+    wearableStatus: 'Awaiting caregiver response.<br><strong>118 bpm · Elevated.</strong>',
+    caregiverStatus: 'Sarah taps <strong>Help</strong> to<br>choose how to respond.',
+    hrTarget: 118,
+    hrClass: 'elevated',
+    bandClass: 'alert',
+    bandCenterClass: 'alert-state',
+    dotClass: 'elevated',
+    phoneScreen: 's1',
+    lockscreen: false,
+    ecg: true,
+    haptic: false,
+    connection: false,
+    breatheGuide: false,
+    nextLabel: 'How to help →',
+  },
+  {
+    title: 'Response · Sarah chooses',
+    wearableStatus: 'Caregiver is responding.<br><strong>125 bpm · Still climbing.</strong>',
+    caregiverStatus: 'Sarah selects<br><strong>"deep breath"</strong> reminder.',
+    hrTarget: 125,
+    hrClass: 'elevated',
+    bandClass: 'alert',
+    bandCenterClass: 'alert-state',
+    dotClass: 'elevated',
+    phoneScreen: 's3',
+    lockscreen: false,
+    ecg: true,
+    haptic: false,
+    connection: true,
+    breatheGuide: false,
+    nextLabel: 'Send the Nudge →',
+  },
+  {
+    title: 'Nudge · Signal sent to wearable',
+    wearableStatus: 'Haptic received from Sarah.<br><strong>Breathing guide activating.</strong>',
+    caregiverStatus: 'Nudge sent. <strong>Reminder delivered.</strong><br>The band guides the breath.',
+    hrTarget: 115,
+    hrClass: 'settling',
+    bandClass: 'breathing-settling',
+    bandCenterClass: 'settling-state',
+    dotClass: '',
+    phoneScreen: 's4',
+    lockscreen: false,
+    ecg: false,
+    haptic: true,
+    connection: true,
+    waveDirection: 'to-left',
+    breatheGuide: 'settling',
+    nextLabel: 'Lizzy settles →',
+  },
+  {
+    title: 'Resolution · Returning to calm',
+    wearableStatus: 'Heart rate settling to 88 bpm.<br><strong>Lizzy is calm. She stays in the room.</strong>',
+    caregiverStatus: 'No crisis. No interruption.<br><strong>Sarah stayed at work.</strong>',
+    hrTarget: 88,
+    hrClass: 'calm',
+    bandClass: 'breathing-calm',
+    bandCenterClass: 'calm-settled',
+    dotClass: 'calm',
+    phoneScreen: 's5',
+    lockscreen: false,
+    ecg: false,
+    haptic: false,
+    connection: false,
+    breatheGuide: 'slow',
+    nextLabel: '↺ Restart',
+  },
+];
+
+/* ─── STEP DEFINITIONS — HAPTIC LANGUAGE ─── */
+const HAPTIC_STEPS = [
+  {
+    title: 'Haptic Language · Tap to connect',
+    wearableStatus: 'Lizzy\'s band is resting.<br><strong>Ready to receive.</strong>',
+    caregiverStatus: 'Sarah\'s companion app.<br><strong>Tap to send a message.</strong>',
+    hrTarget: 85,
+    hrClass: '',
+    bandClass: 'resting',
+    bandCenterClass: '',
+    dotClass: '',
+    phoneScreen: 'haptic-phone',
+    lockscreen: false,
+    ecg: false,
+    haptic: false,
+    connection: false,
+    breatheGuide: false,
+    nextLabel: 'Begin →',
+  },
+  {
+    title: 'Sarah checks in',
+    wearableStatus: 'Lizzy feels 4x buzz.<br><strong>(Are you okay?)</strong>',
+    caregiverStatus: 'Sarah taps 4x on her phone.<br><strong>(Are you okay?)</strong>',
+    hrTarget: 85,
+    hrClass: '',
+    bandClass: 'resting',
+    bandCenterClass: '',
+    dotClass: '',
+    phoneScreen: 'haptic-phone',
+    lockscreen: false,
+    ecg: false,
+    haptic: false,
+    connection: true,
+    breatheGuide: false,
+    nextLabel: 'Lizzy responds →',
+    // Sarah taps → square shakes, signal travels left, band receives
+    waveDirection: 'to-left',
+    vibeSequence: [
+      { target: 'phone-square', type: 'short', count: 4 },
+      { target: 'band',         type: 'short', count: 4, delay: 2000 },
+    ],
+  },
+  {
+    title: 'Lizzy responds',
+    wearableStatus: 'Lizzy taps 1x.<br><strong>(Yes)</strong>',
+    caregiverStatus: 'Sarah feels 1x buzz on her phone.<br><strong>(Yes)</strong>',
+    hrTarget: 85,
+    hrClass: '',
+    bandClass: 'resting',
+    bandCenterClass: '',
+    dotClass: '',
+    phoneScreen: 'haptic-phone',
+    lockscreen: false,
+    ecg: false,
+    haptic: false,
+    connection: true,
+    breatheGuide: false,
+    nextLabel: 'Sarah sends love →',
+    // Lizzy taps → band shakes, signal travels right, whole phone receives
+    waveDirection: 'to-right',
+    vibeSequence: [
+      { target: 'band',  type: 'short', count: 1 },
+      { target: 'phone', type: 'short', count: 1, delay: 2000 },
+    ],
+  },
+  {
+    title: 'Sarah sends love',
+    wearableStatus: 'Lizzy feels 3x buzz.<br><strong>(I love you)</strong>',
+    caregiverStatus: 'Sarah taps 3x on her phone.<br><strong>(I love you)</strong>',
+    hrTarget: 82,
+    hrClass: 'calm',
+    bandClass: 'resting',
+    bandCenterClass: 'calm-state',
+    dotClass: '',
+    phoneScreen: 'haptic-phone',
+    lockscreen: false,
+    ecg: false,
+    haptic: false,
+    connection: true,
+    breatheGuide: false,
+    nextLabel: 'Lizzy responds →',
+    // Sarah taps → square shakes, signal travels left, band receives
+    waveDirection: 'to-left',
+    vibeSequence: [
+      { target: 'phone-square', type: 'short', count: 3 },
+      { target: 'band',         type: 'short', count: 3, delay: 2000 },
+    ],
+  },
+  {
+    title: 'Lizzy responds',
+    wearableStatus: 'Lizzy taps 3x short, 1x long.<br><strong>(I love you too)</strong>',
+    caregiverStatus: 'Sarah feels 3x short, 1x long.<br><strong>(I love you too)</strong>',
+    hrTarget: 78,
+    hrClass: 'calm',
+    bandClass: 'breathing-calm',
+    bandCenterClass: 'calm-settled',
+    dotClass: 'calm',
+    phoneScreen: 'haptic-phone',
+    lockscreen: false,
+    ecg: false,
+    haptic: false,
+    connection: true,
+    breatheGuide: false,
+    nextLabel: '↺ Restart',
+    // Lizzy taps → band shakes, signal travels right, whole phone receives
+    waveDirection: 'to-right',
+    vibeSequence: [
+      { target: 'band',  type: 'mixed', pattern: ['short','short','short','long'] },
+      { target: 'phone', type: 'mixed', pattern: ['short','short','short','long'], delay: 2000 },
+    ],
+  },
+];
+
+/* ─── STEP DEFINITIONS — SANDBOX (single static step) ─── */
+const SANDBOX_STEPS = [
+  {
+    title: 'Try It · Tap either side',
+    wearableStatus: 'Click watch face.',
+    caregiverStatus: 'Click square.',
+    hrTarget: 85,
+    hrClass: '',
+    bandClass: 'resting',
+    bandCenterClass: '',
+    dotClass: '',
+    phoneScreen: 'haptic-phone',
+    lockscreen: false,
+    ecg: false,
+    haptic: false,
+    connection: false,
+    breatheGuide: false,
+    nextLabel: '↺ Reset',
+  },
+];
+
+let currentMode = 'care';
+let STEPS = CARE_STEPS;
+let currentStep = 0;
+let hrAnimFrame = null;
+let currentHR = 85;
+
+/* ─── ELEMENT REFS ─── */
+const hrNumber       = document.getElementById('hr-number');
+const wearableStatus = document.getElementById('wearable-status');
+const caregiverStatus = document.getElementById('caregiver-status');
+const bandWrap       = document.getElementById('band-wrap');
+const bandCenter     = document.getElementById('band-center');
+const bandDot        = document.getElementById('band-status-dot');
+const hapticInd      = document.getElementById('haptic-indicator');
+const breatheGuideEl = document.getElementById('breathe-guide');
+const connLine       = document.getElementById('connection-line');
+const signalPulse    = document.getElementById('signal-pulse');
+const lockscreen     = document.getElementById('screen-lock');
+const lockTime       = document.getElementById('lock-time');
+const lockNotif      = document.getElementById('lock-notif');
+const ecgPath        = document.getElementById('ecg-path');
+const btnNext        = document.getElementById('btn-next');
+const btnRestart     = document.getElementById('btn-restart');
+const stepTitle      = document.getElementById('step-title');
+const stepDots       = document.querySelectorAll('.step-dot');
+
+/* ─── HR COUNTER ANIMATION ─── */
+function animateHR(target) {
+  if (hrAnimFrame) cancelAnimationFrame(hrAnimFrame);
+  const start = currentHR;
+  const diff = target - start;
+  const dur = Math.abs(diff) * 18;
+  const t0 = performance.now();
+  function tick(now) {
+    const p = Math.min((now - t0) / dur, 1);
+    const ease = p < 0.5 ? 2*p*p : -1+(4-2*p)*p;
+    currentHR = Math.round(start + diff * ease);
+    hrNumber.textContent = currentHR;
+    if (p < 1) hrAnimFrame = requestAnimationFrame(tick);
+  }
+  hrAnimFrame = requestAnimationFrame(tick);
+}
+
+/* ─── SIGNAL PULSE ─── */
+function fireSignalPulse() {
+  signalPulse.classList.remove('travel');
+  void signalPulse.offsetWidth;
+  signalPulse.classList.add('travel');
+  setTimeout(() => signalPulse.classList.remove('travel'), 1000);
+}
+
+/* ─── HAPTIC TRIGGER ─── */
+function triggerHaptic() {
+  hapticInd.classList.remove('active');
+  void hapticInd.offsetWidth;
+  hapticInd.classList.add('active');
+  setTimeout(() => hapticInd.classList.remove('active'), 1500);
+}
+
+/* ─── VIBRATION ANIMATION SYSTEM ─── */
+const phoneFrame     = document.getElementById('phone-frame');
+const hapticSquare   = document.getElementById('haptic-square');
+const dirSignal      = document.getElementById('direction-signal');
+const signalGlow     = document.getElementById('signal-glow');
+const signalTail     = document.getElementById('signal-tail');
+let vibeTimeouts = [];
+
+function clearVibeAnimation() {
+  vibeTimeouts.forEach(t => clearTimeout(t));
+  vibeTimeouts = [];
+  bandCenter.classList.remove('vibe-short', 'vibe-long');
+  phoneFrame.classList.remove('vibe-short', 'vibe-long');
+  if (hapticSquare) hapticSquare.classList.remove('vibe-short', 'vibe-long');
+  dirSignal.classList.remove('active');
+  signalGlow.classList.remove('to-left', 'to-right');
+  signalTail.classList.remove('to-left', 'to-right');
+}
+
+function fireWaveSignal(direction) {
+  signalGlow.classList.remove('to-left', 'to-right');
+  signalTail.classList.remove('to-left', 'to-right');
+  void signalGlow.offsetWidth;
+  dirSignal.classList.add('active');
+  signalGlow.classList.add(direction);
+  signalTail.classList.add(direction);
+  signalGlow.addEventListener('animationend', function handler() {
+    dirSignal.classList.remove('active');
+    signalGlow.classList.remove('to-left', 'to-right');
+    signalTail.classList.remove('to-left', 'to-right');
+    signalGlow.removeEventListener('animationend', handler);
+  });
+}
+
+// target: 'band' | 'phone' | 'phone-square'
+// phone-square = only the haptic square shakes (Sarah is sending)
+// phone = whole phone shakes (Lizzy's response arrives)
+function vibeElement(el, cls) {
+  el.classList.remove('vibe-short', 'vibe-long');
+  void el.offsetWidth;
+  el.classList.add(cls);
+  // Clean up class when animation ends to prevent snap-back flicker
+  el.addEventListener('animationend', function handler() {
+    el.classList.remove('vibe-short', 'vibe-long');
+    el.removeEventListener('animationend', handler);
+  });
+}
+
+function fireSingleVibe(target, type) {
+  const cls = type === 'long' ? 'vibe-long' : 'vibe-short';
+  if (target === 'band') {
+    vibeElement(bandCenter, cls);
+  } else if (target === 'phone-square') {
+    if (hapticSquare) vibeElement(hapticSquare, cls);
+  } else {
+    vibeElement(phoneFrame, cls);
+  }
+}
+
+function playVibeSequence(sequence, waveDir) {
+  clearVibeAnimation();
+  let totalDelay = 0;
+  let senderDone = 0;
+
+  sequence.forEach((step, stepIdx) => {
+    const startDelay = totalDelay + (step.delay || 0);
+
+    // Determine pattern
+    let pattern;
+    if (step.type === 'mixed') {
+      pattern = step.pattern;
+    } else {
+      pattern = Array(step.count).fill(step.type);
+    }
+
+    // Play each buzz
+    pattern.forEach((buzzType, i) => {
+      const buzzDelay = startDelay + i * (buzzType === 'long' ? 700 : 400);
+      vibeTimeouts.push(setTimeout(() => {
+        fireSingleVibe(step.target, buzzType);
+      }, buzzDelay));
+      totalDelay = buzzDelay + (buzzType === 'long' ? 700 : 400);
+    });
+
+    // After first step (sender) finishes, fire the wave signal
+    if (stepIdx === 0) {
+      senderDone = totalDelay;
+      vibeTimeouts.push(setTimeout(() => {
+        if (waveDir) fireWaveSignal(waveDir);
+      }, senderDone + 200));
+    }
+  });
+}
+
+/* ─── APPLY STEP ─── */
+function applyStep(idx) {
+  const s = STEPS[idx];
+
+  // HR
+  hrNumber.className = s.hrClass;
+  animateHR(s.hrTarget);
+
+  // Status text
+  wearableStatus.innerHTML  = s.wearableStatus;
+  caregiverStatus.innerHTML = s.caregiverStatus;
+
+  // Band classes — use setAttribute to avoid animation restart flicker
+  // Only update if the class actually changed
+  if (bandWrap.className !== s.bandClass) bandWrap.className = s.bandClass;
+  if (bandCenter.getAttribute('data-state') !== s.bandCenterClass) {
+    bandCenter.className = s.bandCenterClass;
+    bandCenter.setAttribute('data-state', s.bandCenterClass);
+  }
+  bandDot.className    = s.dotClass;
+
+  // ECG animation
+  if (s.ecg) ecgPath.classList.add('animating');
+  else        ecgPath.classList.remove('animating');
+
+  // Lock screen
+  if (s.lockscreen) {
+    lockscreen.classList.add('show');
+    if (s.lockscreen === 'resting') {
+      lockTime.textContent = '9:40';
+      lockNotif.style.opacity = '0';
+    } else {
+      lockTime.textContent = '9:41';
+      lockNotif.style.opacity = '1';
+    }
+  } else {
+    lockscreen.classList.remove('show');
+  }
+
+  // Phone screens
+  document.querySelectorAll('.phone-screen').forEach(sc => sc.classList.remove('active'));
+  document.getElementById(s.phoneScreen)?.classList.add('active');
+
+  // Haptic
+  if (s.haptic) {
+    hapticInd.classList.add('show');
+    triggerHaptic();
+  } else {
+    hapticInd.classList.remove('show', 'active');
+  }
+
+  // Breathe guide
+  const breatheWord = breatheGuideEl.querySelector('.breathe-word');
+  if (s.breatheGuide) {
+    breatheGuideEl.classList.add('show');
+    breatheWord.classList.remove('slow', 'settling');
+    if (s.breatheGuide === 'slow') breatheWord.classList.add('slow');
+    else if (s.breatheGuide === 'settling') breatheWord.classList.add('settling');
+  } else {
+    breatheGuideEl.classList.remove('show');
+    breatheWord.classList.remove('slow', 'settling');
+  }
+
+  // Vibration sequence (haptic mode)
+  if (s.vibeSequence) {
+    playVibeSequence(s.vibeSequence, s.waveDirection);
+  } else {
+    clearVibeAnimation();
+    // Fire directional wave in care mode if specified
+    // Skip if wave was already pre-fired by the button handler
+    if (s.waveDirection && !s._wavePrefired) {
+      setTimeout(() => fireWaveSignal(s.waveDirection), 400);
+    }
+    if (s._wavePrefired) s._wavePrefired = false;
+  }
+
+  // Connection line — only for care mode steps without a wave signal
+  connLine.classList.remove('active');
+  if (s.connection && !s.vibeSequence && !s.waveDirection) {
+    connLine.classList.add('active');
+  }
+
+  // Step dots (re-query since they may be rebuilt)
+  document.querySelectorAll('.step-dot').forEach((dot, i) => {
+    dot.classList.remove('active', 'done');
+    if (i < idx) dot.classList.add('done');
+    if (i === idx) dot.classList.add('active');
+  });
+
+  // Title
+  stepTitle.textContent = s.title;
+
+  // Button state
+  if (idx === STEPS.length - 1) {
+    btnNext.style.display = 'none';
+    btnRestart.classList.add('show');
+  } else {
+    btnNext.style.display = 'flex';
+    btnRestart.classList.remove('show');
+    btnNext.textContent = '';
+    btnNext.innerHTML = STEPS[idx + 1] ? `${STEPS[idx].nextLabel}` : 'Next →';
+  }
+}
+
+/* ─── STAGED TRANSITION (sender changes → wave → receiver changes) ─── */
+function stagedTransition(nextIdx) {
+  const s = STEPS[nextIdx];
+  btnNext.disabled = true;
+  const senderIsWatch = s.waveDirection === 'to-right';
+
+  // Phase 1: Apply SENDER-side changes immediately
+  stepTitle.textContent = s.title;
+  if (senderIsWatch) {
+    // Watch is sender — show HR escalation + alert state
+    hrNumber.className = s.hrClass;
+    animateHR(s.hrTarget);
+    if (bandWrap.className !== s.bandClass) bandWrap.className = s.bandClass;
+    if (bandCenter.getAttribute('data-state') !== s.bandCenterClass) {
+      bandCenter.className = s.bandCenterClass;
+      bandCenter.setAttribute('data-state', s.bandCenterClass);
+    }
+    bandDot.className = s.dotClass;
+    if (s.ecg) ecgPath.classList.add('animating');
+    else ecgPath.classList.remove('animating');
+    wearableStatus.innerHTML = s.wearableStatus;
+  } else {
+    // Phone is sender — update phone screen + caregiver status
+    document.querySelectorAll('.phone-screen').forEach(sc => sc.classList.remove('active'));
+    document.getElementById(s.phoneScreen)?.classList.add('active');
+    caregiverStatus.innerHTML = s.caregiverStatus;
+  }
+
+  // Phase 2: Fire wave signal after a beat
+  setTimeout(() => {
+    fireWaveSignal(s.waveDirection);
+  }, 800);
+
+  // Phase 3: Apply RECEIVER-side changes after wave arrives
+  setTimeout(() => {
+    s._wavePrefired = true;
+    currentStep = nextIdx;
+    applyStep(currentStep);
+    btnNext.disabled = false;
+  }, 2600);
+}
+
+/* ─── CONTROLS ─── */
+btnNext.addEventListener('click', () => {
+  if (currentStep < STEPS.length - 1) {
+    const nextIdx = currentStep + 1;
+    const nextStep = STEPS[nextIdx];
+
+    // If next step has a wave signal (care mode), use staged transition
+    if (nextStep.waveDirection && !nextStep.vibeSequence) {
+      stagedTransition(nextIdx);
+    } else {
+      currentStep = nextIdx;
+      applyStep(currentStep);
+    }
+  }
+});
+
+btnRestart.addEventListener('click', () => {
+  currentStep = 0;
+  applyStep(0);
+});
+
+stepDots.forEach(dot => {
+  dot.style.cursor = 'pointer';
+  dot.addEventListener('click', () => {
+    if (parseInt(dot.dataset.step) < STEPS.length) {
+      currentStep = parseInt(dot.dataset.step);
+      applyStep(currentStep);
+    }
+  });
+});
+
+/* ─── MODE SWITCHING ─── */
+const stepDotsContainer = document.getElementById('step-dots');
+
+function buildStepDots(count) {
+  stepDotsContainer.innerHTML = '';
+  for (let i = 0; i < count; i++) {
+    const d = document.createElement('div');
+    d.className = 'step-dot';
+    d.dataset.step = i;
+    d.style.cursor = 'pointer';
+    d.addEventListener('click', () => {
+      currentStep = i;
+      applyStep(currentStep);
+    });
+    stepDotsContainer.appendChild(d);
+  }
+}
+
+function switchMode(mode) {
+  if (mode === currentMode) return;
+  currentMode = mode;
+  STEPS = mode === 'care' ? CARE_STEPS : mode === 'haptic' ? HAPTIC_STEPS : SANDBOX_STEPS;
+  currentStep = 0;
+
+  // Update mode buttons & panel label
+  document.querySelectorAll('.mode-btn').forEach(b => {
+    b.classList.toggle('active', b.dataset.mode === mode);
+  });
+
+  // Toggle sandbox interactive class on app container
+  document.getElementById('app').classList.toggle('sandbox-active', mode === 'sandbox');
+
+  // In sandbox mode, hide step dots and buttons but keep controls container for consistent layout height
+  document.getElementById('step-dots').style.display = mode === 'sandbox' ? 'none' : '';
+  document.querySelector('#controls > div:last-child').style.display = mode === 'sandbox' ? 'none' : '';
+
+  // Rebuild step dots for the new step count
+  buildStepDots(STEPS.length);
+
+  // Reset and apply
+  clearVibeAnimation();
+  applyStep(0);
+}
+
+document.querySelectorAll('.mode-btn').forEach(btn => {
+  btn.addEventListener('click', () => switchMode(btn.dataset.mode));
+});
+
+/* ─── SANDBOX CLICK HANDLERS ─── */
+function flashElement(el, cls) {
+  el.classList.remove(cls);
+  void el.offsetWidth;
+  el.classList.add(cls);
+  el.addEventListener('animationend', function handler() {
+    el.classList.remove(cls);
+    el.removeEventListener('animationend', handler);
+  });
+}
+
+// Watch face clicked → flash watch, vibrate phone
+bandCenter.addEventListener('click', () => {
+  if (currentMode !== 'sandbox') return;
+  flashElement(bandCenter, 'press-flash');
+  vibeElement(phoneFrame, 'vibe-short');
+});
+
+// Haptic square clicked → square vibrates as press indicator, watch vibrates
+hapticSquare.addEventListener('click', () => {
+  if (currentMode !== 'sandbox') return;
+  vibeElement(hapticSquare, 'vibe-short');
+  vibeElement(bandCenter, 'vibe-short');
+});
+
+/* ─── PARTICLES ─── */
+(function() {
+  const container = document.getElementById('particles');
+  const colors = [
+    'rgba(122,171,222,VAL)',
+    'rgba(148,144,212,VAL)',
+    'rgba(200,185,165,VAL)',
+  ];
+  for (let i = 0; i < 22; i++) {
+    const p = document.createElement('div');
+    p.className = 'particle';
+    const size = 1.5 + Math.random() * 2;
+    const col  = colors[Math.floor(Math.random() * colors.length)];
+    const op   = (0.04 + Math.random() * 0.1).toFixed(2);
+    const dx   = (-20 + Math.random() * 40).toFixed(1);
+    p.style.cssText = [
+      `width:${size}px`, `height:${size}px`,
+      `left:${Math.random() * 100}%`,
+      `bottom:${Math.random() * 60}%`,
+      `background:${col.replace('VAL', op)}`,
+      `--op:${op}`,
+      `--dx:${dx}px`,
+      `animation-duration:${6 + Math.random() * 12}s`,
+      `animation-delay:-${Math.random() * 12}s`,
+    ].join(';');
+    container.appendChild(p);
+  }
+})();
+
+/* ─── NAV ─── */
+function navigateTo(url) {
+  document.getElementById('page-exit').classList.add('active');
+  setTimeout(() => { window.location.href = url; }, 300);
+}
+
+/* ─── INIT ─── */
+applyStep(0);
+</script>
+</body>
+</html>

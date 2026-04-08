@@ -1,0 +1,477 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Transparency Matrix — Amber Grey</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html, body {
+  width: 100%; height: 100%;
+  overflow: hidden;
+  background: #12091e;
+  font-family: 'DM Sans', sans-serif;
+}
+
+body { opacity: 0; transition: opacity 0.55s ease; }
+body.visible { opacity: 1; }
+
+/* ── COSMIC BACKGROUND ── */
+#cosmos {
+  position: fixed;
+  inset: 0;
+  background:
+    radial-gradient(ellipse 90% 80% at 18% 65%, rgba(88, 42, 138, 0.62) 0%, transparent 60%),
+    radial-gradient(ellipse 65% 75% at 8%  28%, rgba(38, 55, 155, 0.35) 0%, transparent 55%),
+    radial-gradient(ellipse 55% 50% at 82% 78%, rgba(165, 72, 32, 0.28) 0%, transparent 48%),
+    radial-gradient(ellipse 50% 35% at 65% 10%, rgba(65, 30, 118, 0.35) 0%, transparent 55%),
+    radial-gradient(ellipse 80% 60% at 50% 50%, rgba(30, 15, 55, 0.4) 0%, transparent 70%),
+    #12091e;
+  z-index: 0;
+}
+
+#stars {
+  position: fixed;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+}
+
+/* ── PAGE EXIT ── */
+#page-exit {
+  position: fixed; inset: 0;
+  background: #12091e;
+  opacity: 0; pointer-events: none;
+  transition: opacity 0.45s ease;
+  z-index: 9999;
+}
+#page-exit.active { opacity: 1; }
+
+/* ── WRAPPER ── */
+#wrapper {
+  position: relative;
+  z-index: 2;
+  width: 100%; height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+/* ── TOP NAV ── */
+.top-nav {
+  flex-shrink: 0;
+  height: 72px;
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  padding: 0 36px;
+  border-bottom: 1px solid rgba(228,218,200,0.12);
+  backdrop-filter: blur(6px);
+}
+
+.nav-back {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #b9654e;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.32em;
+  text-transform: uppercase;
+  transition: opacity 0.25s ease;
+  padding: 0;
+}
+.nav-back:hover { opacity: 0.7; }
+.nav-back-arrow {
+  width: 32px;
+  height: 1px;
+  background: #b9654e;
+  position: relative;
+  flex-shrink: 0;
+}
+.nav-back-arrow::before {
+  content: '';
+  position: absolute;
+  left: 0; top: -4px;
+  width: 8px; height: 8px;
+  border-left: 1px solid #b9654e;
+  border-bottom: 1px solid #b9654e;
+  transform: rotate(45deg);
+}
+
+.nav-center {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 13px;
+  font-weight: 400;
+  letter-spacing: 0.38em;
+  text-transform: uppercase;
+  color: rgba(185,137,133,0.75);
+  text-align: center;
+}
+
+.nav-next {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 14px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: rgba(85,80,106,0.65);
+  font-family: 'DM Sans', sans-serif;
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.32em;
+  text-transform: uppercase;
+  transition: opacity 0.25s ease;
+  padding: 0;
+}
+.nav-next:hover { opacity: 0.85; }
+.nav-next-arrow {
+  width: 32px;
+  height: 1px;
+  background: rgba(85,80,106,0.65);
+  position: relative;
+  flex-shrink: 0;
+}
+.nav-next-arrow::after {
+  content: '';
+  position: absolute;
+  right: 0; top: -4px;
+  width: 8px; height: 8px;
+  border-right: 1px solid rgba(85,80,106,0.65);
+  border-top: 1px solid rgba(85,80,106,0.65);
+  transform: rotate(45deg);
+}
+
+/* ── MAIN LAYOUT ── */
+.main-layout {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+}
+
+/* ── LEFT: MEDIA PANEL ── */
+.media-panel {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 48px 32px;
+  gap: 28px;
+}
+
+.artifact-card {
+  background: rgba(22, 16, 38, 0.88);
+  border-radius: 10px;
+  width: 100%;
+  max-width: 660px;
+  padding: 36px 32px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.swatch-row {
+  display: flex;
+  gap: 12px;
+}
+
+.swatch {
+  height: 80px;
+  border-radius: 7px;
+  flex: 1;
+}
+.swatch.wide { flex: 2; }
+
+.swatch-slate  { background: rgba(41, 40, 67, 0.85); }
+.swatch-umber  { background: rgba(75, 56, 48, 0.85); }
+.swatch-mauve  { background: rgba(58, 43, 80, 0.85); }
+.swatch-mist   { background: rgba(59, 45, 62, 0.85); }
+.swatch-violet { background: rgba(87, 65, 123, 0.85); }
+
+.media-footer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+}
+
+.carousel-dots {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.dot {
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  background: rgba(150,125,179,0.35);
+  transition: background 0.25s ease;
+}
+.dot.active {
+  background: rgba(150,125,179,0.88);
+}
+
+.artifact-label {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.32em;
+  text-transform: uppercase;
+  color: rgba(150,125,179,0.7);
+}
+
+/* ── RIGHT: INFO PANEL ── */
+.info-panel {
+  width: 420px;
+  flex-shrink: 0;
+  background: rgba(47, 35, 54, 0.72);
+  backdrop-filter: blur(12px);
+  border-left: 1px solid rgba(228,218,200,0.06);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 44px 44px 44px 48px;
+  gap: 0;
+  overflow: hidden;
+}
+
+.zone-badge {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.36em;
+  text-transform: uppercase;
+  color: #dca25b;
+  margin-bottom: 14px;
+}
+
+.project-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 40px;
+  font-weight: 600;
+  font-style: normal;
+  line-height: 1.1;
+  color: #eac6ce;
+  margin-bottom: 16px;
+}
+
+.project-desc {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 13px;
+  font-weight: 300;
+  line-height: 1.8;
+  color: #bca6a1;
+  margin-bottom: 24px;
+}
+
+/* ── META TABLE ── */
+.meta-table {
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+  margin-bottom: 22px;
+}
+
+.meta-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+}
+
+.meta-label {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: rgba(117, 87, 110, 0.85);
+}
+
+.meta-value {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 13px;
+  font-weight: 400;
+  color: #cca190;
+  text-align: right;
+}
+
+/* ── DIVIDER ── */
+.meta-divider {
+  width: 100%;
+  height: 1px;
+  background: rgba(180,150,160,0.14);
+  margin-bottom: 20px;
+}
+
+/* ── REFLECTION ── */
+.reflection-label {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 9px;
+  font-weight: 500;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: rgba(117, 87, 110, 0.75);
+  margin-bottom: 12px;
+}
+
+.reflection-quote {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 21px;
+  font-weight: 400;
+  font-style: italic;
+  line-height: 1.5;
+  color: rgba(234,198,206,0.88);
+}
+
+</style>
+</head>
+<body>
+
+<div id="cosmos"></div>
+<canvas id="stars"></canvas>
+<div id="page-exit"></div>
+
+<div id="wrapper">
+
+  <!-- ── TOP NAV ── -->
+  <nav class="top-nav">
+    <button class="nav-back" onclick="navigateTo('perspective.html')">
+      <span class="nav-back-arrow"></span>
+      Perspectives
+    </button>
+    <div class="nav-center">Amber Grey</div>
+    <button class="nav-next">
+      Case Study
+      <span class="nav-next-arrow"></span>
+    </button>
+  </nav>
+
+  <!-- ── MAIN ── -->
+  <div class="main-layout">
+
+    <!-- Left: artifact preview -->
+    <div class="media-panel">
+      <div class="artifact-card">
+        <div class="swatch-row">
+          <div class="swatch swatch-slate"></div>
+          <div class="swatch swatch-umber"></div>
+          <div class="swatch swatch-mauve"></div>
+        </div>
+        <div class="swatch-row">
+          <div class="swatch swatch-mist wide"></div>
+          <div class="swatch swatch-violet"></div>
+        </div>
+      </div>
+
+      <div class="media-footer">
+        <div class="carousel-dots">
+          <span class="dot active"></span>
+          <span class="dot"></span>
+          <span class="dot"></span>
+        </div>
+        <div class="artifact-label">Prototype / Artifact</div>
+      </div>
+    </div>
+
+    <!-- Right: info -->
+    <div class="info-panel">
+      <div class="zone-badge">Perspectives</div>
+      <h1 class="project-title">What gets shown,<br>what gets hidden</h1>
+      <p class="project-desc">A framework for mapping transparency decisions — where visibility is a choice, not a default</p>
+
+      <div class="meta-table">
+        <div class="meta-row">
+          <span class="meta-label">Type</span>
+          <span class="meta-value">Framework</span>
+        </div>
+        <div class="meta-row">
+          <span class="meta-label">Year</span>
+          <span class="meta-value">2024</span>
+        </div>
+        <div class="meta-row">
+          <span class="meta-label">Methods</span>
+          <span class="meta-value">Research, Design</span>
+        </div>
+      </div>
+
+      <div class="meta-divider"></div>
+
+      <div class="reflection-label">What I Wanted to Show</div>
+      <p class="reflection-quote">That transparency is always a negotiation, never a given.</p>
+    </div>
+
+  </div>
+</div>
+
+<script>
+'use strict';
+
+function navigateTo(url) {
+  const exit = document.getElementById('page-exit');
+  exit.classList.add('active');
+  setTimeout(() => { window.location.href = url; }, 450);
+}
+
+// Fade in
+requestAnimationFrame(() => {
+  requestAnimationFrame(() => { document.body.classList.add('visible'); });
+});
+
+// ── STARFIELD ──
+(function() {
+  const canvas = document.getElementById('stars');
+  const ctx = canvas.getContext('2d');
+  let stars = [];
+
+  function resize() {
+    canvas.width  = window.innerWidth;
+    canvas.height = window.innerHeight;
+    buildStars();
+  }
+
+  function buildStars() {
+    stars = [];
+    const count = Math.floor((canvas.width * canvas.height) / 4200);
+    for (let i = 0; i < count; i++) {
+      stars.push({
+        x:       Math.random() * canvas.width,
+        y:       Math.random() * canvas.height,
+        r:       Math.random() * 0.9 + 0.1,
+        opacity: Math.random() * 0.55 + 0.1,
+        speed:   Math.random() * 0.004 + 0.001,
+        phase:   Math.random() * Math.PI * 2,
+      });
+    }
+  }
+
+  function draw(t) {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    for (const s of stars) {
+      const tw = Math.sin(s.phase + t * s.speed) * 0.5 + 0.5;
+      ctx.beginPath();
+      ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
+      ctx.fillStyle = `rgba(220, 210, 200, ${s.opacity * (0.4 + tw * 0.6)})`;
+      ctx.fill();
+    }
+    requestAnimationFrame(draw);
+  }
+
+  window.addEventListener('resize', resize);
+  resize();
+  requestAnimationFrame(draw);
+})();
+</script>
+
+</body>
+</html>

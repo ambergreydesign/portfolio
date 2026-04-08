@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Rewilded — Research GPT</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html, body {
+  width: 100%; height: 100%;
+  overflow: hidden;
+}
+
+body {
+  background-color: #0c1610;
+  background-image:
+    radial-gradient(ellipse 70% 60% at 30% 20%, rgba(78, 118, 68, 0.18) 0%, transparent 65%),
+    radial-gradient(ellipse 50% 50% at 75% 80%, rgba(92, 134, 80, 0.12) 0%, transparent 60%);
+  font-family: 'DM Sans', sans-serif;
+  color: rgba(218, 210, 192, 0.9);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 32px;
+}
+
+/* ── ORGANIC BACKGROUND LINES ── */
+.bg-lines {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0.06;
+}
+
+/* ── CARD ── */
+.card {
+  width: 100%;
+  max-width: 540px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0;
+  opacity: 0;
+  transform: translateY(12px);
+  transition: opacity 0.7s cubic-bezier(0.25, 0.46, 0.45, 0.94),
+              transform 0.7s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+body.visible .card { opacity: 1; transform: translateY(0); }
+
+/* ── ICON ── */
+.gpt-icon {
+  width: 64px; height: 64px;
+  margin-bottom: 28px;
+  border-radius: 16px;
+  background: linear-gradient(140deg, #2a4a26 0%, #1a3018 100%);
+  border: 1px solid rgba(120, 168, 100, 0.25);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 24px rgba(0,0,0,0.4), 0 0 0 1px rgba(100,150,80,0.1);
+}
+
+/* ── WORDMARK ── */
+.eyebrow {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 9px;
+  font-weight: 300;
+  letter-spacing: 0.32em;
+  text-transform: uppercase;
+  color: rgba(140, 190, 115, 0.65);
+  margin-bottom: 10px;
+  text-align: center;
+}
+
+.title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 42px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  color: rgba(212, 228, 198, 0.95);
+  text-align: center;
+  line-height: 1;
+  margin-bottom: 6px;
+}
+
+.subtitle {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 15px;
+  font-weight: 400;
+  font-style: italic;
+  color: rgba(168, 188, 148, 0.65);
+  text-align: center;
+  letter-spacing: 0.04em;
+  margin-bottom: 36px;
+}
+
+/* ── DIVIDER ── */
+.rule {
+  width: 48px;
+  height: 1px;
+  background: rgba(120, 168, 100, 0.25);
+  margin-bottom: 28px;
+}
+
+/* ── DESCRIPTION ── */
+.desc {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 13px;
+  font-weight: 300;
+  line-height: 1.85;
+  color: rgba(195, 210, 180, 0.7);
+  text-align: center;
+  max-width: 380px;
+  margin-bottom: 32px;
+  letter-spacing: 0.02em;
+}
+
+/* ── CAPABILITY TAGS ── */
+.tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  justify-content: center;
+  margin-bottom: 44px;
+}
+
+.tag {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 8px;
+  font-weight: 400;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: rgba(140, 190, 115, 0.65);
+  border: 1px solid rgba(100, 150, 80, 0.22);
+  border-radius: 2px;
+  padding: 5px 11px;
+  background: rgba(60, 90, 48, 0.15);
+}
+
+/* ── CTA BUTTON ── */
+.open-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  background: rgba(78, 118, 68, 0.22);
+  border: 1px solid rgba(120, 168, 100, 0.3);
+  border-radius: 100px;
+  padding: 13px 28px;
+  cursor: pointer;
+  color: rgba(195, 228, 170, 0.9);
+  font-family: 'DM Sans', sans-serif;
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  text-decoration: none;
+  transition: background 0.28s ease, border-color 0.28s ease, color 0.28s ease, transform 0.2s ease;
+  margin-bottom: 14px;
+}
+.open-btn:hover {
+  background: rgba(78, 118, 68, 0.38);
+  border-color: rgba(140, 190, 115, 0.55);
+  color: rgba(220, 245, 200, 1);
+  transform: translateY(-1px);
+}
+.btn-arrow {
+  display: inline-block;
+  width: 18px; height: 1px;
+  background: currentColor;
+  position: relative;
+}
+.btn-arrow::after {
+  content: '';
+  position: absolute;
+  right: 0; top: -3px;
+  width: 6px; height: 6px;
+  border-right: 1px solid currentColor;
+  border-top: 1px solid currentColor;
+  transform: rotate(45deg);
+}
+
+.opens-in {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 8px;
+  font-weight: 300;
+  letter-spacing: 0.14em;
+  color: rgba(140, 168, 118, 0.35);
+  text-align: center;
+}
+</style>
+</head>
+<body>
+
+<!-- organic bg lines -->
+<svg class="bg-lines" viewBox="0 0 820 660" preserveAspectRatio="xMidYMid slice" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <path d="M0 400 C120 360 220 300 320 340 C420 380 480 280 620 260 C720 246 790 290 820 310" stroke="rgba(120,168,90,0.9)" stroke-width="1"/>
+  <path d="M0 500 C80 470 180 440 280 460 C380 480 460 400 560 390 C660 380 740 420 820 440" stroke="rgba(100,148,75,0.7)" stroke-width="0.8"/>
+  <path d="M100 0 C140 80 120 180 160 280 C200 380 180 460 200 580" stroke="rgba(110,158,82,0.6)" stroke-width="0.7"/>
+  <path d="M600 0 C580 100 620 200 600 300 C580 400 620 480 600 660" stroke="rgba(90,138,70,0.5)" stroke-width="0.6"/>
+</svg>
+
+<div class="card">
+  <!-- Icon -->
+  <div class="gpt-icon">
+    <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <!-- Stylized leaf / branch mark -->
+      <path d="M16 28 C16 28 16 16 16 12 C16 8 20 4 26 5 C26 5 24 14 18 18 C22 14 28 12 28 12" stroke="rgba(140,190,115,0.85)" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/>
+      <path d="M16 12 C16 8 12 4 6 5 C6 5 8 14 14 18 C10 14 4 12 4 12" stroke="rgba(110,158,90,0.65)" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"/>
+      <path d="M16 28 L16 20" stroke="rgba(140,190,115,0.5)" stroke-width="0.8" stroke-linecap="round"/>
+    </svg>
+  </div>
+
+  <div class="eyebrow">Research GPT · 2026</div>
+  <h1 class="title">Rewilded</h1>
+  <p class="subtitle">Ecological intelligence, by way of research</p>
+
+  <div class="rule"></div>
+
+  <p class="desc">A custom GPT built to support qualitative research into rewilding practices, ecological restoration, and the design intelligence embedded in natural systems — synthesizing field data, literature, and pattern signals.</p>
+
+  <div class="tags">
+    <span class="tag">Ecological Research</span>
+    <span class="tag">Literature Synthesis</span>
+    <span class="tag">Pattern Recognition</span>
+    <span class="tag">Field Data Analysis</span>
+    <span class="tag">Research Strategy</span>
+  </div>
+
+  <a class="open-btn" href="https://chatgpt.com/g/g-6907af38fd588191b14ff16c43294733-rewilded" target="_blank" rel="noopener">
+    Open Rewilded
+    <span class="btn-arrow"></span>
+  </a>
+  <p class="opens-in">Opens in ChatGPT</p>
+</div>
+
+<script>
+requestAnimationFrame(() => {
+  requestAnimationFrame(() => { document.body.classList.add('visible'); });
+});
+</script>
+</body>
+</html>

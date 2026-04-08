@@ -1,0 +1,939 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MaterGenesis — Case Study — Amber Grey</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,600;1,400;1,500&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --magenta:        #c47a2e;
+  --magenta-dim:    rgba(196, 122, 46, 0.10);
+  --magenta-border: rgba(196, 122, 46, 0.28);
+  --bg:             #0e0d12;
+  --bg-alt:         #12111a;
+  --text:           #e0d6c8;
+  --text-muted:     #7a6e7e;
+  --text-dim:       #3a2e42;
+  --pink:           #eac6ce;
+  --amber:          #dca25b;
+  --border:         rgba(255, 255, 255, 0.06);
+}
+
+html { background: var(--bg); scroll-behavior: smooth; }
+
+body {
+  font-family: 'DM Sans', sans-serif;
+  color: var(--text);
+  overflow-x: hidden;
+  opacity: 0;
+  transition: opacity 0.55s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+body.visible { opacity: 1; }
+
+/* -- PAGE EXIT -- */
+#page-exit {
+  position: fixed; inset: 0;
+  background: #0e0d12;
+  opacity: 0; pointer-events: none;
+  transition: opacity 0.28s ease-in;
+  z-index: 9999;
+}
+#page-exit.active { opacity: 1; }
+
+/* -- NAV -- */
+.nav-back {
+  position: fixed;
+  top: 28px; left: 32px;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  background: rgba(255, 255, 255, 0.06);
+  backdrop-filter: blur(14px) saturate(1.2);
+  -webkit-backdrop-filter: blur(14px) saturate(1.2);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 100px;
+  padding: 9px 18px 9px 14px;
+  cursor: pointer;
+  color: rgba(200, 185, 165, 0.75);
+  font-family: 'DM Sans', sans-serif;
+  font-size: 10px;
+  font-weight: 400;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  transition: background 0.25s ease, color 0.25s ease, border-color 0.25s ease;
+  z-index: 200;
+}
+.nav-back:hover {
+  background: rgba(255, 255, 255, 0.11);
+  color: rgba(200, 185, 165, 1);
+  border-color: rgba(255, 255, 255, 0.18);
+}
+.nav-back-arrow {
+  display: inline-block;
+  width: 16px; height: 1px;
+  background: currentColor;
+  position: relative; flex-shrink: 0;
+}
+.nav-back-arrow::before {
+  content: '';
+  position: absolute;
+  left: 0; top: -3px;
+  width: 6px; height: 6px;
+  border-left: 1px solid currentColor;
+  border-bottom: 1px solid currentColor;
+  transform: rotate(45deg);
+}
+
+/* -- WORDMARK -- */
+.wordmark {
+  position: fixed;
+  bottom: 24px; left: 21px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 13px;
+  font-weight: 300;
+  letter-spacing: 0.2em;
+  color: rgba(210, 195, 172, 0.14);
+  pointer-events: none;
+  z-index: 10;
+}
+
+/* -- HERO -- */
+.hero {
+  min-height: 100svh;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  padding: 0 88px 80px;
+  position: relative;
+  overflow: hidden;
+  background: var(--bg);
+}
+.hero-bg {
+  position: absolute; inset: 0; z-index: 0;
+  background-image: url('https://amber.design/wp-content/uploads/2024/12/Matergenesis_Cover.webp');
+  background-size: cover;
+  background-position: center top;
+  opacity: 0.35;
+}
+.hero-bg::after {
+  content: '';
+  position: absolute; inset: 0;
+  background: linear-gradient(to bottom,
+    transparent 0%,
+    rgba(14, 13, 18, 0.6) 55%,
+    var(--bg) 100%);
+}
+.hero-content { position: relative; z-index: 1; }
+
+.hero-zone {
+  font-size: 10px; font-weight: 500;
+  letter-spacing: 0.32em; text-transform: uppercase;
+  color: var(--amber); margin-bottom: 22px;
+}
+.hero-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(52px, 6.5vw, 92px);
+  font-weight: 600; line-height: 1.04;
+  color: var(--pink); margin-bottom: 26px; max-width: 800px;
+}
+.hero-desc {
+  font-size: 15px; font-weight: 400;
+  line-height: 1.8; letter-spacing: 0.035em;
+  color: rgba(200, 185, 165, 0.62);
+  max-width: 540px; margin-bottom: 64px;
+}
+.hero-meta {
+  display: flex; gap: 52px;
+  border-top: 1px solid rgba(255,255,255,0.07);
+  padding-top: 28px; flex-wrap: wrap;
+}
+.hero-meta-label {
+  font-size: 9px; font-weight: 500;
+  letter-spacing: 0.24em; text-transform: uppercase;
+  color: var(--text-dim); margin-bottom: 7px;
+}
+.hero-meta-value {
+  font-size: 13px; font-weight: 500;
+  letter-spacing: 0.05em; color: var(--text-muted);
+}
+
+/* -- SECTION STRUCTURE -- */
+.cs-section { padding: 96px 88px; border-top: 1px solid var(--border); }
+.cs-section.alt { background: var(--bg-alt); }
+.section-inner { max-width: 1040px; margin: 0 auto; }
+.section-label {
+  font-size: 9px; font-weight: 500;
+  letter-spacing: 0.32em; text-transform: uppercase;
+  color: var(--amber); margin-bottom: 18px;
+}
+.section-heading {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(30px, 3.8vw, 50px);
+  font-weight: 600; line-height: 1.1;
+  color: var(--pink); margin-bottom: 22px;
+}
+.section-body {
+  font-size: 15px; font-weight: 400;
+  line-height: 1.88; letter-spacing: 0.03em;
+  color: rgba(200, 185, 165, 0.6); max-width: 620px;
+}
+.section-body + .section-body { margin-top: 18px; }
+
+/* -- TWO COL -- */
+.two-col {
+  display: grid; grid-template-columns: 1.55fr 1fr;
+  gap: 72px; align-items: start;
+}
+
+/* -- BRIEF META -- */
+.brief-meta { display: flex; flex-direction: column; gap: 24px; padding-top: 4px; }
+.meta-item-label {
+  font-size: 9px; font-weight: 500;
+  letter-spacing: 0.22em; text-transform: uppercase;
+  color: var(--text-dim); margin-bottom: 5px;
+}
+.meta-item-value {
+  font-size: 13px; font-weight: 500;
+  letter-spacing: 0.04em; color: var(--text-muted); line-height: 1.55;
+}
+
+/* -- DIVIDER -- */
+.section-divider {
+  width: 48px; height: 1px;
+  background: var(--amber); opacity: 0.4; margin: 36px 0;
+}
+
+/* -- THEME GRID -- */
+.theme-grid {
+  display: grid; grid-template-columns: repeat(3, 1fr);
+  gap: 18px; margin-top: 52px;
+}
+.theme-card {
+  background: rgba(255,255,255,0.018);
+  border: 1px solid var(--magenta-border);
+  border-radius: 12px;
+  padding: 32px 26px;
+  position: relative;
+  overflow: hidden;
+  transition: border-color 0.25s ease, transform 0.25s ease;
+}
+.theme-card:hover {
+  border-color: rgba(196, 122, 46, 0.55);
+  transform: translateY(-3px);
+}
+.theme-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, var(--amber) 0%, transparent 70%);
+}
+.theme-kicker {
+  font-size: 9px; font-weight: 500;
+  letter-spacing: 0.22em; text-transform: uppercase;
+  color: var(--amber); margin-bottom: 14px; opacity: 0.85;
+}
+.theme-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 24px; font-weight: 600;
+  color: var(--pink); margin-bottom: 14px; line-height: 1.2;
+}
+.theme-body {
+  font-size: 13px; font-weight: 400; line-height: 1.75;
+  color: rgba(200, 185, 165, 0.55); letter-spacing: 0.025em;
+}
+
+/* -- PROCESS STEPS -- */
+.process-steps {
+  display: grid; grid-template-columns: repeat(4, 1fr);
+  gap: 14px; margin-top: 52px;
+}
+.process-step {
+  border-left: 2px solid var(--magenta-border);
+  padding: 0 0 0 24px;
+  transition: border-color 0.3s ease, transform 0.3s ease;
+}
+.process-step:hover {
+  border-left-color: var(--amber);
+  transform: translateX(4px);
+}
+.process-num {
+  font-size: 9px; font-weight: 500;
+  letter-spacing: 0.28em; text-transform: uppercase;
+  color: var(--amber); margin-bottom: 12px;
+}
+.process-heading {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 20px; font-weight: 600;
+  color: var(--pink); margin-bottom: 10px; line-height: 1.2;
+}
+.process-body {
+  font-size: 13px; font-weight: 400; line-height: 1.75;
+  color: rgba(200, 185, 165, 0.55); letter-spacing: 0.025em;
+}
+
+/* -- GALLERY -- */
+.gallery-grid {
+  display: grid; grid-template-columns: repeat(3, 1fr);
+  gap: 14px; margin-top: 44px;
+}
+.gallery-card {
+  border-radius: 12px;
+  border: 1px solid rgba(255,255,255,0.08);
+  overflow: hidden;
+  position: relative;
+  aspect-ratio: 4/3;
+  transition: border-color 0.25s ease, transform 0.25s ease, box-shadow 0.25s ease;
+  cursor: default;
+}
+.gallery-card:hover {
+  border-color: rgba(196, 122, 46, 0.35);
+  transform: translateY(-4px);
+  box-shadow: 0 16px 44px rgba(0,0,0,0.4);
+}
+.gallery-card img {
+  width: 100%; height: 100%;
+  object-fit: cover; display: block;
+  transition: transform 0.45s ease;
+}
+.gallery-card:hover img { transform: scale(1.04); }
+.gallery-caption {
+  position: absolute; bottom: 0; left: 0; right: 0;
+  padding: 14px 16px;
+  background: linear-gradient(to top, rgba(14, 13, 18, 0.88) 0%, transparent 100%);
+}
+.gallery-caption-text {
+  font-size: 11px; font-weight: 500;
+  letter-spacing: 0.06em; color: var(--pink);
+}
+
+/* -- INSIGHT ACCORDION -- */
+.insight-grid {
+  display: grid; grid-template-columns: repeat(2, 1fr);
+  gap: 14px; margin-top: 52px;
+}
+.insight-item {
+  border-radius: 14px;
+  background:
+    radial-gradient(140% 120% at 15% 0%, rgba(196,122,46,0.08) 0%, rgba(196,122,46,0.00) 58%),
+    linear-gradient(160deg, #18152a, #0e0d12);
+  border: 1px solid rgba(196,122,46,0.15);
+  overflow: hidden;
+  transition: border-color 0.25s ease;
+}
+.insight-item[open],
+.insight-item:hover { border-color: rgba(196,122,46,0.38); }
+
+.insight-item summary {
+  list-style: none; cursor: pointer;
+  padding: 22px 24px;
+  display: flex; align-items: center; justify-content: space-between; gap: 16px;
+  user-select: none;
+}
+.insight-item summary::-webkit-details-marker { display: none; }
+
+.insight-kicker {
+  font-size: 9px; font-weight: 500;
+  letter-spacing: 0.22em; text-transform: uppercase;
+  color: var(--amber); margin-bottom: 8px; opacity: 0.85;
+}
+.insight-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 22px; font-weight: 600; line-height: 1.2;
+  color: var(--pink); margin: 0;
+}
+.insight-chev {
+  width: 9px; height: 9px;
+  border-right: 1.5px solid rgba(200,185,165,0.45);
+  border-bottom: 1.5px solid rgba(200,185,165,0.45);
+  transform: rotate(-45deg);
+  transition: transform 220ms ease, border-color 220ms ease;
+  flex-shrink: 0;
+}
+.insight-item[open] .insight-chev {
+  transform: rotate(45deg);
+  border-color: var(--amber);
+}
+.insight-body {
+  padding: 16px 24px 24px;
+  font-size: 13px; font-weight: 400; line-height: 1.78;
+  color: rgba(200,185,165,0.7); letter-spacing: 0.02em;
+  border-top: 1px solid rgba(196,122,46,0.1);
+  margin: 0 24px;
+}
+.insight-body p + p { margin-top: 10px; }
+.insight-implication {
+  margin-top: 16px; padding-left: 12px;
+  border-left: 2px solid rgba(220,162,91,0.45);
+  color: var(--amber); font-weight: 500; font-size: 13px; line-height: 1.6;
+}
+
+/* -- HORIZON ROW -- */
+.horizon-row {
+  display: grid; grid-template-columns: repeat(3, 1fr);
+  gap: 24px; margin-top: 52px;
+}
+.horizon-card {
+  border-left: 2px solid var(--magenta-border);
+  padding: 0 0 0 24px;
+  transition: border-color 0.3s ease, transform 0.3s ease;
+}
+.horizon-card:hover {
+  border-left-color: var(--amber);
+  transform: translateX(4px);
+}
+.horizon-label {
+  font-size: 9px; font-weight: 500;
+  letter-spacing: 0.28em; text-transform: uppercase;
+  color: var(--amber); margin-bottom: 12px;
+}
+.horizon-heading {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 22px; font-weight: 600;
+  color: var(--pink); margin-bottom: 10px; line-height: 1.2;
+}
+.horizon-body {
+  font-size: 13px; font-weight: 400; line-height: 1.75;
+  color: rgba(200, 185, 165, 0.55); letter-spacing: 0.025em;
+}
+
+/* -- SCROLL REVEAL -- */
+.reveal { opacity: 0; transform: translateY(20px); transition: opacity 0.7s ease, transform 0.7s ease; will-change: opacity, transform; }
+.reveal.is-visible { opacity: 1; transform: translateY(0); }
+@media (prefers-reduced-motion: reduce) { .reveal { opacity: 1; transform: none; transition: none; } }
+
+/* -- REFLECTION -- */
+.reflection-section {
+  background: linear-gradient(135deg,
+    rgba(30, 20, 42, 0.5) 0%,
+    rgba(14, 13, 18, 1) 100%
+  );
+  border-top: 1px solid rgba(255,255,255,0.05);
+}
+.reflection-quote {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(28px, 3.6vw, 50px);
+  font-weight: 400; font-style: italic; line-height: 1.45;
+  color: var(--pink); max-width: 760px; margin-bottom: 36px;
+}
+.reflection-attr {
+  font-size: 10px; font-weight: 400;
+  letter-spacing: 0.24em; text-transform: uppercase;
+  color: var(--text-dim);
+}
+
+/* -- FOOTER SPACE -- */
+.cs-footer {
+  height: 80px;
+  background: var(--bg);
+  border-top: 1px solid var(--border);
+}
+
+/* -- RESPONSIVE -- */
+@media (max-width: 860px) {
+  .hero { padding: 0 36px 60px; background-attachment: scroll; }
+  .cs-section { padding: 72px 36px; }
+  .two-col { grid-template-columns: 1fr; gap: 40px; }
+  .theme-grid { grid-template-columns: 1fr; }
+  .process-steps { grid-template-columns: 1fr 1fr; gap: 28px; }
+  .gallery-grid { grid-template-columns: 1fr 1fr; }
+  .insight-grid { grid-template-columns: 1fr 1fr; }
+  .horizon-row { grid-template-columns: 1fr; gap: 32px; }
+  .hero-meta { gap: 28px; }
+}
+
+@media (max-width: 560px) {
+  .hero { padding: 0 22px 48px; }
+  .cs-section { padding: 56px 22px; }
+  .hero-title { font-size: 44px; }
+  .process-steps { grid-template-columns: 1fr; }
+  .gallery-grid { grid-template-columns: 1fr; }
+  .insight-grid { grid-template-columns: 1fr; }
+  .hero-meta { gap: 20px; flex-wrap: wrap; }
+  .hero-meta-value { font-size: 12px; }
+  .nav-back { top: 16px; left: 16px; }
+  .wordmark { display: none; }
+  .section-body { font-size: 14px; }
+}
+
+@media (max-width: 480px) {
+  .hero { padding: 0 20px 40px; }
+  .hero-title { font-size: 36px; }
+  .hero-desc { font-size: 14px; }
+  .hero-meta { flex-direction: column; gap: 14px; }
+  .cs-section { padding: 52px 20px; }
+  .section-heading { font-size: clamp(22px, 5.5vw, 32px); }
+  .nav-back { padding: 8px 14px 8px 10px; font-size: 9px; }
+  .reflection-quote { font-size: clamp(22px, 5vw, 36px); }
+  .theme-card { padding: 24px 18px; }
+}
+
+/* -- ARTIFACT EMBEDS -- */
+.artifact-wrapper {
+  width: 100%; height: 620px;
+  border-radius: 14px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  overflow: hidden;
+  margin-top: 36px;
+}
+.artifact-wrapper iframe {
+  width: 100%; height: 100%;
+  border: none; display: block;
+}
+.artifact-caption {
+  font-size: 10px; font-weight: 400;
+  letter-spacing: 0.2em; text-transform: uppercase;
+  color: var(--text-dim);
+  text-align: center; margin-top: 16px;
+}
+.mob-tool-link { display: none; }
+
+@media (max-width: 480px) {
+  .artifact-wrapper { height: 68svh; }
+  .mob-tool-link {
+    display: block; margin-bottom: 12px;
+    font-size: 11px; font-weight: 400; font-style: italic;
+    letter-spacing: 0.03em; color: rgba(204,161,144,0.6);
+  }
+}
+</style>
+</head>
+<body>
+
+<div id="page-exit"></div>
+
+<div class="wordmark">Amber Grey</div>
+
+<button class="nav-back" onclick="navigateTo('level-3-matergenesis.html')">
+  <span class="nav-back-arrow"></span>
+  Generating Worlds
+</button>
+
+<!-- ══════════════════════════════════════
+     HERO
+══════════════════════════════════════ -->
+<section class="hero">
+  <div class="hero-bg"></div>
+  <div class="hero-content">
+  <div class="hero-zone">Speculative Design &middot; Case Study</div>
+  <h1 class="hero-title">MaterGenesis</h1>
+  <p class="hero-desc">A speculative world where gender equity, ecological harmony, and cultural preservation aren't aspirations — they're the foundation everything was built on.</p>
+  <div class="hero-meta">
+    <div>
+      <div class="hero-meta-label">Role</div>
+      <div class="hero-meta-value">Research &amp; Speculative Design Lead</div>
+    </div>
+    <div>
+      <div class="hero-meta-label">Team</div>
+      <div class="hero-meta-value">Group A &mdash; IADS Capstone</div>
+    </div>
+    <div>
+      <div class="hero-meta-label">Year</div>
+      <div class="hero-meta-value">2023</div>
+    </div>
+    <div>
+      <div class="hero-meta-label">Methods</div>
+      <div class="hero-meta-value">Lit Review &middot; AI Visualization &middot; Worldbuilding</div>
+    </div>
+    <div>
+      <div class="hero-meta-label">Type</div>
+      <div class="hero-meta-value">Speculative Design &middot; Research &middot; Art</div>
+    </div>
+  </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════
+     01 THE BRIEF
+══════════════════════════════════════ -->
+<section class="cs-section reveal">
+  <div class="section-inner">
+    <div class="two-col">
+      <div>
+        <div class="section-label">01 &mdash; The Brief</div>
+        <h2 class="section-heading">What if our world had taken a different path?</h2>
+        <p class="section-body">MaterGenesis explores an alternate timeline where the patriarchy never came into existence and women were always treated as equals — honored as life givers and spiritual leaders. Born as part of an IADS capstone project, my focus areas were Art, Religion, and Ecology. The project used literature reviews to inform AI-generated prompts, producing imagery that paints a picture of this imagined world.</p>
+        <div class="section-divider"></div>
+        <p class="section-body">The broader group project — "A World Without the Patriarchy, According to AI" — brought together four researchers, each exploring what different domains would look like without male-dominated power structures: graphic design, architecture, fashion, colonization, and my own focus on ecology, religion, and art through the MaterGenesis lens.</p>
+      </div>
+      <div class="brief-meta">
+        <div>
+          <div class="meta-item-label">Institution</div>
+          <div class="meta-item-value">IADS Capstone Project<br>Group A</div>
+        </div>
+        <div>
+          <div class="meta-item-label">My Focus</div>
+          <div class="meta-item-value">Ecology &middot; Religion &middot; Art<br>Worldbuilding &middot; Concept Map</div>
+        </div>
+        <div>
+          <div class="meta-item-label">Tools</div>
+          <div class="meta-item-value">MidJourney &middot; ChatGPT<br>Iterative Prompt Design</div>
+        </div>
+        <div>
+          <div class="meta-item-label">Deliverables</div>
+          <div class="meta-item-value">Concept Map &middot; Creation Story<br>AI Visual Narratives &middot; Research Film</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════
+     02 THE PROBLEM
+══════════════════════════════════════ -->
+<section class="cs-section alt reveal">
+  <div class="section-inner">
+    <div class="section-label">02 &mdash; The Problem</div>
+    <h2 class="section-heading">Systems shaped by what was never questioned</h2>
+    <p class="section-body">Deeply ingrained gender biases, unsustainable environmental practices, and the lingering effects of colonial power structures continue to shape societal dynamics — resulting in economic disparities, ecological degradation, and cultural erasure.</p>
+    <div class="section-divider"></div>
+    <p class="section-body">Despite global efforts toward equality and sustainability, progress remains hindered by systemic barriers and entrenched mindsets. MaterGenesis addresses these challenges by constructing a speculative world where those barriers never formed — and then asking what we can learn from the difference.</p>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════
+     03 CORE THEMES
+══════════════════════════════════════ -->
+<section class="cs-section reveal">
+  <div class="section-inner">
+    <div class="section-label">03 &mdash; Core Themes</div>
+    <h2 class="section-heading">Three pillars of an alternate foundation</h2>
+    <p class="section-body">The MaterGenesis universe is built on three interlocking systems that, in our timeline, were disrupted or dismantled. Each became a lens for worldbuilding.</p>
+
+    <div class="theme-grid">
+
+      <div class="theme-card">
+        <div class="theme-kicker">Pillar One</div>
+        <div class="theme-title">Gender Equity</div>
+        <p class="theme-body">A world where matriarchal structures evolved alongside egalitarian governance — where power was distributed, not concentrated. Communities organized around balance rather than dominance.</p>
+      </div>
+
+      <div class="theme-card">
+        <div class="theme-kicker">Pillar Two</div>
+        <div class="theme-title">Ecological Harmony</div>
+        <p class="theme-body">Architecture, agriculture, and industry developed in symbiosis with the natural world. Sustainability wasn't a movement — it was the default. Cities grew with forests, not over them.</p>
+      </div>
+
+      <div class="theme-card">
+        <div class="theme-kicker">Pillar Three</div>
+        <div class="theme-title">Cultural Preservation</div>
+        <p class="theme-body">Indigenous knowledge systems, languages, and traditions were never disrupted. Cultural exchange happened through dialogue, not extraction. Preservation was woven into governance itself.</p>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════
+     04 RESEARCH METHODOLOGY
+══════════════════════════════════════ -->
+<section class="cs-section alt reveal">
+  <div class="section-inner">
+    <div class="section-label">04 &mdash; Research Methodology</div>
+    <h2 class="section-heading">From brainstorming to a visual world</h2>
+    <p class="section-body">The initial brainstorming phase began with a single question: "How might the world be different?" From there, the exploration moved through defining matriarchy vs. patriarchy, mapping historical and contemporary power structures through block definition diagrams and Venn diagrams, and ultimately arriving at a universal prompt: "What if women weren't economically dependent on men?"</p>
+    <div class="section-divider"></div>
+    <p class="section-body">This foundation informed three focal domains — Ecology, Religion, and Art — each explored through a systematic pipeline: literature review, concept listing, ChatGPT prompt refinement, and MidJourney image generation. The results were assembled into the MaterGenesis Concept Map.</p>
+
+    <div class="process-steps">
+      <div class="process-step">
+        <div class="process-num">Phase 01</div>
+        <div class="process-heading">Brainstorming</div>
+        <p class="process-body">Defined matriarchy vs. patriarchy. Built block diagrams, Venn diagrams, and hierarchical maps. Identified the core "What if?" question.</p>
+      </div>
+      <div class="process-step">
+        <div class="process-num">Phase 02</div>
+        <div class="process-heading">Literature Review</div>
+        <p class="process-body">Deep research into each domain — ecological systems, belief structures, and creative expression — to build a foundation of real-world knowledge.</p>
+      </div>
+      <div class="process-step">
+        <div class="process-num">Phase 03</div>
+        <div class="process-heading">Concept Map</div>
+        <p class="process-body">Built a visual map with "Matriarchal World" at the center, branching into Art, Ecology, and Religion — each with sub-categories and prompt-ready details.</p>
+      </div>
+      <div class="process-step">
+        <div class="process-num">Phase 04</div>
+        <div class="process-heading">Prompt &rarr; Image</div>
+        <p class="process-body">Taught ChatGPT to construct MidJourney prompts from the map. Each branch produced a unique prompt, generating four images per concept, assembled in Photoshop.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════
+     04b IMAGE GALLERY
+══════════════════════════════════════ -->
+<section class="cs-section reveal">
+  <div class="section-inner">
+    <div class="section-label">The Visual Output</div>
+    <h2 class="section-heading">Visions of MaterGenesis</h2>
+    <p class="section-body">The methodology produced over 130 AI-generated images across Art, Ecology, Religion, and worldbuilding scenes — each one traced from a concept map branch, through a ChatGPT-refined prompt, to a MidJourney visualization. Explore the full collection below.</p>
+
+    <p class="mob-tool-link">Open on desktop for full gallery experience</p>
+    <div class="artifact-wrapper" style="height: 720px; margin-top: 36px;">
+      <iframe src="prototype-matergenesis-gallery.html" title="MaterGenesis Image Gallery" loading="lazy"></iframe>
+    </div>
+    <div class="artifact-caption">MaterGenesis Image Gallery &mdash; 130+ AI-Generated Images &middot; World &middot; Art &middot; Ecology &middot; Religion</div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════
+     05 THREE DOMAINS
+══════════════════════════════════════ -->
+<section class="cs-section reveal">
+  <div class="section-inner">
+    <div class="section-label">05 &mdash; Three Research Domains</div>
+    <h2 class="section-heading">Ecology, Religion, and Art — reimagined</h2>
+    <p class="section-body">Each domain began with a fundamental question, explored through its own pipeline of research, listing, and AI visualization. Together they form the three branches of the MaterGenesis Concept Map.</p>
+
+    <div class="theme-grid" style="margin-top: 52px;">
+
+      <div class="theme-card">
+        <div class="theme-kicker">Ecology</div>
+        <div class="theme-title">Would life thrive?</div>
+        <p class="theme-body">Starting with "Would life thrive in a matriarchal world?", this domain explored how ecological systems might diverge — and which species currently functionally extinct might still flourish. The research produced an extinction timeline and visualizations of species like the northern white rhino, Javan wildlife, and Yangtze River dolphins thriving in untouched habitats.</p>
+      </div>
+
+      <div class="theme-card">
+        <div class="theme-kicker">Religion</div>
+        <div class="theme-title">Belief without patriarchy</div>
+        <p class="theme-body">This domain peeled back layers of belief systems to find what would persist without human hierarchy. The research honed in on a belief system linked with nature, where women as stewards of worship sought enlightenment through the natural world. It culminated in the MaterGenesis Creation Story — an origin narrative for this alternate world.</p>
+      </div>
+
+      <div class="theme-card">
+        <div class="theme-kicker">Art</div>
+        <div class="theme-title">Creativity intertwined with nature</div>
+        <p class="theme-body">The art domain envisioned a world where creativity seamlessly intertwined with nature. Brainstorming produced a list of creative facets that would take distinct form in this imagined world — from inclusive art institutions and community-based collaboration to gender-equal art criticism and preservation practices.</p>
+      </div>
+
+    </div>
+
+    <p class="mob-tool-link">Open on desktop for full tool functionality</p>
+    <div class="artifact-wrapper" style="height: 680px;">
+      <iframe src="prototype-matergenesis-map.html" title="MaterGenesis Concept Map Explorer" loading="lazy"></iframe>
+    </div>
+    <div class="artifact-caption">Concept Map Explorer &mdash; Three Domains &middot; Interactive Prototype</div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════
+     06 THE CREATION STORY & AI PROMPTS
+══════════════════════════════════════ -->
+<section class="cs-section alt reveal">
+  <div class="section-inner">
+    <div class="section-label">06 &mdash; The Creation Story</div>
+    <h2 class="section-heading">An origin narrative for a world that never broke</h2>
+    <p class="section-body">The Religion domain produced something unexpected — a complete creation myth for the MaterGenesis universe. Beginning with "a vast and tranquil void, a canvas of endless potential," the narrative describes a primordial consciousness known as "The Mother," an embodiment of the essence of creation itself.</p>
+    <div class="section-divider"></div>
+    <p class="section-body">This creation story became the anchor for the entire project. It wasn't just a narrative device — it was the lens through which every AI prompt was written. Each MidJourney prompt embedded the world's foundational values: women as equals in leadership, revered as life givers, honored as spiritual wisdom holders. The prompts spanned goddess-centered worship, nature-based rituals, inclusive art institutions, eco-feminist agriculture, and species that never went extinct.</p>
+
+    <div class="horizon-row">
+      <div class="horizon-card">
+        <div class="horizon-label">Religion Prompts</div>
+        <div class="horizon-heading">Sacred rituals &amp; divine worship</div>
+        <p class="horizon-body">Goddess-centered ceremonies, matriarchal mythology, spiritual guidance by women and men equally, nature-based healing practices, and rituals where roles are determined by ability — not gender.</p>
+      </div>
+      <div class="horizon-card">
+        <div class="horizon-label">Art Prompts</div>
+        <div class="horizon-heading">Inclusive institutions &amp; community creation</div>
+        <p class="horizon-body">Equitable art museums, interdisciplinary education led by women, balanced art criticism, gender-inclusive preservation, and collaborative community art projects rooted in spiritual practice.</p>
+      </div>
+      <div class="horizon-card">
+        <div class="horizon-label">Ecology Prompts</div>
+        <div class="horizon-heading">Thriving species &amp; environmental stewardship</div>
+        <p class="horizon-body">Sustainable agriculture, eco-feminist values, renewable energy, sacred groves, and vivid scenes of functionally extinct species — white rhinos, Yangtze dolphins, golden toads — alive in untouched habitats.</p>
+      </div>
+    </div>
+
+    <p class="mob-tool-link">Open on desktop for full experience</p>
+    <div class="artifact-wrapper" style="height: 600px;">
+      <iframe src="prototype-matergenesis-story.html" title="MaterGenesis Creation Story Experience" loading="lazy"></iframe>
+    </div>
+    <div class="artifact-caption">Creation Story Experience &mdash; Interactive Walkthrough &middot; Prototype</div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════
+     06b EXTINCTION TIMELINE
+══════════════════════════════════════ -->
+<section class="cs-section reveal">
+  <div class="section-inner">
+    <div class="section-label">Ecology &mdash; Would Life Thrive?</div>
+    <h2 class="section-heading">The species that might have survived</h2>
+    <p class="section-body">One of the most striking outputs of the ecology domain was the extinction timeline — a comparison of species that went functionally extinct in our timeline with what their world might look like in MaterGenesis. The tool below lets you explore both realities side by side.</p>
+
+    <p class="mob-tool-link">Open on desktop for full tool functionality</p>
+    <div class="artifact-wrapper" style="height: 700px;">
+      <iframe src="prototype-matergenesis-timeline.html" title="MaterGenesis Extinction Timeline" loading="lazy"></iframe>
+    </div>
+    <div class="artifact-caption">Extinction Timeline &mdash; Our Timeline vs. MaterGenesis &middot; Interactive Prototype</div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════
+     07 RESEARCH SIGNALS
+══════════════════════════════════════ -->
+<section class="cs-section alt reveal">
+  <div class="section-inner">
+    <div class="section-label">07 &mdash; Research Signals</div>
+    <h2 class="section-heading">What the worldbuilding revealed</h2>
+    <p class="section-body">Four signals kept surfacing across the research — not as answers, but as lenses that reframed the questions worth asking about our own timeline.</p>
+
+    <div class="insight-grid">
+
+      <details class="insight-item">
+        <summary>
+          <div>
+            <div class="insight-kicker">Structural Signal</div>
+            <p class="insight-title">Power Shapes Everything</p>
+          </div>
+          <span class="insight-chev"></span>
+        </summary>
+        <div class="insight-body">
+          <p>Every system in the MaterGenesis world — from agriculture to architecture to governance — reflected the foundational distribution of power. When power was shared, every downstream system was different.</p>
+          <p class="insight-implication"><strong>Implication:</strong> Design interventions targeting outcomes without addressing power structures will always be surface-level.</p>
+        </div>
+      </details>
+
+      <details class="insight-item">
+        <summary>
+          <div>
+            <div class="insight-kicker">Ecological Signal</div>
+            <p class="insight-title">Sustainability Is a Default, Not a Feature</p>
+          </div>
+          <span class="insight-chev"></span>
+        </summary>
+        <div class="insight-body">
+          <p>In this timeline, ecological sustainability was never framed as an aspiration. It was the baseline. When nature isn't treated as an externality, the entire economic and architectural logic shifts.</p>
+          <p class="insight-implication"><strong>Implication:</strong> Our sustainability frameworks are built on the assumption that destruction is the default. Speculative design can challenge that assumption.</p>
+        </div>
+      </details>
+
+      <details class="insight-item">
+        <summary>
+          <div>
+            <div class="insight-kicker">Cultural Signal</div>
+            <p class="insight-title">Preservation as Governance</p>
+          </div>
+          <span class="insight-chev"></span>
+        </summary>
+        <div class="insight-body">
+          <p>Cultural preservation wasn't a program or a policy — it was woven into governance itself. Language, tradition, and knowledge were treated as infrastructure, not heritage.</p>
+          <p class="insight-implication"><strong>Implication:</strong> Treating culture as something to "preserve" already positions it as separate from progress.</p>
+        </div>
+      </details>
+
+      <details class="insight-item">
+        <summary>
+          <div>
+            <div class="insight-kicker">Narrative Signal</div>
+            <p class="insight-title">Imagination Is a Research Method</p>
+          </div>
+          <span class="insight-chev"></span>
+        </summary>
+        <div class="insight-body">
+          <p>The act of building an alternate world wasn't just creative expression — it generated real design insights. Speculative worldbuilding forced decisions that revealed assumptions invisible in our timeline.</p>
+          <p class="insight-implication"><strong>Implication:</strong> Speculative design isn't escapism. It's a diagnostic tool for the present.</p>
+        </div>
+      </details>
+
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════
+     07 STORYTELLING
+══════════════════════════════════════ -->
+<section class="cs-section reveal">
+  <div class="section-inner">
+    <div class="section-label">08 &mdash; The Group Project</div>
+    <h2 class="section-heading">Four lenses on a world without patriarchy</h2>
+    <p class="section-body">MaterGenesis was my contribution to a larger IADS capstone collaboration. Each team member used the same AI-driven methodology — literature review, ChatGPT prompt design, image generation — to explore a different domain of this alternate world. Together, the work formed a comprehensive picture of what "according to AI" a world without patriarchy might look like.</p>
+    <div class="section-divider"></div>
+    <p class="section-body">The project culminated in a presentation and interactive worksheet activity where participants crafted their own MidJourney prompts from the creation story — turning the audience from spectators into co-creators of this speculative world.</p>
+
+    <div class="process-steps">
+      <div class="process-step">
+        <div class="process-num">Amber</div>
+        <div class="process-heading">MaterGenesis</div>
+        <p class="process-body">Ecology, Religion, and Art — worldbuilding through concept mapping, creation stories, and AI-generated imagery of a matriarchal world.</p>
+      </div>
+      <div class="process-step">
+        <div class="process-num">Marixie</div>
+        <div class="process-heading">Design According to AI</div>
+        <p class="process-body">Graphic and architectural design without male influence — exploring how visual culture and built environments would shift.</p>
+      </div>
+      <div class="process-step">
+        <div class="process-num">Rachel</div>
+        <div class="process-heading">Fashion According to AI</div>
+        <p class="process-body">Fashion design, trade affairs, and business structures — reimagining an industry historically shaped by patriarchal aesthetics.</p>
+      </div>
+      <div class="process-step">
+        <div class="process-num">Zantua</div>
+        <div class="process-heading">Colonialism According to AI</div>
+        <p class="process-body">History, economy, and religion under colonialism — examining how power, faith, and finance operate without patriarchy as a driver.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════
+     08 CONCLUSION
+══════════════════════════════════════ -->
+<section class="cs-section alt reveal">
+  <div class="section-inner">
+    <div class="section-label">09 &mdash; What It Became</div>
+    <h2 class="section-heading">A mirror built from imagination</h2>
+    <p class="section-body">What started as a capstone "What if?" became a comprehensive speculative universe — a concept map with three branching worlds, a creation myth, dozens of AI-generated scenes, an extinction timeline of species that might have survived, and a group collaboration that asked AI itself to picture a world without patriarchy.</p>
+    <div class="section-divider"></div>
+    <p class="section-body">The project's most lasting insight wasn't any single image or prompt. It was the discovery that AI — trained on our world's data — still carries the biases of this timeline. The iterative work of minimizing that bias, of teaching a machine to imagine equity, became its own form of research. MaterGenesis doesn't just show an alternate world. It reveals how deeply this one is encoded into everything we build — including our tools.</p>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════
+     REFLECTION
+══════════════════════════════════════ -->
+<section class="cs-section reflection-section reveal">
+  <div class="section-inner">
+    <div class="section-label">What I Wanted to Show</div>
+    <p class="reflection-quote">"The world we live in isn't the only one that was possible — and imagining the alternative is the first act of changing it."</p>
+    <div class="reflection-attr">Amber Grey</div>
+  </div>
+</section>
+
+<div class="cs-footer"></div>
+
+<script>
+'use strict';
+
+function navigateTo(url) {
+  document.body.style.transition = 'opacity 0.28s ease-in';
+  document.body.style.opacity = '0';
+  const exit = document.getElementById('page-exit');
+  setTimeout(() => { exit.classList.add('active'); }, 200);
+  setTimeout(() => { window.location.href = url; }, 430);
+}
+
+/* -- SCROLL REVEAL -- */
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.classList.add('is-visible');
+      observer.unobserve(entry.target);
+    }
+  });
+}, { threshold: 0.1 });
+document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+requestAnimationFrame(() => {
+  requestAnimationFrame(() => { document.body.classList.add('visible'); });
+});
+</script>
+
+</body>
+</html>

@@ -1,0 +1,461 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dayli AI — Avatar Animation</title>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..900;1,9..144,300..900&family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&display=swap" rel="stylesheet" />
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: #F1E1FF;
+      color: #121928;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      overflow: hidden;
+    }
+
+    :root {
+      --purple: #9230E3;
+      --purple-deep: #461F65;
+      --purple-light: #DBB0FF;
+      --purple-pale: #F1E1FF;
+      --cyan: #1FEEEA;
+      --navy: #23304D;
+      --bg: #F6F0FC;
+      --card-bg: #FFFFFF;
+      --text: #121928;
+      --text-muted: #6b5985;
+    }
+
+    /* ---- Avatar Container ---- */
+    .avatar-stage {
+      position: relative;
+      width: 140px;
+      height: 140px;
+      margin-bottom: 24px;
+    }
+
+    .avatar-svg {
+      width: 140px;
+      height: 140px;
+      overflow: visible;
+    }
+
+    /* ---- Arc ---- */
+    .arc-group {
+      transform-origin: 70px 70px;
+      animation: arcRotate 3.5s cubic-bezier(0.34, 1.2, 0.64, 1) forwards;
+    }
+
+    .arc-path {
+      fill: none;
+      stroke: var(--purple);
+      stroke-width: 10;
+      stroke-linecap: round;
+      stroke-dasharray: 90;
+      stroke-dashoffset: 90;
+      animation: arcDraw 0.8s ease-out 0.3s forwards;
+    }
+
+    /* Draw in the arc */
+    @keyframes arcDraw {
+      to { stroke-dashoffset: 0; }
+    }
+
+    /* Rotate: start top → tilt left → swing around to bottom */
+    @keyframes arcRotate {
+      0%   { transform: rotate(0deg); }
+      /* hold as top arc */
+      20%  { transform: rotate(0deg); }
+      /* tilt left (image 2) */
+      35%  { transform: rotate(-70deg); }
+      /* continue swinging through left side */
+      50%  { transform: rotate(-120deg); }
+      /* pass through bottom-right (image 3) */
+      65%  { transform: rotate(-200deg); }
+      /* arrive at bottom = smile position (180°) */
+      78%  { transform: rotate(-185deg); }
+      85%  { transform: rotate(-177deg); }
+      92%  { transform: rotate(-181deg); }
+      100% { transform: rotate(-180deg); }
+    }
+
+    /* ---- Center dot: expands in, then splits ---- */
+    .dot-center {
+      fill: var(--purple);
+      transform-origin: 70px 80px;
+      opacity: 0;
+      animation:
+        dotAppear 0.6s ease-out 0.5s forwards,
+        dotFade   0.5s ease    2.2s forwards;
+    }
+
+    @keyframes dotAppear {
+      0%   { opacity: 0; transform: scale(0); }
+      60%  { opacity: 1; transform: scale(1.1); }
+      100% { opacity: 1; transform: scale(1); }
+    }
+
+    @keyframes dotFade {
+      to { opacity: 0; transform: scale(0.5); }
+    }
+
+    /* ---- Eyes: split out from center dot ---- */
+    .eye-left {
+      fill: var(--purple);
+      opacity: 0;
+      animation: eyeSplitLeft 0.7s cubic-bezier(0.34, 1.4, 0.64, 1) 2.2s forwards;
+    }
+
+    .eye-right {
+      fill: var(--purple);
+      opacity: 0;
+      animation: eyeSplitRight 0.7s cubic-bezier(0.34, 1.4, 0.64, 1) 2.2s forwards;
+    }
+
+    @keyframes eyeSplitLeft {
+      0%   { opacity: 1; cx: 70; cy: 80; r: 11; }
+      30%  { opacity: 1; cx: 58; cy: 72; r: 10; }
+      100% { opacity: 1; cx: 50; cy: 55; r: 10; }
+    }
+
+    @keyframes eyeSplitRight {
+      0%   { opacity: 1; cx: 70; cy: 80; r: 11; }
+      30%  { opacity: 1; cx: 82; cy: 72; r: 10; }
+      100% { opacity: 1; cx: 90; cy: 55; r: 10; }
+    }
+
+    /* ---- Blink (after intro settles) ---- */
+    .eye-blink-group {
+      transform-origin: center;
+    }
+
+    .blink-active {
+      animation: blink 3.5s ease-in-out infinite;
+    }
+
+    .blink-active-offset {
+      animation: blink 3.5s ease-in-out infinite;
+      animation-delay: 0.06s;
+    }
+
+    @keyframes blink {
+      0%, 40%, 44%, 100% { transform: scaleY(1); }
+      42% { transform: scaleY(0.08); }
+    }
+
+    /* ---- Cheek blush ---- */
+    .cheek {
+      fill: var(--purple-light);
+      opacity: 0;
+      animation: cheekIn 0.5s ease forwards;
+      animation-delay: 3.2s;
+    }
+
+    @keyframes cheekIn {
+      to { opacity: 0.3; }
+    }
+
+    /* ---- Idle float ---- */
+    .avatar-stage.alive {
+      animation: gentleFloat 3s ease-in-out infinite;
+    }
+
+    @keyframes gentleFloat {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-6px); }
+    }
+
+    /* ---- Reactions ---- */
+    .avatar-stage.thinking {
+      animation: thinkTilt 1.5s ease-in-out infinite;
+    }
+
+    @keyframes thinkTilt {
+      0%, 100% { transform: rotate(0deg) translateY(0); }
+      25% { transform: rotate(-8deg) translateY(-4px); }
+      75% { transform: rotate(5deg) translateY(-2px); }
+    }
+
+    .avatar-stage.happy {
+      animation: happyBounce 0.5s ease-in-out;
+    }
+
+    @keyframes happyBounce {
+      0%, 100% { transform: translateY(0) scale(1); }
+      30% { transform: translateY(-16px) scale(1.08); }
+      60% { transform: translateY(-4px) scale(1.02); }
+    }
+
+    /* ---- Chat Interface ---- */
+    .chat-container {
+      width: 100%;
+      max-width: 440px;
+      opacity: 0;
+      transform: translateY(20px);
+      animation: chatAppear 0.8s ease forwards;
+      animation-delay: 4s;
+    }
+
+    @keyframes chatAppear {
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .chat-window {
+      background: var(--card-bg);
+      border-radius: 24px;
+      box-shadow:
+        0 4px 24px rgba(146, 48, 227, 0.08),
+        0 1px 3px rgba(146, 48, 227, 0.04);
+      overflow: hidden;
+    }
+
+    .chat-messages {
+      padding: 24px 20px;
+      min-height: 200px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .chat-msg {
+      padding: 12px 16px;
+      border-radius: 18px;
+      font-size: 0.88rem;
+      line-height: 1.45;
+      max-width: 82%;
+      opacity: 0;
+      transform: translateY(8px);
+    }
+
+    .chat-msg.visible {
+      animation: msgIn 0.4s ease forwards;
+    }
+
+    @keyframes msgIn {
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .chat-msg.ai {
+      background: var(--purple-pale);
+      color: var(--purple-deep);
+      align-self: flex-start;
+      border-bottom-left-radius: 6px;
+    }
+
+    .chat-msg.user {
+      background: var(--purple);
+      color: white;
+      align-self: flex-end;
+      border-bottom-right-radius: 6px;
+    }
+
+    .typing-indicator {
+      display: flex;
+      gap: 4px;
+      padding: 12px 16px;
+      align-self: flex-start;
+      opacity: 0;
+    }
+
+    .typing-indicator.visible { opacity: 1; }
+
+    .typing-dot {
+      width: 8px; height: 8px;
+      border-radius: 50%;
+      background: var(--purple);
+      opacity: 0.4;
+      animation: typingPulse 1.2s ease-in-out infinite;
+    }
+    .typing-dot:nth-child(2) { animation-delay: 0.15s; }
+    .typing-dot:nth-child(3) { animation-delay: 0.3s; }
+
+    @keyframes typingPulse {
+      0%, 100% { opacity: 0.3; transform: translateY(0); }
+      50% { opacity: 1; transform: translateY(-4px); }
+    }
+
+    .chat-input-bar {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 14px 16px;
+      border-top: 1px solid rgba(146, 48, 227, 0.08);
+    }
+
+    .chat-input {
+      flex: 1;
+      padding: 10px 16px;
+      border-radius: 20px;
+      border: 1px solid rgba(146, 48, 227, 0.15);
+      background: var(--bg);
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.85rem;
+      color: var(--text);
+      outline: none;
+    }
+
+    .chat-input::placeholder { color: var(--text-muted); }
+    .chat-input:focus { border-color: var(--purple); }
+
+    .chat-send {
+      width: 40px; height: 40px;
+      border-radius: 50%;
+      background: var(--purple);
+      border: none;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: transform 0.15s, background 0.2s;
+    }
+    .chat-send:hover { transform: scale(1.08); background: var(--purple-deep); }
+    .chat-send svg { fill: white; width: 18px; height: 18px; }
+
+    /* ---- Replay ---- */
+    .replay-btn {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      padding: 10px 20px;
+      border-radius: 12px;
+      background: white;
+      border: 1px solid rgba(146, 48, 227, 0.12);
+      box-shadow: 0 2px 12px rgba(146, 48, 227, 0.06);
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      cursor: pointer;
+      transition: all 0.2s;
+      opacity: 0;
+      animation: fadeIn 0.4s ease forwards;
+      animation-delay: 6s;
+    }
+    .replay-btn:hover { color: var(--purple); border-color: var(--purple); }
+
+    @keyframes fadeIn { to { opacity: 1; } }
+  </style>
+</head>
+<body>
+
+  <!-- Avatar -->
+  <div class="avatar-stage" id="avatarStage">
+    <svg class="avatar-svg" viewBox="0 0 140 140">
+
+      <!-- Arc: draws in at top, then rotates around to bottom = smile -->
+      <g class="arc-group">
+        <path class="arc-path" d="M 35 62 Q 70 25, 105 62" />
+      </g>
+
+      <!-- Center dot: appears, then fades as eyes split -->
+      <circle class="dot-center" cx="70" cy="80" r="12" />
+
+      <!-- Left eye: animates from center to final position -->
+      <g class="eye-blink-group" id="eyeLeftGroup" style="transform-origin: 50px 55px;">
+        <circle class="eye-left" cx="70" cy="80" r="0" />
+      </g>
+
+      <!-- Right eye: animates from center to final position -->
+      <g class="eye-blink-group" id="eyeRightGroup" style="transform-origin: 90px 55px;">
+        <circle class="eye-right" cx="70" cy="80" r="0" />
+      </g>
+
+      <!-- Cheek blushes -->
+      <circle class="cheek" cx="32" cy="76" r="10" />
+      <circle class="cheek" cx="108" cy="76" r="10" />
+    </svg>
+  </div>
+
+  <!-- Chat Interface -->
+  <div class="chat-container" id="chatContainer">
+    <div class="chat-window">
+      <div class="chat-messages" id="chatMessages">
+        <div class="chat-msg ai" id="msg1">Hi! I'm Dayli. Tell me about a daily activity that's been difficult lately.</div>
+        <div class="typing-indicator" id="typing">
+          <div class="typing-dot"></div>
+          <div class="typing-dot"></div>
+          <div class="typing-dot"></div>
+        </div>
+      </div>
+      <div class="chat-input-bar">
+        <input class="chat-input" placeholder="Describe your challenge..." readonly />
+        <button class="chat-send" id="sendBtn">
+          <svg viewBox="0 0 24 24"><path d="M2 21l21-9L2 3v7l15 2-15 2z"/></svg>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <button class="replay-btn" onclick="location.reload()">Replay Animation</button>
+
+  <script>
+    const stage = document.getElementById('avatarStage');
+    const eyeL = document.getElementById('eyeLeftGroup');
+    const eyeR = document.getElementById('eyeRightGroup');
+    const typing = document.getElementById('typing');
+
+    // After intro settles (~3.5s), start idle float + blink
+    setTimeout(() => {
+      stage.classList.add('alive');
+      eyeL.classList.add('blink-active');
+      eyeR.classList.add('blink-active-offset');
+    }, 3800);
+
+    // Show first AI message
+    setTimeout(() => {
+      document.getElementById('msg1').classList.add('visible');
+      stage.classList.remove('alive');
+      stage.classList.add('happy');
+      setTimeout(() => {
+        stage.classList.remove('happy');
+        stage.classList.add('alive');
+      }, 600);
+    }, 4800);
+
+    // Conversation
+    const conversation = [
+      { type: 'user', text: "Bathing has been really hard since my shoulder surgery.", delay: 7000 },
+      { type: 'think', delay: 8500 },
+      { type: 'ai', text: "I understand — reaching and balancing can be tough after shoulder surgery. Let me find some solutions that could help.", delay: 10500 },
+      { type: 'ai', text: "I found 3 options: a shower bench, a handheld showerhead, and long-handle sponges. Want to explore any of these?", delay: 13500 }
+    ];
+
+    conversation.forEach(({ type, text, delay }) => {
+      setTimeout(() => {
+        if (type === 'think') {
+          typing.classList.add('visible');
+          stage.classList.remove('alive');
+          stage.classList.add('thinking');
+          return;
+        }
+
+        typing.classList.remove('visible');
+        stage.classList.remove('thinking');
+        stage.classList.add('alive');
+
+        const msg = document.createElement('div');
+        msg.className = `chat-msg ${type}`;
+        msg.textContent = text;
+        const messages = document.getElementById('chatMessages');
+        messages.insertBefore(msg, typing);
+        requestAnimationFrame(() => msg.classList.add('visible'));
+
+        if (type === 'ai') {
+          stage.classList.remove('alive');
+          stage.classList.add('happy');
+          setTimeout(() => {
+            stage.classList.remove('happy');
+            stage.classList.add('alive');
+          }, 600);
+        }
+      }, delay);
+    });
+  </script>
+
+</body>
+</html>

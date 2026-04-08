@@ -1,0 +1,991 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>About — Amber Grey</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,600;1,400;1,500&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --blue:        #7aabde;
+  --blue-dim:    rgba(122, 171, 222, 0.10);
+  --blue-border: rgba(122, 171, 222, 0.26);
+  --bg:          #060810;
+  --bg-alt:      #090c18;
+  --text:        #dde6f4;
+  --text-muted:  #4a5c78;
+  --text-dim:    rgba(120, 145, 180, 0.35);
+  --ice:         #c4d8f0;
+  --amber:       #d4a576;
+  --lavender:    #8b87c8;
+  --border:      rgba(255, 255, 255, 0.06);
+  --warm:        rgba(212, 165, 118, 0.82);
+  --warm-bright: rgba(212, 165, 118, 1);
+}
+
+html { background: var(--bg); scroll-behavior: smooth; }
+
+body {
+  font-family: 'DM Sans', sans-serif;
+  color: var(--text);
+  overflow-x: hidden;
+  opacity: 0;
+  transition: opacity 0.55s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+body.visible { opacity: 1; }
+
+/* ── PAGE EXIT ── */
+#page-exit {
+  position: fixed; inset: 0;
+  background: #060810;
+  opacity: 0; pointer-events: none;
+  transition: opacity 0.28s ease-in;
+  z-index: 9999;
+}
+#page-exit.active { opacity: 1; }
+
+/* ── NAV ── */
+.nav-back {
+  position: fixed;
+  top: 28px; left: 32px;
+  display: inline-flex; align-items: center; gap: 10px;
+  background: rgba(255,255,255,0.06);
+  backdrop-filter: blur(14px) saturate(1.2);
+  -webkit-backdrop-filter: blur(14px) saturate(1.2);
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 100px;
+  padding: 9px 18px 9px 14px;
+  cursor: pointer;
+  color: rgba(200,185,165,0.75);
+  font-family: 'DM Sans', sans-serif;
+  font-size: 10px; font-weight: 400;
+  letter-spacing: 0.22em; text-transform: uppercase;
+  transition: background 0.25s ease, color 0.25s ease, border-color 0.25s ease;
+  z-index: 200;
+  text-decoration: none;
+}
+.nav-back:hover { background: rgba(255,255,255,0.11); color: rgba(200,185,165,1); border-color: rgba(255,255,255,0.18); }
+.nav-back-arrow { display: inline-block; width: 16px; height: 1px; background: currentColor; position: relative; flex-shrink: 0; }
+.nav-back-arrow::before { content: ''; position: absolute; left: 0; top: -3px; width: 6px; height: 6px; border-left: 1px solid currentColor; border-bottom: 1px solid currentColor; transform: rotate(45deg); }
+
+.wordmark { position: fixed; bottom: 24px; left: 21px; font-size: 13px; font-weight: 300; letter-spacing: 0.2em; color: rgba(210,195,172,0.14); pointer-events: none; z-index: 10; }
+
+/* ── FLOATING MOTES ── */
+.motes-canvas {
+  position: fixed; inset: 0;
+  pointer-events: none; z-index: 0;
+  overflow: hidden;
+}
+.mote {
+  position: absolute;
+  width: 2px; height: 2px;
+  border-radius: 50%;
+  background: rgba(122,171,222,0.25);
+  animation: moteFloat linear infinite;
+}
+@keyframes moteFloat {
+  0%   { transform: translateY(0) translateX(0); opacity: 0; }
+  10%  { opacity: 1; }
+  90%  { opacity: 1; }
+  100% { transform: translateY(-100vh) translateX(40px); opacity: 0; }
+}
+
+/* ── FIREFLIES ── */
+.fireflies-canvas {
+  position: absolute; inset: 0;
+  width: 100%; height: 100%;
+  pointer-events: none; z-index: 0;
+}
+
+/* ── HERO ── */
+.hero {
+  min-height: 100svh;
+  display: flex; flex-direction: column; justify-content: center; align-items: center;
+  padding: 80px 88px;
+  position: relative; overflow: hidden;
+  text-align: center;
+}
+.hero::before {
+  content: ''; position: absolute; inset: 0; pointer-events: none;
+  background:
+    radial-gradient(ellipse 60% 50% at 30% 60%, rgba(122,171,222,0.06) 0%, transparent 60%),
+    radial-gradient(ellipse 50% 45% at 70% 40%, rgba(139,135,200,0.04) 0%, transparent 55%),
+    radial-gradient(ellipse 80% 35% at 50% 100%, rgba(12,25,70,0.35) 0%, transparent 45%);
+}
+.hero-content { position: relative; z-index: 1; max-width: 720px; }
+
+.hero-portrait {
+  width: 140px; height: 140px;
+  border-radius: 50%;
+  overflow: hidden;
+  margin: 0 auto 32px;
+  border: 1px solid rgba(122,171,222,0.15);
+  box-shadow: 0 0 40px rgba(122,171,222,0.08), 0 0 80px rgba(122,171,222,0.04);
+  opacity: 0; transform: translateY(16px) scale(0.95);
+  animation: portraitIn 0.8s 0.2s cubic-bezier(0.25,0.46,0.45,0.94) forwards;
+  position: relative;
+}
+.hero-portrait img {
+  width: 100%; height: 100%;
+  object-fit: cover;
+  object-position: center 20%;
+  display: block;
+}
+.hero-portrait::after {
+  content: ''; position: absolute; inset: 0;
+  border-radius: 50%;
+  box-shadow: inset 0 0 20px rgba(6,8,16,0.4);
+  pointer-events: none;
+}
+@keyframes portraitIn {
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+.hero-eyebrow {
+  font-size: 10px; font-weight: 500;
+  letter-spacing: 0.32em; text-transform: uppercase;
+  color: var(--blue);
+  margin-bottom: 28px;
+  opacity: 0; transform: translateY(16px);
+  animation: fadeUp 0.7s 0.3s cubic-bezier(0.25,0.46,0.45,0.94) forwards;
+}
+.hero-greeting {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(44px, 5.5vw, 80px);
+  font-weight: 300; line-height: 1.1;
+  color: rgba(200,185,165,0.45);
+  margin-bottom: 8px;
+  opacity: 0; transform: translateY(20px);
+  animation: fadeUp 0.8s 0.4s cubic-bezier(0.25,0.46,0.45,0.94) forwards;
+}
+.hero-name {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(56px, 7vw, 100px);
+  font-weight: 600; line-height: 1.04;
+  color: var(--ice);
+  margin-bottom: 40px;
+  opacity: 0; transform: translateY(20px);
+  animation: fadeUp 0.8s 0.55s cubic-bezier(0.25,0.46,0.45,0.94) forwards;
+}
+.hero-name span { color: var(--amber); }
+.hero-line {
+  width: 48px; height: 1px;
+  background: var(--blue); opacity: 0.4;
+  margin: 0 auto 40px;
+  opacity: 0;
+  animation: fadeUp 0.6s 0.7s cubic-bezier(0.25,0.46,0.45,0.94) forwards;
+}
+.hero-intro {
+  font-size: 16px; font-weight: 300;
+  line-height: 1.88; letter-spacing: 0.02em;
+  color: var(--warm);
+  max-width: 580px; margin: 0 auto;
+  opacity: 0; transform: translateY(16px);
+  animation: fadeUp 0.8s 0.8s cubic-bezier(0.25,0.46,0.45,0.94) forwards;
+}
+.hero-intro em { font-style: normal; color: var(--warm-bright); font-weight: 400; }
+
+.scroll-hint {
+  position: absolute; bottom: 40px; left: 50%; transform: translateX(-50%);
+  display: flex; flex-direction: column; align-items: center;
+  opacity: 0; animation: fadeUp 0.6s 1.2s cubic-bezier(0.25,0.46,0.45,0.94) forwards;
+}
+.scroll-firefly {
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: var(--amber);
+  box-shadow: 0 0 8px rgba(212,165,118,0.6), 0 0 20px rgba(212,165,118,0.3), 0 0 40px rgba(212,165,118,0.1);
+  animation: fireflyDrift 3s ease-in-out infinite;
+}
+@keyframes fireflyDrift {
+  0%, 100% { transform: translateY(0); opacity: 0.4; box-shadow: 0 0 6px rgba(212,165,118,0.4), 0 0 16px rgba(212,165,118,0.15); }
+  50%      { transform: translateY(12px); opacity: 1; box-shadow: 0 0 10px rgba(212,165,118,0.8), 0 0 28px rgba(212,165,118,0.4), 0 0 50px rgba(212,165,118,0.15); }
+}
+
+@keyframes fadeUp {
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* ── SECTIONS ── */
+.section {
+  padding: 96px 88px;
+  border-top: 1px solid var(--border);
+  position: relative;
+}
+.section.alt { background: var(--bg-alt); }
+.section-inner { max-width: 1040px; margin: 0 auto; }
+
+.section-label {
+  font-size: 9px; font-weight: 500;
+  letter-spacing: 0.32em; text-transform: uppercase;
+  color: var(--blue); margin-bottom: 18px;
+}
+.section-heading {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(30px, 3.8vw, 50px);
+  font-weight: 600; line-height: 1.1;
+  color: var(--ice); margin-bottom: 22px;
+}
+.section-body {
+  font-size: 15px; font-weight: 400;
+  line-height: 1.88; letter-spacing: 0.03em;
+  color: var(--warm);
+  max-width: 620px;
+}
+.section-body + .section-body { margin-top: 18px; }
+.section-divider { width: 48px; height: 1px; background: var(--blue); opacity: 0.4; margin: 36px 0; }
+
+/* ── REVEAL ANIMATION ── */
+.reveal {
+  opacity: 0; transform: translateY(24px);
+  transition: opacity 0.7s cubic-bezier(0.25,0.46,0.45,0.94), transform 0.7s cubic-bezier(0.25,0.46,0.45,0.94);
+}
+.reveal.visible { opacity: 1; transform: translateY(0); }
+.reveal-delay-1 { transition-delay: 0.1s; }
+.reveal-delay-2 { transition-delay: 0.2s; }
+.reveal-delay-3 { transition-delay: 0.3s; }
+.reveal-delay-4 { transition-delay: 0.4s; }
+
+/* ── TWO COL ── */
+.two-col { display: grid; grid-template-columns: 1.55fr 1fr; gap: 72px; align-items: start; }
+
+/* ── APPROACH SECTION — AI FOCUS ── */
+.focus-cards {
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: 16px; margin-top: 44px;
+}
+.focus-card {
+  padding: 32px 28px;
+  border: 1px solid rgba(122,171,222,0.12);
+  border-radius: 16px;
+  background: linear-gradient(160deg, #0e1428, #080c1a);
+  transition: border-color 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease;
+  cursor: default;
+  position: relative; overflow: hidden;
+}
+.focus-card::before {
+  content: ''; position: absolute; inset: 0;
+  background: radial-gradient(ellipse 80% 60% at var(--mx,50%) var(--my,40%), rgba(122,171,222,0.04) 0%, transparent 70%);
+  pointer-events: none; opacity: 0;
+  transition: opacity 0.3s ease;
+}
+.focus-card:hover::before { opacity: 1; }
+.focus-card:hover {
+  transform: translateY(-3px);
+  border-color: rgba(122,171,222,0.32);
+  box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+}
+.focus-card-icon {
+  font-size: 22px; margin-bottom: 16px;
+  width: 44px; height: 44px;
+  display: flex; align-items: center; justify-content: center;
+  background: rgba(122,171,222,0.07);
+  border: 1px solid rgba(122,171,222,0.12);
+  border-radius: 12px;
+  color: var(--blue);
+}
+.focus-card-title {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 14px; font-weight: 500;
+  letter-spacing: 0.04em;
+  color: var(--ice); margin-bottom: 10px;
+}
+.focus-card-desc {
+  font-size: 12.5px; font-weight: 400;
+  line-height: 1.7; letter-spacing: 0.02em;
+  color: rgba(212,165,118,0.78);
+}
+
+/* ── VALUES / TRAITS ── */
+.traits-container {
+  display: flex; gap: 24px;
+  margin-top: 44px;
+}
+.trait-orb {
+  flex: 1;
+  padding: 40px 28px;
+  border: 1px solid rgba(122,171,222,0.1);
+  border-radius: 18px;
+  background: linear-gradient(160deg, #0c1424, #070b18);
+  text-align: center;
+  transition: border-color 0.4s ease, transform 0.4s ease, box-shadow 0.4s ease;
+  cursor: pointer;
+  position: relative; overflow: hidden;
+}
+.trait-orb::before {
+  content: ''; position: absolute;
+  top: -50%; left: 50%; transform: translateX(-50%);
+  width: 180px; height: 180px;
+  border-radius: 50%;
+  background: radial-gradient(circle, var(--trait-glow, rgba(122,171,222,0.08)) 0%, transparent 70%);
+  transition: opacity 0.5s ease, transform 0.5s ease;
+  opacity: 0; pointer-events: none;
+}
+.trait-orb:hover::before { opacity: 1; transform: translateX(-50%) translateY(20%); }
+.trait-orb:hover {
+  transform: translateY(-4px);
+  border-color: var(--trait-border, rgba(122,171,222,0.3));
+  box-shadow: 0 12px 40px rgba(0,0,0,0.3);
+}
+.trait-orb.active {
+  border-color: var(--trait-border, rgba(122,171,222,0.45));
+}
+.trait-orb.active::before { opacity: 1; transform: translateX(-50%) translateY(20%); }
+
+.trait-word {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(28px, 3vw, 40px);
+  font-weight: 600; font-style: italic;
+  color: var(--trait-color, var(--ice));
+  margin-bottom: 14px;
+  transition: color 0.3s ease;
+  position: relative; z-index: 1;
+}
+.trait-desc {
+  font-size: 12px; font-weight: 400;
+  line-height: 1.7; letter-spacing: 0.02em;
+  color: rgba(200,185,165,0.35);
+  max-height: 0; overflow: hidden;
+  transition: max-height 0.5s cubic-bezier(0.25,0.46,0.45,0.94), opacity 0.4s ease, margin 0.4s ease;
+  opacity: 0;
+  position: relative; z-index: 1;
+}
+.trait-orb.active .trait-desc {
+  max-height: 120px; opacity: 1; margin-top: 8px;
+}
+
+.trait-orb:nth-child(1) { --trait-color: var(--blue); --trait-glow: rgba(122,171,222,0.1); --trait-border: rgba(122,171,222,0.35); }
+.trait-orb:nth-child(2) { --trait-color: var(--amber); --trait-glow: rgba(212,165,118,0.1); --trait-border: rgba(212,165,118,0.35); }
+.trait-orb:nth-child(3) { --trait-color: var(--lavender); --trait-glow: rgba(139,135,200,0.1); --trait-border: rgba(139,135,200,0.35); }
+
+/* ── GORILLA SECTION ── */
+.story-grid {
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: 64px; align-items: center;
+  margin-top: 44px;
+}
+.story-visual {
+  position: relative;
+  border-radius: 18px;
+  overflow: hidden;
+  border: 1px solid rgba(122,171,222,0.12);
+  aspect-ratio: 4/5;
+  background: linear-gradient(160deg, #0e1428, #080c1a);
+}
+.story-visual img,
+.story-visual video {
+  width: 100%; height: 100%;
+  object-fit: cover;
+  object-position: center center;
+  display: block;
+}
+.story-visual::after {
+  content: ''; position: absolute; inset: 0;
+  background:
+    linear-gradient(to bottom, rgba(6,8,16,0) 50%, rgba(6,8,16,0.6) 100%),
+    radial-gradient(ellipse 90% 60% at 50% 100%, rgba(12,25,70,0.3) 0%, transparent 55%);
+  pointer-events: none;
+}
+.story-visual-caption {
+  position: absolute; bottom: 28px; left: 0; right: 0;
+  text-align: center; z-index: 2;
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 18px; font-style: italic;
+  color: rgba(200,185,165,0.5);
+  letter-spacing: 0.02em;
+}
+
+.story-text .section-body { max-width: none; }
+
+/* ── CLOSING ── */
+.closing {
+  min-height: 100svh;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  padding: 80px 88px;
+  text-align: center;
+  position: relative; overflow: hidden;
+}
+.closing::before {
+  content: ''; position: absolute; inset: 0; pointer-events: none;
+  background:
+    radial-gradient(ellipse 55% 50% at 50% 50%, rgba(212,165,118,0.04) 0%, transparent 55%),
+    radial-gradient(ellipse 45% 40% at 50% 30%, rgba(212,165,118,0.03) 0%, transparent 50%);
+}
+.closing-fireflies {
+  position: absolute; inset: 0;
+  width: 100%; height: 100%;
+  pointer-events: none; z-index: 0;
+}
+.closing-inner { position: relative; z-index: 1; }
+.juba-portrait {
+  width: 160px; height: 160px;
+  margin: 0 auto 36px;
+}
+.juba-portrait img {
+  width: 100%; height: 100%;
+  object-fit: contain;
+  display: block;
+}
+.closing-heading {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(36px, 4.5vw, 60px);
+  font-weight: 600; font-style: italic;
+  color: var(--amber); margin-bottom: 72px;
+  line-height: 1.15;
+  text-shadow: 0 0 20px rgba(212,165,118,0.35), 0 0 50px rgba(212,165,118,0.15);
+}
+.closing-body {
+  font-size: 15px; font-weight: 400;
+  line-height: 1.88; letter-spacing: 0.03em;
+  color: var(--warm);
+  max-width: 520px; margin: 0 auto 48px;
+}
+.resume-btn {
+  display: inline-flex; align-items: center; gap: 12px;
+  background: rgba(122,171,222,0.07);
+  border: 1px solid rgba(122,171,222,0.2);
+  border-radius: 100px;
+  padding: 14px 32px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 12px; font-weight: 500;
+  letter-spacing: 0.18em; text-transform: uppercase;
+  color: var(--blue);
+  cursor: pointer;
+  transition: background 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease, transform 0.2s ease, color 0.25s ease;
+  text-decoration: none;
+}
+.resume-btn:hover {
+  background: rgba(122,171,222,0.18);
+  border-color: rgba(122,171,222,0.5);
+  box-shadow: 0 0 24px rgba(122,171,222,0.15);
+  transform: translateY(-2px);
+  color: #fff;
+}
+.resume-btn svg { transition: transform 0.25s ease; }
+.resume-btn:hover svg { transform: translateY(2px); }
+
+/* ── RESPONSIVE ── */
+@media (max-width: 768px) {
+  .hero { padding: 80px 32px; }
+  .section { padding: 64px 32px; }
+  .closing { padding: 80px 32px; }
+  .two-col { grid-template-columns: 1fr; gap: 36px; }
+  .focus-cards { grid-template-columns: 1fr; }
+  .traits-container { flex-direction: column; }
+  .story-grid { grid-template-columns: 1fr; gap: 36px; }
+  .nav-back { top: 16px; left: 16px; }
+}
+
+/* ── REDUCED MOTION ── */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
+  .motes-canvas { display: none; }
+}
+</style>
+</head>
+<body>
+
+<div id="page-exit"></div>
+
+<!-- Floating motes -->
+<div class="motes-canvas" id="motes"></div>
+
+<!-- Navigation -->
+<a class="nav-back" href="level-2-perspective.html" id="backBtn">
+  <span class="nav-back-arrow"></span> Perspectives
+</a>
+<div class="wordmark">AG</div>
+
+<!-- ══════════════════════════════════════ HERO ══════════════════════════════════════ -->
+<section class="hero">
+  <canvas id="fireflies" class="fireflies-canvas"></canvas>
+  <div class="hero-content">
+    <div class="hero-portrait"><img src="A Images/Amber Grey 3.webp" alt="Amber Grey"></div>
+    <div class="hero-eyebrow">About Me</div>
+    <div class="hero-greeting">Hi, I'm</div>
+    <h1 class="hero-name">Amber <span>Grey</span></h1>
+    <div class="hero-line"></div>
+    <p class="hero-intro">
+      I'm a UX researcher and interaction designer interested in what <em>moments of tension</em> reveal about how systems actually work. My work focuses on identifying behavioral patterns within complex experiences and translating those insights into <em>meaningful design interventions</em>. I learn by building.
+    </p>
+  </div>
+  <div class="scroll-hint">
+    <span class="scroll-firefly"></span>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════ APPROACH ══════════════════════════════════════ -->
+<section class="section alt">
+  <div class="section-inner">
+    <div class="section-label reveal">Approach</div>
+    <h2 class="section-heading reveal reveal-delay-1">Research-driven,<br>design-led</h2>
+    <p class="section-body reveal reveal-delay-2">
+      I'm especially interested in how AI can extend the research process — helping uncover patterns, deepen understanding, and transform insight into experiences that improve clarity, efficiency, and human outcomes.
+    </p>
+    <div class="focus-cards">
+      <div class="focus-card reveal reveal-delay-1">
+        <div class="focus-card-icon">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+        </div>
+        <div class="focus-card-title">Behavioral Patterns</div>
+        <div class="focus-card-desc">Identifying what moments of tension reveal about how systems actually work beneath the surface.</div>
+      </div>
+      <div class="focus-card reveal reveal-delay-2">
+        <div class="focus-card-icon">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+        </div>
+        <div class="focus-card-title">Complex Systems</div>
+        <div class="focus-card-desc">Translating systemic insights into meaningful interventions that address root causes, not symptoms.</div>
+      </div>
+      <div class="focus-card reveal reveal-delay-3">
+        <div class="focus-card-icon">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 3c.132 0 .263 0 .393 0a7.5 7.5 0 0 0 7.92 12.446A9 9 0 1 1 12 3z"/></svg>
+        </div>
+        <div class="focus-card-title">AI + Research</div>
+        <div class="focus-card-desc">Extending the research process with AI to uncover patterns and deepen understanding at scale.</div>
+      </div>
+      <div class="focus-card reveal reveal-delay-4">
+        <div class="focus-card-icon">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+        </div>
+        <div class="focus-card-title">Human Outcomes</div>
+        <div class="focus-card-desc">Designing experiences that improve clarity, efficiency, and meaningful connection for the people who use them.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════ VALUES ══════════════════════════════════════ -->
+<section class="section" style="position:relative;overflow:hidden;">
+  <canvas id="traitsFireflies" class="closing-fireflies"></canvas>
+  <div class="section-inner" style="position:relative;z-index:1;">
+    <div class="section-label reveal">What Drives Me</div>
+    <h2 class="section-heading reveal reveal-delay-1">Core qualities</h2>
+    <p class="section-body reveal reveal-delay-2">The values that shape how I approach every project, every conversation, and every design decision.</p>
+
+    <div class="traits-container reveal reveal-delay-3">
+      <div class="trait-orb" data-trait="curious">
+        <div class="trait-word">Curious</div>
+        <div class="trait-desc">Driven by questions more than answers. I look for the surprising connections between seemingly unrelated systems and ideas.</div>
+      </div>
+      <div class="trait-orb" data-trait="creative">
+        <div class="trait-word">Creative</div>
+        <div class="trait-desc">Finding elegant solutions within constraints. Creativity isn't about limitless freedom — it thrives in the space between tension and possibility.</div>
+      </div>
+      <div class="trait-orb" data-trait="empathy">
+        <div class="trait-word">Empathy</div>
+        <div class="trait-desc">Understanding isn't enough. True empathy means translating insight into action that genuinely improves someone's experience.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════ PERSONAL ══════════════════════════════════════ -->
+<section class="section alt">
+  <div class="section-inner">
+    <div class="story-grid">
+      <div class="story-visual reveal">
+        <video autoplay loop muted playsinline>
+          <source src="A Images/Video/Juba-the-Gorilla.mov" type="video/quicktime">
+        </video>
+        <div class="story-visual-caption">"A sort of peaceful discomfort."</div>
+      </div>
+      <div class="story-text">
+        <div class="section-label reveal">In My Free Time</div>
+        <h2 class="section-heading reveal reveal-delay-1">I'm a gorilla girl</h2>
+        <p class="section-body reveal reveal-delay-2">
+          A unique part of my life is spending time with gorillas. Each week I sit nearby observing, sketching, and simply watching how they interact with each other and with the environment around them.
+        </p>
+        <div class="section-divider reveal reveal-delay-3"></div>
+        <p class="section-body reveal reveal-delay-3">
+          Spending time in that setting shifts my perspective beyond purely human-centered thinking. It's a reminder that many systems we design exist within much larger ecosystems.
+        </p>
+        <p class="section-body reveal reveal-delay-4">
+          Over the years, these quiet observations have shaped how I think about design — encouraging me to imagine spaces where animal welfare, curiosity, and learning can exist together.
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════ CLOSING ══════════════════════════════════════ -->
+<section class="closing">
+  <canvas id="closingFireflies" class="closing-fireflies"></canvas>
+  <div class="closing-inner reveal">
+    <div class="juba-portrait"><img src="A Images/ Juba.webp" alt="Juba time"></div>
+    <h2 class="closing-heading">Let's create something meaningful</h2>
+    <a class="resume-btn" href="A Resume/AMBER GREY_UX Research | Interaction Design.pdf" target="_blank" download>
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+      Resume
+    </a>
+  </div>
+</section>
+
+<script>
+/* ── BODY VISIBLE ── */
+document.addEventListener('DOMContentLoaded', () => {
+  requestAnimationFrame(() => document.body.classList.add('visible'));
+});
+
+/* ── PAGE EXIT TRANSITION ── */
+document.getElementById('backBtn').addEventListener('click', function(e) {
+  e.preventDefault();
+  const exit = document.getElementById('page-exit');
+  exit.classList.add('active');
+  const href = this.href;
+  setTimeout(() => { window.location.href = href; }, 350);
+});
+
+/* ── FIREFLIES ── */
+(function() {
+  const canvas = document.getElementById('fireflies');
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d');
+  let w, h, flies = [];
+  const COUNT = 35;
+
+  function resize() {
+    const rect = canvas.parentElement.getBoundingClientRect();
+    w = canvas.width = rect.width;
+    h = canvas.height = rect.height;
+  }
+
+  function createFly() {
+    const hue = Math.random() < 0.7 ? 35 + Math.random() * 15 : 55 + Math.random() * 10; // amber to gold
+    return {
+      x: Math.random() * w,
+      y: Math.random() * h,
+      vx: (Math.random() - 0.5) * 0.35,
+      vy: (Math.random() - 0.5) * 0.25,
+      radius: 1.5 + Math.random() * 2,
+      glowRadius: 12 + Math.random() * 18,
+      phase: Math.random() * Math.PI * 2,
+      pulseSpeed: 0.008 + Math.random() * 0.015,
+      brightness: 0,
+      targetBrightness: 0,
+      nextChange: Math.random() * 200,
+      timer: 0,
+      hue: hue,
+      drift: Math.random() * Math.PI * 2,
+      driftSpeed: 0.002 + Math.random() * 0.004,
+    };
+  }
+
+  function init() {
+    resize();
+    flies = [];
+    for (let i = 0; i < COUNT; i++) flies.push(createFly());
+  }
+
+  function update() {
+    for (const f of flies) {
+      f.timer++;
+      f.drift += f.driftSpeed;
+      f.phase += f.pulseSpeed;
+
+      // Gentle wandering with drift
+      f.vx += Math.sin(f.drift) * 0.008 + (Math.random() - 0.5) * 0.012;
+      f.vy += Math.cos(f.drift * 0.7) * 0.006 + (Math.random() - 0.5) * 0.01;
+
+      // Dampen velocity
+      f.vx *= 0.992;
+      f.vy *= 0.992;
+
+      f.x += f.vx;
+      f.y += f.vy;
+
+      // Wrap edges softly
+      if (f.x < -30) f.x = w + 30;
+      if (f.x > w + 30) f.x = -30;
+      if (f.y < -30) f.y = h + 30;
+      if (f.y > h + 30) f.y = -30;
+
+      // Firefly glow pattern: random on/off like real fireflies
+      if (f.timer > f.nextChange) {
+        f.timer = 0;
+        f.targetBrightness = f.targetBrightness < 0.3 ? (0.5 + Math.random() * 0.5) : (Math.random() * 0.15);
+        f.nextChange = 80 + Math.random() * 250;
+      }
+      f.brightness += (f.targetBrightness - f.brightness) * 0.025;
+
+      // Add subtle pulse when glowing
+      const pulse = f.brightness > 0.3 ? Math.sin(f.phase) * 0.15 : 0;
+      f.alpha = Math.max(0, f.brightness + pulse);
+    }
+  }
+
+  function draw() {
+    ctx.clearRect(0, 0, w, h);
+    for (const f of flies) {
+      if (f.alpha < 0.01) continue;
+
+      // Outer glow
+      const grad = ctx.createRadialGradient(f.x, f.y, 0, f.x, f.y, f.glowRadius * f.alpha);
+      grad.addColorStop(0, `hsla(${f.hue}, 70%, 65%, ${f.alpha * 0.3})`);
+      grad.addColorStop(0.4, `hsla(${f.hue}, 60%, 55%, ${f.alpha * 0.1})`);
+      grad.addColorStop(1, `hsla(${f.hue}, 50%, 45%, 0)`);
+      ctx.fillStyle = grad;
+      ctx.beginPath();
+      ctx.arc(f.x, f.y, f.glowRadius, 0, Math.PI * 2);
+      ctx.fill();
+
+      // Bright core
+      ctx.fillStyle = `hsla(${f.hue}, 80%, 80%, ${f.alpha * 0.9})`;
+      ctx.beginPath();
+      ctx.arc(f.x, f.y, f.radius * (0.7 + f.alpha * 0.3), 0, Math.PI * 2);
+      ctx.fill();
+    }
+  }
+
+  function loop() {
+    update();
+    draw();
+    requestAnimationFrame(loop);
+  }
+
+  // Only animate when hero is visible
+  const heroObserver = new IntersectionObserver((entries) => {
+    if (entries[0].isIntersecting) { loop(); heroObserver.disconnect(); }
+  }, { threshold: 0.1 });
+  heroObserver.observe(canvas.parentElement);
+
+  init();
+  window.addEventListener('resize', resize);
+})();
+
+/* ── FLOATING MOTES ── */
+(function() {
+  const canvas = document.getElementById('motes');
+  const count = 25;
+  for (let i = 0; i < count; i++) {
+    const mote = document.createElement('div');
+    mote.className = 'mote';
+    mote.style.left = Math.random() * 100 + '%';
+    mote.style.bottom = '-4px';
+    mote.style.animationDuration = (12 + Math.random() * 20) + 's';
+    mote.style.animationDelay = (Math.random() * 15) + 's';
+    mote.style.width = mote.style.height = (1.5 + Math.random() * 2) + 'px';
+    mote.style.opacity = 0.15 + Math.random() * 0.25;
+    canvas.appendChild(mote);
+  }
+})();
+
+/* ── SCROLL REVEAL ── */
+(function() {
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('visible');
+      }
+    });
+  }, { threshold: 0.15, rootMargin: '0px 0px -40px 0px' });
+
+  document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+})();
+
+/* ── TRAIT ORB INTERACTION ── */
+(function() {
+  const orbs = document.querySelectorAll('.trait-orb');
+  orbs.forEach(orb => {
+    orb.addEventListener('click', () => {
+      const wasActive = orb.classList.contains('active');
+      orbs.forEach(o => o.classList.remove('active'));
+      if (!wasActive) orb.classList.add('active');
+    });
+  });
+})();
+
+/* ── FOCUS CARD MOUSE FOLLOW ── */
+(function() {
+  document.querySelectorAll('.focus-card').forEach(card => {
+    card.addEventListener('mousemove', (e) => {
+      const rect = card.getBoundingClientRect();
+      const x = ((e.clientX - rect.left) / rect.width * 100).toFixed(1);
+      const y = ((e.clientY - rect.top) / rect.height * 100).toFixed(1);
+      card.style.setProperty('--mx', x + '%');
+      card.style.setProperty('--my', y + '%');
+    });
+  });
+})();
+
+/* ── HIDE SCROLL HINT ON SCROLL ── */
+(function() {
+  const hint = document.querySelector('.scroll-hint');
+  let hidden = false;
+  window.addEventListener('scroll', () => {
+    if (!hidden && window.scrollY > 80) {
+      hint.style.opacity = '0';
+      hint.style.transition = 'opacity 0.5s ease';
+      hidden = true;
+    }
+  });
+})();
+
+/* ── TRAITS FIREFLIES ── */
+(function() {
+  const canvas = document.getElementById('traitsFireflies');
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d');
+  let w, h, flies = [], running = false;
+  const COUNT = 25;
+
+  function resize() {
+    const rect = canvas.parentElement.getBoundingClientRect();
+    w = canvas.width = rect.width;
+    h = canvas.height = rect.height;
+  }
+
+  function createFly() {
+    const hue = 35 + Math.random() * 20;
+    return {
+      x: Math.random() * w, y: Math.random() * h,
+      vx: (Math.random() - 0.5) * 0.35, vy: (Math.random() - 0.5) * 0.25,
+      radius: 1.5 + Math.random() * 2,
+      glowRadius: 12 + Math.random() * 18,
+      phase: Math.random() * Math.PI * 2,
+      pulseSpeed: 0.008 + Math.random() * 0.015,
+      brightness: 0, targetBrightness: 0,
+      nextChange: Math.random() * 200, timer: 0,
+      hue: hue, drift: Math.random() * Math.PI * 2,
+      driftSpeed: 0.002 + Math.random() * 0.004,
+    };
+  }
+
+  function init() {
+    resize();
+    flies = [];
+    for (let i = 0; i < COUNT; i++) flies.push(createFly());
+  }
+
+  function loop() {
+    if (!running) return;
+    for (const f of flies) {
+      f.timer++; f.drift += f.driftSpeed; f.phase += f.pulseSpeed;
+      f.vx += Math.sin(f.drift) * 0.008 + (Math.random() - 0.5) * 0.012;
+      f.vy += Math.cos(f.drift * 0.7) * 0.006 + (Math.random() - 0.5) * 0.01;
+      f.vx *= 0.992; f.vy *= 0.992;
+      f.x += f.vx; f.y += f.vy;
+      if (f.x < -30) f.x = w + 30; if (f.x > w + 30) f.x = -30;
+      if (f.y < -30) f.y = h + 30; if (f.y > h + 30) f.y = -30;
+      if (f.timer > f.nextChange) {
+        f.timer = 0;
+        f.targetBrightness = f.targetBrightness < 0.3 ? (0.5 + Math.random() * 0.5) : (Math.random() * 0.15);
+        f.nextChange = 80 + Math.random() * 250;
+      }
+      f.brightness += (f.targetBrightness - f.brightness) * 0.025;
+      const pulse = f.brightness > 0.3 ? Math.sin(f.phase) * 0.15 : 0;
+      f.alpha = Math.max(0, f.brightness + pulse);
+    }
+    ctx.clearRect(0, 0, w, h);
+    for (const f of flies) {
+      if (f.alpha < 0.01) continue;
+      const grad = ctx.createRadialGradient(f.x, f.y, 0, f.x, f.y, f.glowRadius * f.alpha);
+      grad.addColorStop(0, `hsla(${f.hue}, 70%, 65%, ${f.alpha * 0.3})`);
+      grad.addColorStop(0.4, `hsla(${f.hue}, 60%, 55%, ${f.alpha * 0.1})`);
+      grad.addColorStop(1, `hsla(${f.hue}, 50%, 45%, 0)`);
+      ctx.fillStyle = grad;
+      ctx.beginPath(); ctx.arc(f.x, f.y, f.glowRadius, 0, Math.PI * 2); ctx.fill();
+      ctx.fillStyle = `hsla(${f.hue}, 80%, 80%, ${f.alpha * 0.9})`;
+      ctx.beginPath(); ctx.arc(f.x, f.y, f.radius * (0.7 + f.alpha * 0.3), 0, Math.PI * 2); ctx.fill();
+    }
+    requestAnimationFrame(loop);
+  }
+
+  const obs = new IntersectionObserver((entries) => {
+    if (entries[0].isIntersecting && !running) { running = true; loop(); }
+    else if (!entries[0].isIntersecting) { running = false; }
+  }, { threshold: 0.1 });
+  obs.observe(canvas.parentElement);
+
+  init();
+  window.addEventListener('resize', resize);
+})();
+
+/* ── CLOSING FIREFLIES ── */
+(function() {
+  const canvas = document.getElementById('closingFireflies');
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d');
+  let w, h, flies = [], running = false;
+  const COUNT = 30;
+
+  function resize() {
+    const rect = canvas.parentElement.getBoundingClientRect();
+    w = canvas.width = rect.width;
+    h = canvas.height = rect.height;
+  }
+
+  function createFly() {
+    const hue = 35 + Math.random() * 20;
+    return {
+      x: Math.random() * w, y: Math.random() * h,
+      vx: (Math.random() - 0.5) * 0.35, vy: (Math.random() - 0.5) * 0.25,
+      radius: 1.5 + Math.random() * 2,
+      glowRadius: 12 + Math.random() * 18,
+      phase: Math.random() * Math.PI * 2,
+      pulseSpeed: 0.008 + Math.random() * 0.015,
+      brightness: 0, targetBrightness: 0,
+      nextChange: Math.random() * 200, timer: 0,
+      hue: hue, drift: Math.random() * Math.PI * 2,
+      driftSpeed: 0.002 + Math.random() * 0.004,
+    };
+  }
+
+  function init() {
+    resize();
+    flies = [];
+    for (let i = 0; i < COUNT; i++) flies.push(createFly());
+  }
+
+  function loop() {
+    if (!running) return;
+    for (const f of flies) {
+      f.timer++; f.drift += f.driftSpeed; f.phase += f.pulseSpeed;
+      f.vx += Math.sin(f.drift) * 0.008 + (Math.random() - 0.5) * 0.012;
+      f.vy += Math.cos(f.drift * 0.7) * 0.006 + (Math.random() - 0.5) * 0.01;
+      f.vx *= 0.992; f.vy *= 0.992;
+      f.x += f.vx; f.y += f.vy;
+      if (f.x < -30) f.x = w + 30; if (f.x > w + 30) f.x = -30;
+      if (f.y < -30) f.y = h + 30; if (f.y > h + 30) f.y = -30;
+      if (f.timer > f.nextChange) {
+        f.timer = 0;
+        f.targetBrightness = f.targetBrightness < 0.3 ? (0.5 + Math.random() * 0.5) : (Math.random() * 0.15);
+        f.nextChange = 80 + Math.random() * 250;
+      }
+      f.brightness += (f.targetBrightness - f.brightness) * 0.025;
+      const pulse = f.brightness > 0.3 ? Math.sin(f.phase) * 0.15 : 0;
+      f.alpha = Math.max(0, f.brightness + pulse);
+    }
+    ctx.clearRect(0, 0, w, h);
+    for (const f of flies) {
+      if (f.alpha < 0.01) continue;
+      const grad = ctx.createRadialGradient(f.x, f.y, 0, f.x, f.y, f.glowRadius * f.alpha);
+      grad.addColorStop(0, `hsla(${f.hue}, 70%, 65%, ${f.alpha * 0.3})`);
+      grad.addColorStop(0.4, `hsla(${f.hue}, 60%, 55%, ${f.alpha * 0.1})`);
+      grad.addColorStop(1, `hsla(${f.hue}, 50%, 45%, 0)`);
+      ctx.fillStyle = grad;
+      ctx.beginPath(); ctx.arc(f.x, f.y, f.glowRadius, 0, Math.PI * 2); ctx.fill();
+      ctx.fillStyle = `hsla(${f.hue}, 80%, 80%, ${f.alpha * 0.9})`;
+      ctx.beginPath(); ctx.arc(f.x, f.y, f.radius * (0.7 + f.alpha * 0.3), 0, Math.PI * 2); ctx.fill();
+    }
+    requestAnimationFrame(loop);
+  }
+
+  const obs = new IntersectionObserver((entries) => {
+    if (entries[0].isIntersecting && !running) { running = true; loop(); }
+    else if (!entries[0].isIntersecting) { running = false; }
+  }, { threshold: 0.1 });
+  obs.observe(canvas.parentElement);
+
+  init();
+  window.addEventListener('resize', resize);
+})();
+</script>
+
+</body>
+</html>

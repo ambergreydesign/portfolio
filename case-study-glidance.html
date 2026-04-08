@@ -1,0 +1,1043 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BLV Ecosystem — Case Study — Amber Grey</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,600;1,400;1,500&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --magenta:        #d4006b;
+  --magenta-dim:    rgba(212, 0, 107, 0.12);
+  --magenta-border: rgba(212, 0, 107, 0.3);
+  --bg:             #0b1221;
+  --bg-alt:         #0e1529;
+  --text:           #e0d6c8;
+  --text-muted:     #7a6e7e;
+  --text-dim:       #42384d;
+  --pink:           #eac6ce;
+  --amber:          #dca25b;
+  --border:         rgba(255, 255, 255, 0.07);
+}
+
+html {
+  background: var(--bg);
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: 'DM Sans', sans-serif;
+  color: var(--text);
+  overflow-x: hidden;
+  opacity: 0;
+  transition: opacity 0.55s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+body.visible { opacity: 1; }
+
+/* ── PAGE EXIT ── */
+#page-exit {
+  position: fixed; inset: 0;
+  background: #0b1c26;
+  opacity: 0; pointer-events: none;
+  transition: opacity 0.28s ease-in;
+  z-index: 9999;
+}
+#page-exit.active { opacity: 1; }
+
+/* ── NAV ── */
+.nav-back {
+  position: fixed;
+  top: 28px; left: 32px;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  background: rgba(255, 255, 255, 0.06);
+  backdrop-filter: blur(14px) saturate(1.2);
+  -webkit-backdrop-filter: blur(14px) saturate(1.2);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 100px;
+  padding: 9px 18px 9px 14px;
+  cursor: pointer;
+  color: rgba(200, 185, 165, 0.75);
+  font-family: 'DM Sans', sans-serif;
+  font-size: 10px;
+  font-weight: 400;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  transition: background 0.25s ease, color 0.25s ease, border-color 0.25s ease;
+  z-index: 200;
+  background-clip: padding-box;
+}
+.nav-back:hover {
+  background: rgba(255, 255, 255, 0.11);
+  color: rgba(200, 185, 165, 1);
+  border-color: rgba(255, 255, 255, 0.18);
+}
+.nav-back-arrow {
+  display: inline-block;
+  width: 16px; height: 1px;
+  background: currentColor;
+  position: relative; flex-shrink: 0;
+}
+.nav-back-arrow::before {
+  content: '';
+  position: absolute;
+  left: 0; top: -3px;
+  width: 6px; height: 6px;
+  border-left: 1px solid currentColor;
+  border-bottom: 1px solid currentColor;
+  transform: rotate(45deg);
+}
+
+/* ── WORDMARK ── */
+.wordmark {
+  position: fixed;
+  bottom: 24px; left: 21px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 13px;
+  font-weight: 300;
+  letter-spacing: 0.2em;
+  color: rgba(210, 195, 172, 0.18);
+  pointer-events: none;
+  z-index: 10;
+}
+
+/* ── HERO ── */
+.hero {
+  min-height: 100svh;
+  background-image:
+    linear-gradient(to bottom,
+      rgba(31, 15, 56, 0.55) 0%,
+      rgba(11, 18, 33, 0.88) 70%,
+      #0b1221 100%),
+    url('Studio_Edited.webp');
+  background-size: cover;
+  background-position: center top;
+  background-attachment: fixed;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  padding: 0 88px 80px;
+  position: relative;
+}
+
+.hero-zone {
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.32em;
+  text-transform: uppercase;
+  color: var(--amber);
+  margin-bottom: 22px;
+}
+
+.hero-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(52px, 6.5vw, 92px);
+  font-weight: 600;
+  line-height: 1.04;
+  color: var(--pink);
+  margin-bottom: 26px;
+  max-width: 800px;
+}
+
+.hero-desc {
+  font-size: 15px;
+  font-weight: 400;
+  line-height: 1.8;
+  letter-spacing: 0.035em;
+  color: rgba(200, 185, 165, 0.62);
+  max-width: 540px;
+  margin-bottom: 64px;
+}
+
+.hero-meta {
+  display: flex;
+  gap: 52px;
+  border-top: 1px solid rgba(255,255,255,0.07);
+  padding-top: 28px;
+  flex-wrap: wrap;
+}
+
+.hero-meta-label {
+  font-size: 9px;
+  font-weight: 500;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: var(--text-dim);
+  margin-bottom: 7px;
+}
+.hero-meta-value {
+  font-size: 13px;
+  font-weight: 500;
+  letter-spacing: 0.05em;
+  color: var(--text-muted);
+}
+
+/* ── CONTENT WRAPPER ── */
+.cs-section {
+  padding: 96px 88px;
+  border-top: 1px solid var(--border);
+}
+.cs-section.alt { background: var(--bg-alt); }
+
+.section-inner {
+  max-width: 1040px;
+  margin: 0 auto;
+}
+
+.section-label {
+  font-size: 9px;
+  font-weight: 500;
+  letter-spacing: 0.32em;
+  text-transform: uppercase;
+  color: var(--magenta);
+  margin-bottom: 18px;
+}
+
+.section-heading {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(30px, 3.8vw, 50px);
+  font-weight: 600;
+  line-height: 1.1;
+  color: var(--pink);
+  margin-bottom: 22px;
+}
+
+.section-body {
+  font-size: 15px;
+  font-weight: 400;
+  line-height: 1.88;
+  letter-spacing: 0.03em;
+  color: rgba(200, 185, 165, 0.6);
+  max-width: 600px;
+}
+
+/* ── TWO COL ── */
+.two-col-wide {
+  display: grid;
+  grid-template-columns: 1.55fr 1fr;
+  gap: 72px;
+  align-items: start;
+}
+
+/* ── BRIEF ── */
+.brief-text {
+  font-size: 15px;
+  font-weight: 400;
+  line-height: 1.9;
+  letter-spacing: 0.03em;
+  color: rgba(220, 205, 185, 0.68);
+}
+.brief-text + .brief-text { margin-top: 20px; }
+
+.brief-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  padding-top: 4px;
+}
+
+.meta-item-label {
+  font-size: 9px;
+  font-weight: 500;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--text-dim);
+  margin-bottom: 5px;
+}
+.meta-item-value {
+  font-size: 13px;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  color: var(--text-muted);
+  line-height: 1.55;
+}
+
+/* ── DIVIDER ── */
+.section-divider {
+  width: 48px; height: 1px;
+  background: var(--magenta);
+  opacity: 0.4;
+  margin: 36px 0;
+}
+
+/* ── PERSONAS ── */
+.personas-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 18px;
+  margin-top: 52px;
+}
+
+.persona-card {
+  background: rgba(255, 255, 255, 0.018);
+  border: 1px solid var(--magenta-border);
+  border-radius: 12px;
+  padding: 36px;
+  position: relative;
+  overflow: hidden;
+}
+
+.persona-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, var(--magenta) 0%, transparent 70%);
+}
+
+.persona-phase {
+  font-size: 9px;
+  font-weight: 500;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--magenta);
+  margin-bottom: 14px;
+}
+
+.persona-name {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 36px;
+  font-weight: 600;
+  color: var(--pink);
+  margin-bottom: 4px;
+  line-height: 1;
+}
+
+.persona-condition {
+  font-size: 12px;
+  font-weight: 400;
+  letter-spacing: 0.05em;
+  color: var(--text-muted);
+  margin-bottom: 26px;
+}
+
+.persona-barriers {
+  list-style: none;
+  margin-bottom: 26px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.persona-barriers li {
+  font-size: 13px;
+  font-weight: 400;
+  line-height: 1.5;
+  letter-spacing: 0.03em;
+  color: rgba(200, 185, 165, 0.62);
+  padding-left: 18px;
+  position: relative;
+}
+.persona-barriers li::before {
+  content: '';
+  position: absolute;
+  left: 0; top: 8px;
+  width: 6px; height: 1px;
+  background: var(--magenta);
+  opacity: 0.6;
+}
+
+.persona-goal {
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  color: var(--magenta);
+  padding-top: 20px;
+  border-top: 1px solid rgba(212, 0, 107, 0.14);
+  line-height: 1.5;
+}
+
+/* ── PHASES ── */
+.phases-list {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 10px;
+  margin-top: 52px;
+}
+
+.phase-item {
+  background: rgba(255,255,255,0.018);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 22px 14px;
+  text-align: center;
+}
+
+.phase-num {
+  font-size: 9px;
+  font-weight: 500;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--magenta);
+  opacity: 0.7;
+  margin-bottom: 10px;
+}
+
+.phase-name {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--pink);
+  line-height: 1.35;
+}
+
+.phases-note {
+  margin-top: 20px;
+  font-size: 12px;
+  font-weight: 400;
+  letter-spacing: 0.04em;
+  color: var(--text-dim);
+  font-style: italic;
+}
+
+/* ── STRATEGIES ── */
+.strategies-table {
+  margin-top: 52px;
+  width: 100%;
+}
+
+.strategy-row {
+  display: grid;
+  grid-template-columns: 1fr 36px 1fr 1.2fr;
+  align-items: center;
+  padding: 13px 0;
+  border-bottom: 1px solid var(--border);
+  gap: 0;
+}
+.strategy-row.header-row {
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid rgba(255,255,255,0.04);
+  padding: 10px 0 14px;
+}
+
+.strategy-col-head {
+  font-size: 9px;
+  font-weight: 500;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--text-dim);
+}
+.strategy-col-head.right { text-align: right; }
+
+.barrier-name {
+  font-size: 14px;
+  font-weight: 400;
+  letter-spacing: 0.04em;
+  color: rgba(200, 185, 165, 0.45);
+}
+
+.arrow-col {
+  color: var(--magenta);
+  font-size: 14px;
+  text-align: center;
+  opacity: 0.7;
+}
+
+.bridge-name {
+  font-size: 14px;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  color: var(--pink);
+}
+
+.strategy-desc {
+  font-size: 12px;
+  font-weight: 400;
+  letter-spacing: 0.04em;
+  color: var(--text-muted);
+  text-align: right;
+}
+
+/* ── ECOSYSTEM AREAS ── */
+.ecosystem-areas {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px;
+  margin-top: 48px;
+  margin-bottom: 52px;
+}
+
+.eco-area {
+  background: rgba(255,255,255,0.018);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 18px 16px;
+}
+
+.eco-area-name {
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  line-height: 1.45;
+  color: var(--pink);
+}
+
+/* ── ARTIFACT EMBED ── */
+.artifact-wrapper {
+  border-radius: 14px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  overflow: hidden;
+  aspect-ratio: 822 / 659;
+  width: 100%;
+}
+
+.artifact-wrapper iframe {
+  width: 100%; height: 100%;
+  border: none; display: block;
+}
+
+.artifact-caption {
+  font-size: 10px;
+  font-weight: 400;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--text-dim);
+  text-align: center;
+  margin-top: 16px;
+}
+
+/* mobile-only tool link — hidden on desktop */
+.mob-tool-link { display: none; }
+
+/* ── CONCEPTS ── */
+.concepts-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 18px;
+  margin-top: 52px;
+}
+
+.concept-column {
+  background: rgba(255,255,255,0.015);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 32px 26px;
+}
+
+.concept-horizon {
+  font-size: 9px;
+  font-weight: 500;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--text-dim);
+  margin-bottom: 8px;
+}
+
+.concept-phase {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 30px;
+  font-weight: 600;
+  color: var(--pink);
+  margin-bottom: 4px;
+  line-height: 1;
+}
+
+.concept-timeline {
+  font-size: 11px;
+  font-weight: 400;
+  letter-spacing: 0.06em;
+  color: var(--magenta);
+  margin-bottom: 22px;
+  opacity: 0.85;
+}
+
+.concept-desc {
+  font-size: 12px;
+  font-weight: 400;
+  line-height: 1.75;
+  color: rgba(200, 185, 165, 0.5);
+  margin-bottom: 24px;
+  border-bottom: 1px solid var(--border);
+  padding-bottom: 24px;
+}
+
+.concept-items {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.concept-item {
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 0.03em;
+  color: rgba(200, 185, 165, 0.65);
+  padding: 9px 12px;
+  background: rgba(255,255,255,0.02);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+}
+
+.concept-item-num {
+  color: var(--magenta);
+  font-size: 10px;
+  letter-spacing: 0.06em;
+  flex-shrink: 0;
+  opacity: 0.85;
+}
+
+/* ── REFLECTION ── */
+.reflection-section {
+  background: linear-gradient(135deg,
+    rgba(31, 15, 56, 0.5) 0%,
+    rgba(11, 18, 33, 1) 100%
+  );
+  border-top: 1px solid rgba(255,255,255,0.05);
+}
+
+.reflection-quote {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(28px, 3.6vw, 50px);
+  font-weight: 400;
+  font-style: italic;
+  line-height: 1.45;
+  color: var(--pink);
+  max-width: 760px;
+  margin-bottom: 36px;
+}
+
+.reflection-attr {
+  font-size: 10px;
+  font-weight: 400;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: var(--text-dim);
+}
+
+/* ── FOOTER SPACE ── */
+.cs-footer {
+  height: 80px;
+  background: var(--bg);
+  border-top: 1px solid var(--border);
+}
+
+/* ── MOBILE ── */
+@media (max-width: 860px) {
+  .hero { padding: 0 28px 56px; background-attachment: scroll; }
+  .cs-section { padding: 72px 28px; }
+  .two-col-wide { grid-template-columns: 1fr; gap: 44px; }
+  .personas-grid { grid-template-columns: 1fr; }
+  .phases-list { grid-template-columns: repeat(4, 1fr); }
+  .concepts-grid { grid-template-columns: 1fr; }
+  .ecosystem-areas { grid-template-columns: 1fr 1fr; }
+  .strategy-row { grid-template-columns: 1fr 28px 1fr; }
+  .strategy-col-head.right, .strategy-desc { display: none; }
+  .hero-meta { gap: 28px; }
+}
+
+@media (max-width: 560px) {
+  .phases-list { grid-template-columns: repeat(3, 1fr); }
+  .hero-title { font-size: 44px; }
+}
+
+/* ══ MOBILE (≤480px) ════════════════════════════════════════ */
+@media (max-width: 480px) {
+
+  /* Artifact: remove aspect-ratio, use svh height so tool content is accessible */
+  .artifact-wrapper {
+    aspect-ratio: unset;
+    height: 68svh;
+  }
+
+  /* Mobile tool disclaimer — shown above iframe */
+  .mob-tool-link {
+    display: block;
+    margin-bottom: 12px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 11px;
+    font-weight: 400;
+    font-style: italic;
+    letter-spacing: 0.03em;
+    color: rgba(204,161,144,0.6);
+  }
+
+  /* Hero */
+  .hero        { padding: 0 20px 40px; }
+  .hero-title  { font-size: 36px; }
+  .hero-desc   { font-size: 14px; }
+  .hero-meta   { gap: 14px; }
+  .hero-meta-value { font-size: 12px; }
+
+  /* Sections */
+  .cs-section  { padding: 52px 20px; }
+  .section-heading { font-size: clamp(22px, 5.5vw, 32px); }
+  .section-body    { font-size: 14px; }
+
+  /* Nav */
+  .nav-back    { top: 16px; left: 16px; }
+
+  /* Brief */
+  .brief-text  { font-size: 14px; }
+  .two-col-wide { gap: 28px; }
+
+  /* Personas */
+  .persona-card { padding: 26px 18px; }
+  .persona-name { font-size: 30px; }
+
+  /* Phases: 2 columns at 390px */
+  .phases-list { grid-template-columns: 1fr 1fr; gap: 7px; }
+  .phase-item  { padding: 16px 10px; }
+  .phase-name  { font-size: 13px; }
+
+  /* Strategy table: already 3-col from 860px, just reduce padding */
+  .strategy-row { padding: 11px 0; }
+  .barrier-name, .bridge-name { font-size: 13px; }
+
+  /* Ecosystem */
+  .ecosystem-areas { gap: 7px; }
+  .eco-area        { padding: 14px 12px; }
+
+  /* Concepts */
+  .concept-column { padding: 24px 18px; }
+
+  /* Reflection */
+  .reflection-quote { font-size: clamp(22px, 5vw, 36px); }
+}
+</style>
+</head>
+<body>
+
+<div id="page-exit"></div>
+
+<div class="wordmark">Amber Grey</div>
+
+<button class="nav-back" onclick="navigateTo('level-3-blv.html')">
+  <span class="nav-back-arrow"></span>
+  BLV Ecosystem
+</button>
+
+<!-- ══════════════════════════════════════
+     HERO
+══════════════════════════════════════ -->
+<section class="hero">
+  <div class="hero-zone">Sense Making · Case Study</div>
+  <h1 class="hero-title">Glidance, finding<br>the missing 98%</h1>
+  <p class="hero-desc">A team consulting project for Glidance — revealing who the BLV mobility ecosystem was built around, and who it quietly leaves out. My focus: researching and building the BLV Ecosystem tool.</p>
+  <div class="hero-meta">
+    <div class="hero-meta-item">
+      <div class="hero-meta-label">Client</div>
+      <div class="hero-meta-value">Glidance</div>
+    </div>
+    <div class="hero-meta-item">
+      <div class="hero-meta-label">Year</div>
+      <div class="hero-meta-value">2025</div>
+    </div>
+    <div class="hero-meta-item">
+      <div class="hero-meta-label">Methods</div>
+      <div class="hero-meta-value">Research · Systems Mapping</div>
+    </div>
+    <div class="hero-meta-item">
+      <div class="hero-meta-label">Type</div>
+      <div class="hero-meta-value">Framework · Interactive Tool</div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════
+     01 BRIEF
+══════════════════════════════════════ -->
+<section class="cs-section">
+  <div class="section-inner">
+    <div class="two-col-wide">
+      <div>
+        <div class="section-label">01 — The Brief</div>
+        <h2 class="section-heading">A tool company without a map of who needs it.</h2>
+        <p class="brief-text">Glidance makes mobility aids for blind and low-vision individuals. But like most assistive technology companies, their outreach centered on the most visible users — recently diagnosed, tech-ready, independently mobile.</p>
+        <p class="brief-text">Our team of international, intercultural designers was brought in to expand that lens. Across 15 interviews with BLV individuals and caregivers, we surfaced 8 systemic barriers preventing people from finding, trusting, or adopting Glidance's products. The challenge then became: how do you build 8 bridges — strategies that actually meet people inside the real complexity of their lives?</p>
+        <div class="section-divider"></div>
+        <p class="brief-text" style="font-size:13px; line-height:1.75;">The result: 8 strategies, 11 product and outreach concepts, and an interactive mapping tool to visualize the support ecosystem surrounding every BLV individual — the latter researched and built by me.</p>
+      </div>
+      <div class="brief-meta">
+        <div>
+          <div class="meta-item-label">Institution</div>
+          <div class="meta-item-value">University of North Texas<br>Dept. of Communication Design</div>
+        </div>
+        <div>
+          <div class="meta-item-label">Team</div>
+          <div class="meta-item-value">Masters Candidates<br>in Interaction Design</div>
+        </div>
+        <div>
+          <div class="meta-item-label">My Role</div>
+          <div class="meta-item-value">Research · BLV Ecosystem<br>Tool Design &amp; Build</div>
+        </div>
+        <div>
+          <div class="meta-item-label">Deliverables</div>
+          <div class="meta-item-value">8 Strategies · 11 Concepts<br>BLV Ecosystem Tool</div>
+        </div>
+        <div>
+          <div class="meta-item-label">Presented</div>
+          <div class="meta-item-value">May 6, 2025</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════
+     02 PERSONAS
+══════════════════════════════════════ -->
+<section class="cs-section alt">
+  <div class="section-inner">
+    <div class="section-label">02 — Actual Lived Experiences</div>
+    <h2 class="section-heading">Four people the system wasn't built around.</h2>
+    <p class="section-body">From 15 interviews, we developed four composite personas — not archetypes, but anchored in specific lived experiences. Each represents a distinct relationship with vision loss, independence, and the support structures that surround them.</p>
+
+    <div class="personas-grid">
+
+      <div class="persona-card">
+        <div class="persona-phase">Phase 4 · Depression · Risk</div>
+        <div class="persona-name">Howard</div>
+        <div class="persona-condition">56 — Diabetic Retinopathy</div>
+        <ul class="persona-barriers">
+          <li>Alone — disconnected from family and community</li>
+          <li>Bored — trapped in a care home, unable to go outside</li>
+          <li>Scared — lack of trust in the world, fears independence</li>
+        </ul>
+        <div class="persona-goal">Goal: Restore Howard's independence.</div>
+      </div>
+
+      <div class="persona-card">
+        <div class="persona-phase">Phase 5 · Reaffirmation · Relationship</div>
+        <div class="persona-name">Lisa</div>
+        <div class="persona-condition">40+ — Hemianopia (50% bilateral vision loss)</div>
+        <ul class="persona-barriers">
+          <li>Relies entirely on her family to get around</li>
+          <li>Misses being active and independent</li>
+          <li>Wants to reduce confusion with others in public</li>
+        </ul>
+        <div class="persona-goal">Goal: Help Lisa reclaim active independence.</div>
+      </div>
+
+      <div class="persona-card">
+        <div class="persona-phase">Phase 3 · Withdrawal · Relationship</div>
+        <div class="persona-name">Joon</div>
+        <div class="persona-condition">Elder — gradual vision loss</div>
+        <ul class="persona-barriers">
+          <li>Treated like a child by his own family</li>
+          <li>Family unaware that other support options exist</li>
+          <li>Lost dignity and authority within his household</li>
+        </ul>
+        <div class="persona-goal">Goal: Empower Joon's family to support him differently.</div>
+      </div>
+
+      <div class="persona-card">
+        <div class="persona-phase">Phase 7 · Self-Acceptance · Stigma</div>
+        <div class="persona-name">Khan</div>
+        <div class="persona-condition">Acid attack survivor — partial vision loss</div>
+        <ul class="persona-barriers">
+          <li>Vision loss from trauma, not age or progressive condition</li>
+          <li>Positive outlook constrained by public perception</li>
+          <li>Wants to travel safely without feeling marked</li>
+        </ul>
+        <div class="persona-goal">Goal: Enable Khan to move through the world on his terms.</div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════
+     03 PHASES
+══════════════════════════════════════ -->
+<section class="cs-section">
+  <div class="section-inner">
+    <div class="section-label">03 — The Framework</div>
+    <h2 class="section-heading">Adjusting to vision loss follows seven phases.</h2>
+    <p class="section-body">Vision loss isn't an event — it's a journey with identifiable phases that BLV individuals and their caregivers move through together. Glidance's opportunity to connect meaningfully looks very different depending on where someone is in that arc.</p>
+    <div class="phases-list">
+      <div class="phase-item"><div class="phase-num">01</div><div class="phase-name">Trauma</div></div>
+      <div class="phase-item"><div class="phase-num">02</div><div class="phase-name">Denial</div></div>
+      <div class="phase-item"><div class="phase-num">03</div><div class="phase-name">Withdrawal</div></div>
+      <div class="phase-item"><div class="phase-num">04</div><div class="phase-name">Depression</div></div>
+      <div class="phase-item"><div class="phase-num">05</div><div class="phase-name">Reaffirm&shy;ation</div></div>
+      <div class="phase-item"><div class="phase-num">06</div><div class="phase-name">Coping</div></div>
+      <div class="phase-item"><div class="phase-num">07</div><div class="phase-name">Self-Acceptance</div></div>
+    </div>
+    <p class="phases-note">Phases mapped from clinical literature and synthesized across 15 interview participants.</p>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════
+     04 STRATEGIES
+══════════════════════════════════════ -->
+<section class="cs-section alt">
+  <div class="section-inner">
+    <div class="section-label">04 — Strategies</div>
+    <h2 class="section-heading">Eight barriers become eight bridges.</h2>
+    <p class="section-body">Each barrier we surfaced maps to a specific strategic bridge — a way for Glidance to show up differently for the people currently outside its reach.</p>
+    <div class="strategies-table">
+      <div class="strategy-row header-row">
+        <div class="strategy-col-head">Barrier</div>
+        <div></div>
+        <div class="strategy-col-head">Bridge</div>
+        <div class="strategy-col-head right">Strategy</div>
+      </div>
+      <div class="strategy-row">
+        <div class="barrier-name">Boundaries</div>
+        <div class="arrow-col">→</div>
+        <div class="bridge-name">Boundless</div>
+        <div class="strategy-desc">Multimodal feedback</div>
+      </div>
+      <div class="strategy-row">
+        <div class="barrier-name">Awareness</div>
+        <div class="arrow-col">→</div>
+        <div class="bridge-name">Acceptance</div>
+        <div class="strategy-desc">Multichannel outreach</div>
+      </div>
+      <div class="strategy-row">
+        <div class="barrier-name">Resistance</div>
+        <div class="arrow-col">→</div>
+        <div class="bridge-name">Resilience</div>
+        <div class="strategy-desc">Reframe assistive tech</div>
+      </div>
+      <div class="strategy-row">
+        <div class="barrier-name">Risk</div>
+        <div class="arrow-col">→</div>
+        <div class="bridge-name">Reward</div>
+        <div class="strategy-desc">Introduce assistive tech</div>
+      </div>
+      <div class="strategy-row">
+        <div class="barrier-name">Instability</div>
+        <div class="arrow-col">→</div>
+        <div class="bridge-name">Infrastructure</div>
+        <div class="strategy-desc">Integrate assistive tech</div>
+      </div>
+      <div class="strategy-row">
+        <div class="barrier-name">Emotions</div>
+        <div class="arrow-col">→</div>
+        <div class="bridge-name">Empathy</div>
+        <div class="strategy-desc">Share testimonials</div>
+      </div>
+      <div class="strategy-row">
+        <div class="barrier-name">Relationship</div>
+        <div class="arrow-col">→</div>
+        <div class="bridge-name">Reciprocity</div>
+        <div class="strategy-desc">Educate caregivers</div>
+      </div>
+      <div class="strategy-row">
+        <div class="barrier-name">Stigma</div>
+        <div class="arrow-col">→</div>
+        <div class="bridge-name">Solidarity</div>
+        <div class="strategy-desc">Challenge perceptions</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════
+     05 ECOSYSTEM
+══════════════════════════════════════ -->
+<section class="cs-section">
+  <div class="section-inner">
+    <div class="section-label">05 — The BLV Ecosystem</div>
+    <h2 class="section-heading">Seven areas surround every BLV individual.</h2>
+    <p class="section-body">Vision loss is never experienced alone. Seven distinct support areas form the ecosystem that BLV individuals and caregivers move through — and Glidance must understand where it already sits within that system, and where it could. I researched this ecosystem and built the interactive tool below to make it navigable.</p>
+    <div class="ecosystem-areas">
+      <div class="eco-area"><div class="eco-area-name">Healthcare Providers</div></div>
+      <div class="eco-area"><div class="eco-area-name">Caregiver &amp; Family Support</div></div>
+      <div class="eco-area"><div class="eco-area-name">Assistive Technologies</div></div>
+      <div class="eco-area"><div class="eco-area-name">Organizations</div></div>
+      <div class="eco-area"><div class="eco-area-name">Educational &amp; Rehab Services</div></div>
+      <div class="eco-area"><div class="eco-area-name">Social Networks</div></div>
+      <div class="eco-area"><div class="eco-area-name">Financial Support</div></div>
+    </div>
+    <p class="section-body" style="margin-bottom: 20px;">The tool below maps these seven areas — and lets you explore which actors, units, and forces occupy each one.</p>
+    <p class="mob-tool-link">Open on desktop for full tool functionality</p>
+    <div class="artifact-wrapper">
+      <iframe src="prototype-glidance-ecosystem.html" title="BLV Ecosystem Tool" loading="lazy"></iframe>
+    </div>
+    <div class="artifact-caption">Interactive BLV Ecosystem Tool — Prototype / Artifact</div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════
+     06 CONCEPTS
+══════════════════════════════════════ -->
+<section class="cs-section alt">
+  <div class="section-inner">
+    <div class="section-label">06 — Concepts</div>
+    <h2 class="section-heading">Three horizons, eleven concepts.</h2>
+    <p class="section-body">The 8 strategies informed three time horizons for Glidance — from awareness-building in the near term, through adoption in the mid term, to aspirational product innovation long term. Crawl, Walk, Run.</p>
+    <div class="concepts-grid">
+
+      <div class="concept-column">
+        <div class="concept-horizon">Horizon 1 · Crawl</div>
+        <div class="concept-phase">Awareness</div>
+        <div class="concept-timeline">0–3 years</div>
+        <div class="concept-desc">Spread awareness of Glidance to different communities of BLV people and caregivers — building reach before asking for adoption.</div>
+        <ul class="concept-items">
+          <li class="concept-item"><span class="concept-item-num">1.1</span>Provider Partnerships</li>
+          <li class="concept-item"><span class="concept-item-num">1.2</span>Vision Loss Campaign</li>
+          <li class="concept-item"><span class="concept-item-num">1.3</span>Mentor Program</li>
+        </ul>
+      </div>
+
+      <div class="concept-column">
+        <div class="concept-horizon">Horizon 2 · Walk</div>
+        <div class="concept-phase">Adoption</div>
+        <div class="concept-timeline">3–5 years</div>
+        <div class="concept-desc">Increase adoption of Glidance products and programs through deeper integration into BLV individuals' daily lives and support systems.</div>
+        <ul class="concept-items">
+          <li class="concept-item"><span class="concept-item-num">2.1</span>Onboarding</li>
+          <li class="concept-item"><span class="concept-item-num">2.2</span>Caretaker Check-In</li>
+          <li class="concept-item"><span class="concept-item-num">2.3</span>Celebrating Small Wins</li>
+          <li class="concept-item"><span class="concept-item-num">2.4</span>Confidence Climbing</li>
+          <li class="concept-item"><span class="concept-item-num">2.5</span>Customizable Grip</li>
+        </ul>
+      </div>
+
+      <div class="concept-column">
+        <div class="concept-horizon">Horizon 3 · Run</div>
+        <div class="concept-phase">Aspiration</div>
+        <div class="concept-timeline">5+ years</div>
+        <div class="concept-desc">Create aspiration by addressing needs that extend beyond Glidance's current product line — positioning the brand as a long-term life partner.</div>
+        <ul class="concept-items">
+          <li class="concept-item"><span class="concept-item-num">3.1</span>Hands Free</li>
+          <li class="concept-item"><span class="concept-item-num">3.2</span>Fun Ways to Learn</li>
+          <li class="concept-item"><span class="concept-item-num">3.3</span>Smart Shirt</li>
+        </ul>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════
+     07 REFLECTION
+══════════════════════════════════════ -->
+<section class="cs-section reflection-section">
+  <div class="section-inner">
+    <div class="section-label">07 — What I Wanted to Show</div>
+    <p class="reflection-quote">"That the 'target user' is often just the most visible one — not the most representative."</p>
+    <div class="reflection-attr">Amber Grey · 2025</div>
+  </div>
+</section>
+
+<div class="cs-footer"></div>
+
+<script>
+'use strict';
+
+function navigateTo(url) {
+  document.body.style.transition = 'opacity 0.28s ease-in';
+  document.body.style.opacity = '0';
+  const exit = document.getElementById('page-exit');
+  setTimeout(() => { exit.classList.add('active'); }, 200);
+  setTimeout(() => { window.location.href = url; }, 430);
+}
+
+requestAnimationFrame(() => {
+  requestAnimationFrame(() => { document.body.classList.add('visible'); });
+});
+</script>
+
+</body>
+</html>

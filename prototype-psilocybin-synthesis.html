@@ -1,0 +1,710 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Synthesis Table — Psilocybin as System</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400;1,500&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bg:            #09070e;
+  --bg-alt:        #0d0a15;
+  --bg-panel:      #100c18;
+  --accent:        #9b6dff;
+  --accent-soft:   rgba(155, 109, 255, 0.12);
+  --accent-border: rgba(155, 109, 255, 0.22);
+  --accent-bright: #c4a8ff;
+  --warm:          #d4a054;
+  --warm-soft:     rgba(212, 160, 84, 0.12);
+  --warm-border:   rgba(212, 160, 84, 0.28);
+  --text:          rgba(235, 228, 250, 0.95);
+  --text-muted:    rgba(195, 175, 240, 0.80);
+  --text-dim:      rgba(180, 165, 225, 0.55);
+  --border:        rgba(255, 255, 255, 0.07);
+}
+
+html, body {
+  width: 100%; height: 100%; overflow: hidden;
+  background: var(--bg); color: var(--text);
+  font-family: 'DM Sans', sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ── AMBIENT ── */
+.ambient {
+  position: fixed; inset: 0; z-index: 0; pointer-events: none;
+  background:
+    radial-gradient(ellipse 60% 50% at 20% 40%, rgba(80, 30, 140, 0.12) 0%, transparent 70%),
+    radial-gradient(ellipse 50% 45% at 80% 65%, rgba(50, 15, 100, 0.08) 0%, transparent 65%),
+    var(--bg);
+}
+.ambient-orb {
+  position: fixed; border-radius: 50%; z-index: 0; pointer-events: none;
+  animation: orbPulse 9s ease-in-out infinite;
+}
+.ambient-orb-1 {
+  top: 15%; left: 5%; width: 400px; height: 400px;
+  background: radial-gradient(circle, rgba(155,109,255,0.04) 0%, transparent 65%);
+}
+.ambient-orb-2 {
+  bottom: 10%; right: 8%; width: 300px; height: 300px;
+  background: radial-gradient(circle, rgba(212,160,84,0.03) 0%, transparent 65%);
+  animation-delay: -4s;
+}
+@keyframes orbPulse {
+  0%,100% { transform: scale(1); opacity: 0.6; }
+  50%     { transform: scale(1.15); opacity: 1; }
+}
+
+/* ── LAYOUT ── */
+#shell {
+  display: flex; width: 100%; height: 100%;
+  position: relative; z-index: 1;
+}
+
+/* ── STATUS BAR ── */
+#statusBar {
+  position: fixed; top: 0; left: 0; right: 0; height: 38px;
+  background: rgba(9, 7, 14, 0.95);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--accent-border);
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0 20px;
+  z-index: 100;
+}
+.status-left {
+  display: flex; align-items: center; gap: 10px;
+  font-size: 10.5px; letter-spacing: 0.08em;
+}
+.status-dot {
+  width: 6px; height: 6px; border-radius: 50%;
+  background: var(--accent);
+  box-shadow: 0 0 6px rgba(155,109,255,0.6), 0 0 14px rgba(155,109,255,0.25);
+  animation: blink 2.5s ease-in-out infinite;
+}
+@keyframes blink { 0%,100% { opacity: 0.5; } 50% { opacity: 1; } }
+.status-brand {
+  color: var(--accent); font-weight: 600; letter-spacing: 0.12em;
+  text-shadow: 0 0 8px rgba(155,109,255,0.5);
+}
+.status-sep { color: var(--text-dim); }
+.status-label { color: var(--text-dim); font-weight: 300; }
+.status-right {
+  font-size: 10px; color: var(--text-dim); letter-spacing: 0.1em;
+}
+.status-right .count { color: var(--accent-bright); font-weight: 500; }
+
+/* ── BACK BUTTON ── */
+.nav-back {
+  position: fixed; top: 50px; left: 16px;
+  display: inline-flex; align-items: center; gap: 8px;
+  background: rgba(255,255,255,0.04);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255,255,255,0.07);
+  border-radius: 100px;
+  padding: 7px 14px 7px 11px;
+  cursor: pointer;
+  color: var(--text-dim);
+  font-size: 9px; font-weight: 400; letter-spacing: 0.2em; text-transform: uppercase;
+  transition: all 0.25s; z-index: 100;
+}
+.nav-back:hover { background: rgba(255,255,255,0.08); color: var(--text-muted); border-color: rgba(255,255,255,0.14); }
+.nav-back-arrow { display: inline-block; width: 14px; height: 1px; background: currentColor; position: relative; }
+.nav-back-arrow::before { content: ''; position: absolute; left: 0; top: -3px; width: 5px; height: 5px; border-left: 1px solid currentColor; border-bottom: 1px solid currentColor; transform: rotate(45deg); }
+
+/* ── LEFT PANEL: CANVAS ── */
+#canvasPanel {
+  flex: 1; position: relative;
+  padding: 38px 0 0 0;
+  overflow: hidden;
+  display: flex; align-items: center; justify-content: center;
+}
+#canvasArea {
+  position: relative;
+  width: 580px; height: 580px;
+  border: 1px solid rgba(200, 190, 220, 0.25);
+  border-radius: 16px;
+  background: #ffffff;
+  overflow: hidden;
+  box-shadow: 0 8px 40px rgba(0,0,0,0.3), 0 0 0 1px rgba(255,255,255,0.05);
+}
+.canvas-label {
+  position: absolute; bottom: -28px; left: 0; right: 0;
+  text-align: center;
+  font-size: 8px; font-weight: 400; letter-spacing: 0.3em; text-transform: uppercase;
+  color: var(--text-dim);
+}
+
+/* ── DRAGGABLE ARTWORK ── */
+.artwork-piece {
+  position: absolute;
+  cursor: grab;
+  transition: box-shadow 0.3s ease, border-color 0.3s ease;
+  border: 1px solid transparent;
+  border-radius: 6px;
+  overflow: hidden;
+  user-select: none;
+}
+.artwork-piece:hover { border-color: rgba(155,109,255,0.3); box-shadow: 0 0 20px rgba(155,109,255,0.15); }
+.artwork-piece.dragging { cursor: grabbing; border-color: var(--accent); box-shadow: 0 0 30px rgba(155,109,255,0.3); z-index: 50 !important; }
+.artwork-piece.selected { border-color: var(--accent); box-shadow: 0 0 24px rgba(155,109,255,0.25); }
+.artwork-piece img {
+  display: block; width: 100%; height: 100%;
+  object-fit: cover; pointer-events: none;
+}
+.artwork-piece.contain img { object-fit: contain; }
+
+/* ── RIGHT PANEL ── */
+#rightPanel {
+  width: 340px; flex-shrink: 0;
+  padding: 50px 24px 24px;
+  border-left: 1px solid var(--border);
+  background: var(--bg-panel);
+  overflow-y: auto;
+  display: flex; flex-direction: column; gap: 0;
+}
+
+.panel-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 28px; font-weight: 600; line-height: 1.1;
+  color: var(--accent-bright);
+  margin-bottom: 6px;
+}
+.panel-subtitle {
+  font-size: 11px; font-weight: 300; color: var(--text-dim);
+  line-height: 1.6; margin-bottom: 28px;
+}
+
+/* ── ARTWORK TRAY ── */
+.tray-label {
+  font-size: 8px; font-weight: 500; letter-spacing: 0.28em; text-transform: uppercase;
+  color: var(--text-muted); margin-bottom: 12px;
+}
+.artwork-tray {
+  display: grid; grid-template-columns: repeat(4, 1fr);
+  gap: 6px; margin-bottom: 24px;
+}
+.tray-thumb {
+  position: relative; aspect-ratio: 1;
+  border-radius: 8px; overflow: hidden; cursor: pointer;
+  border: 1px solid var(--border);
+  background: #ffffff;
+  transition: all 0.25s ease;
+}
+.tray-thumb:hover { border-color: var(--accent-border); }
+.tray-thumb.active { border-color: var(--accent); box-shadow: 0 0 12px rgba(155,109,255,0.2); }
+.tray-thumb.placed { opacity: 0.4; }
+.tray-thumb img { width: 100%; height: 100%; object-fit: contain; display: block; }
+.tray-thumb-label {
+  position: absolute; bottom: 0; left: 0; right: 0;
+  padding: 4px 6px;
+  background: linear-gradient(to top, rgba(0,0,0,0.7), transparent);
+  font-size: 8px; font-weight: 400; letter-spacing: 0.15em; text-transform: uppercase;
+  color: rgba(255,255,255,0.6);
+}
+
+/* ── CONTROLS ── */
+.controls-section {
+  padding: 20px 0;
+  border-top: 1px solid var(--border);
+}
+.controls-label {
+  font-size: 8px; font-weight: 500; letter-spacing: 0.28em; text-transform: uppercase;
+  color: var(--text-muted); margin-bottom: 14px;
+}
+.control-row {
+  display: flex; align-items: center; gap: 12px; margin-bottom: 12px;
+}
+.control-name {
+  font-size: 10px; font-weight: 400; color: var(--text-dim);
+  letter-spacing: 0.06em; min-width: 52px;
+}
+.control-slider {
+  flex: 1; -webkit-appearance: none; appearance: none;
+  height: 3px; border-radius: 2px;
+  background: rgba(155,109,255,0.15);
+  outline: none;
+}
+.control-slider::-webkit-slider-thumb {
+  -webkit-appearance: none; appearance: none;
+  width: 12px; height: 12px; border-radius: 50%;
+  background: var(--accent);
+  box-shadow: 0 0 6px rgba(155,109,255,0.5);
+  cursor: pointer;
+}
+.control-value {
+  font-size: 10px; font-weight: 300; color: var(--text-dim);
+  min-width: 28px; text-align: right;
+}
+
+/* ── ACTION BUTTONS ── */
+.action-row {
+  display: flex; gap: 8px; margin-top: 8px;
+}
+.action-btn {
+  flex: 1; padding: 10px 0;
+  border: 1px solid var(--accent-border);
+  border-radius: 8px; background: var(--accent-soft);
+  color: var(--accent-bright);
+  font-size: 10px; font-weight: 500; letter-spacing: 0.12em; text-transform: uppercase;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+.action-btn:hover { background: rgba(155,109,255,0.2); border-color: rgba(155,109,255,0.4); }
+.action-btn.warm {
+  border-color: var(--warm-border); background: var(--warm-soft);
+  color: var(--warm);
+}
+.action-btn.warm:hover { background: rgba(212,160,84,0.2); border-color: rgba(212,160,84,0.4); }
+
+/* ── DETAIL CARD ── */
+.detail-card {
+  padding: 20px 0;
+  border-top: 1px solid var(--border);
+}
+.detail-card-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 20px; font-weight: 600; color: var(--accent-bright);
+  margin-bottom: 8px;
+}
+.detail-card-body {
+  font-size: 12px; font-weight: 300; line-height: 1.7;
+  color: rgba(215,208,232,0.55);
+}
+.detail-card-body em { color: rgba(200,175,255,0.75); }
+
+
+/* ── EMPTY STATE ── */
+.empty-state {
+  position: absolute; inset: 0;
+  display: flex; align-items: center; justify-content: center;
+  flex-direction: column; gap: 10px;
+  pointer-events: none;
+  transition: opacity 0.4s ease;
+}
+.empty-state.hidden { opacity: 0; }
+.empty-icon {
+  width: 48px; height: 48px;
+  border: 1px dashed rgba(155,109,255,0.2);
+  border-radius: 12px;
+  display: flex; align-items: center; justify-content: center;
+  color: var(--text-dim); font-size: 20px;
+}
+.empty-text {
+  font-size: 11px; font-weight: 300; color: var(--text-dim);
+  text-align: center; line-height: 1.6;
+}
+
+/* ── WORDMARK ── */
+.wordmark {
+  position: fixed; bottom: 16px; left: 16px;
+  font-size: 11px; font-weight: 300; letter-spacing: 0.18em;
+  color: rgba(155,109,255,0.1); z-index: 10; pointer-events: none;
+}
+
+/* ── SCROLLBAR ── */
+#rightPanel::-webkit-scrollbar { width: 4px; }
+#rightPanel::-webkit-scrollbar-track { background: transparent; }
+#rightPanel::-webkit-scrollbar-thumb { background: rgba(155,109,255,0.15); border-radius: 2px; }
+</style>
+</head>
+<body>
+
+<div class="ambient"></div>
+<div class="ambient-orb ambient-orb-1"></div>
+<div class="ambient-orb ambient-orb-2"></div>
+<div class="wordmark">Amber Grey</div>
+
+<!-- STATUS BAR -->
+<div id="statusBar">
+  <div class="status-left">
+    <div class="status-dot"></div>
+    <span class="status-brand">SYNTHESIS</span>
+    <span class="status-sep">/</span>
+    <span class="status-label">Psilocybin as System</span>
+  </div>
+  <div class="status-right">
+    <span class="count" id="placedCount">0</span> placed
+  </div>
+</div>
+
+
+<div id="shell">
+
+  <!-- LEFT: CANVAS -->
+  <div id="canvasPanel">
+    <div id="canvasArea">
+      <div class="empty-state" id="emptyState">
+        <div class="empty-icon">+</div>
+        <div class="empty-text">Click artworks from the tray<br>to place them on the canvas</div>
+      </div>
+    </div>
+    <div class="canvas-label">Synthesis Canvas</div>
+  </div>
+
+  <!-- RIGHT: PANEL -->
+  <div id="rightPanel">
+    <div class="panel-title">The Synthesis Table</div>
+    <div class="panel-subtitle">Each piece below was created by non-artists during a psilocybin ritual. Click to add to the canvas, rotate, blend, stack, and scale to create something new.</div>
+
+    <div class="tray-label">Ceremony Artworks</div>
+    <div class="artwork-tray" id="artworkTray"></div>
+
+    <div class="controls-section" id="controlsSection" style="display:none;">
+      <div class="controls-label">Selected Artwork</div>
+      <div class="control-row">
+        <span class="control-name">Opacity</span>
+        <input type="range" class="control-slider" id="opacitySlider" min="10" max="100" value="100">
+        <span class="control-value" id="opacityValue">100%</span>
+      </div>
+      <div class="control-row">
+        <span class="control-name">Scale</span>
+        <input type="range" class="control-slider" id="scaleSlider" min="30" max="200" value="100">
+        <span class="control-value" id="scaleValue">100%</span>
+      </div>
+      <div class="control-row">
+        <span class="control-name">Rotation</span>
+        <input type="range" class="control-slider" id="rotationSlider" min="-180" max="180" value="0">
+        <span class="control-value" id="rotationValue">0&deg;</span>
+      </div>
+      <div class="action-row">
+        <button class="action-btn" onclick="removeSelected()" style="border-color: rgba(255,100,100,0.25); background: rgba(255,80,80,0.06); color: rgba(255,130,130,0.8);">Remove</button>
+      </div>
+    </div>
+
+    <div class="controls-section">
+      <div class="action-row">
+        <button class="action-btn" onclick="undo()">Undo</button>
+        <button class="action-btn" onclick="redo()">Redo</button>
+        <button class="action-btn" onclick="resetCanvas()">Reset</button>
+      </div>
+    </div>
+
+
+
+  </div>
+</div>
+
+
+<script>
+'use strict';
+
+// ── IMAGE DATA ──────────────────────────────────────────
+const artworks = [
+  { id: 'a1',  src: 'A Images/Psilocybin Art/Psilocybin Art-01.webp', label: 'Piece I',     desc: 'One of the first marks made during the ceremony. Fluid, exploratory — the hand finding its rhythm before the mind could intervene.' },
+  { id: 'a2',  src: 'A Images/Psilocybin Art/Psilocybin Art-02.webp', label: 'Piece II',    desc: 'A shift in pressure and palette. Something deeper surfacing — color choices becoming more instinctive, less deliberate.' },
+  { id: 'a3',  src: 'A Images/Psilocybin Art/Psilocybin Art-03.webp', label: 'Piece III',   desc: 'Layers begin to accumulate. The marks are no longer isolated gestures — they\'re responding to what came before.' },
+  { id: 'a4',  src: 'A Images/Psilocybin Art/Psilocybin Art-04.webp', label: 'Piece IV',    desc: 'A moment of expansion. The composition breaks free from the center, reaching toward edges — boundaries dissolving.', contain: true },
+  { id: 'a5',  src: 'A Images/Psilocybin Art/Psilocybin Art-05.webp', label: 'Piece V',     desc: 'Structure re-emerges from within the flow. Pattern and chaos finding a temporary equilibrium.' },
+  { id: 'a6',  src: 'A Images/Psilocybin Art/Psilocybin Art-06.webp', label: 'Piece VI',    desc: 'The palette softens. Something integrative happening — the peak passing, awareness widening to include the whole field.' },
+  { id: 'a7',  src: 'A Images/Psilocybin Art/Psilocybin Art-07.webp', label: 'Piece VII',   desc: 'Textural density increases. Multiple layers of experience compressed into a single visual moment.' },
+  { id: 'a8',  src: 'A Images/Psilocybin Art/Psilocybin Art-08.webp', label: 'Piece VIII',  desc: 'A return to simplicity after complexity. The marks carry weight — each one chosen rather than searched for.' },
+  { id: 'a9',  src: 'A Images/Psilocybin Art/Psilocybin Art-09.webp', label: 'Piece IX',    desc: 'Integration visible in the composition. What was fragmented earlier now reads as connected — the system finding coherence.' },
+  { id: 'a10', src: 'A Images/Psilocybin Art/Psilocybin Art-10.webp', label: 'Piece X',     desc: 'The final expression. A quiet resolution — not closure, but a resting point. The creative energy held, not spent.' },
+  { id: 'a11', src: 'A Images/Psilocybin Art/Psilocybin Art-11.webp', label: 'Piece XI',    desc: 'A gesture that carries the weight of everything before it. The line knows where it wants to go.' },
+  { id: 'a12', src: 'A Images/Psilocybin Art/Psilocybin Art-12.webp', label: 'Piece XII',   desc: 'Soft, peripheral. This piece lives at the edge of attention — present but not demanding.' },
+  { id: 'a13', src: 'A Images/Psilocybin Art/Psilocybin Art-13.webp', label: 'Piece XIII',  desc: 'Something recursive happening here. The form references itself — a loop of perception captured in mark-making.' },
+  { id: 'a15', src: 'A Images/Psilocybin Art/Psilocybin Art-15.webp', label: 'Piece XV',    desc: 'Organic movement. The forms suggest growth, cellular logic — the body drawing what the mind couldn\'t articulate.' },
+  { id: 'a16', src: 'A Images/Psilocybin Art/Psilocybin Art-16.webp', label: 'Piece XVI',   desc: 'A quiet piece. Restraint after intensity — the creative system cooling, settling into new equilibrium.' },
+  { id: 'a17', src: 'A Images/Psilocybin Art/Psilocybin Art-17.webp', label: 'Piece XVII',  desc: 'The last piece in the collection. Not an ending — a pause. The system still humming, just below the surface.' },
+];
+
+const canvas = document.getElementById('canvasArea');
+const tray = document.getElementById('artworkTray');
+const controlsSection = document.getElementById('controlsSection');
+
+let placedPieces = [];
+let selectedPiece = null;
+let zCounter = 1;
+
+// ── UNDO / REDO HISTORY ──
+const undoStack = [];
+const redoStack = [];
+
+function saveState() {
+  redoStack.length = 0; // clear redo on new action
+  undoStack.push(placedPieces.map(p => ({
+    id: p.id,
+    left: p.el.style.left,
+    top: p.el.style.top,
+    opacity: p.opacity,
+    scale: p.scale,
+    rotation: p.rotation,
+    zIndex: p.el.style.zIndex,
+  })));
+  // Cap history
+  if (undoStack.length > 40) undoStack.shift();
+}
+
+function restoreState(snapshot) {
+  // Remove pieces not in snapshot
+  const snapIds = new Set(snapshot.map(s => s.id));
+  placedPieces.filter(p => !snapIds.has(p.id)).forEach(p => {
+    p.el.remove();
+    const thumb = tray.querySelector(`[data-id="${p.id}"]`);
+    if (thumb) thumb.classList.remove('placed');
+  });
+
+  // Add/update pieces from snapshot
+  snapshot.forEach(s => {
+    let existing = placedPieces.find(p => p.id === s.id);
+    if (!existing) {
+      // Re-place this piece
+      const art = artworks.find(a => a.id === s.id);
+      if (!art) return;
+      const piece = document.createElement('div');
+      piece.className = 'artwork-piece' + (art.contain ? ' contain' : '');
+      piece.dataset.id = art.id;
+      piece.style.cssText = `left:${s.left}; top:${s.top}; width:160px; height:160px; z-index:${s.zIndex};`;
+      piece.innerHTML = `<img src="${art.src}" alt="${art.label}" draggable="false">`;
+      attachDrag(piece, art);
+      canvas.appendChild(piece);
+      existing = { id: art.id, el: piece, opacity: s.opacity, scale: s.scale, rotation: s.rotation, label: art.label, desc: art.desc, src: art.src };
+      const thumb = tray.querySelector(`[data-id="${art.id}"]`);
+      if (thumb) thumb.classList.add('placed');
+    }
+    existing.el.style.left = s.left;
+    existing.el.style.top = s.top;
+    existing.el.style.zIndex = s.zIndex;
+    existing.opacity = s.opacity;
+    existing.el.style.opacity = s.opacity / 100;
+    existing.scale = s.scale;
+    existing.rotation = s.rotation;
+    existing.el.style.transform = `scale(${s.scale / 100}) rotate(${s.rotation}deg)`;
+  });
+
+  placedPieces = placedPieces.filter(p => snapIds.has(p.id));
+  // Also include newly created ones
+  snapshot.forEach(s => {
+    if (!placedPieces.find(p => p.id === s.id)) {
+      const el = canvas.querySelector(`[data-id="${s.id}"]`);
+      const art = artworks.find(a => a.id === s.id);
+      if (el && art) placedPieces.push({ id: s.id, el, opacity: s.opacity, scale: s.scale, rotation: s.rotation, label: art.label, desc: art.desc, src: art.src });
+    }
+  });
+
+  selectedPiece = null;
+  controlsSection.style.display = 'none';
+  document.querySelectorAll('.artwork-piece.selected').forEach(el => el.classList.remove('selected'));
+  document.querySelectorAll('.tray-thumb.active').forEach(el => el.classList.remove('active'));
+  updateCount();
+  if (placedPieces.length === 0) document.getElementById('emptyState').classList.remove('hidden');
+  else document.getElementById('emptyState').classList.add('hidden');
+}
+
+function undo() {
+  if (undoStack.length === 0) return;
+  // Save current state to redo
+  redoStack.push(placedPieces.map(p => ({
+    id: p.id, left: p.el.style.left, top: p.el.style.top,
+    opacity: p.opacity, scale: p.scale, rotation: p.rotation, zIndex: p.el.style.zIndex,
+  })));
+  restoreState(undoStack.pop());
+}
+
+function redo() {
+  if (redoStack.length === 0) return;
+  undoStack.push(placedPieces.map(p => ({
+    id: p.id, left: p.el.style.left, top: p.el.style.top,
+    opacity: p.opacity, scale: p.scale, rotation: p.rotation, zIndex: p.el.style.zIndex,
+  })));
+  restoreState(redoStack.pop());
+}
+
+// ── BUILD TRAY ──────────────────────────────────────────
+artworks.forEach(art => {
+  const thumb = document.createElement('div');
+  thumb.className = 'tray-thumb';
+  thumb.dataset.id = art.id;
+  thumb.innerHTML = `<img src="${art.src}" alt="${art.label}" loading="lazy">`;
+  thumb.addEventListener('click', () => placeArtwork(art));
+  tray.appendChild(thumb);
+});
+
+// ── REUSABLE DRAG HANDLER ──
+function attachDrag(piece, art) {
+  const size = 160;
+  piece.addEventListener('mousedown', e => {
+    e.preventDefault();
+    selectPiece(art.id);
+    piece.classList.add('dragging');
+    saveState();
+    const canvasRect = canvas.getBoundingClientRect();
+    const offsetX = e.clientX - canvasRect.left - piece.offsetLeft;
+    const offsetY = e.clientY - canvasRect.top - piece.offsetTop;
+
+    const onMove = ev => {
+      const cr = canvas.getBoundingClientRect();
+      let nx = ev.clientX - cr.left - offsetX;
+      let ny = ev.clientY - cr.top - offsetY;
+      nx = Math.max(-size/2, Math.min(canvas.offsetWidth - size/2, nx));
+      ny = Math.max(-size/2, Math.min(canvas.offsetHeight - size/2, ny));
+      piece.style.left = nx + 'px';
+      piece.style.top = ny + 'px';
+    };
+    const onUp = () => {
+      piece.classList.remove('dragging');
+      document.removeEventListener('mousemove', onMove);
+      document.removeEventListener('mouseup', onUp);
+    };
+    document.addEventListener('mousemove', onMove);
+    document.addEventListener('mouseup', onUp);
+  });
+}
+
+// ── PLACE ARTWORK ───────────────────────────────────────
+function placeArtwork(art) {
+  if (placedPieces.find(p => p.id === art.id)) {
+    const el = document.querySelector(`.artwork-piece[data-id="${art.id}"]`);
+    if (el) selectPiece(art.id);
+    return;
+  }
+
+  saveState();
+
+  const size = 160;
+  const x = 40 + Math.random() * (canvas.offsetWidth - size - 80);
+  const y = 40 + Math.random() * (canvas.offsetHeight - size - 80);
+
+  const piece = document.createElement('div');
+  piece.className = 'artwork-piece' + (art.contain ? ' contain' : '');
+  piece.dataset.id = art.id;
+  piece.style.cssText = `left:${x}px; top:${y}px; width:${size}px; height:${size}px; z-index:${zCounter++};`;
+  piece.innerHTML = `<img src="${art.src}" alt="${art.label}" draggable="false">`;
+
+  attachDrag(piece, art);
+  canvas.appendChild(piece);
+
+  placedPieces.push({
+    id: art.id,
+    el: piece,
+    opacity: 100,
+    scale: 100,
+    rotation: 0,
+    label: art.label,
+    desc: art.desc,
+    src: art.src,
+  });
+
+  const thumb = tray.querySelector(`[data-id="${art.id}"]`);
+  if (thumb) thumb.classList.add('placed');
+
+  updateCount();
+  document.getElementById('emptyState').classList.add('hidden');
+  selectPiece(art.id);
+}
+
+// ── SELECT PIECE ────────────────────────────────────────
+function selectPiece(id) {
+  // Deselect previous
+  document.querySelectorAll('.artwork-piece.selected').forEach(el => el.classList.remove('selected'));
+  document.querySelectorAll('.tray-thumb.active').forEach(el => el.classList.remove('active'));
+
+  const data = placedPieces.find(p => p.id === id);
+  if (!data) return;
+
+  selectedPiece = data;
+  data.el.classList.add('selected');
+  data.el.style.zIndex = zCounter++;
+
+  const thumb = tray.querySelector(`[data-id="${id}"]`);
+  if (thumb) thumb.classList.add('active');
+
+  // Update controls
+  controlsSection.style.display = 'block';
+  document.getElementById('opacitySlider').value = data.opacity;
+  document.getElementById('opacityValue').textContent = data.opacity + '%';
+  document.getElementById('scaleSlider').value = data.scale;
+  document.getElementById('scaleValue').textContent = data.scale + '%';
+  document.getElementById('rotationSlider').value = data.rotation;
+  document.getElementById('rotationValue').textContent = data.rotation + '\u00B0';
+
+  // Update info
+}
+
+// ── CONTROLS ────────────────────────────────────────────
+// Save once when user starts dragging a slider
+['opacitySlider','scaleSlider','rotationSlider'].forEach(id => {
+  document.getElementById(id).addEventListener('mousedown', () => saveState(), { once: false });
+});
+
+document.getElementById('opacitySlider').addEventListener('input', e => {
+  if (!selectedPiece) return;
+  const v = parseInt(e.target.value);
+  selectedPiece.opacity = v;
+  selectedPiece.el.style.opacity = v / 100;
+  document.getElementById('opacityValue').textContent = v + '%';
+});
+
+document.getElementById('scaleSlider').addEventListener('input', e => {
+  if (!selectedPiece) return;
+  const v = parseInt(e.target.value);
+  selectedPiece.scale = v;
+  applyTransform(selectedPiece);
+  document.getElementById('scaleValue').textContent = v + '%';
+});
+
+document.getElementById('rotationSlider').addEventListener('input', e => {
+  if (!selectedPiece) return;
+  const v = parseInt(e.target.value);
+  selectedPiece.rotation = v;
+  applyTransform(selectedPiece);
+  document.getElementById('rotationValue').textContent = v + '\u00B0';
+});
+
+function applyTransform(p) {
+  p.el.style.transform = `scale(${p.scale / 100}) rotate(${p.rotation}deg)`;
+}
+
+function removeSelected() {
+  saveState();
+  if (!selectedPiece) return;
+  const id = selectedPiece.id;
+  selectedPiece.el.remove();
+  placedPieces = placedPieces.filter(p => p.id !== id);
+  const thumb = tray.querySelector(`[data-id="${id}"]`);
+  if (thumb) { thumb.classList.remove('placed'); thumb.classList.remove('active'); }
+  selectedPiece = null;
+  controlsSection.style.display = 'none';
+  updateCount();
+  if (placedPieces.length === 0) document.getElementById('emptyState').classList.remove('hidden');
+}
+
+function resetCanvas() {
+  placedPieces.forEach(p => p.el.remove());
+  placedPieces = [];
+  selectedPiece = null;
+  zCounter = 1;
+  controlsSection.style.display = 'none';
+  document.querySelectorAll('.tray-thumb').forEach(t => { t.classList.remove('placed'); t.classList.remove('active'); });
+  document.getElementById('emptyState').classList.remove('hidden');
+  updateCount();
+}
+
+function updateCount() {
+  document.getElementById('placedCount').textContent = placedPieces.length;
+}
+
+// ── CLICK OUTSIDE TO DESELECT ───────────────────────────
+canvas.addEventListener('mousedown', e => {
+  if (e.target === canvas || e.target.classList.contains('empty-state') || e.target.classList.contains('empty-icon') || e.target.classList.contains('empty-text')) {
+    document.querySelectorAll('.artwork-piece.selected').forEach(el => el.classList.remove('selected'));
+    document.querySelectorAll('.tray-thumb.active').forEach(el => el.classList.remove('active'));
+    selectedPiece = null;
+    controlsSection.style.display = 'none';
+    }
+});
+
+// ── PAGE TRANSITION ─────────────────────────────────────
+function navigateTo(url) {
+  document.body.style.opacity = '0';
+  document.body.style.transition = 'opacity 0.3s ease';
+  setTimeout(() => { window.location.href = url; }, 320);
+}
+</script>
+</body>
+</html>

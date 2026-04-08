@@ -1,0 +1,763 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RoomMates — Case Study — Amber Grey</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,600;1,400;1,500&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --coral:        #de9a7a;
+  --coral-dim:    rgba(222, 154, 122, 0.10);
+  --coral-border: rgba(222, 154, 122, 0.26);
+  --coral-bright: #e8b094;
+  --bg:          #060810;
+  --bg-alt:      #0c0a08;
+  --text:        #dde6f4;
+  --text-muted:  #6a5c50;
+  --text-dim:    rgba(180, 155, 130, 0.35);
+  --ice:         #f0e4d8;
+  --amber:       #d4a576;
+  --sage:        #8bc89a;
+  --border:      rgba(255, 255, 255, 0.06);
+}
+
+html { background: var(--bg); scroll-behavior: smooth; }
+
+body {
+  font-family: 'DM Sans', sans-serif;
+  color: var(--text);
+  overflow-x: hidden;
+  opacity: 0;
+  transition: opacity 0.55s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+body.visible { opacity: 1; }
+
+/* ── PAGE EXIT ── */
+#page-exit {
+  position: fixed; inset: 0;
+  background: #060810;
+  opacity: 0; pointer-events: none;
+  transition: opacity 0.28s ease-in;
+  z-index: 9999;
+}
+#page-exit.active { opacity: 1; }
+
+/* ── NAV ── */
+.nav-back {
+  position: fixed;
+  top: 28px; left: 32px;
+  display: inline-flex; align-items: center; gap: 10px;
+  background: rgba(255,255,255,0.06);
+  backdrop-filter: blur(14px) saturate(1.2);
+  -webkit-backdrop-filter: blur(14px) saturate(1.2);
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 100px;
+  padding: 9px 18px 9px 14px;
+  cursor: pointer;
+  color: rgba(200,185,165,0.75);
+  font-family: 'DM Sans', sans-serif;
+  font-size: 10px; font-weight: 400;
+  letter-spacing: 0.22em; text-transform: uppercase;
+  transition: background 0.25s ease, color 0.25s ease, border-color 0.25s ease;
+  z-index: 200;
+}
+.nav-back:hover { background: rgba(255,255,255,0.11); color: rgba(200,185,165,1); border-color: rgba(255,255,255,0.18); }
+.nav-back-arrow { display: inline-block; width: 16px; height: 1px; background: currentColor; position: relative; flex-shrink: 0; }
+.nav-back-arrow::before { content: ''; position: absolute; left: 0; top: -3px; width: 6px; height: 6px; border-left: 1px solid currentColor; border-bottom: 1px solid currentColor; transform: rotate(45deg); }
+
+.wordmark { position: fixed; bottom: 24px; left: 21px; font-size: 13px; font-weight: 300; letter-spacing: 0.2em; color: rgba(210,195,172,0.14); pointer-events: none; z-index: 10; }
+
+/* ── HERO ── */
+.hero {
+  min-height: 100svh;
+  display: flex; flex-direction: column; justify-content: flex-end;
+  padding: 0 88px 80px;
+  position: relative; overflow: hidden;
+  background:
+    linear-gradient(to bottom, rgba(6,8,20,0.25) 0%, rgba(6,8,20,0.88) 65%, #060810 100%),
+    radial-gradient(ellipse 75% 60% at 18% 45%, rgba(150,80,40,0.18) 0%, transparent 68%),
+    radial-gradient(ellipse 55% 65% at 76% 28%, rgba(222,154,122,0.10) 0%, transparent 62%),
+    url('Studio_Edited.webp');
+  background-size: cover;
+  background-position: center top;
+  background-attachment: fixed;
+}
+.hero::before {
+  content: ''; position: absolute; inset: 0; pointer-events: none;
+  background: radial-gradient(ellipse 95% 55% at 50% 100%, rgba(70,35,12,0.45) 0%, transparent 55%);
+  animation: heroPulse 9s ease-in-out infinite alternate;
+}
+@keyframes heroPulse {
+  0%   { opacity: 0.7; }
+  100% { opacity: 1; }
+}
+.hero-content { position: relative; z-index: 1; }
+.hero-zone { font-size: 10px; font-weight: 500; letter-spacing: 0.32em; text-transform: uppercase; color: var(--coral); margin-bottom: 22px; }
+.hero-title { font-family: 'Cormorant Garamond', serif; font-size: clamp(52px, 6.5vw, 92px); font-weight: 600; line-height: 1.04; color: var(--ice); margin-bottom: 20px; max-width: 700px; }
+.hero-subtitle { font-family: 'Cormorant Garamond', serif; font-size: clamp(18px, 2.2vw, 28px); font-weight: 400; font-style: italic; color: rgba(200,185,165,0.55); margin-bottom: 52px; max-width: 540px; line-height: 1.4; }
+.hero-meta { display: flex; gap: 52px; border-top: 1px solid rgba(255,255,255,0.07); padding-top: 28px; flex-wrap: wrap; }
+.hero-meta-label { font-size: 9px; font-weight: 500; letter-spacing: 0.24em; text-transform: uppercase; color: var(--text-dim); margin-bottom: 7px; }
+.hero-meta-value { font-size: 13px; font-weight: 500; letter-spacing: 0.05em; color: var(--text-muted); }
+
+/* ── SECTION STRUCTURE ── */
+.cs-section { padding: 96px 88px; border-top: 1px solid var(--border); }
+.cs-section.alt { background: var(--bg-alt); }
+.section-inner { max-width: 1040px; margin: 0 auto; }
+.section-label { font-size: 9px; font-weight: 500; letter-spacing: 0.32em; text-transform: uppercase; color: var(--coral); margin-bottom: 18px; }
+.section-heading { font-family: 'Cormorant Garamond', serif; font-size: clamp(30px, 3.8vw, 50px); font-weight: 600; line-height: 1.1; color: var(--ice); margin-bottom: 22px; }
+.section-body { font-size: 15px; font-weight: 400; line-height: 1.88; letter-spacing: 0.03em; color: rgba(200,185,165,0.6); max-width: 620px; }
+.section-body + .section-body { margin-top: 18px; }
+.section-divider { width: 48px; height: 1px; background: var(--coral); opacity: 0.4; margin: 36px 0; }
+
+/* ── TWO COL ── */
+.two-col { display: grid; grid-template-columns: 1.55fr 1fr; gap: 72px; align-items: start; }
+.brief-meta { display: flex; flex-direction: column; gap: 24px; padding-top: 4px; }
+.meta-item-label { font-size: 9px; font-weight: 500; letter-spacing: 0.22em; text-transform: uppercase; color: var(--text-dim); margin-bottom: 5px; }
+.meta-item-value { font-size: 13px; font-weight: 500; letter-spacing: 0.04em; color: var(--text-muted); line-height: 1.55; }
+
+/* ── OVERVIEW INTRO ── */
+.overview-intro { font-size: 16px; font-weight: 300; line-height: 1.85; letter-spacing: 0.02em; color: rgba(200,185,165,0.58); max-width: 760px; margin-bottom: 44px; }
+.overview-intro em { font-style: normal; color: rgba(200,185,165,0.82); font-weight: 400; }
+
+/* ── CHIP PANEL ── */
+.proj-meta-outer { border: 1px solid rgba(222,154,122,0.18); border-radius: 18px; overflow: hidden; position: relative; }
+.proj-meta-outer::before { content: ''; position: absolute; inset: 0; background: radial-gradient(ellipse 80% 60% at var(--mx,50%) var(--my,40%), rgba(222,154,122,0.06) 0%, transparent 70%); pointer-events: none; z-index: 0; }
+.chip-panel { position: relative; z-index: 1; background: linear-gradient(160deg, #14100e, #0c0908); padding: 36px 40px; display: grid; grid-template-columns: 1fr 1fr; gap: 36px 52px; }
+.chip-group-label { font-size: 9px; font-weight: 500; letter-spacing: 0.26em; text-transform: uppercase; color: rgba(200,185,165,0.3); margin-bottom: 12px; }
+.chip-row { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 12px; }
+.chip-btn { background: rgba(222,154,122,0.07); border: 1px solid rgba(222,154,122,0.15); border-radius: 100px; padding: 7px 15px; font-family: 'DM Sans', sans-serif; font-size: 11.5px; font-weight: 400; letter-spacing: 0.04em; color: rgba(240,210,190,0.6); cursor: pointer; transition: background 0.22s ease, border-color 0.22s ease, color 0.22s ease, box-shadow 0.22s ease, transform 0.18s ease; line-height: 1; }
+.chip-btn:hover, .chip-btn:focus { background: rgba(222,154,122,0.22); border-color: rgba(222,154,122,0.6); color: rgba(255,235,220,1); box-shadow: 0 0 14px rgba(222,154,122,0.22); transform: translateY(-1px); outline: none; }
+.chip-btn.active { background: rgba(222,154,122,0.28); border-color: rgba(222,154,122,0.75); color: #fff; box-shadow: 0 0 18px rgba(222,154,122,0.28); }
+.chip-detail { font-size: 12px; font-weight: 400; line-height: 1.7; color: rgba(200,185,165,0.35); letter-spacing: 0.02em; min-height: 38px; font-style: italic; transition: color 0.25s ease, transform 0.25s ease, opacity 0.25s ease; transform: translateY(2px); opacity: 0.7; }
+.chip-detail.has-value { color: rgba(240,210,190,0.82); font-style: normal; transform: translateY(0); opacity: 1; }
+
+/* ── STAT BAR ── */
+.stat-bar {
+  display: grid; grid-template-columns: repeat(3, 1fr);
+  background: linear-gradient(135deg, #180e0a, #0d0806);
+  border: 1px solid rgba(255,255,255,0.07);
+  border-radius: 16px; overflow: hidden;
+  margin-top: 52px; position: relative;
+}
+.stat-bar::before {
+  content: ""; position: absolute; top: -40%; bottom: -40%;
+  width: 35%; left: -40%;
+  background: linear-gradient(90deg, rgba(222,154,122,0) 0%, rgba(222,154,122,0.09) 35%, rgba(200,120,80,0.12) 60%, rgba(222,154,122,0) 100%);
+  filter: blur(10px); transform: skewX(-18deg);
+  opacity: 0; pointer-events: none;
+}
+.reveal.is-visible .stat-bar::before { opacity: 1; animation: rmSweep 1.35s cubic-bezier(0.22,1,0.36,1) 0.25s both; }
+@keyframes rmSweep { from { left: -45%; opacity: 0; } 15% { opacity: 1; } to { left: 110%; opacity: 0; } }
+.reveal.is-visible .stat-cell:nth-child(1) .stat-number { animation: rmPop .55s cubic-bezier(0.22,1,0.36,1) .35s both; }
+.reveal.is-visible .stat-cell:nth-child(2) .stat-number { animation: rmPop .55s cubic-bezier(0.22,1,0.36,1) .48s both; }
+.reveal.is-visible .stat-cell:nth-child(3) .stat-number { animation: rmPop .55s cubic-bezier(0.22,1,0.36,1) .61s both; }
+@keyframes rmPop { 0% { transform: scale(1); } 55% { transform: scale(1.06); } 100% { transform: scale(1); } }
+@media (prefers-reduced-motion: reduce) { .reveal.is-visible .stat-bar::before { animation: none; opacity: 0; } .reveal.is-visible .stat-cell .stat-number { animation: none; } }
+.stat-cell { padding: 28px 32px; border-right: 1px solid rgba(255,255,255,0.06); transition: background 0.25s ease; }
+.stat-cell:last-child { border-right: none; }
+.stat-cell:hover { background: rgba(255,255,255,0.03); }
+.stat-number { font-family: 'DM Sans', sans-serif; font-size: clamp(40px, 4.5vw, 58px); font-weight: 700; line-height: 1; color: var(--text); letter-spacing: -0.02em; margin-bottom: 6px; }
+.stat-label { font-size: 9px; font-weight: 500; letter-spacing: 0.22em; text-transform: uppercase; color: rgba(200,185,165,0.38); }
+
+/* ── INSIGHT ACCORDION ── */
+.insight-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px; margin-top: 52px; }
+.insight-item { border-radius: 14px; background: radial-gradient(140% 120% at 15% 0%, rgba(222,154,122,0.09) 0%, rgba(222,154,122,0.00) 58%), linear-gradient(160deg, #14100e, #0c0908); border: 1px solid rgba(222,154,122,0.14); overflow: hidden; transition: border-color 0.25s ease; }
+.insight-item[open], .insight-item:hover { border-color: rgba(222,154,122,0.38); }
+.insight-item summary { list-style: none; cursor: pointer; padding: 22px 24px; display: flex; align-items: center; justify-content: space-between; gap: 16px; user-select: none; }
+.insight-item summary::-webkit-details-marker { display: none; }
+.insight-kicker { font-size: 9px; font-weight: 500; letter-spacing: 0.22em; text-transform: uppercase; color: var(--coral); margin-bottom: 8px; opacity: 0.85; }
+.insight-title { font-family: 'Cormorant Garamond', serif; font-size: 22px; font-weight: 600; line-height: 1.2; color: var(--ice); margin: 0; }
+.insight-chev { width: 9px; height: 9px; border-right: 1.5px solid rgba(200,185,165,0.45); border-bottom: 1.5px solid rgba(200,185,165,0.45); transform: rotate(-45deg); transition: transform 220ms ease, border-color 220ms ease; flex-shrink: 0; }
+.insight-item[open] .insight-chev { transform: rotate(45deg); border-color: var(--coral); }
+.insight-body { padding: 16px 24px 24px; font-size: 13px; font-weight: 400; line-height: 1.78; color: rgba(200,185,165,0.7); letter-spacing: 0.02em; border-top: 1px solid rgba(222,154,122,0.1); margin: 0 24px; }
+.insight-body p + p { margin-top: 10px; }
+.insight-implication { margin-top: 16px; padding-left: 12px; border-left: 2px solid rgba(212,165,118,0.45); color: var(--amber); font-weight: 500; font-size: 13px; line-height: 1.6; }
+
+/* ── 4-STEP FLOW ── */
+.flow-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 0; margin-top: 52px; border: 1px solid rgba(222,154,122,0.14); border-radius: 16px; overflow: hidden; }
+.flow-step { padding: 32px 26px; border-right: 1px solid rgba(222,154,122,0.1); background: linear-gradient(160deg, #14100e, #0c0908); position: relative; transition: background 0.25s ease; }
+.flow-step:last-child { border-right: none; }
+.flow-step:hover { background: linear-gradient(160deg, #1a1410, #100c0a); }
+.flow-num { font-family: 'DM Sans', sans-serif; font-size: 10px; font-weight: 700; letter-spacing: 0.26em; color: rgba(222,154,122,0.35); margin-bottom: 18px; }
+.flow-icon { font-size: 22px; margin-bottom: 16px; opacity: 0.6; color: var(--coral); }
+.flow-name { font-family: 'Cormorant Garamond', serif; font-size: 19px; font-weight: 600; color: var(--ice); line-height: 1.2; margin-bottom: 10px; }
+.flow-desc { font-size: 12px; font-weight: 400; line-height: 1.72; color: rgba(200,185,165,0.52); letter-spacing: 0.02em; }
+.flow-tag { display: inline-block; margin-top: 10px; font-size: 8px; font-weight: 600; letter-spacing: 0.18em; text-transform: uppercase; padding: 3px 8px; border-radius: 4px; background: rgba(222,154,122,0.1); color: rgba(222,154,122,0.6); }
+.flow-step:nth-child(3) .flow-tag, .flow-step:nth-child(4) .flow-tag { background: rgba(139,200,154,0.1); color: rgba(139,200,154,0.7); }
+
+/* ── DESIGN INTENTS (horizon) ── */
+.horizon-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; margin-top: 52px; }
+.horizon-card { border-left: 2px solid var(--coral-border); padding: 0 0 0 24px; transition: border-color 0.3s ease, transform 0.3s ease; }
+.horizon-card:hover { border-left-color: var(--coral); transform: translateX(4px); }
+.horizon-label { font-size: 9px; font-weight: 500; letter-spacing: 0.28em; text-transform: uppercase; color: var(--coral); margin-bottom: 12px; }
+.horizon-heading { font-family: 'Cormorant Garamond', serif; font-size: 22px; font-weight: 600; color: var(--ice); margin-bottom: 10px; line-height: 1.2; }
+.horizon-body { font-size: 13px; font-weight: 400; line-height: 1.75; color: rgba(200,185,165,0.55); letter-spacing: 0.025em; }
+
+/* ── WORD CLOUD GRID ── */
+.wc-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; margin-top: 52px; }
+.wc-card { border-radius: 16px; background: linear-gradient(160deg, #14100e, #0c0908); border: 1px solid rgba(222,154,122,0.14); padding: 32px 28px; text-align: center; transition: border-color 0.25s ease, transform 0.28s ease; }
+.wc-card:hover { border-color: rgba(222,154,122,0.38); transform: translateY(-3px); }
+.wc-title { font-family: 'Cormorant Garamond', serif; font-size: 22px; font-weight: 600; color: var(--ice); margin-bottom: 16px; line-height: 1.2; }
+.wc-words { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px 12px; }
+.wc-word { font-size: 13px; color: rgba(200,185,165,0.5); transition: color 0.2s ease; }
+.wc-word.lg { font-size: 20px; font-weight: 500; color: var(--coral); opacity: 0.85; }
+.wc-word.md { font-size: 16px; font-weight: 400; color: rgba(222,154,122,0.65); }
+.wc-word.sm { font-size: 11px; color: rgba(200,185,165,0.35); }
+
+/* ── PHASE CARDS ── */
+.phase-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-top: 52px; }
+.phase-card { border-radius: 14px; background: linear-gradient(160deg, #14100e, #0c0908); border: 1px solid rgba(222,154,122,0.14); padding: 28px 26px; transition: border-color 0.25s ease, transform 0.28s ease; }
+.phase-card:hover { border-color: rgba(222,154,122,0.38); transform: translateY(-4px); }
+.phase-num { font-size: 9px; font-weight: 700; letter-spacing: 0.28em; text-transform: uppercase; color: var(--coral); opacity: 0.65; margin-bottom: 14px; }
+.phase-title { font-family: 'Cormorant Garamond', serif; font-size: 22px; font-weight: 600; color: var(--ice); margin-bottom: 14px; line-height: 1.2; }
+.phase-body { font-size: 12.5px; font-weight: 400; line-height: 1.75; color: rgba(200,185,165,0.55); }
+.phase-body ul { padding-left: 16px; margin-top: 8px; }
+.phase-body li { margin-bottom: 6px; }
+
+/* ── SURVEY METHODOLOGY ── */
+.method-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 0; margin-top: 52px; border: 1px solid rgba(222,154,122,0.14); border-radius: 16px; overflow: hidden; }
+.method-cell { padding: 28px 24px; border-right: 1px solid rgba(222,154,122,0.08); background: linear-gradient(160deg, #14100e, #0c0908); text-align: center; transition: background 0.25s ease; }
+.method-cell:last-child { border-right: none; }
+.method-cell:hover { background: linear-gradient(160deg, #1a1410, #100c0a); }
+.method-icon { font-size: 24px; margin-bottom: 14px; color: var(--coral); opacity: 0.55; }
+.method-name { font-family: 'Cormorant Garamond', serif; font-size: 18px; font-weight: 600; color: var(--ice); margin-bottom: 8px; line-height: 1.2; }
+.method-desc { font-size: 11.5px; font-weight: 400; line-height: 1.65; color: rgba(200,185,165,0.48); }
+
+/* ── REFLECTION ── */
+.reflection-wrap { padding: 112px 88px; text-align: center; border-top: 1px solid var(--border); }
+.reflection-label { font-size: 9px; font-weight: 500; letter-spacing: 0.32em; text-transform: uppercase; color: var(--coral); margin-bottom: 28px; }
+.reflection-quote { font-family: 'Cormorant Garamond', serif; font-size: clamp(26px, 3.2vw, 44px); font-weight: 400; font-style: italic; line-height: 1.5; color: var(--ice); max-width: 820px; margin: 0 auto; text-wrap: balance; }
+
+/* ── SCROLL REVEAL ── */
+.reveal { opacity: 0; transform: translateY(20px); transition: opacity 0.7s ease, transform 0.7s ease; will-change: opacity, transform; }
+.reveal.is-visible { opacity: 1; transform: translateY(0); }
+@media (prefers-reduced-motion: reduce) { .reveal { opacity: 1; transform: none; transition: none; } }
+
+/* ── FOOTER ── */
+.cs-footer { height: 1px; }
+
+/* ══ RESPONSIVE ════════════════════════════════════════════════ */
+@media (max-width: 860px) {
+  .hero            { padding: 0 36px 60px; }
+  .cs-section      { padding: 72px 36px; }
+  .reflection-wrap { padding: 80px 36px; }
+  .insight-grid    { grid-template-columns: 1fr 1fr; }
+  .two-col         { grid-template-columns: 1fr; gap: 40px; }
+  .flow-grid       { grid-template-columns: 1fr 1fr; }
+  .phase-row       { grid-template-columns: 1fr; gap: 12px; }
+  .chip-panel      { grid-template-columns: 1fr; gap: 28px; }
+  .stat-bar        { grid-template-columns: repeat(3, 1fr); }
+  .wc-grid         { grid-template-columns: 1fr 1fr; }
+  .method-grid     { grid-template-columns: 1fr 1fr; }
+  .horizon-row     { grid-template-columns: 1fr; gap: 24px; }
+}
+@media (max-width: 560px) {
+  .hero            { padding: 0 22px 48px; }
+  .cs-section      { padding: 56px 22px; }
+  .reflection-wrap { padding: 64px 22px; }
+  .insight-grid    { grid-template-columns: 1fr; }
+  .horizon-row     { grid-template-columns: 1fr; gap: 32px; }
+  .flow-grid       { grid-template-columns: 1fr; }
+  .hero-meta       { gap: 20px; }
+  .hero-meta-value { font-size: 12px; }
+  .nav-back        { top: 16px; left: 16px; }
+  .wordmark        { display: none; }
+  .stat-bar        { grid-template-columns: 1fr 1fr; }
+  .wc-grid         { grid-template-columns: 1fr; }
+  .method-grid     { grid-template-columns: 1fr; }
+}
+@media (max-width: 480px) {
+  .hero-title      { font-size: 38px; }
+  .hero-meta       { flex-direction: column; gap: 14px; }
+  .section-heading { font-size: clamp(22px, 5.5vw, 32px); }
+  .stat-cell       { padding: 20px 18px; }
+  .stat-number     { font-size: 36px; }
+}
+</style>
+</head>
+<body>
+
+<div id="page-exit"></div>
+<div class="wordmark">Amber Grey</div>
+<button class="nav-back" onclick="navigateTo('studio-portfolio.html')">
+  <span class="nav-back-arrow"></span>
+  Portfolio
+</button>
+
+<!-- ══════════════════════════════════════
+     HERO
+══════════════════════════════════════ -->
+<section class="hero">
+  <div class="hero-content">
+    <div class="hero-zone">Sensemaking · Case Study</div>
+    <h1 class="hero-title">RoomMates</h1>
+    <p class="hero-subtitle">UX for harmonious shared spaces.</p>
+    <div class="hero-meta">
+      <div>
+        <div class="hero-meta-label">Role</div>
+        <div class="hero-meta-value">UX Researcher</div>
+      </div>
+      <div>
+        <div class="hero-meta-label">Focus</div>
+        <div class="hero-meta-value">Survey Design · Data Analysis · Proposal Strategy</div>
+      </div>
+      <div>
+        <div class="hero-meta-label">Context</div>
+        <div class="hero-meta-value">Ages 18-40 · Chicago</div>
+      </div>
+      <div>
+        <div class="hero-meta-label">Type</div>
+        <div class="hero-meta-value">Research-Driven · App Concept</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════
+     00 PROJECT OVERVIEW
+══════════════════════════════════════ -->
+<section class="cs-section reveal">
+  <div class="section-inner">
+    <div class="section-label">Project Overview</div>
+    <p class="overview-intro">A comprehensive UX research investigation into <em>the dynamics of roommate experiences</em> among individuals aged 18-40 in Chicago. Through survey design, data analysis, and qualitative synthesis, the project gathered insights on the common pitfalls of shared living — with the aim of informing the development of <em>an innovative roommate-matching application</em> designed to scale to any city.</p>
+
+    <div class="proj-meta-outer">
+      <div class="chip-panel">
+        <div>
+          <div class="chip-group-label">Skills</div>
+          <div class="chip-row">
+            <button class="chip-btn" data-group="skill" data-detail="Designing a multi-format survey using scale systems, rankings, yes/no queries, and narrative prompts to comprehensively explore the roommate experience across demographics.">Survey Design</button>
+            <button class="chip-btn" data-group="skill" data-detail="Integrating quantitative data for statistical insights with qualitative data to unveil the narratives behind participant experiences — turning responses into actionable patterns.">Mixed-Methods Research</button>
+            <button class="chip-btn" data-group="skill" data-detail="Transforming open-ended survey responses into visual word clouds, ranking charts, and data visualizations that make pain points immediately legible.">Data Visualization</button>
+            <button class="chip-btn" data-group="skill" data-detail="Translating research findings into a strategic product roadmap — from matching algorithms to personality quizzes to in-app education on cohabitation challenges.">Product Strategy</button>
+            <button class="chip-btn" data-group="skill" data-detail="Ensuring respondent anonymity, fostering candid sharing, and upholding rigorous standards in data collection, privacy, and informed consent at every stage.">Research Ethics</button>
+          </div>
+          <div class="chip-detail" id="skill-detail">Hover a skill to explore it.</div>
+        </div>
+        <div>
+          <div class="chip-group-label">Methods &amp; Tools</div>
+          <div class="chip-row">
+            <button class="chip-btn" data-group="tool" data-detail="Distributed across diverse channels to secure a representative sample of roommate experiences from individuals aged 18-40 in the Chicago area.">Survey Distribution</button>
+            <button class="chip-btn" data-group="tool" data-detail="Scale gauges (0-5) for experience intensity, rankings (1-12) for prioritization, yes/no for clarity, and open-ended narratives for in-depth qualitative insight.">Quantitative &amp; Qualitative Analysis</button>
+            <button class="chip-btn" data-group="tool" data-detail="Open-ended responses transformed into word clouds, visually highlighting the most prevalent roommate issues and turning qualitative data into digestible visuals.">Word Cloud Generation</button>
+            <button class="chip-btn" data-group="tool" data-detail="Custom illustrations depicting roommate dynamics, pain points, and shared living scenarios — bringing the research to life visually.">Custom Illustration</button>
+          </div>
+          <div class="chip-detail" id="tool-detail">Hover a method to explore it.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════
+     01 THE CHALLENGE
+══════════════════════════════════════ -->
+<section class="cs-section alt reveal">
+  <div class="section-inner">
+    <div class="two-col">
+      <div>
+        <div class="section-label">The Challenge</div>
+        <h2 class="section-heading">The Compatibility Gap</h2>
+        <p class="section-body">Finding a roommate is rarely about finding someone who can pay rent on time. The real friction lives in the invisible layers — habits, boundaries, cleanliness standards, sleep schedules, and social expectations that only surface after the lease is signed.</p>
+        <div class="section-divider"></div>
+        <p class="section-body">Existing platforms treat roommate matching like a transaction: budget, location, move-in date. They filter for logistics but ignore the behavioral dynamics that actually determine whether a living arrangement works or collapses. The result is a cycle of mismatched expectations, unspoken frustrations, and avoidable conflict.</p>
+        <div class="section-divider"></div>
+        <p class="section-body">This project asked: what if we could surface the real compatibility signals — the ones people only discover after moving in — and use them to build matches that actually last?</p>
+      </div>
+      <div class="brief-meta">
+        <div>
+          <div class="meta-item-label">Context</div>
+          <div class="meta-item-value">Shared Living Spaces · Urban Young Adults (18-40) · Chicago</div>
+        </div>
+        <div>
+          <div class="meta-item-label">Methods</div>
+          <div class="meta-item-value">Survey Design · Mixed-Methods Analysis · Word Cloud Synthesis · Data Visualization</div>
+        </div>
+        <div>
+          <div class="meta-item-label">Skills</div>
+          <div class="meta-item-value">UX Research · Product Strategy · Research Ethics · Data Visualization</div>
+        </div>
+        <div>
+          <div class="meta-item-label">Type</div>
+          <div class="meta-item-value">Research-Driven · App Concept · Scalable Platform</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="stat-bar">
+      <div class="stat-cell">
+        <div class="stat-number">18-40</div>
+        <div class="stat-label">Age Range Surveyed</div>
+      </div>
+      <div class="stat-cell">
+        <div class="stat-number">4</div>
+        <div class="stat-label">Survey Format Types</div>
+      </div>
+      <div class="stat-cell">
+        <div class="stat-number">12</div>
+        <div class="stat-label">Factors Ranked by Priority</div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════
+     02 SURVEY DESIGN
+══════════════════════════════════════ -->
+<section class="cs-section reveal">
+  <div class="section-inner">
+    <div class="section-label">Survey Design</div>
+    <h2 class="section-heading">Four lenses on one experience</h2>
+    <p class="section-body">The survey used four complementary formats to capture the full spectrum of roommate dynamics — from measurable intensity to personal narrative. Each method was chosen to reveal a different layer of the lived experience.</p>
+
+    <div class="method-grid">
+      <div class="method-cell">
+        <div class="method-icon">◐</div>
+        <div class="method-name">Scale (0-5)</div>
+        <div class="method-desc">Gauges experience intensity across roommate scenarios, from minor friction to serious conflict.</div>
+      </div>
+      <div class="method-cell">
+        <div class="method-icon">≡</div>
+        <div class="method-name">Rankings (1-12)</div>
+        <div class="method-desc">Prioritizes what matters most, revealing which factors drive compatibility or breakdown.</div>
+      </div>
+      <div class="method-cell">
+        <div class="method-icon">◇</div>
+        <div class="method-name">Yes / No</div>
+        <div class="method-desc">Provides binary clarity on key experience markers and behavioral expectations.</div>
+      </div>
+      <div class="method-cell">
+        <div class="method-icon">❝</div>
+        <div class="method-name">Narratives</div>
+        <div class="method-desc">Open-ended prompts for in-depth personal stories and the nuance behind the numbers.</div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════
+     03 PAIN POINTS
+══════════════════════════════════════ -->
+<section class="cs-section alt reveal">
+  <div class="section-inner">
+    <div class="section-label">Pain Points</div>
+    <h2 class="section-heading">What the data kept surfacing</h2>
+    <p class="section-body">Across survey responses, four recurring themes emerged — not as isolated complaints, but as systemic patterns in how shared living fails when compatibility is left to chance.</p>
+
+    <div class="insight-grid">
+
+      <details class="insight-item">
+        <summary>
+          <div>
+            <div class="insight-kicker">Boundaries</div>
+            <p class="insight-title">The Invisible Line Problem</p>
+          </div>
+          <span class="insight-chev"></span>
+        </summary>
+        <div class="insight-body">
+          <p>Most roommate conflicts trace back to boundaries that were never discussed — because people assume their standards are universal. Cleanliness thresholds, noise tolerance, guest policies, and shared space etiquette all operate on unspoken rules until those rules collide.</p>
+          <p>The survey revealed that respondents rarely articulated these expectations before moving in. The friction wasn't about bad behavior — it was about mismatched defaults.</p>
+          <p class="insight-implication"><strong>Implication:</strong> A matching system must surface these invisible expectations before the lease is signed, not after.</p>
+        </div>
+      </details>
+
+      <details class="insight-item">
+        <summary>
+          <div>
+            <div class="insight-kicker">Communication</div>
+            <p class="insight-title">Silence Breeds Resentment</p>
+          </div>
+          <span class="insight-chev"></span>
+        </summary>
+        <div class="insight-body">
+          <p>When issues arose, the most common response was avoidance. Respondents described a pattern: irritation builds quietly, passive-aggressive signals replace direct conversation, and by the time the issue is addressed, the relationship is already strained.</p>
+          <p>The narratives showed that many respondents lacked a framework for raising concerns without escalation. The problem wasn't that they didn't care — it's that they didn't know how to start the conversation.</p>
+          <p class="insight-implication"><strong>Implication:</strong> The app should include communication resources and strategies for navigating cohabitation challenges.</p>
+        </div>
+      </details>
+
+      <details class="insight-item">
+        <summary>
+          <div>
+            <div class="insight-kicker">Lifestyle</div>
+            <p class="insight-title">Schedules That Don't Align</p>
+          </div>
+          <span class="insight-chev"></span>
+        </summary>
+        <div class="insight-body">
+          <p>Sleep schedules, work rhythms, social habits, and domestic routines emerged as primary friction points. An early riser paired with a night owl. A homebody matched with someone who hosts frequently. These aren't personality flaws — they're lifestyle incompatibilities that no traditional listing can predict.</p>
+          <p class="insight-implication"><strong>Implication:</strong> Lifestyle rhythm matching must be a core component of the algorithm, not a supplementary filter.</p>
+        </div>
+      </details>
+
+      <details class="insight-item">
+        <summary>
+          <div>
+            <div class="insight-kicker">Expectations</div>
+            <p class="insight-title">What "Clean" Really Means</p>
+          </div>
+          <span class="insight-chev"></span>
+        </summary>
+        <div class="insight-body">
+          <p>Cleanliness was one of the most frequently cited pain points — but the issue wasn't about hygiene. It was about calibration. One person's "tidy" is another person's "barely acceptable." The gap between individual standards consistently surfaced as a source of low-grade, persistent tension.</p>
+          <p>Rankings showed that cleanliness norms were among the top three factors respondents wished they'd aligned on before committing to a shared space.</p>
+          <p class="insight-implication"><strong>Implication:</strong> Matching should use granular behavioral questions, not self-assessments, to calibrate shared expectations.</p>
+        </div>
+      </details>
+
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════
+     04 DATA SYNTHESIS
+══════════════════════════════════════ -->
+<section class="cs-section reveal">
+  <div class="section-inner">
+    <div class="section-label">Data Synthesis</div>
+    <h2 class="section-heading">From responses to patterns</h2>
+    <p class="section-body">Through an examination of scale responses, ranking patterns, and open-ended prompts, the data began to reveal the architecture of compatibility — what matters most, what breaks first, and what people wish they'd known before moving in.</p>
+
+    <div class="wc-grid">
+      <div class="wc-card">
+        <div class="wc-title">Top Frustrations</div>
+        <div class="wc-words">
+          <span class="wc-word lg">cleanliness</span>
+          <span class="wc-word md">noise</span>
+          <span class="wc-word">boundaries</span>
+          <span class="wc-word lg">communication</span>
+          <span class="wc-word sm">guests</span>
+          <span class="wc-word md">dishes</span>
+          <span class="wc-word">rent</span>
+          <span class="wc-word sm">respect</span>
+          <span class="wc-word md">space</span>
+          <span class="wc-word">privacy</span>
+        </div>
+      </div>
+      <div class="wc-card">
+        <div class="wc-title">Desired Qualities</div>
+        <div class="wc-words">
+          <span class="wc-word lg">respectful</span>
+          <span class="wc-word md">clean</span>
+          <span class="wc-word">considerate</span>
+          <span class="wc-word md">quiet</span>
+          <span class="wc-word lg">communicative</span>
+          <span class="wc-word sm">responsible</span>
+          <span class="wc-word">friendly</span>
+          <span class="wc-word md">reliable</span>
+          <span class="wc-word sm">honest</span>
+          <span class="wc-word">mature</span>
+        </div>
+      </div>
+      <div class="wc-card">
+        <div class="wc-title">Dealbreakers</div>
+        <div class="wc-words">
+          <span class="wc-word lg">stealing</span>
+          <span class="wc-word md">loud</span>
+          <span class="wc-word">messy</span>
+          <span class="wc-word md">dishonest</span>
+          <span class="wc-word lg">disrespectful</span>
+          <span class="wc-word sm">passive-aggressive</span>
+          <span class="wc-word">late rent</span>
+          <span class="wc-word sm">entitled</span>
+          <span class="wc-word md">inconsiderate</span>
+        </div>
+      </div>
+      <div class="wc-card">
+        <div class="wc-title">Best Experiences</div>
+        <div class="wc-words">
+          <span class="wc-word lg">friendship</span>
+          <span class="wc-word md">trust</span>
+          <span class="wc-word">shared meals</span>
+          <span class="wc-word lg">mutual respect</span>
+          <span class="wc-word sm">support</span>
+          <span class="wc-word md">laughter</span>
+          <span class="wc-word">adventures</span>
+          <span class="wc-word sm">growth</span>
+          <span class="wc-word md">community</span>
+        </div>
+      </div>
+    </div>
+
+    <p class="section-body" style="margin-top:36px;">Age and gender data were collected to test for significant correlations. While no major demographic differences emerged in responses, the consistency across groups reinforced that roommate friction is a universal experience shaped by behavior, not identity.</p>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════
+     05 RESEARCH PROCESS
+══════════════════════════════════════ -->
+<section class="cs-section alt reveal">
+  <div class="section-inner">
+    <div class="section-label">Research Process</div>
+    <h2 class="section-heading">How insights became a system</h2>
+    <p class="section-body">The research followed a deliberate arc — from broad data gathering through pattern recognition to actionable product direction.</p>
+
+    <div class="flow-grid">
+      <div class="flow-step">
+        <div class="flow-num">01</div>
+        <div class="flow-icon">◎</div>
+        <div class="flow-name">Survey Design</div>
+        <div class="flow-desc">Multi-format survey built to capture both measurable patterns and personal narratives across diverse channels.</div>
+        <div class="flow-tag">Research</div>
+      </div>
+      <div class="flow-step">
+        <div class="flow-num">02</div>
+        <div class="flow-icon">◐</div>
+        <div class="flow-name">Data Collection</div>
+        <div class="flow-desc">Distributed across diverse channels with anonymity protections, informed consent, and ethical data handling throughout.</div>
+        <div class="flow-tag">Research</div>
+      </div>
+      <div class="flow-step">
+        <div class="flow-num">03</div>
+        <div class="flow-icon">◈</div>
+        <div class="flow-name">Pattern Synthesis</div>
+        <div class="flow-desc">Quantitative metrics merged with qualitative narratives. Word clouds and rankings surfaced recurring themes.</div>
+        <div class="flow-tag">Analysis</div>
+      </div>
+      <div class="flow-step">
+        <div class="flow-num">04</div>
+        <div class="flow-icon">✦</div>
+        <div class="flow-name">Product Proposal</div>
+        <div class="flow-desc">Insights translated into a matching algorithm strategy, feature set, and scalable platform roadmap.</div>
+        <div class="flow-tag">Strategy</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════
+     06 DESIGN INTENTS
+══════════════════════════════════════ -->
+<section class="cs-section reveal">
+  <div class="section-inner">
+    <div class="section-label">Design Intents</div>
+    <h2 class="section-heading">Three principles for the platform</h2>
+    <p class="section-body">The research didn't just identify problems — it revealed the principles a roommate-matching platform would need to embody to solve them meaningfully.</p>
+
+    <div class="horizon-row">
+      <div class="horizon-card">
+        <div class="horizon-label">Transparency</div>
+        <div class="horizon-heading">Surface the invisible before it becomes a problem</div>
+        <p class="horizon-body">Every major pain point traced back to an unspoken expectation. The platform must make behavioral standards, lifestyle rhythms, and personal boundaries legible before the match is made — not after the lease is signed.</p>
+      </div>
+      <div class="horizon-card">
+        <div class="horizon-label">Compatibility</div>
+        <div class="horizon-heading">Match on behavior, not just budget</div>
+        <p class="horizon-body">Existing platforms filter on logistics. This one must match on the behavioral dynamics that determine whether a living arrangement thrives or fractures. Compatibility scores should reflect the full picture — habits, schedules, communication styles, and cleanliness calibration.</p>
+      </div>
+      <div class="horizon-card">
+        <div class="horizon-label">Education</div>
+        <div class="horizon-heading">Equip people to live well together</div>
+        <p class="horizon-body">Matching is only half the equation. The platform should include resources on communication strategies, boundary-setting, and common cohabitation challenges — turning users into better roommates, not just matched ones.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════
+     07 PROPOSAL
+══════════════════════════════════════ -->
+<section class="cs-section alt reveal">
+  <div class="section-inner">
+    <div class="section-label">What Comes Next</div>
+    <h2 class="section-heading">Three phases to build the platform</h2>
+    <p class="section-body">The research opens the door. These three phases map how insights become a product — refining the matching system, validating with real users, and scaling beyond Chicago.</p>
+
+    <div class="phase-row">
+      <div class="phase-card">
+        <div class="phase-num">Phase 01</div>
+        <div class="phase-title">Refine the Algorithm</div>
+        <div class="phase-body">
+          <ul>
+            <li>Integrate key survey factors into the matching algorithm</li>
+            <li>Develop visual compatibility scores for intuitive understanding</li>
+            <li>Design a personality quiz tailored to roommate-relevant qualities</li>
+            <li>Build interactive chat features to facilitate pre-match communication</li>
+          </ul>
+        </div>
+      </div>
+      <div class="phase-card">
+        <div class="phase-num">Phase 02</div>
+        <div class="phase-title">Pilot Testing</div>
+        <div class="phase-body">
+          <ul>
+            <li>Test with a diverse user group across Chicago neighborhoods</li>
+            <li>Gather iterative feedback on matching accuracy and user experience</li>
+            <li>Develop in-app education resources on cohabitation strategies</li>
+            <li>Establish feedback mechanisms for continuous improvement</li>
+          </ul>
+        </div>
+      </div>
+      <div class="phase-card">
+        <div class="phase-num">Phase 03</div>
+        <div class="phase-title">Scale Beyond Chicago</div>
+        <div class="phase-body">
+          <ul>
+            <li>Marketing collaborations for broader visibility and reach</li>
+            <li>Ensure accessibility is at the forefront of platform design</li>
+            <li>Adapt matching parameters for different urban contexts</li>
+            <li>Build a sophisticated, user-friendly, and inclusive platform</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════
+     REFLECTION
+══════════════════════════════════════ -->
+<section class="reflection-wrap reveal">
+  <div class="reflection-label">Design Reflection</div>
+  <blockquote class="reflection-quote">
+    "The best roommate match isn't found — it's understood. Compatibility lives in the details people forget to discuss until the silence becomes friction."
+  </blockquote>
+</section>
+
+<div class="cs-footer"></div>
+
+<script>
+'use strict';
+
+requestAnimationFrame(() => {
+  requestAnimationFrame(() => {
+    document.body.classList.add('visible');
+  });
+});
+
+function navigateTo(url) {
+  const exit = document.getElementById('page-exit');
+  exit.classList.add('active');
+  setTimeout(() => { window.location.href = url; }, 300);
+}
+
+const revealObserver = new IntersectionObserver((entries) => {
+  entries.forEach(e => {
+    if (e.isIntersecting) { e.target.classList.add('is-visible'); revealObserver.unobserve(e.target); }
+  });
+}, { threshold: 0.08 });
+document.querySelectorAll('.reveal').forEach(el => revealObserver.observe(el));
+
+document.querySelectorAll('.chip-btn').forEach(btn => {
+  const group = btn.dataset.group;
+  const detail = document.getElementById(`${group}-detail`);
+  if (!detail) return;
+  btn.addEventListener('mouseenter', () => {
+    detail.textContent = btn.dataset.detail;
+    detail.classList.add('has-value');
+    document.querySelectorAll(`.chip-btn[data-group="${group}"]`).forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+  });
+});
+</script>
+
+</body>
+</html>

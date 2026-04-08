@@ -1,0 +1,935 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GWI — Greenwashing Index</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html, body {
+  width: 100%; height: 100%;
+  overflow: hidden;
+  background: #0c1610;
+  font-family: 'DM Sans', sans-serif;
+  color: rgba(215, 208, 190, 0.9);
+}
+
+/* ── LAYOUT ── */
+#app {
+  display: flex;
+  width: 100%; height: 100%;
+}
+
+/* ── LEFT: ZOO LIST ── */
+#zoo-panel {
+  width: 240px;
+  flex-shrink: 0;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  border-right: 1px solid rgba(100, 140, 80, 0.12);
+  background: rgba(10, 20, 8, 0.6);
+}
+
+#zoo-header {
+  padding: 20px 18px 14px;
+  border-bottom: 1px solid rgba(100, 140, 80, 0.1);
+  flex-shrink: 0;
+}
+
+.zoo-header-eyebrow {
+  font-size: 7px;
+  font-weight: 400;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  color: rgba(130, 180, 105, 0.55);
+  margin-bottom: 8px;
+}
+
+.zoo-header-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 17px;
+  font-weight: 600;
+  color: rgba(200, 220, 185, 0.9);
+  line-height: 1.2;
+  margin-bottom: 12px;
+}
+
+/* Filter tabs */
+#filter-tabs {
+  display: flex;
+  gap: 4px;
+}
+
+.filter-tab {
+  font-size: 7px;
+  font-weight: 400;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  padding: 4px 8px;
+  border-radius: 2px;
+  cursor: pointer;
+  border: 1px solid transparent;
+  transition: all 0.2s ease;
+  color: rgba(180, 170, 150, 0.5);
+  background: transparent;
+}
+.filter-tab:hover { color: rgba(215, 208, 190, 0.8); }
+.filter-tab.active {
+  border-color: rgba(100, 150, 80, 0.35);
+  background: rgba(80, 120, 60, 0.15);
+  color: rgba(160, 210, 130, 0.9);
+}
+
+/* Zoo list */
+#zoo-list {
+  flex: 1;
+  overflow-y: auto;
+  padding: 6px 0;
+}
+#zoo-list::-webkit-scrollbar { width: 3px; }
+#zoo-list::-webkit-scrollbar-track { background: transparent; }
+#zoo-list::-webkit-scrollbar-thumb { background: rgba(100,140,80,0.2); border-radius: 2px; }
+
+.zoo-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 9px 18px;
+  cursor: pointer;
+  transition: background 0.18s ease;
+  border-left: 2px solid transparent;
+}
+.zoo-item:hover { background: rgba(100, 140, 80, 0.06); }
+.zoo-item.active {
+  background: rgba(100, 140, 80, 0.12);
+  border-left-color: rgba(130, 190, 100, 0.5);
+}
+
+.zoo-gwi-dot {
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.zoo-item-text {
+  flex: 1;
+  min-width: 0;
+}
+.zoo-item-name {
+  font-size: 11px;
+  font-weight: 400;
+  color: rgba(210, 202, 185, 0.85);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  line-height: 1.2;
+  margin-bottom: 2px;
+}
+.zoo-item-city {
+  font-size: 9px;
+  font-weight: 300;
+  color: rgba(160, 150, 130, 0.55);
+  letter-spacing: 0.04em;
+}
+
+.zoo-gwi-badge {
+  font-size: 9px;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  flex-shrink: 0;
+  opacity: 0.7;
+}
+
+/* ── RIGHT: ANALYSIS PANEL ── */
+#analysis-panel {
+  flex: 1;
+  height: 100%;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding: 28px 32px 28px;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+#analysis-panel::-webkit-scrollbar { width: 3px; }
+#analysis-panel::-webkit-scrollbar-track { background: transparent; }
+#analysis-panel::-webkit-scrollbar-thumb { background: rgba(100,140,80,0.15); border-radius: 2px; }
+
+/* ── HEADER ROW ── */
+#zoo-name-row {
+  margin-bottom: 6px;
+}
+#zoo-name {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 30px;
+  font-weight: 600;
+  color: rgba(205, 225, 188, 0.95);
+  line-height: 1.05;
+}
+#zoo-location {
+  font-size: 10px;
+  font-weight: 300;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: rgba(140, 180, 110, 0.55);
+  margin-top: 4px;
+}
+
+/* ── GWI SPECTRUM ── */
+#gwi-section {
+  margin: 20px 0 22px;
+}
+
+.section-label {
+  font-size: 7px;
+  font-weight: 500;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  color: rgba(130, 170, 100, 0.5);
+  margin-bottom: 12px;
+}
+
+#gwi-track {
+  position: relative;
+  height: 6px;
+  border-radius: 3px;
+  background: linear-gradient(to right,
+    #5a9e48 0%,
+    #7ab85e 18%,
+    #a8c88a 33%,
+    #c8b98a 42%,
+    #c8b98a 50%,
+    #c89a5a 62%,
+    #c07040 78%,
+    #a8442a 100%
+  );
+  margin-bottom: 6px;
+}
+
+#gwi-marker {
+  position: absolute;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: 14px; height: 14px;
+  border-radius: 50%;
+  background: white;
+  box-shadow: 0 0 0 2px rgba(0,0,0,0.4), 0 2px 8px rgba(0,0,0,0.5);
+  transition: left 0.55s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+#gwi-labels {
+  display: flex;
+  justify-content: space-between;
+  font-size: 7px;
+  font-weight: 300;
+  letter-spacing: 0.1em;
+  color: rgba(160, 150, 130, 0.45);
+  margin-bottom: 14px;
+}
+
+#gwi-score-row {
+  display: flex;
+  align-items: baseline;
+  gap: 14px;
+}
+
+#gwi-score-number {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 52px;
+  font-weight: 600;
+  line-height: 1;
+  transition: color 0.4s ease;
+}
+
+#gwi-score-label {
+  font-size: 11px;
+  font-weight: 400;
+  letter-spacing: 0.06em;
+  line-height: 1.4;
+  transition: color 0.4s ease;
+}
+
+/* ── DIVIDER ── */
+.rule {
+  width: 100%;
+  height: 1px;
+  background: rgba(100, 140, 80, 0.1);
+  margin: 18px 0;
+}
+
+/* ── MISSION STATEMENT ── */
+#mission-section { margin-bottom: 0; }
+
+#mission-statement {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 16px;
+  font-weight: 400;
+  font-style: italic;
+  line-height: 1.65;
+  color: rgba(200, 215, 182, 0.8);
+  margin-bottom: 10px;
+}
+
+/* ── METRICS ROW ── */
+#metrics-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 12px;
+  margin-bottom: 0;
+}
+
+.metric-card {
+  background: rgba(60, 90, 45, 0.1);
+  border: 1px solid rgba(100, 140, 80, 0.12);
+  border-radius: 6px;
+  padding: 12px 14px;
+}
+
+.metric-label {
+  font-size: 7px;
+  font-weight: 500;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: rgba(130, 170, 100, 0.5);
+  margin-bottom: 6px;
+}
+
+.metric-value {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 24px;
+  font-weight: 600;
+  line-height: 1;
+  margin-bottom: 4px;
+  transition: color 0.4s ease;
+}
+
+.metric-sub {
+  font-size: 9px;
+  font-weight: 300;
+  color: rgba(155, 145, 125, 0.6);
+  letter-spacing: 0.04em;
+  line-height: 1.4;
+}
+
+/* ── SCORE BARS ── */
+#score-bars {
+  margin-bottom: 0;
+}
+
+.score-bar-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 8px;
+}
+.score-bar-label {
+  font-size: 9px;
+  font-weight: 400;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: rgba(160, 150, 130, 0.6);
+  width: 72px;
+  flex-shrink: 0;
+}
+.score-bar-track {
+  flex: 1;
+  height: 4px;
+  background: rgba(100, 140, 80, 0.1);
+  border-radius: 2px;
+  overflow: hidden;
+}
+.score-bar-fill {
+  height: 100%;
+  border-radius: 2px;
+  transition: width 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+.score-bar-num {
+  font-size: 10px;
+  font-weight: 500;
+  color: rgba(180, 170, 150, 0.7);
+  width: 14px;
+  text-align: right;
+  flex-shrink: 0;
+}
+
+/* ── SIGNAL INTERPRETATION ── */
+#signal-section {
+  background: rgba(60, 90, 45, 0.08);
+  border: 1px solid rgba(100, 140, 80, 0.1);
+  border-radius: 8px;
+  padding: 16px 18px;
+  margin-bottom: 0;
+}
+
+.signal-eyebrow {
+  font-size: 7px;
+  font-weight: 500;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  margin-bottom: 10px;
+  transition: color 0.4s ease;
+}
+
+#signal-text {
+  font-size: 12px;
+  font-weight: 300;
+  line-height: 1.75;
+  color: rgba(195, 208, 178, 0.75);
+  margin-bottom: 10px;
+}
+
+#visitor-impact {
+  font-size: 11px;
+  font-weight: 400;
+  font-style: italic;
+  color: rgba(170, 185, 150, 0.6);
+  line-height: 1.6;
+  padding-top: 10px;
+  border-top: 1px solid rgba(100, 140, 80, 0.08);
+}
+
+/* ── THEMES ── */
+#themes-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+.theme-tag {
+  font-size: 8px;
+  font-weight: 300;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: rgba(140, 190, 110, 0.55);
+  border: 1px solid rgba(100, 150, 80, 0.18);
+  padding: 4px 9px;
+  border-radius: 2px;
+  background: rgba(70, 110, 50, 0.08);
+}
+.theme-tag.country {
+  color: rgba(160, 170, 140, 0.5);
+  border-color: rgba(120, 130, 100, 0.18);
+  background: rgba(80, 90, 60, 0.08);
+}
+
+/* ── EMPTY STATE ── */
+#empty-state {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  opacity: 0.4;
+}
+.empty-icon {
+  width: 32px; height: 32px;
+  opacity: 0.4;
+}
+.empty-text {
+  font-size: 11px;
+  font-weight: 300;
+  letter-spacing: 0.1em;
+  color: rgba(160, 150, 130, 0.7);
+  text-align: center;
+}
+
+/* ── DATA NOTE ── */
+#data-note {
+  font-size: 8px;
+  font-weight: 300;
+  color: rgba(130, 120, 100, 0.38);
+  letter-spacing: 0.06em;
+  line-height: 1.6;
+  border-top: 1px solid rgba(100, 140, 80, 0.07);
+  padding-top: 14px;
+  margin-top: 18px;
+}
+
+/* content sections that animate in */
+.content-section {
+  opacity: 0;
+  transform: translateY(6px);
+  transition: opacity 0.35s ease, transform 0.35s ease;
+}
+.content-section.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+</style>
+</head>
+<body>
+
+<div id="app">
+
+  <!-- LEFT: Zoo selector -->
+  <div id="zoo-panel">
+    <div id="zoo-header">
+      <div class="zoo-header-eyebrow">ReWilded · Research</div>
+      <div class="zoo-header-title">Greenwashing<br>Index</div>
+      <div id="filter-tabs">
+        <button class="filter-tab active" data-filter="all">All</button>
+        <button class="filter-tab" data-filter="over">Over</button>
+        <button class="filter-tab" data-filter="aligned">Aligned</button>
+        <button class="filter-tab" data-filter="risk">Risk</button>
+      </div>
+    </div>
+    <div id="zoo-list"></div>
+  </div>
+
+  <!-- RIGHT: Analysis -->
+  <div id="analysis-panel">
+
+    <!-- Empty state -->
+    <div id="empty-state">
+      <svg class="empty-icon" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M16 28 C16 28 16 16 16 12 C16 8 20 4 26 5 C26 5 24 14 18 18 C22 14 28 12 28 12" stroke="rgba(140,190,115,0.85)" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/>
+        <path d="M16 12 C16 8 12 4 6 5 C6 5 8 14 14 18 C10 14 4 12 4 12" stroke="rgba(110,158,90,0.65)" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+      <div class="empty-text">Select a zoo to<br>view its signal</div>
+    </div>
+
+    <!-- Populated content (hidden until selection) -->
+    <div id="zoo-content" style="display:none; flex-direction:column; gap:0; flex:1;">
+
+      <div class="content-section" id="cs-header">
+        <div id="zoo-name-row">
+          <div id="zoo-name"></div>
+          <div id="zoo-location"></div>
+        </div>
+      </div>
+
+      <div class="content-section" id="cs-gwi">
+        <div id="gwi-section">
+          <div class="section-label">GWI · Greenwashing Index</div>
+          <div id="gwi-track">
+            <div id="gwi-marker"></div>
+          </div>
+          <div id="gwi-labels">
+            <span>Overperformer</span>
+            <span>Aligned</span>
+            <span>Greenwashing Risk</span>
+          </div>
+          <div id="gwi-score-row">
+            <div id="gwi-score-number"></div>
+            <div id="gwi-score-label"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="rule content-section" id="cs-rule1"></div>
+
+      <div class="content-section" id="cs-mission">
+        <div id="mission-section">
+          <div class="section-label">Mission Statement</div>
+          <div id="mission-statement"></div>
+        </div>
+      </div>
+
+      <div class="rule content-section" id="cs-rule2"></div>
+
+      <div class="content-section" id="cs-metrics">
+        <div class="section-label">Financial Signal</div>
+        <div id="metrics-row">
+          <div class="metric-card">
+            <div class="metric-label">Revenue (avg)</div>
+            <div class="metric-value" id="metric-revenue"></div>
+            <div class="metric-sub">annual average<br>2019–2023</div>
+          </div>
+          <div class="metric-card">
+            <div class="metric-label">Conservation Giving</div>
+            <div class="metric-value" id="metric-giving"></div>
+            <div class="metric-sub">annual average<br>direct giving</div>
+          </div>
+          <div class="metric-card">
+            <div class="metric-label">% to Conservation</div>
+            <div class="metric-value" id="metric-pct"></div>
+            <div class="metric-sub">of total revenue<br>directed outward</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="rule content-section" id="cs-rule3"></div>
+
+      <div class="content-section" id="cs-scores">
+        <div class="section-label">Mission vs. Action</div>
+        <div id="score-bars">
+          <div class="score-bar-row">
+            <div class="score-bar-label">Mission</div>
+            <div class="score-bar-track">
+              <div class="score-bar-fill" id="bar-mission" style="background: rgba(180,160,210,0.55);"></div>
+            </div>
+            <div class="score-bar-num" id="num-mission"></div>
+          </div>
+          <div class="score-bar-row">
+            <div class="score-bar-label">Action</div>
+            <div class="score-bar-track">
+              <div class="score-bar-fill" id="bar-action" style="background: rgba(100,170,90,0.65);"></div>
+            </div>
+            <div class="score-bar-num" id="num-action"></div>
+          </div>
+        </div>
+        <div style="font-size:9px; font-weight:300; color:rgba(140,130,110,0.45); letter-spacing:0.06em; margin-top:8px; line-height:1.5;">
+          Mission score measures conservation language in stated mission. Action score measures financial conservation behavior. The gap between them is the GWI.
+        </div>
+      </div>
+
+      <div class="rule content-section" id="cs-rule4"></div>
+
+      <div class="content-section" id="cs-signal">
+        <div id="signal-section">
+          <div class="signal-eyebrow" id="signal-eyebrow"></div>
+          <div id="signal-text"></div>
+          <div id="visitor-impact"></div>
+        </div>
+      </div>
+
+      <div class="content-section" id="cs-themes" style="margin-top:18px;">
+        <div id="themes-row"></div>
+      </div>
+
+      <div class="content-section" id="cs-note">
+        <div id="data-note">
+          Data sourced from IRS 990 filings (2019, 2022, 2023) via ProPublica Nonprofit Explorer.
+          GWI = Mission Score − Action Score. All figures represent averages across available filing years.
+          This analysis is part of the ReWilded research project examining institutional alignment between stated conservation missions and financial behavior.
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+</div>
+
+<script>
+'use strict';
+
+// ── ZOO DATA ──────────────────────────────────────────────────────────
+const ZOOS = [
+  {id:'birmingham-zoo',name:'Birmingham Zoo',city:'Birmingham',state:'AL',gwi:2,ms:2,as:0,pct:0.0,avg_giving:0,avg_rev:13840962.0,statement:'Inspiring passion to conserve the natural world.',themes:[],countries:[],zero:true},
+  {id:'phoenix-zoo',name:'Phoenix Zoo',city:'Phoenix',state:'AZ',gwi:2,ms:5,as:3,pct:0.42,avg_giving:181419.0,avg_rev:42849837.0,statement:'to advance the stewardship and conservation of animals and their habitats while providing experiences that inspire people and motivate them to care for the natural world.',themes:['Species Recovery Ssp','Education Stem','Habitat Restoration'],countries:['Costa Rica','Malaysia','Brazil'],zero:false},
+  {id:'reid-park-zoo',name:'Reid Park Zoo',city:'Tucson',state:'AZ',gwi:1,ms:3,as:2,pct:3.31,avg_giving:363184.0,avg_rev:10955842.0,statement:'To connect people with animals, inspiring the protection of wild animals and wild places.',themes:['Species Recovery Ssp','Education Stem'],countries:[],zero:false},
+  {id:'little-rock-zoo',name:'Little Rock Zoo',city:'Little Rock',state:'AR',gwi:0,ms:3,as:3,pct:0.94,avg_giving:7000,avg_rev:742843.0,statement:'to inspire people to value and conserve our natural world,',themes:['Conservation Org Support','Research Innovation'],countries:[],zero:false},
+  {id:'central-coast-zoo',name:'Central Coast Zoo',city:'Atascadero',state:'CA',gwi:5,ms:5,as:0,pct:0.0,avg_giving:0,avg_rev:187120,statement:'aims to engage its community and visitors by inspiring them to take action for conservation and species preservation',themes:[],countries:[],zero:true},
+  {id:'frezno-chaffee-zoo',name:'Fresno Chaffee Zoo',city:'Fresno',state:'CA',gwi:-2,ms:1,as:3,pct:2.04,avg_giving:677373.0,avg_rev:33134568.0,statement:'Fresno Chaffee Zoo inspires people to care for animals, create connections, build community, and save wildlife.',themes:['Zoo To Zoo Support          Conservation Org Support'],countries:[],zero:false},
+  {id:'living-desert-zoo',name:'Living Desert Zoo',city:'Palm Desert',state:'CA',gwi:1,ms:3,as:2,pct:1.15,avg_giving:328540,avg_rev:28445666.0,statement:'desert conservation through preservation, education, and appreciation',themes:['Zoo To Zoo Support Conservation Org Support Rhino Rescue'],countries:[],zero:false},
+  {id:'los-angeles-zoo',name:'Los Angeles Zoo',city:'Los Angeles',state:'CA',gwi:1,ms:3,as:2,pct:0.0,avg_giving:0.0,avg_rev:23834208.0,statement:'Creating a just and sustainable world where people and wildlife thrive, together',themes:['Conservation Org Support'],countries:[],zero:true},
+  {id:'oakland-zoo',name:'Oakland Zoo',city:'Oakland',state:'CA',gwi:-5,ms:0,as:5,pct:1.21,avg_giving:364299.0,avg_rev:29984242.0,statement:'To deepen connections with animals, save wildlife, and inspire champions for the natural world.',themes:['Conservation Org Support'],countries:['Subsaharah Africa'],zero:false},
+  {id:'sacramento-zoo',name:'Sacramento Zoo',city:'Sacramento',state:'CA',gwi:-1,ms:3,as:4,pct:0.75,avg_giving:89192,avg_rev:11851580.0,statement:'Inspires appreciation, respect and a connection with wildlife and nature through education, recreation and conservation',themes:['Conservation Org Support'],countries:['Subsaharan Africa','South Asia','South America'],zero:false},
+  {id:'san-diego-zoo-safari',name:'San Diego Zoo Safari',city:'San Diego',state:'CA',gwi:0,ms:4,as:4,pct:1.59,avg_giving:6511126.0,avg_rev:408518652,statement:'save species worldwide by uniting its expertise in wildlife care and conservation science with its dedication to inspiring passion for nature',themes:['Conservation Org Support'],countries:['Subsaharah Africa','East Asia','Europe'],zero:false},
+  {id:'san-franscisco-zoo',name:'San Franscisco Zoo',city:'San Francisco',state:'CA',gwi:3,ms:3,as:0,pct:0.0,avg_giving:0,avg_rev:27659156,statement:'connect people with wildlife, inspire caring for nature, and advance conservation action',themes:[],countries:[],zero:true},
+  {id:'santa-barbra-zoo',name:'Santa Barbra Zoo',city:'Santa Barbara',state:'CA',gwi:4,ms:4,as:0,pct:0.0,avg_giving:0,avg_rev:15278070.0,statement:'dedicated to the preservation, conservation, and enhancement of the natural world and its living treasures through education, research, and recreation',themes:[],countries:[],zero:true},
+  {id:'sequoia-park-zoo',name:'Sequoia Park Zoo',city:'Eureka',state:'CA',gwi:-2,ms:2,as:4,pct:3.57,avg_giving:41674.0,avg_rev:1167898.0,statement:'SEQUOIA PARK ZOO INSPIRES CONSERVATION OF THE NATURAL WORLD BY INSTILLING WONDER, RESPECT AND PASSION FOR WILDLIFE',themes:['Conservation Org Support','Research Innovation'],countries:[],zero:false},
+  {id:'cheyenne-mountain-zoo',name:'Cheyenne Mountain Zoo',city:'Colorado Springs',state:'CO',gwi:1,ms:3,as:2,pct:5.17,avg_giving:1500000,avg_rev:29003982.0,statement:'to be a leader in conservation, captive breeding, and animal care, while connecting people with wildlife and wild places through experiences that inspire action',themes:[],countries:[],zero:false},
+  {id:'denver-zoo',name:'Denver Zoo',city:'Denver',state:'CO',gwi:-2,ms:0,as:2,pct:0.89,avg_giving:510110,avg_rev:57396275.0,statement:'Inspire communities to save wildlife for future generations',themes:['Education Stem','Research Innovation','Conservation Org Support'],countries:['Subsaharan Africa','East Asia Pacific','South America'],zero:false},
+  {id:'pueblo-zoo',name:'Pueblo Zoo',city:'Pueblo',state:'CO',gwi:5,ms:5,as:0,pct:0.0,avg_giving:0,avg_rev:2444487,statement:'To empower people to engage in conservation of animals and their natural habitat',themes:[],countries:[],zero:true},
+  {id:'beardsley-zoo',name:'Beardsley Zoo',city:'Bridgeport',state:'CT',gwi:6,ms:6,as:0,pct:0.0,avg_giving:0,avg_rev:5620882.0,statement:'Education, through staff involvement and training, outreach programs, workshops, lectures, docent volunteers, natural animal exhibits, informational and interpretive graphics, and research by utilizing staff, universities and other zoological facilities. Conservation, through participation in in situ and ex situ endangered Recreation, through state-of-the-art exhibit design, well-run visitor services (i.e., food and gift concessions, rides, rest rooms and parking) and maximizing the natural and park-like setting by formal and informal landscaping. species programs such as the Species Survival Program, Zoo Conservation Outreach Group, etc. Also through professional animal and veterinary care and a comprehensive animal management policy.',themes:[],countries:[],zero:true},
+  {id:'brandywine-zoo',name:'Brandywine Zoo',city:'Wilmington',state:'DE',gwi:3,ms:3,as:0,pct:0.0,avg_giving:0,avg_rev:13259519.0,statement:'To enhance and enrich peoples\' understanding and respect of the complex relationships among all living things and inspire wildlife conservation',themes:[],countries:[],zero:true},
+  {id:'brevard-zoo',name:'Brevard Zoo',city:'Melbourne',state:'FL',gwi:-1,ms:1,as:2,pct:0.28,avg_giving:70676,avg_rev:25289985.0,statement:'We Share Our Joy of Nature to Help Wildlife and People Thrive.',themes:['Conservation Org Support'],countries:[],zero:false},
+  {id:'central-florida-zoo',name:'Central Florida Zoo',city:'Sanford',state:'FL',gwi:1,ms:1,as:0,pct:0.0,avg_giving:0,avg_rev:8234055,statement:'create connections that inspire people to take action for wildlife',themes:[],countries:[],zero:true},
+  {id:'jacksonville-zoo',name:'Jacksonville Zoo',city:'Jacksonville',state:'FL',gwi:-4,ms:0,as:4,pct:1.22,avg_giving:390216,avg_rev:31873646.0,statement:'Connecting communities with wildlife and wild places.',themes:['Conservation Org Support','Research Innovation','Education Stem'],countries:['Subsaharan Africa','East Asia Pacific','South America'],zero:false},
+  {id:'naples-zoo',name:'Naples Zoo',city:'Naples',state:'FL',gwi:0,ms:3,as:3,pct:1.03,avg_giving:125000,avg_rev:12125529.0,statement:'To inspire people of all ages to respect, value and help conserve wildlife and our natural world',themes:['Conservation Org Support','Research Innovation','Education Stem'],countries:[],zero:false},
+  {id:'palm-beach-zoo',name:'Palm Beach Zoo',city:'West Palm Beach',state:'FL',gwi:-2,ms:1,as:3,pct:0.6,avg_giving:77291.0,avg_rev:12827814,statement:'inspire people to act on behalf of wildlife and the natural world',themes:['Conservation Org Support'],countries:[],zero:false},
+  {id:'zoo-miami',name:'Zoo Miami',city:'Miami',state:'FL',gwi:-1,ms:3,as:4,pct:1.04,avg_giving:85202.0,avg_rev:8165999.0,statement:'To inspire people through engaging experiences to preserve nature in South Florida and across the globe',themes:['Conservation Org Support'],countries:[],zero:false},
+  {id:'zoo-tampa',name:'Zoo Tampa',city:'Tampa',state:'FL',gwi:1,ms:1,as:0,pct:0.0,avg_giving:0,avg_rev:35882190.0,statement:'Rescue, rehabilitate and care for animals; create exceptional personalized experiences that connect people with wildlife and each other in fun, immersive ways.',themes:[],countries:[],zero:true},
+  {id:'zoo-atlanta',name:'Zoo Atlanta',city:'Atlanta',state:'GA',gwi:4,ms:7,as:3,pct:0.32,avg_giving:119976.0,avg_rev:37215409.0,statement:'We save wildlife and their habitats through conservation, research, education and engaging experiences. Our efforts connect people to animals and inspire conservation action.',themes:['Conservation Org Support','Zoo To Zoo Support'],countries:['Mexico','South America','Sub Saharan Africa'],zero:false},
+  {id:'honolulu-zoo',name:'Honolulu Zoo',city:'Honolulu',state:'HI',gwi:2,ms:4,as:2,pct:0.09,avg_giving:1727,avg_rev:1971396.0,statement:'inspire stewardship of our living world by providing conservation, education, and meaningful experiences to the community',themes:['Conservation Org Support'],countries:[],zero:false},
+  {id:'idaho-falls-zoo',name:'Idaho Falls Zoo',city:'Idaho Falls',state:'ID',gwi:4,ms:4,as:0,pct:0.0,avg_giving:0,avg_rev:622070.0,statement:'to conserve wildlife and inspire conservation action through education and engagement',themes:[],countries:[],zero:true},
+  {id:'zoo-boise',name:'Zoo Boise',city:'Boise',state:'ID',gwi:5,ms:5,as:0,pct:0.0,avg_giving:0,avg_rev:41225.0,statement:'Zoo Boise connects our guests with animals to inspire and involve our community in the conservation of wildlife worldwide',themes:[],countries:[],zero:true},
+  {id:'brookfield-zoo',name:'Brookfield Zoo',city:'Brookfield',state:'IL',gwi:-1,ms:3,as:4,pct:0.53,avg_giving:387419.0,avg_rev:72603821,statement:'inspire conservation leadership by connecting people with wildlife and nature',themes:['Conservation Org Support'],countries:['Subsaharan Africa','Russia','Europe'],zero:false},
+  {id:'cosley-zoo',name:'Cosley Zoo',city:'Wheaton',state:'IL',gwi:3,ms:3,as:0,pct:0.0,avg_giving:0,avg_rev:939627,statement:'To create connections between people and animals that will inspire lifelong conservation of the natural world',themes:[],countries:[],zero:true},
+  {id:'lincoln-park-zoo',name:'Lincoln Park Zoo',city:'Chicago',state:'IL',gwi:2,ms:5,as:3,pct:0.6,avg_giving:309471.0,avg_rev:51614301.0,statement:'Lincoln Park Zoo is dedicated to connecting people with nature by providing a free, family-oriented wildlife experience in the heart of Chicago and by advancing the highest quality of animal care, education, science, and conservation.',themes:['Conservation Org Support'],countries:['Tanzania','Congo'],zero:false},
+  {id:'miller-park-zoo',name:'Miller Park Zoo',city:'Bloomington',state:'IL',gwi:4,ms:4,as:0,pct:0.0,avg_giving:0,avg_rev:502262.0,statement:'Engaging our community in conservation, education and fun.',themes:[],countries:[],zero:true},
+  {id:'peoria-zoo',name:'Peoria Zoo',city:'Peoria',state:'IL',gwi:2,ms:2,as:0,pct:15.17,avg_giving:66667.0,avg_rev:439416.0,statement:'create connections that inspire an appreciation for and encourage actions to conserve the natural world',themes:[],countries:[],zero:false},
+  {id:'scovill-zoo',name:'Scovill Zoo',city:'Decatur',state:'IL',gwi:1,ms:1,as:0,pct:0.0,avg_giving:0,avg_rev:444076.0,statement:'enhance the quality of life for residents and visitors by providing unique recreational and educational opportunities through the enjoyment of animals and nature',themes:[],countries:[],zero:true},
+  {id:'fort-wayne-zoo',name:'Fort Wayne Zoo',city:'Fort Wayne',state:'IN',gwi:-1,ms:1,as:2,pct:1.74,avg_giving:242628.0,avg_rev:13952760.0,statement:'connect kids and animals, strengthen families and inspire people to care',themes:['Conservation Org Support','Research Innovation','Education Stem'],countries:['Egypt','Australia','Cambodia'],zero:false},
+  {id:'indianapolis-zoo',name:'Indianapolis Zoo',city:'Indianapolis',state:'IN',gwi:-3,ms:1,as:4,pct:0.76,avg_giving:350117.0,avg_rev:46255632.0,statement:'to protect nature and inspire people to care for our world',themes:['Zoo To Zoo Support          Conservation Org Support','Research Innovation'],countries:['Subsaharan Africa','East Asia Pacific','Europe'],zero:false},
+  {id:'mesker-park-zoo',name:'Mesker Park Zoo',city:'Evansville',state:'IN',gwi:2,ms:3,as:1,pct:0.13,avg_giving:1667.0,avg_rev:1296628,statement:'Cultivating connections between people and nature that inspire action for our planet.',themes:['Conservation Org Support'],countries:[],zero:false},
+  {id:'potawatomi-zoo',name:'Potawatomi Zoo',city:'South Bend',state:'IN',gwi:3,ms:3,as:0,pct:0.0,avg_giving:0,avg_rev:6339042.0,statement:'to inspire excellence in education, conservation, and improved animal quality of life',themes:[],countries:[],zero:true},
+  {id:'blank-park-zoo',name:'Blank Park Zoo',city:'Des Moines',state:'IA',gwi:2,ms:4,as:2,pct:0.19,avg_giving:13667.0,avg_rev:7271244.0,statement:'The mission of the Blank Park Zoo is to inspire an appreciation of the natural world through conservation, education, research and recreation.',themes:['Conservation Org Support'],countries:[],zero:false},
+  {id:'hutchinson-zoo',name:'Hutchinson Zoo',city:'Hutchinson',state:'KS',gwi:3,ms:3,as:0,pct:24.09,avg_giving:35983.0,avg_rev:149400,statement:'Plains conservation through community engagement, inspiring experiences, and exemplary animal care',themes:[],countries:[],zero:false},
+  {id:'rolling-hills-zoo',name:'Rolling Hills Zoo',city:'Salina',state:'KS',gwi:0,ms:0,as:0,pct:0.0,avg_giving:0,avg_rev:4605716.0,statement:'Touching Hearts • Igniting Passion • Saving Wildlife',themes:[],countries:[],zero:true},
+  {id:'sedgwick-county-zoo',name:'Sedgwick County Zoo',city:'Wichita',state:'KS',gwi:2,ms:2,as:0,pct:0.0,avg_giving:0,avg_rev:20387098,statement:'to inspire respect and conservation of wildlife and wild places',themes:[],countries:[],zero:true},
+  {id:'sunset-zoological-park',name:'Sunset Zoological Park',city:'Manhattan',state:'KS',gwi:2,ms:2,as:0,pct:0.0,avg_giving:0,avg_rev:312117.0,statement:'Inspiring Conservation of the Natural World',themes:[],countries:[],zero:true},
+  {id:'topeka-zoo',name:'Topeka Zoo',city:'Topeka',state:'KS',gwi:4,ms:4,as:0,pct:0.0,avg_giving:0,avg_rev:8315386.0,statement:'to enrich our community through wildlife conservation and education',themes:[],countries:[],zero:true},
+  {id:'louisville-zoo',name:'Louisville Zoo',city:'Louisville',state:'KY',gwi:2,ms:3,as:1,pct:1.89,avg_giving:33316.0,avg_rev:1761431.0,statement:'To better the bond between people and our planet',themes:['Community Outreach','Conservation Org Support'],countries:[],zero:false},
+  {id:'brecs-baton-rouge-zoo',name:'Brec\'S Baton Rouge Zoo',city:'Baton Rouge',state:'LA',gwi:5,ms:5,as:0,pct:0.0,avg_giving:0,avg_rev:484664.0,statement:'The Baton Rouge Zoo connects people with wildlife and the natural world through exceptionally engaging experiences and conservation efforts that impact our world both locally and globally.',themes:[],countries:[],zero:true},
+  {id:'maryland-zoo',name:'Maryland Zoo',city:'Baltimore',state:'MD',gwi:0,ms:3,as:3,pct:0.25,avg_giving:59208.0,avg_rev:23890592.0,statement:'The Zoo’s mission is to engage people in the wonders of the living world through personal encounters with animals, fostering empathy and lifelong support for conservation of wildlife and wild places.',themes:['Conservation Org Support'],countries:['Subsaharan Africa','Central America Caribbean','Russia'],zero:false},
+  {id:'buttonwood-park-zoo',name:'Buttonwood Park Zoo',city:'New Bedford',state:'MA',gwi:2,ms:2,as:0,pct:0.0,avg_giving:0,avg_rev:1169592,statement:'preserving the future of wildlife by creating engaging and educational experiences that connect the community to the natural world',themes:[],countries:[],zero:true},
+  {id:'capron-park-zoo',name:'Capron Park Zoo',city:'Attleboro',state:'MA',gwi:3,ms:3,as:0,pct:0.0,avg_giving:0,avg_rev:43247.0,statement:'to inspire an appreciation for wildlife and the natural world through education, conservation, and recreation.',themes:[],countries:[],zero:true},
+  {id:'zoo-england',name:'Zoo New England',city:'Boston',state:'MA',gwi:-1,ms:1,as:2,pct:0.3,avg_giving:82593,avg_rev:27268277.0,statement:'inspire people to protect and sustain the natural world for future generations bycreating fun and engaging experiences. *also has Stone Zoo included',themes:['Conservation Org Support'],countries:[],zero:false},
+  {id:'binder-park-zoo',name:'Binder Park Zoo',city:'Battle Creek',state:'MI',gwi:3,ms:3,as:0,pct:0.0,avg_giving:0,avg_rev:5934922.0,statement:'Connect. Inspire. Conserve. Connect people with nature. Inspire them to conserve.',themes:[],countries:[],zero:true},
+  {id:'detroit-zoo',name:'Detroit Zoo',city:'Royal Oak',state:'MI',gwi:-4,ms:1,as:5,pct:1.16,avg_giving:604745.0,avg_rev:52139424.0,statement:'To create meaningful connections between people, animals and the natural world so all can thrive.',themes:['Zoo To Zoo Support','Conservation Org Support'],countries:['Subsaharan Africa','East Asia Pacific','Central America Caribbean'],zero:false},
+  {id:'john-ball-zoo',name:'John Ball Zoo',city:'Grand Rapids',state:'MI',gwi:1,ms:3,as:2,pct:0.28,avg_giving:57163.0,avg_rev:20387288,statement:'John Ball Zoo Inspires Our Community To Be Actively Engaged In The Conservation Of Wildlife And Our Natural Environment',themes:['Conservation Org Support'],countries:[],zero:false},
+  {id:'saginaw-childrens-zoo',name:'Saginaw Childrens Zoo',city:'Saginaw',state:'MI',gwi:0,ms:0,as:0,pct:0.0,avg_giving:0,avg_rev:2215921.0,statement:'Transform an ordinary day into an extraordinary experience by interacting with animals, rides, attractions, and Zoo staff.',themes:[],countries:[],zero:true},
+  {id:'como-park-zoo',name:'Como Park Zoo',city:'St Paul',state:'MN',gwi:1,ms:1,as:0,pct:0.0,avg_giving:0,avg_rev:4351349.0,statement:'inspire our public to value the presence of living things in our lives',themes:[],countries:[],zero:true},
+  {id:'lake-supirior-zoo',name:'Lake Supirior Zoo',city:'DuLuth',state:'MN',gwi:2,ms:2,as:0,pct:0.0,avg_giving:0,avg_rev:2458115,statement:'To provide close-up animal experiences that inspire connections with wildlife and action towards conservation in our region and around the world.',themes:[],countries:[],zero:true},
+  {id:'minnesota-zoo',name:'Minnesota Zoo',city:'Apple Valley',state:'MN',gwi:-4,ms:1,as:5,pct:2.4,avg_giving:225510.0,avg_rev:9378067,statement:'To connect people, animals and the natural world to save wildlife.',themes:['Zoo To Zoo Support          Conservation Org Support'],countries:['Subsaharan Africa'],zero:false},
+  {id:'dickerson-park-zoo',name:'Dickerson Park Zoo',city:'Springfield',state:'MO',gwi:-1,ms:3,as:4,pct:0.98,avg_giving:19991.0,avg_rev:2046713.0,statement:'to connect people with animals to create curiosity, encourage discovery, and inspire conservation action',themes:['Conservation Org Support','Research Innovation'],countries:[],zero:false},
+  {id:'kansas-city-zoo',name:'Kansas City Zoo',city:'Kansas City',state:'MO',gwi:-1,ms:3,as:4,pct:0.29,avg_giving:161601.0,avg_rev:55234399.0,statement:'positively change behavior by instilling in all people the desire and knowledge to respect and conserve wildlife and nature',themes:['Conservation Org Support'],countries:['Subsaharan Africa','East Asia Pacific','South America'],zero:false},
+  {id:'st-louis-zoo',name:'St Louis Zoo',city:'St Louis',state:'MO',gwi:5,ms:7,as:2,pct:0.2,avg_giving:77087.0,avg_rev:39272781.0,statement:'To conserve animals and their habitats through animal management, research, recreation, and educational programs that encourage the support and enrich the experience of the public',themes:[],countries:['Subsaharan Africa','South America'],zero:false},
+  {id:'zoo-montana',name:'Zoo Montana',city:'Billings',state:'MT',gwi:-3,ms:1,as:4,pct:2.6,avg_giving:58333.0,avg_rev:2240000.0,statement:'provide an enjoyable, recreational, and educational experience for visitors while also ensuring quality care for its animal and plant collections.',themes:['Community Outreach','Endowment'],countries:[],zero:false},
+  {id:'wildlife-safari-park',name:'Wildlife Safari Park',city:'Ashland',state:'NE',gwi:3,ms:3,as:0,pct:0.0,avg_giving:0,avg_rev:40148834.0,statement:'to promote the viewing and conservation of North American native animals, fostering public appreciation and stewardship of wildlife and wild places.',themes:[],countries:[],zero:true},
+  {id:'lincoln-childrens-zoo',name:'Lincoln Childrens Zoo',city:'Lincoln',state:'NE',gwi:0,ms:0,as:0,pct:0.0,avg_giving:0,avg_rev:9135944.0,statement:'enrich lives through firsthand interaction with living things',themes:[],countries:[],zero:true},
+  {id:'omaha-zoo',name:'Omaha Zoo',city:'Omaha',state:'NE',gwi:3,ms:6,as:3,pct:0.49,avg_giving:352408.0,avg_rev:71849419.0,statement:'to inspire, educate, and engage people to serve as lifelong stewards for the conservation of animals and their habitats,',themes:[],countries:['Africa'],zero:false},
+  {id:'cape-may-zoo',name:'Cape May Zoo',city:'Cape May',state:'NJ',gwi:3,ms:3,as:0,pct:0.0,avg_giving:0,avg_rev:153147,statement:'inspire appreciation and respect for the natural world, create a foundation for preserving it, and increase awareness of conservation.',themes:[],countries:[],zero:true},
+  {id:'turtle-back-zoo',name:'Turtle Back Zoo',city:'West Orange',state:'NJ',gwi:3,ms:3,as:0,pct:0.0,avg_giving:0,avg_rev:2872630.0,statement:'providing an enriching recreational experience that fosters excellence in wildlife education and wildlife conservation',themes:[],countries:[],zero:true},
+  {id:'albuquerque-biological-park',name:'Albuquerque Biological Park',city:'Albuquerque',state:'NM',gwi:1,ms:1,as:0,pct:0.0,avg_giving:0,avg_rev:5750192.0,statement:'connect people with nature and protect the natural world',themes:[],countries:[],zero:true},
+  {id:'buffalo-zoo',name:'Buffalo Zoo',city:'Buffalo',state:'NY',gwi:1,ms:1,as:0,pct:0.0,avg_giving:0,avg_rev:10682862,statement:'build community, create connections, and save wildlife',themes:[],countries:[],zero:true},
+  {id:'rosamond-gifford-zoo',name:'Rosamond Gifford Zoo',city:'Syracuse',state:'NY',gwi:4,ms:4,as:0,pct:0.0,avg_giving:0,avg_rev:3880182.0,statement:'dedicated to connecting people to the natural world by providing engaging guest experiences, exceptional animal care and unparalleled conservation education.',themes:[],countries:[],zero:true},
+  {id:'seneca-park-zoo',name:'Seneca Park Zoo',city:'Rochester',state:'NY',gwi:-1,ms:3,as:4,pct:0.85,avg_giving:46061,avg_rev:5397662,statement:'To inspire the community to connect with, care for, and conserve wildlife and wild places',themes:['Conservation Org Support'],countries:[],zero:false},
+  {id:'staten-island-zoo',name:'Staten Island Zoo',city:'Staten Island',state:'NY',gwi:2,ms:2,as:0,pct:0.0,avg_giving:0,avg_rev:4789741.0,statement:'To be an educational institution that fosters meaningful connections between people, animals, and the natural world.',themes:[],countries:[],zero:true},
+  {id:'utica-zoo',name:'Utica Zoo',city:'Utica',state:'NY',gwi:4,ms:4,as:0,pct:0.0,avg_giving:0,avg_rev:3215384.0,statement:'creates unique experiences and promotes public appreciation of wildlife through education, conservation, and recreation.',themes:[],countries:[],zero:true},
+  {id:'wnc-nature-center',name:'Wnc Nature Center',city:'Asheville',state:'NC',gwi:5,ms:5,as:0,pct:0.0,avg_giving:0,avg_rev:1165317.0,statement:'connect people with the animals and plants of the Southern Appalachian Mountain region, inspiring appreciation, nurturing understanding, and advancing conservation of the region\'s rich biodiversity',themes:[],countries:[],zero:true},
+  {id:'dakota-zoo',name:'Dakota Zoo',city:'Bismarck',state:'ND',gwi:0,ms:0,as:0,pct:0.0,avg_giving:0,avg_rev:2490152.0,statement:'To instill and inspire a better understanding and appreciation for animals and nature.',themes:[],countries:[],zero:true},
+  {id:'red-river-zoo',name:'Red River Zoo',city:'Fargo',state:'ND',gwi:3,ms:3,as:0,pct:0.0,avg_giving:0,avg_rev:1670703.0,statement:'to connect the community to nature and inspire people to help save species.',themes:[],countries:[],zero:true},
+  {id:'roosevelt-park-zoo',name:'Roosevelt Park Zoo',city:'Minot',state:'ND',gwi:3,ms:3,as:0,pct:0.0,avg_giving:0,avg_rev:1790903.0,statement:'to provide education, experiences, and knowledge that promote wildlife understanding and conservation.',themes:[],countries:[],zero:true},
+  {id:'akron-zoological-park',name:'Akron Zoological Park',city:'Akron',state:'OH',gwi:2,ms:4,as:2,pct:0.05,avg_giving:10000,avg_rev:20239196.0,statement:'to connect people with wildlife and inspire lifelong learning and conservation action',themes:['Conservation Org Support'],countries:[],zero:false},
+  {id:'cincinnati-zoo',name:'Cincinnati Zoo',city:'Cincinnati',state:'OH',gwi:2,ms:2,as:0,pct:0.0,avg_giving:0,avg_rev:2453647.0,statement:'to inspire every visitor with wildlife every day, and to engage and cultivate a healthy and sustainable future.',themes:[],countries:[],zero:true},
+  {id:'cleveland-metroparks-zoo',name:'Cleveland Metroparks Zoo',city:'Cleveland',state:'OH',gwi:-2,ms:2,as:4,pct:2.74,avg_giving:325396.0,avg_rev:11890959.0,statement:'Protecting nature, connecting communities and inspiring conservation of our world.',themes:[],countries:['East Asia','Europe','South America'],zero:false},
+  {id:'columbus-zoo',name:'Columbus Zoo',city:'Powell',state:'OH',gwi:-4,ms:1,as:5,pct:2.87,avg_giving:2497749,avg_rev:87077350.0,statement:'Empowering People. Saving Wildlife.',themes:['Conservation Org Support','Research Innovation','Zoo To Zoo Support'],countries:['Subsaharan Africa','East Asia Pacific','Central America Caribbean'],zero:false},
+  {id:'toledo-zoo',name:'Toledo Zoo',city:'Toledo',state:'OH',gwi:-3,ms:2,as:5,pct:0.51,avg_giving:217185.0,avg_rev:42690922.0,statement:'to inspire guests to be advocates for wildlife and conserve the natural world',themes:['Conservation Org Support','Research Innovation'],countries:['East Asia','Europe','South Asia'],zero:false},
+  {id:'the-wilds',name:'The Wilds',city:'Cumberland',state:'OH',gwi:1,ms:1,as:0,pct:0.0,avg_giving:0,avg_rev:8942321.0,statement:'Lead and inspire by connecting people and wildlife.',themes:[],countries:[],zero:true},
+  {id:'oklahoma-zoo',name:'Oklahoma Zoo',city:'Oklahoma City',state:'OK',gwi:0,ms:3,as:3,pct:1.15,avg_giving:43836.0,avg_rev:3824518.0,statement:'To connect people with our world\'s vanishing wildlife and wild places to inspire conservation action',themes:[],countries:['Subsaharan Africa','South America'],zero:false},
+  {id:'oregon-zoo',name:'Oregon Zoo',city:'Portland',state:'OR',gwi:1,ms:1,as:0,pct:0.0,avg_giving:0,avg_rev:10237632,statement:'Inspiring our community to create a better future for wildlife',themes:[],countries:[],zero:true},
+  {id:'wildlife-safari',name:'Wildlife Safari',city:'Winston',state:'OR',gwi:3,ms:3,as:0,pct:0.0,avg_giving:0,avg_rev:6340949.0,statement:'conservation, education, and providing a high-quality experience with wildlife.',themes:[],countries:[],zero:true},
+  {id:'elmwood-park-zoo',name:'Elmwood Park Zoo',city:'Norristown',state:'PA',gwi:2,ms:2,as:0,pct:0.0,avg_giving:0,avg_rev:11348024,statement:'to foster an appreciation for wildlife and the environment that will inspire active participation in conservation.',themes:[],countries:[],zero:true},
+  {id:'lehigh-valley-zoo',name:'Lehigh Valley Zoo',city:'Schnecksville',state:'PA',gwi:1,ms:1,as:0,pct:0.0,avg_giving:0,avg_rev:4242734.0,statement:'connects its community with nature to empower people to protect wildlife.',themes:[],countries:[],zero:true},
+  {id:'national-aviary',name:'National Aviary',city:'Pittsburgh',state:'PA',gwi:-3,ms:0,as:3,pct:0.19,avg_giving:16067.0,avg_rev:8398785.0,statement:'to inspire respect for nature through an appreciation of birds.',themes:[],countries:['Guam','Marina Islands'],zero:false},
+  {id:'philadelphia-zoo',name:'Philadelphia Zoo',city:'Philadelphia',state:'PA',gwi:-2,ms:1,as:3,pct:0.25,avg_giving:108561.0,avg_rev:43489228.0,statement:'to connect people with wildlife and inspire them to take action to save wildlife.',themes:['Conservation Org Support','Education Stem'],countries:['Subsaharan Africa','East Asia Pacific','South America'],zero:false},
+  {id:'pittsburgh-zoo',name:'Pittsburgh Zoo',city:'Pittsburgh',state:'PA',gwi:-1,ms:3,as:4,pct:0.33,avg_giving:85965,avg_rev:26050851.0,statement:'We connect people to wildlife,  inspiring our communities to conserve nature for future generations',themes:['Conservation Org Support'],countries:['Subsaharan Africa','East Asia Pacific','South America'],zero:false},
+  {id:'roger-williams-park-zoo',name:'Roger Williams Park Zoo',city:'Providence',state:'RI',gwi:2,ms:2,as:0,pct:0.0,avg_giving:0,avg_rev:13616470.0,statement:'to conserve wildlife and wild places.',themes:[],countries:[],zero:true},
+  {id:'riverbanks-zoo',name:'Riverbanks Zoo',city:'Columbia',state:'SC',gwi:-2,ms:0,as:2,pct:0.31,avg_giving:32479.0,avg_rev:10407622.0,statement:'We create connections and inspire actions that have a lasting impact on wildlife and wild places.',themes:['Conservation Org Support','Sanctuary'],countries:[],zero:false},
+  {id:'great-plains-zoo',name:'Great Plains Zoo',city:'Sioux Falls',state:'SD',gwi:4,ms:4,as:0,pct:0.0,avg_giving:0,avg_rev:14179998,statement:'Creating connection and inspiring conservation of wild species and spaces.',themes:[],countries:[],zero:true},
+  {id:'chattanooga-zoo',name:'Chattanooga Zoo',city:'Chatanooga',state:'TN',gwi:4,ms:4,as:0,pct:0.0,avg_giving:0,avg_rev:5780888.0,statement:'to engage, educate and inspire our community to better understand and conserve wildlife.',themes:[],countries:[],zero:true},
+  {id:'memphis-zoo',name:'Memphis Zoo',city:'Memphis',state:'TN',gwi:-1,ms:0,as:1,pct:2.24,avg_giving:509490.0,avg_rev:22774844.0,statement:'Creating Adventures. Saving Wildlife.',themes:[],countries:['East Asia Pacific'],zero:false},
+  {id:'nashville-zoo',name:'Nashville Zoo',city:'Nashville',state:'TN',gwi:-2,ms:2,as:4,pct:1.54,avg_giving:570466.0,avg_rev:37046126,statement:'To inspire a culture of understanding and discovery of our natural world through conservation, innovation and leadership.',themes:['Conservation Org Support','Education Stem'],countries:['South America  Sub Saharan Africa','East Asia Pacitic'],zero:false},
+  {id:'zoo-knoxville',name:'Zoo Knoxville',city:'Knoxville',state:'TN',gwi:0,ms:0,as:0,pct:0.0,avg_giving:0,avg_rev:18647705.0,statement:'save animals from extinction.',themes:[],countries:[],zero:true},
+  {id:'caldwell-zoo',name:'Caldwell Zoo',city:'Tyler',state:'TX',gwi:0,ms:1,as:1,pct:0.15,avg_giving:20925.0,avg_rev:14188420.0,statement:'Caldwell Zoo will be a leader in connecting people with wildlife by igniting discovery of the natural world through fun.',themes:[],countries:[],zero:false},
+  {id:'cameron-park-zoo',name:'Cameron Park Zoo',city:'Waco',state:'TX',gwi:4,ms:4,as:0,pct:0.0,avg_giving:0,avg_rev:1882529,statement:'wildlife conservation and research, educating the public about nature, and preserving biological diversity.',themes:[],countries:[],zero:true},
+  {id:'dallas-zoo',name:'Dallas Zoo',city:'Dallas',state:'TX',gwi:-4,ms:1,as:5,pct:0.75,avg_giving:232032.0,avg_rev:31126134,statement:'Engage People & Save Wildlife',themes:['Conservation Org Support'],countries:['South Africa Sub Saharan Africa','France'],zero:false},
+  {id:'fort-worth-zoo',name:'Fort Worth Zoo',city:'Fort Worth',state:'TX',gwi:0,ms:1,as:1,pct:0.24,avg_giving:128224.0,avg_rev:52450773,statement:'to strengthen the bond between humans and the environment by promoting responsible stewardship of wildlife and ensuring diverse, high-quality educational and entertaining family experiences through effective and efficient management of its resources.',themes:['Conservation Org Support'],countries:[],zero:false},
+  {id:'fossil-rim',name:'Fossil Rim',city:'Glen Rose',state:'TX',gwi:-3,ms:0,as:3,pct:0.45,avg_giving:34177.0,avg_rev:7639542.0,statement:'We create a better future for wildlife through our passion, place, and partnerships.',themes:['Conservation Org Support'],countries:[],zero:false},
+  {id:'houston-zoo',name:'Houston Zoo',city:'Houston',state:'TX',gwi:-5,ms:0,as:5,pct:4.2,avg_giving:3147576,avg_rev:74871877,statement:'Connect communities with animals, inspiring action to save wildlife.',themes:['Conservation Org Support','Research Innovation'],countries:['Subsaharan Africa','East Asia Pacific','South America'],zero:false},
+  {id:'san-antonio-zoo',name:'San Antonio Zoo',city:'San Antonio',state:'TX',gwi:-1,ms:1,as:2,pct:0.13,avg_giving:61009,avg_rev:45358257.0,statement:'to inspire people to love, engage with, act for, and protect animals and the places they live',themes:[],countries:['South America'],zero:false},
+  {id:'hogle-zoo',name:'Hogle Zoo',city:'Salt Lake City',state:'UT',gwi:-3,ms:1,as:4,pct:1.2,avg_giving:254333.0,avg_rev:21254178.0,statement:'Create champions for wildlife by making connections between people and animals to inspire action.',themes:['Conservation Org Support'],countries:['Subsaharan Africa','East Asia Pacific'],zero:false},
+  {id:'virginia-zoo',name:'Virginia Zoo',city:'Norfolk',state:'VA',gwi:3,ms:3,as:0,pct:0.0,avg_giving:0,avg_rev:5767138.0,statement:'engaging our community in taking action to save the world\'s wildlife and their ecosystems.',themes:[],countries:[],zero:true},
+  {id:'northwest-trek-wildlife-park',name:'Northwest Trek Wildlife Park',city:'Eatonville',state:'WA',gwi:2,ms:2,as:0,pct:0.0,avg_giving:0,avg_rev:526494.0,statement:'WE CONSERVE WILDLIFE',themes:[],countries:[],zero:true},
+  {id:'woodland-park-zoo',name:'Woodland Park Zoo',city:'Seattle',state:'WA',gwi:-5,ms:0,as:5,pct:3.2,avg_giving:1834001,avg_rev:57314105,statement:'Empower',themes:['Conservation Org Support'],countries:['Subsaharan Africa','East Asia Pacific','South America'],zero:false},
+  {id:'oglebay-good-zoo',name:'Oglebay Good Zoo',city:'Wheeling',state:'WV',gwi:2,ms:2,as:0,pct:0.0,avg_giving:0,avg_rev:5972071.0,statement:'Inspiring wildlife conservation and animal wellbeing through memorable experiences.',themes:[],countries:[],zero:true},
+  {id:'milwaukee-zoo',name:'Milwaukee Zoo',city:'Milwaukee',state:'WI',gwi:5,ms:7,as:2,pct:2.37,avg_giving:241195.0,avg_rev:10178958,statement:'to inspire public understanding, support, and participation in global conservation of animal species and their environment.',themes:['Conservation Org Support'],countries:['Subsaharan Africa','Europe'],zero:false},
+  {id:'new-zoo',name:'New Zoo',city:'Green Bay',state:'WI',gwi:1,ms:1,as:0,pct:0.0,avg_giving:0,avg_rev:874695.0,statement:'to connect the community with wildlife and nature through engaging, interactive experiences.',themes:[],countries:[],zero:true},
+  {id:'racine-zoo',name:'Racine Zoo',city:'Racine',state:'WI',gwi:1,ms:1,as:0,pct:0.0,avg_giving:0,avg_rev:3742784.0,statement:'To foster an enlightening and affordable wildlife experience that improves the bond between people and nature.',themes:[],countries:[],zero:true}
+];
+
+// ── HELPERS ──────────────────────────────────────────────────────────
+function gwi_color(gwi) {
+  if (gwi <= -4)  return '#6ab54f';
+  if (gwi <= -2)  return '#8dc46a';
+  if (gwi <= -1)  return '#a8c882';
+  if (gwi === 0)  return '#c8b98a';
+  if (gwi <= 2)   return '#c89a5a';
+  if (gwi <= 4)   return '#c07040';
+  return '#a8442a';
+}
+
+function gwi_label(gwi) {
+  if (gwi <= -4) return 'Overperformer';
+  if (gwi <= -1) return 'Under-claims';
+  if (gwi === 0) return 'Aligned';
+  if (gwi <= 2)  return 'Slight Gap';
+  if (gwi <= 4)  return 'Notable Gap';
+  return 'Greenwashing Risk';
+}
+
+function gwi_signal(zoo) {
+  const { gwi, pct, zero, ms, as: as_ } = zoo;
+  const pctStr = pct.toFixed(2) + '%';
+
+  if (gwi <= -4) return {
+    label: 'Signal: Overperformer',
+    text: `This institution gives ${pctStr} of revenue to direct conservation — and says very little about it. The gap between low mission language and high financial action is a signal of genuine institutional commitment rather than narrative management.`,
+    impact: `Visitors likely feel sincerity without being asked for it. Trust is earned quietly.`
+  };
+  if (gwi <= -1) return {
+    label: 'Signal: Under-claims',
+    text: `Financial action is outpacing stated mission. This zoo gives ${pctStr} of revenue to conservation while its mission language stays measured. Often a sign that the institution is doing the work without over-marketing it.`,
+    impact: `Visitors may not realize the scale of what this institution funds — a legibility problem worth designing for.`
+  };
+  if (gwi === 0) return {
+    label: 'Signal: Aligned',
+    text: `Mission language and financial behavior are in balance. ${pct > 0 ? `At ${pctStr} of revenue to conservation,` : `Despite`} this institution's stated commitments ${pct > 0 ? 'track' : 'don\'t exceed'} its financial behavior — a relatively rare condition across AZA institutions.`,
+    impact: `Visitors are unlikely to feel friction between what is said and what is done. Baseline trust holds.`
+  };
+  if (gwi <= 2) return {
+    label: 'Signal: Slight Gap',
+    text: `Mission language is beginning to outpace financial action. ${zero ? 'With zero direct conservation giving,' : `At ${pctStr} of revenue to conservation,`} this institution's stated commitments exceed its demonstrated financial behavior — a common but worth-noting pattern.`,
+    impact: `Visitors who probe beyond the surface may sense this misalignment. Transparency mechanisms would reduce this risk.`
+  };
+  if (gwi <= 4) return {
+    label: 'Signal: Notable Gap',
+    text: `There is a meaningful gap between what is claimed and what is financially demonstrated. ${zero ? 'Zero direct conservation giving' : `Only ${pctStr} to conservation`} against a high-commitment mission score suggests that conservation is performing a narrative role rather than a financial one.`,
+    impact: `Visitors are likely to feel this dissonance — a sense that something doesn't add up, even if they can't name it. This is the feeling ReWilded is designed to interpret.`
+  };
+  return {
+    label: 'Signal: Greenwashing Risk',
+    text: `This institution's mission language scores among the highest in the dataset, while its financial conservation behavior ${zero ? 'is absent entirely' : `is minimal at ${pctStr} of revenue`}. The gap between claim and action is the definition of institutional greenwashing — not necessarily intentional, but structurally present.`,
+    impact: `Visitors are encountering a system that tells them one story while operating on a different set of priorities. This gap erodes long-term trust even when individual experiences feel positive.`
+  };
+}
+
+function fmt_money(n) {
+  if (n === 0) return '$0';
+  if (n >= 1000000) return '$' + (n / 1000000).toFixed(1) + 'M';
+  if (n >= 1000) return '$' + Math.round(n / 1000) + 'K';
+  return '$' + n;
+}
+
+// ── RENDER ZOO LIST ──────────────────────────────────────────────────
+let currentFilter = 'all';
+let selectedId = null;
+
+function filter_fn(filter, gwi) {
+  if (filter === 'all') return true;
+  if (filter === 'over') return gwi < 0;
+  if (filter === 'aligned') return gwi === 0;
+  if (filter === 'risk') return gwi > 0;
+  return true;
+}
+
+function renderList() {
+  const list = document.getElementById('zoo-list');
+  list.innerHTML = '';
+  const sorted = [...ZOOS].sort((a, b) => a.gwi - b.gwi);
+  sorted.forEach(zoo => {
+    if (!filter_fn(currentFilter, zoo.gwi)) return;
+    const item = document.createElement('div');
+    item.className = 'zoo-item' + (zoo.id === selectedId ? ' active' : '');
+    item.dataset.id = zoo.id;
+    const color = gwi_color(zoo.gwi);
+    item.innerHTML = `
+      <div class="zoo-gwi-dot" style="background:${color};"></div>
+      <div class="zoo-item-text">
+        <div class="zoo-item-name">${zoo.name}</div>
+        <div class="zoo-item-city">${zoo.city}, ${zoo.state}</div>
+      </div>
+      <div class="zoo-gwi-badge" style="color:${color};">${zoo.gwi > 0 ? '+' : ''}${zoo.gwi}</div>
+    `;
+    item.addEventListener('click', () => selectZoo(zoo.id));
+    list.appendChild(item);
+  });
+}
+
+// ── RENDER ANALYSIS ──────────────────────────────────────────────────
+function selectZoo(id) {
+  selectedId = id;
+  const zoo = ZOOS.find(z => z.id === id);
+  if (!zoo) return;
+
+  // Update list selection
+  document.querySelectorAll('.zoo-item').forEach(el => {
+    el.classList.toggle('active', el.dataset.id === id);
+  });
+
+  // Hide empty, show content
+  document.getElementById('empty-state').style.display = 'none';
+  const content = document.getElementById('zoo-content');
+  content.style.display = 'flex';
+
+  // Reset animations
+  document.querySelectorAll('.content-section').forEach(el => el.classList.remove('visible'));
+
+  // Populate data
+  const color = gwi_color(zoo.gwi);
+  const label = gwi_label(zoo.gwi);
+  const signal = gwi_signal(zoo);
+
+  document.getElementById('zoo-name').textContent = zoo.name;
+  document.getElementById('zoo-location').textContent = `${zoo.city}, ${zoo.state}`;
+  document.getElementById('mission-statement').textContent = `"${zoo.statement}"`;
+
+  // GWI marker position: scale -5 to 6 → 4% to 96%
+  const min_gwi = -5, max_gwi = 6;
+  const pct_pos = ((zoo.gwi - min_gwi) / (max_gwi - min_gwi)) * 92 + 4;
+  document.getElementById('gwi-marker').style.left = pct_pos + '%';
+
+  // GWI score
+  const scoreEl = document.getElementById('gwi-score-number');
+  scoreEl.textContent = (zoo.gwi > 0 ? '+' : '') + zoo.gwi;
+  scoreEl.style.color = color;
+
+  const labelEl = document.getElementById('gwi-score-label');
+  labelEl.textContent = label;
+  labelEl.style.color = color;
+
+  // Metrics
+  document.getElementById('metric-revenue').textContent = fmt_money(zoo.avg_rev);
+  document.getElementById('metric-revenue').style.color = 'rgba(195,210,178,0.85)';
+
+  const givingEl = document.getElementById('metric-giving');
+  givingEl.textContent = fmt_money(zoo.avg_giving);
+  givingEl.style.color = zoo.zero ? '#c07040' : 'rgba(195,210,178,0.85)';
+
+  const pctEl = document.getElementById('metric-pct');
+  pctEl.textContent = zoo.pct.toFixed(2) + '%';
+  pctEl.style.color = zoo.pct === 0 ? '#c07040' : zoo.pct >= 2 ? '#7ab85e' : 'rgba(195,210,178,0.85)';
+
+  // Score bars — max score in dataset is 7
+  const MAX_SCORE = 7;
+  document.getElementById('bar-mission').style.width = (zoo.ms / MAX_SCORE * 100) + '%';
+  document.getElementById('bar-action').style.width  = (zoo.as / MAX_SCORE * 100) + '%';
+  document.getElementById('num-mission').textContent = zoo.ms;
+  document.getElementById('num-action').textContent  = zoo.as;
+
+  // Signal
+  document.getElementById('signal-eyebrow').textContent = signal.label;
+  document.getElementById('signal-eyebrow').style.color = color;
+  document.getElementById('signal-text').textContent = signal.text;
+  document.getElementById('visitor-impact').textContent = signal.impact;
+
+  // Themes
+  const themesRow = document.getElementById('themes-row');
+  themesRow.innerHTML = '';
+  zoo.themes.forEach(t => {
+    const tag = document.createElement('div');
+    tag.className = 'theme-tag';
+    tag.textContent = t;
+    themesRow.appendChild(tag);
+  });
+  zoo.countries.forEach(c => {
+    const tag = document.createElement('div');
+    tag.className = 'theme-tag country';
+    tag.textContent = c;
+    themesRow.appendChild(tag);
+  });
+  document.getElementById('cs-themes').style.display = (zoo.themes.length + zoo.countries.length) > 0 ? '' : 'none';
+
+  // Animate sections in with stagger
+  const sections = document.querySelectorAll('.content-section');
+  sections.forEach((el, i) => {
+    setTimeout(() => el.classList.add('visible'), i * 45);
+  });
+}
+
+// ── FILTER TABS ──────────────────────────────────────────────────────
+document.querySelectorAll('.filter-tab').forEach(tab => {
+  tab.addEventListener('click', () => {
+    document.querySelectorAll('.filter-tab').forEach(t => t.classList.remove('active'));
+    tab.classList.add('active');
+    currentFilter = tab.dataset.filter;
+    renderList();
+  });
+});
+
+// ── INIT ─────────────────────────────────────────────────────────────
+renderList();
+
+// Auto-select a mid-range zoo to show the UI populated on load
+setTimeout(() => selectZoo('phoenix-zoo'), 200);
+</script>
+</body>
+</html>

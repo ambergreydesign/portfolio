@@ -1,0 +1,809 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Glidance — BLV Ecosystem Map</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --pink:#E31B6D; --navy:#1E3A5F; --purple:#6B2D8B;
+  --teal:#0D9488; --sage:#7C8C6E; --org:#8B6BAE; --edu:#9B8CB4;
+  --bg:#F8F7FC; --surface:#FFFFFF; --border:#E4E1EF;
+  --text:#1A1730; --muted:#6B6685;
+}
+html{scroll-behavior:smooth}
+body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);line-height:1.5;overflow-x:hidden}
+
+/* ══ TOOL SHELL ══ */
+.tool{
+  background:var(--surface);
+  border-top:3px solid var(--pink);
+  border-bottom:1px solid var(--border);
+}
+
+/* 3-column grid */
+.tool-grid{
+  display:grid;
+  grid-template-columns:260px 1fr 300px;
+  height:660px;
+  overflow:hidden;
+}
+
+/* ── COL 1: Persona list ── */
+.col-personas{
+  border-right:1px solid var(--border);
+  display:flex;flex-direction:column;overflow:hidden;
+}
+.col-header{
+  padding:1rem 1.25rem .875rem;
+  border-bottom:1px solid var(--border);
+}
+.col-header .eyebrow{
+  font-size:.62rem;font-weight:700;letter-spacing:.12em;
+  text-transform:uppercase;color:var(--pink);margin-bottom:.3rem;
+}
+.col-header h2{font-size:.95rem;font-weight:700;margin-bottom:.15rem}
+.col-header p{font-size:.75rem;color:var(--muted);line-height:1.4}
+
+.p-list{flex:1;padding:.5rem .5rem;display:flex;flex-direction:column;gap:.2rem;overflow:hidden}
+.p-btn{
+  display:flex;align-items:center;gap:.65rem;
+  width:100%;padding:.55rem .75rem;border-radius:10px;
+  border:none;background:none;cursor:pointer;text-align:left;
+  transition:background .18s;position:relative;
+}
+.p-btn:hover{background:#F5F3FA}
+.p-btn.active{background:#F5F3FA}
+.p-btn.active::before{
+  content:'';position:absolute;left:0;top:20%;height:60%;
+  width:3px;border-radius:0 2px 2px 0;background:var(--accent,var(--pink));
+}
+.p-avatar{
+  width:32px;height:32px;border-radius:50%;flex-shrink:0;
+  display:flex;align-items:center;justify-content:center;
+  font-weight:800;font-size:.78rem;color:white;
+}
+.p-meta{flex:1;min-width:0}
+.p-name{font-size:.82rem;font-weight:700;line-height:1.2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.p-type{font-size:.68rem;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.p-badge{
+  display:inline-block;font-size:.58rem;font-weight:700;padding:.18rem .5rem;border-radius:5px;
+  text-transform:uppercase;letter-spacing:.04em;margin-top:.25rem;
+}
+
+/* ── Persona list sections ── */
+.p-overview-btn{
+  border-bottom:1px solid var(--border);
+  margin-bottom:.25rem;padding-bottom:.6rem;
+}
+.p-section-header{
+  padding:.6rem .75rem .2rem;
+  font-size:.6rem;font-weight:700;letter-spacing:.1em;
+  text-transform:uppercase;color:var(--muted);
+}
+.ale-section{
+  border-top:1px solid var(--border);
+  margin-top:.35rem;padding-top:.6rem;
+}
+.ale-hint{
+  font-size:.68rem;font-weight:400;text-transform:none;
+  letter-spacing:0;color:var(--muted);opacity:.75;
+  font-style:italic;line-height:1.35;margin-top:.15rem;
+}
+.p-badge.ale-badge{
+  background:transparent!important;
+  border:1.5px solid currentColor;
+}
+
+/* ── COL 2: Wheel ── */
+.col-wheel{
+  display:flex;align-items:center;justify-content:center;
+  padding:1.25rem;position:relative;
+}
+#wheelWrap{position:relative;width:100%;max-height:100%;aspect-ratio:1;align-self:center}
+#wheelSvg{width:100%;height:100%}
+.wheel-avatar{
+  position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);
+  width:23%;aspect-ratio:1;border-radius:50%;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  text-align:center;pointer-events:none;transition:background .4s;
+  border:3px solid white;box-shadow:0 3px 16px rgba(0,0,0,.14);
+}
+.wheel-avatar .av-init{font-size:1.3rem;font-weight:900;color:white;line-height:1}
+.wheel-avatar .av-name{font-size:.45rem;font-weight:600;color:rgba(255,255,255,.7);letter-spacing:.06em;text-transform:uppercase;margin-top:.1rem}
+
+/* wheel tooltip */
+.w-tip{
+  position:absolute;background:#1A1730;color:white;padding:.4rem .8rem;
+  border-radius:8px;font-size:.74rem;font-weight:600;pointer-events:none;
+  opacity:0;transition:opacity .12s;white-space:nowrap;z-index:9;
+  transform:translate(-50%,-120%);
+}
+
+/* legend — compact pill, bottom-right of wheel column */
+.wheel-legend{
+  position:absolute;bottom:.75rem;right:.75rem;
+  display:flex;flex-direction:row;align-items:center;gap:.65rem;
+  background:rgba(248,247,252,0.92);
+  border:1px solid var(--border);
+  border-radius:8px;padding:.3rem .6rem;
+  backdrop-filter:blur(4px);
+}
+.leg-item{display:flex;align-items:center;gap:.3rem;font-size:.6rem;color:var(--muted);white-space:nowrap}
+.leg-swatch{width:14px;height:7px;border-radius:2px;flex-shrink:0}
+.leg-swatch.strong{background:var(--pink)}
+.leg-swatch.weak{background:transparent;border:2px solid var(--org)}
+.leg-swatch.none{background:#EAE8F0}
+
+/* ── COL 3: Narrative ── */
+.col-narrative{
+  border-left:1px solid var(--border);
+  display:flex;flex-direction:column;overflow:hidden;
+}
+.narrative-body{
+  flex:1;padding:1.5rem 1.5rem 1rem;overflow-y:auto;
+}
+.narrative-body .empty{font-size:.85rem;color:var(--muted);padding-top:.5rem}
+.narrative-body h3{font-size:1.35rem;font-weight:800;margin-bottom:.2rem}
+.narrative-body .tagline{font-size:.85rem;color:var(--muted);margin-bottom:1.1rem;line-height:1.6}
+.conn-group{margin-bottom:1rem}
+.conn-label{font-size:.63rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:.5rem}
+.chips{display:flex;flex-wrap:wrap;gap:.35rem}
+.chip{display:inline-block;padding:.28rem .65rem;border-radius:7px;font-size:.76rem;font-weight:600;transition:transform .15s}
+.chip.strong{color:white}
+.chip.weak{background:transparent!important;border:2px solid;color:inherit}
+.chip.none{background:#F0EDF8;color:var(--muted);border:1px solid var(--border)}
+
+/* resource drawer */
+.res-drawer{
+  border-top:1px solid var(--border);padding:1rem 1.5rem;min-height:80px;
+  background:#FAFAF9;
+}
+.res-drawer .drawer-hint{font-size:.8rem;color:var(--muted)}
+.res-drawer h5{font-size:.82rem;font-weight:700;margin-bottom:.5rem}
+.res-drawer .res-tags{display:flex;flex-wrap:wrap;gap:.35rem;margin-bottom:.5rem}
+.res-tag{padding:.25rem .7rem;border-radius:7px;font-size:.76rem;font-weight:600;color:white}
+.res-tag.weak{color:var(--text);background:#E4E1EF!important;border:1px solid #C5BFDB}
+.res-tag.none{color:var(--muted);background:#EDEBF5;border:1px solid var(--border)}
+.res-note{font-size:.75rem;color:var(--muted);line-height:1.5}
+
+/* ══ ALE SECTION ══ */
+.ales{background:var(--bg);border-top:1px solid var(--border);padding:2rem 0}
+.wrap{max-width:1200px;margin:0 auto;padding:0 1.5rem}
+.eyebrow{font-size:.68rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--pink);margin-bottom:.3rem}
+.section-title{font-size:1.5rem;font-weight:800;margin-bottom:.4rem}
+.section-sub{font-size:.875rem;color:var(--muted);margin-bottom:1.25rem;max-width:580px;line-height:1.65}
+.insight-bar{
+  display:flex;align-items:center;gap:1rem;
+  background:#1A1730;border-radius:12px;padding:1rem 1.25rem;
+  margin-bottom:1.25rem;
+}
+.insight-bar p{font-size:.85rem;font-weight:500;color:rgba(255,255,255,.8);line-height:1.5}
+.ale-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:1rem}
+.ale-card{
+  background:var(--surface);border-radius:14px;padding:1.1rem;
+  border:2px solid var(--border);cursor:pointer;
+  transition:all .22s;text-align:center;
+}
+.ale-card:hover{border-color:#C5BFDB;transform:translateY(-2px);box-shadow:0 8px 20px rgba(0,0,0,.06)}
+.ale-card.active{border-color:var(--pink);box-shadow:0 0 0 3px rgba(227,27,109,.1)}
+.ale-mini{width:76px;height:76px;display:block;margin:0 auto .65rem}
+.ale-card h4{font-size:.95rem;font-weight:700;margin-bottom:.2rem}
+.ale-card .ale-sub{font-size:.76rem;color:var(--muted);line-height:1.45;margin-bottom:.6rem}
+.ale-badge{display:inline-block;padding:.2rem .65rem;border-radius:6px;font-size:.7rem;font-weight:700;color:white}
+.ale-expand{
+  background:var(--surface);border-radius:14px;padding:1.5rem;
+  border:1px solid var(--border);margin-top:1rem;display:none;
+}
+.ale-expand.open{display:grid;grid-template-columns:1fr 200px;gap:1.5rem;align-items:start}
+
+/* ══ CONCEPTS ══ */
+.concepts{border-top:1px solid var(--border);padding:2rem 0}
+.concepts-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:.75rem}
+.c-card{
+  background:var(--surface);border-radius:12px;padding:1rem 1.1rem;
+  border:1px solid var(--border);display:flex;align-items:center;gap:.8rem;
+  transition:transform .18s,box-shadow .18s;
+}
+.c-card:hover{transform:translateY(-2px);box-shadow:0 6px 18px rgba(0,0,0,.06)}
+.c-num{width:36px;height:36px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:.78rem;font-weight:800;color:white;flex-shrink:0}
+.c-name{font-size:.85rem;font-weight:700;margin-bottom:.1rem}
+.c-area{font-size:.7rem;color:var(--muted)}
+
+/* scroll fade */
+.fade{opacity:0;transform:translateY(18px);transition:opacity .55s,transform .55s}
+.fade.in{opacity:1;transform:none}
+
+/* responsive */
+@media(max-width:1000px){
+  .tool-grid{grid-template-columns:220px 1fr 260px}
+}
+@media(max-width:780px){
+  .tool-grid{grid-template-columns:1fr}
+  .col-personas{border-right:none;border-bottom:1px solid var(--border)}
+  .col-narrative{border-left:none;border-top:1px solid var(--border)}
+  .ale-grid{grid-template-columns:repeat(2,1fr)}
+  .ale-expand.open{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+
+<!-- ══ TOOL ══ -->
+<div class="tool" id="tool">
+  <div class="tool-grid">
+
+    <!-- COL 1: Persona selector -->
+    <div class="col-personas">
+      <div class="p-list" id="personaList"></div>
+    </div>
+
+    <!-- COL 2: Wheel -->
+    <div class="col-wheel">
+      <div id="wheelWrap">
+        <svg id="wheelSvg" viewBox="0 0 700 700"></svg>
+        <div class="wheel-avatar" id="wheelAvatar" style="background:#D0CBDE">
+          <span class="av-init" id="avInit">?</span>
+          <span class="av-name" id="avName">—</span>
+        </div>
+        <div class="w-tip" id="wheelTip"></div>
+      </div>
+      <div class="wheel-legend">
+        <div class="leg-item"><div class="leg-swatch strong"></div><span>Strong — regularly uses</span></div>
+        <div class="leg-item"><div class="leg-swatch weak"></div><span>Weak — limited connection</span></div>
+        <div class="leg-item"><div class="leg-swatch none"></div><span>None — disconnected</span></div>
+      </div>
+    </div>
+
+    <!-- COL 3: Narrative + resource drawer -->
+    <div class="col-narrative">
+      <div class="narrative-body" id="narrativeBody">
+        <p class="empty">Select a persona to see their ecosystem story.</p>
+      </div>
+      <div class="res-drawer" id="resDrawer">
+        <p class="drawer-hint">Click a wheel segment to explore its resources.</p>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ══ ALEs ══ -->
+<div class="ales" id="ales">
+  <div class="wrap">
+    <div class="fade">
+      <div class="eyebrow">Actual Lived Experiences</div>
+      <h2 class="section-title">Comparing Experiences</h2>
+      <p class="section-sub">4 ALEs mapped onto the ecosystem — showing how differently each person navigates the same support landscape.</p>
+      <div class="insight-bar">
+        <span style="font-size:1.1rem">💡</span>
+        <p>Entry into the ecosystem almost always starts with <strong style="color:white">family or a healthcare provider</strong> — confirmed across all 4 ALEs.</p>
+      </div>
+    </div>
+    <div class="ale-grid fade" id="aleGrid"></div>
+    <div class="ale-expand" id="aleExpand"></div>
+  </div>
+</div>
+
+<!-- ══ CONCEPTS ══ -->
+<div class="concepts" id="concepts">
+  <div class="wrap">
+    <div class="fade">
+      <div class="eyebrow">Design Outcomes</div>
+      <h2 class="section-title">11 Concepts Connected to the Ecosystem</h2>
+      <p class="section-sub" style="margin-bottom:1.25rem">Each concept addresses a specific gap — together forming a strategy to reach the missing 98%.</p>
+    </div>
+    <div class="concepts-grid fade" id="conceptsGrid"></div>
+  </div>
+</div>
+
+<script>
+// ──────────────────────────────────────
+// DATA
+// ──────────────────────────────────────
+const AREAS = [
+  { id:'healthcare', name:'Healthcare\nProviders',        short:'Healthcare',        color:'#E31B6D', angle:48,
+    resources:['BLV Vision Specialist','Mental Health Services for BLV'] },
+  { id:'family',     name:'Caregiver &\nFamily Support',  short:'Caregiver & Family', color:'#1E3A5F', angle:55,
+    resources:['Family Care Services','Caregiver Training'] },
+  { id:'assistive',  name:'Assistive\nTechnologies',      short:'Assistive Tech',    color:'#6B2D8B', angle:52,
+    resources:['Daily Living Aids','Communication Aids','Mobility Aids'] },
+  { id:'orgs',       name:'Organizations',                short:'Organizations',     color:'#8B6BAE', angle:58,
+    resources:['National Foundation of the Blind','American Foundation for the Blind','American Council of the Blind','Canadian National Institute for the Blind'] },
+  { id:'education',  name:'Educational &\nRehab Services',short:'Education & Rehab', color:'#9B8CB4', angle:55,
+    resources:['Braille / Reading','Orientation & Mobility','Assistive Technology Training'] },
+  { id:'social',     name:'Social\nNetworks',             short:'Social Networks',   color:'#0D9488', angle:54,
+    resources:['Peer-to-Peer Mentoring','Reddit','Slack / Discord','Facebook'] },
+  { id:'financial',  name:'Financial\nSupport',           short:'Financial Support', color:'#7C8C6E', angle:46,
+    resources:['Government Grants','Non-Profits','Employment Assistance / Job Training','Legal-Aid','Insurance Providers'] },
+];
+
+const PERSONAS = [
+  { id:'sally', name:'Safety Sally', initials:'SS', accent:'#E31B6D', type:'Cautious Adapter', modeLabel:'Healthcare-first',
+    tagline:'Relies on her doctor and family to guide her through vision loss. Hasn\'t explored most of the ecosystem on her own.',
+    connections:{
+      healthcare:{ level:'strong', note:'BLV Vision Specialist is her primary touchpoint.',       resourceLevels:{'BLV Vision Specialist':'strong','Mental Health Services for BLV':'none'} },
+      family:    { level:'strong', note:'Her family arranges appointments and daily support.',     resourceLevels:{'Family Care Services':'strong','Caregiver Training':'none'} },
+      assistive: { level:'none',   note:'Has not explored assistive tech independently.',          resourceLevels:{'Daily Living Aids':'none','Communication Aids':'none','Mobility Aids':'none'} },
+      orgs:      { level:'none',   note:'Not connected to any national organisations.',            resourceLevels:{'National Foundation of the Blind':'none','American Foundation for the Blind':'none','American Council of the Blind':'none','Canadian National Institute for the Blind':'none'} },
+      education: { level:'none',   note:'No current engagement with rehab services.',             resourceLevels:{'Braille / Reading':'none','Orientation & Mobility':'none','Assistive Technology Training':'none'} },
+      social:    { level:'none',   note:'Not connected to peer communities.',                     resourceLevels:{'Peer-to-Peer Mentoring':'none','Reddit':'none','Slack / Discord':'none','Facebook':'none'} },
+      financial: { level:'weak',   note:'Covered through insurance providers only.',              resourceLevels:{'Government Grants':'none','Non-Profits':'none','Employment Assistance / Job Training':'none','Legal-Aid':'none','Insurance Providers':'weak'} },
+    }
+  },
+  { id:'george', name:'Explorer George', initials:'EG', accent:'#0D9488', type:'Independent Explorer', modeLabel:'Tech-forward',
+    tagline:'Determined to travel independently. Actively uses assistive technology and online communities — but avoids formal institutions.',
+    connections:{
+      healthcare:{ level:'none',   note:'Lifelong BLV — no current healthcare provider connection.', resourceLevels:{'BLV Vision Specialist':'none','Mental Health Services for BLV':'none'} },
+      family:    { level:'weak',   note:'Family is a social outlet, not primary support.',           resourceLevels:{'Family Care Services':'weak','Caregiver Training':'none'} },
+      assistive: { level:'strong', note:'Uses daily living aids, mobility tools, and communication tech.', resourceLevels:{'Daily Living Aids':'strong','Communication Aids':'strong','Mobility Aids':'strong'} },
+      orgs:      { level:'weak',   note:'Aware of NFB and AFB but not actively engaged.',            resourceLevels:{'National Foundation of the Blind':'weak','American Foundation for the Blind':'weak','American Council of the Blind':'none','Canadian National Institute for the Blind':'none'} },
+      education: { level:'none',   note:'Self-taught — has not used formal rehab services.',         resourceLevels:{'Braille / Reading':'none','Orientation & Mobility':'none','Assistive Technology Training':'none'} },
+      social:    { level:'strong', note:'Active on Reddit and Slack/Discord communities.',            resourceLevels:{'Peer-to-Peer Mentoring':'none','Reddit':'strong','Slack / Discord':'strong','Facebook':'none'} },
+      financial: { level:'none',   note:'Not connected to any financial support resources.',          resourceLevels:{'Government Grants':'none','Non-Profits':'none','Employment Assistance / Job Training':'none','Legal-Aid':'none','Insurance Providers':'none'} },
+    }
+  },
+  { id:'howard', name:'Howard', initials:'H', accent:'#E31B6D', type:'Recently Diagnosed', modeLabel:'Family-guided', isALE:true,
+    tagline:'Recently lost significant vision. His family is navigating the healthcare system on his behalf.',
+    connections:{
+      healthcare:{ level:'strong', note:'Just began seeing a BLV Vision Specialist.', resourceLevels:{'BLV Vision Specialist':'strong','Mental Health Services for BLV':'none'} },
+      family:    { level:'strong', note:'Family is his primary support and navigator.', resourceLevels:{'Family Care Services':'strong','Caregiver Training':'none'} },
+      assistive: { level:'none', note:null, resourceLevels:{'Daily Living Aids':'none','Communication Aids':'none','Mobility Aids':'none'} },
+      orgs:      { level:'none', note:null, resourceLevels:{'National Foundation of the Blind':'none','American Foundation for the Blind':'none','American Council of the Blind':'none','Canadian National Institute for the Blind':'none'} },
+      education: { level:'none', note:null, resourceLevels:{'Braille / Reading':'none','Orientation & Mobility':'none','Assistive Technology Training':'none'} },
+      social:    { level:'none', note:null, resourceLevels:{'Peer-to-Peer Mentoring':'none','Reddit':'none','Slack / Discord':'none','Facebook':'none'} },
+      financial: { level:'none', note:null, resourceLevels:{'Government Grants':'none','Non-Profits':'none','Employment Assistance / Job Training':'none','Legal-Aid':'none','Insurance Providers':'none'} },
+    }
+  },
+  { id:'joon', name:'Joon', initials:'J', accent:'#1E3A5F', type:'Elderly, Family-Centric', modeLabel:'Family-guided', isALE:true,
+    tagline:'Elderly. Family manages most of his care. Has limited direct interaction with BLV resources.',
+    connections:{
+      healthcare:{ level:'weak',   note:'Sees a general physician, not a BLV specialist.', resourceLevels:{'BLV Vision Specialist':'none','Mental Health Services for BLV':'none'} },
+      family:    { level:'strong', note:'Family is his sole navigator and caregiver.',      resourceLevels:{'Family Care Services':'strong','Caregiver Training':'none'} },
+      assistive: { level:'none', note:null, resourceLevels:{'Daily Living Aids':'none','Communication Aids':'none','Mobility Aids':'none'} },
+      orgs:      { level:'none', note:null, resourceLevels:{'National Foundation of the Blind':'none','American Foundation for the Blind':'none','American Council of the Blind':'none','Canadian National Institute for the Blind':'none'} },
+      education: { level:'none', note:null, resourceLevels:{'Braille / Reading':'none','Orientation & Mobility':'none','Assistive Technology Training':'none'} },
+      social:    { level:'none', note:null, resourceLevels:{'Peer-to-Peer Mentoring':'none','Reddit':'none','Slack / Discord':'none','Facebook':'none'} },
+      financial: { level:'none', note:null, resourceLevels:{'Government Grants':'none','Non-Profits':'none','Employment Assistance / Job Training':'none','Legal-Aid':'none','Insurance Providers':'none'} },
+    }
+  },
+  { id:'lisa', name:'Lisa', initials:'L', accent:'#6B2D8B', type:'Parent + BLV Individual', modeLabel:'Multi-channel', isALE:true,
+    tagline:'A mother living with vision loss. Connected across healthcare, family, and organisations — navigating systems for herself and her child.',
+    connections:{
+      healthcare:{ level:'strong', note:'Regular specialist care and mental health support.', resourceLevels:{'BLV Vision Specialist':'strong','Mental Health Services for BLV':'strong'} },
+      family:    { level:'strong', note:'Deep family network providing practical and emotional support.', resourceLevels:{'Family Care Services':'strong','Caregiver Training':'weak'} },
+      assistive: { level:'weak',   note:'Some daily living aids, exploring more options.',    resourceLevels:{'Daily Living Aids':'weak','Communication Aids':'none','Mobility Aids':'none'} },
+      orgs:      { level:'weak',   note:'Connected to NFB for community and advocacy.',       resourceLevels:{'National Foundation of the Blind':'weak','American Foundation for the Blind':'none','American Council of the Blind':'none','Canadian National Institute for the Blind':'none'} },
+      education: { level:'weak',   note:'Starting orientation & mobility training.',          resourceLevels:{'Braille / Reading':'none','Orientation & Mobility':'weak','Assistive Technology Training':'none'} },
+      social:    { level:'weak',   note:'Active in a local peer support group.',              resourceLevels:{'Peer-to-Peer Mentoring':'weak','Reddit':'none','Slack / Discord':'none','Facebook':'none'} },
+      financial: { level:'none',   note:null, resourceLevels:{'Government Grants':'none','Non-Profits':'none','Employment Assistance / Job Training':'none','Legal-Aid':'none','Insurance Providers':'none'} },
+    }
+  },
+  { id:'khan', name:'Khan', initials:'K', accent:'#0D9488', type:'Young Professional', modeLabel:'Broadly connected', isALE:true,
+    tagline:'Young professional with progressive vision loss. Actively building his support network across multiple ecosystem areas.',
+    connections:{
+      healthcare:{ level:'strong', note:'Regular ophthalmologist and low vision specialist.',       resourceLevels:{'BLV Vision Specialist':'strong','Mental Health Services for BLV':'none'} },
+      family:    { level:'strong', note:'Supportive family actively involved in his journey.',      resourceLevels:{'Family Care Services':'strong','Caregiver Training':'none'} },
+      assistive: { level:'weak',   note:'Beginning to explore mobility and communication tools.',   resourceLevels:{'Daily Living Aids':'weak','Communication Aids':'none','Mobility Aids':'none'} },
+      orgs:      { level:'weak',   note:'Attended one AFB event, exploring further.',               resourceLevels:{'National Foundation of the Blind':'none','American Foundation for the Blind':'weak','American Council of the Blind':'none','Canadian National Institute for the Blind':'none'} },
+      education: { level:'none',   note:null, resourceLevels:{'Braille / Reading':'none','Orientation & Mobility':'none','Assistive Technology Training':'none'} },
+      social:    { level:'weak',   note:'Connected on Facebook BLV groups.',                       resourceLevels:{'Peer-to-Peer Mentoring':'none','Reddit':'none','Slack / Discord':'none','Facebook':'weak'} },
+      financial: { level:'weak',   note:'Recently applied for employment assistance.',             resourceLevels:{'Government Grants':'none','Non-Profits':'none','Employment Assistance / Job Training':'weak','Legal-Aid':'none','Insurance Providers':'none'} },
+    }
+  },
+];
+
+const CONCEPTS = [
+  {id:'1.1',name:'Provider Partnerships',  area:'Healthcare Providers',        areaId:'healthcare'},
+  {id:'1.2',name:'Vision Loss Campaign',   area:'Caregiver & Family Support',  areaId:'family'},
+  {id:'1.3',name:'Mentor Program',         area:'Social Networks',             areaId:'social'},
+  {id:'2.1',name:'Onboarding',             area:'Educational & Rehab Services',areaId:'education'},
+  {id:'2.2',name:'Caretaker Check-In',     area:'Caregiver & Family Support',  areaId:'family'},
+  {id:'2.3',name:'Celebrating Small Wins', area:'Social Networks',             areaId:'social'},
+  {id:'2.4',name:'Confident Climbing',     area:'Assistive Technologies',      areaId:'assistive'},
+  {id:'2.5',name:'Customizable Grip',      area:'Healthcare Providers',        areaId:'healthcare'},
+  {id:'3.1',name:'Hands Free',             area:'Assistive Technologies',      areaId:'assistive'},
+  {id:'3.2',name:'Fun Ways To Learn',      area:'Educational & Rehab Services',areaId:'education'},
+  {id:'3.3',name:'Smart Shirt',            area:'Assistive Technologies',      areaId:'assistive'},
+];
+
+// ──────────────────────────────────────
+// SVG WHEEL
+// ──────────────────────────────────────
+const NS  = 'http://www.w3.org/2000/svg';
+const cx=350, cy=350;
+const R_CENTER=118, R_IN1=128, R_IN2=218, R_OUT1=224, R_OUT2=288;
+const GAP=3.5;
+
+function polar(r,a){ const rad=(a-90)*Math.PI/180; return [cx+r*Math.cos(rad),cy+r*Math.sin(rad)]; }
+function arcPath(r1,r2,a1,a2){
+  const [x1,y1]=polar(r1,a1),[x2,y2]=polar(r1,a2);
+  const [x3,y3]=polar(r2,a2),[x4,y4]=polar(r2,a1);
+  const lg=a2-a1>180?1:0;
+  return `M${x1},${y1} A${r1},${r1},0,${lg},1,${x2},${y2} L${x3},${y3} A${r2},${r2},0,${lg},0,${x4},${y4} Z`;
+}
+function midA(a1,a2){ return (a1+a2)/2; }
+
+function computeAngles(){
+  const total=AREAS.reduce((s,a)=>s+a.angle,0);
+  const usable=360-GAP*AREAS.length, scale=usable/total;
+  let cur=0; const starts=[];
+  AREAS.forEach(a=>{ starts.push(cur); cur+=a.angle*scale+GAP; });
+  return {starts,scale};
+}
+const {starts:STARTS,scale:SCALE}=computeAngles();
+
+let activePersona=null, activeArea=null;
+const wheelSvg=document.getElementById('wheelSvg');
+const tip=document.getElementById('wheelTip');
+
+function lvlStyle(level,color){
+  if(level==='strong') return {fill:color,fo:'1',stroke:'white',sw:'1.5'};
+  if(level==='weak')   return {fill:'none',fo:'0',stroke:color,sw:'2.5'};
+  return {fill:'#EAE8F0',fo:'0.55',stroke:'white',sw:'1'};
+}
+
+function drawWheel(persona, overview=false){
+  wheelSvg.innerHTML='';
+  const bg=document.createElementNS(NS,'circle');
+  bg.setAttribute('cx',cx);bg.setAttribute('cy',cy);bg.setAttribute('r',R_OUT2+4);
+  bg.setAttribute('fill','#F8F7FC'); wheelSvg.appendChild(bg);
+
+  AREAS.forEach((area,i)=>{
+    const a1=STARTS[i], sweep=area.angle*SCALE, a2=a1+sweep;
+    const conn=persona?persona.connections[area.id]:null;
+    const level=overview?'strong':(conn?conn.level:'none');
+    const s=lvlStyle(level,area.color);
+
+    // inner segment
+    const ip=document.createElementNS(NS,'path');
+    ip.setAttribute('d',arcPath(R_IN1,R_IN2,a1,a2));
+    ip.setAttribute('fill',s.fill); ip.setAttribute('fill-opacity',s.fo);
+    ip.setAttribute('stroke',s.stroke); ip.setAttribute('stroke-width',s.sw);
+    ip.setAttribute('cursor','pointer'); ip.setAttribute('pointer-events','all');
+    ip.style.transition='all .4s cubic-bezier(.16,1,.3,1)';
+    ip.addEventListener('mouseenter',e=>showTip(e,area.short));
+    ip.addEventListener('mouseleave',()=>tip.style.opacity='0');
+    ip.addEventListener('click',()=>onAreaClick(i,area,persona));
+    wheelSvg.appendChild(ip);
+
+    // label (always short, colored by level)
+    const mid=midA(a1,a2), labelR=(R_IN1+R_IN2)/2;
+    const [lx,ly]=polar(labelR,mid);
+    const rot=(mid>90&&mid<270)?mid+180:mid;
+    const txt=document.createElementNS(NS,'text');
+    txt.setAttribute('x',lx); txt.setAttribute('y',ly);
+    txt.setAttribute('text-anchor','middle'); txt.setAttribute('dominant-baseline','middle');
+    txt.setAttribute('font-size',level==='strong'?'10':'9');
+    txt.setAttribute('font-weight','700');
+    txt.setAttribute('fill',level==='strong'?'white':level==='weak'?area.color:'#C0B8D8');
+    txt.setAttribute('pointer-events','none');
+    txt.setAttribute('transform',`rotate(${rot},${lx},${ly})`);
+    const lines=area.name.split('\n');
+    if(lines.length===1){ txt.textContent=lines[0]; }
+    else {
+      lines.forEach((l,li)=>{
+        const ts=document.createElementNS(NS,'tspan');
+        ts.setAttribute('x',lx); ts.setAttribute('dy',li===0?`${-(lines.length-1)*0.55}em`:'1.1em');
+        ts.textContent=l; txt.appendChild(ts);
+      });
+    }
+    wheelSvg.appendChild(txt);
+
+    // outer sub-segments
+    const res=area.resources, n=res.length;
+    const resGap=1.8, resSweep=(sweep-resGap*(n-1))/n;
+    res.forEach((r,ri)=>{
+      const ra1=a1+ri*(resSweep+resGap), ra2=ra1+resSweep;
+      const resLvl=overview?'weak':(conn?(conn.resourceLevels[r]||'none'):'none');
+      const rs=lvlStyle(resLvl,area.color);
+      const op=document.createElementNS(NS,'path');
+      op.setAttribute('d',arcPath(R_OUT1,R_OUT2,ra1,ra2));
+      op.setAttribute('fill',rs.fill); op.setAttribute('fill-opacity',rs.fo);
+      op.setAttribute('stroke',rs.stroke); op.setAttribute('stroke-width',rs.sw);
+      op.setAttribute('cursor','pointer'); op.setAttribute('pointer-events','all');
+      op.style.transition='all .4s cubic-bezier(.16,1,.3,1)';
+      op.addEventListener('mouseenter',e=>showTip(e,r));
+      op.addEventListener('mouseleave',()=>tip.style.opacity='0');
+      op.addEventListener('click',()=>onAreaClick(i,area,persona));
+      wheelSvg.appendChild(op);
+      // resource label if strong
+      if(resLvl==='strong'){
+        const rMid=midA(ra1,ra2), rR=(R_OUT1+R_OUT2)/2;
+        const [rx,ry]=polar(rR,rMid);
+        const rRot=(rMid>90&&rMid<270)?rMid+180:rMid;
+        const rt=document.createElementNS(NS,'text');
+        rt.setAttribute('x',rx); rt.setAttribute('y',ry);
+        rt.setAttribute('text-anchor','middle'); rt.setAttribute('dominant-baseline','middle');
+        rt.setAttribute('font-size','7.5'); rt.setAttribute('font-weight','700');
+        rt.setAttribute('fill','white'); rt.setAttribute('pointer-events','none');
+        rt.setAttribute('transform',`rotate(${rRot},${rx},${ry})`);
+        rt.textContent=r.length>14?r.split(' ').slice(0,2).join(' ')+'…':r;
+        wheelSvg.appendChild(rt);
+      }
+    });
+  });
+
+  // center hole
+  const hole=document.createElementNS(NS,'circle');
+  hole.setAttribute('cx',cx); hole.setAttribute('cy',cy); hole.setAttribute('r',R_CENTER);
+  hole.setAttribute('fill','white'); wheelSvg.appendChild(hole);
+}
+
+function showTip(e,label){
+  const wrap=document.getElementById('wheelWrap');
+  const rect=wrap.getBoundingClientRect();
+  tip.textContent=label; tip.style.opacity='1';
+  tip.style.left=(e.clientX-rect.left)+'px';
+  tip.style.top=(e.clientY-rect.top)+'px';
+}
+
+function onAreaClick(i,area,persona){
+  tip.style.opacity='0';
+  activeArea=activeArea===i?null:i;
+  const drawer=document.getElementById('resDrawer');
+  if(activeArea===null){ drawer.innerHTML='<p class="drawer-hint">Click a wheel segment to explore its resources.</p>'; return; }
+  const conn=persona?persona.connections[area.id]:null;
+  let html=`<h5 style="color:${area.color}">${area.short}</h5><div class="res-tags">`;
+  area.resources.forEach(r=>{
+    const lvl=conn?(conn.resourceLevels[r]||'none'):'none';
+    html+=`<span class="res-tag ${lvl}" style="${lvl==='strong'?'background:'+area.color:''}">${r}</span>`;
+  });
+  html+='</div>';
+  if(conn?.note) html+=`<p class="res-note">${conn.note}</p>`;
+  drawer.innerHTML=html;
+}
+
+// ──────────────────────────────────────
+// PERSONA LIST
+// ──────────────────────────────────────
+function buildPersonaList(){
+  const list=document.getElementById('personaList');
+
+  // Overview button
+  const ovBtn=document.createElement('button');
+  ovBtn.className='p-btn p-overview-btn'; ovBtn.dataset.id='overview';
+  ovBtn.innerHTML=`
+    <div class="p-avatar" style="background:var(--purple);font-size:.9rem">●</div>
+    <div class="p-meta">
+      <div class="p-name">Full Ecosystem</div>
+      <div class="p-type">Overview — all 7 areas</div>
+    </div>`;
+  ovBtn.addEventListener('click',()=>selectPersona('overview'));
+  list.appendChild(ovBtn);
+
+  const personas=PERSONAS.filter(p=>!p.isALE);
+  const ales=PERSONAS.filter(p=>p.isALE);
+
+  // Personas section
+  const phdr=document.createElement('div');
+  phdr.className='p-section-header';
+  phdr.innerHTML='<span>Personas</span>';
+  list.appendChild(phdr);
+
+  personas.forEach(p=>{
+    const btn=document.createElement('button');
+    btn.className='p-btn'; btn.dataset.id=p.id;
+    btn.style.setProperty('--accent',p.accent);
+    btn.innerHTML=`
+      <div class="p-avatar" style="background:${p.accent}">${p.initials}</div>
+      <div class="p-meta">
+        <div class="p-name">${p.name}</div>
+        <div class="p-type">${p.type}</div>
+        <span class="p-badge" style="background:${p.accent}18;color:${p.accent}">${p.modeLabel}</span>
+      </div>`;
+    btn.addEventListener('click',()=>selectPersona(p.id));
+    list.appendChild(btn);
+  });
+
+  // ALE section
+  const ahdr=document.createElement('div');
+  ahdr.className='p-section-header ale-section';
+  ahdr.innerHTML=`<span>Adult Lived Experiences</span>
+    <div class="ale-hint">Based on real people — names changed</div>`;
+  list.appendChild(ahdr);
+
+  ales.forEach(p=>{
+    const btn=document.createElement('button');
+    btn.className='p-btn'; btn.dataset.id=p.id;
+    btn.style.setProperty('--accent',p.accent);
+    btn.innerHTML=`
+      <div class="p-avatar" style="background:${p.accent}">${p.initials}</div>
+      <div class="p-meta">
+        <div class="p-name">${p.name}</div>
+        <div class="p-type">${p.type}</div>
+        <span class="p-badge ale-badge" style="color:${p.accent}">${p.modeLabel}</span>
+      </div>`;
+    btn.addEventListener('click',()=>selectPersona(p.id));
+    list.appendChild(btn);
+  });
+}
+
+function showDefaultNarrative(){
+  const av=document.getElementById('wheelAvatar');
+  av.style.background='var(--purple)';
+  document.getElementById('avInit').textContent='●';
+  document.getElementById('avName').textContent='ALL';
+  document.getElementById('narrativeBody').innerHTML=`
+    <h3 style="color:var(--purple)">The BLV Ecosystem</h3>
+    <p class="tagline">7 interconnected areas of support that people with vision loss may access throughout their journey. Select a persona or ALE to see how they navigate this landscape.</p>
+    <div class="conn-group">
+      <div class="conn-label">Ecosystem Areas</div>
+      <div class="chips">${AREAS.map(a=>`<span class="chip strong" style="background:${a.color}">${a.short}</span>`).join('')}</div>
+    </div>
+    <div class="conn-group" style="margin-top:1rem">
+      <div class="conn-label">What is an ALE?</div>
+      <p style="font-size:.8rem;color:var(--muted);line-height:1.6;margin-top:.35rem">Adult Lived Experience — research participants with real vision loss journeys. Their stories are mapped here with names changed to protect their identity.</p>
+    </div>`;
+  document.getElementById('resDrawer').innerHTML='<p class="drawer-hint">Click a wheel segment to explore its resources.</p>';
+}
+
+function selectPersona(id){
+  activeArea=null;
+  document.querySelectorAll('.p-btn').forEach(b=>b.classList.toggle('active',b.dataset.id===id));
+
+  if(id==='overview'){
+    activePersona=null;
+    drawWheel(null,true);
+    showDefaultNarrative();
+    document.getElementById('resDrawer').innerHTML='<p class="drawer-hint">Click a wheel segment to explore its resources.</p>';
+    return;
+  }
+
+  const p=PERSONAS.find(x=>x.id===id); if(!p) return;
+  activePersona=p;
+  // avatar
+  const av=document.getElementById('wheelAvatar');
+  av.style.background=p.accent;
+  document.getElementById('avInit').textContent=p.initials;
+  document.getElementById('avName').textContent=p.name.split(' ')[0];
+  // wheel
+  drawWheel(p);
+  // narrative
+  const strong=AREAS.filter(a=>p.connections[a.id]?.level==='strong');
+  const weak=AREAS.filter(a=>p.connections[a.id]?.level==='weak');
+  const none=AREAS.filter(a=>p.connections[a.id]?.level==='none');
+  const aleTag=p.isALE?`<span style="display:inline-block;font-size:.65rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;padding:.2rem .55rem;border-radius:5px;border:1.5px solid ${p.accent};color:${p.accent};margin-bottom:.75rem">Adult Lived Experience</span><br>`:'';
+  document.getElementById('narrativeBody').innerHTML=`
+    <h3 style="color:${p.accent}">${p.name}</h3>
+    ${aleTag}
+    <p class="tagline">${p.tagline}</p>
+    ${strong.length?`<div class="conn-group">
+      <div class="conn-label">Strong Connections</div>
+      <div class="chips">${strong.map(a=>`<span class="chip strong" style="background:${a.color}">${a.short}</span>`).join('')}</div>
+    </div>`:''}
+    ${weak.length?`<div class="conn-group">
+      <div class="conn-label">Weak Connections</div>
+      <div class="chips">${weak.map(a=>`<span class="chip weak" style="color:${a.color};border-color:${a.color}">${a.short}</span>`).join('')}</div>
+    </div>`:''}
+    ${none.length?`<div class="conn-group">
+      <div class="conn-label">No Current Connection</div>
+      <div class="chips">${none.map(a=>`<span class="chip none">${a.short}</span>`).join('')}</div>
+    </div>`:''}`;
+  document.getElementById('resDrawer').innerHTML='<p class="drawer-hint">Click a wheel segment to explore its resources.</p>';
+}
+
+// ──────────────────────────────────────
+// ALE MINI CHARTS
+// ──────────────────────────────────────
+function drawMini(svgId,persona){
+  const s=document.getElementById(svgId); if(!s) return; s.innerHTML='';
+  const mcx=50,mcy=50,mr1=22,mr2=40,mout=48;
+  const mGap=3.5, total=AREAS.reduce((a,x)=>a+x.angle,0);
+  const usable=360-mGap*AREAS.length, mScale=usable/total;
+  let mc=0;
+  AREAS.forEach(area=>{
+    const sweep=area.angle*mScale, a1=mc, a2=a1+sweep;
+    const conn=persona.connections[area.id];
+    const level=conn?conn.level:'none';
+    function mp(r,a){ const rad=(a-90)*Math.PI/180; return [mcx+r*Math.cos(rad),mcy+r*Math.sin(rad)]; }
+    function mArc(r1,r2,aa1,aa2){
+      const [x1,y1]=mp(r1,aa1),[x2,y2]=mp(r1,aa2);
+      const [x3,y3]=mp(r2,aa2),[x4,y4]=mp(r2,aa1);
+      const lg=aa2-aa1>180?1:0;
+      return `M${x1},${y1} A${r1},${r1},0,${lg},1,${x2},${y2} L${x3},${y3} A${r2},${r2},0,${lg},0,${x4},${y4} Z`;
+    }
+    const ip=document.createElementNS(NS,'path');
+    ip.setAttribute('d',mArc(mr1,mr2,a1,a2));
+    if(level==='strong'){ip.setAttribute('fill',area.color);}
+    else if(level==='weak'){ip.setAttribute('fill','none');ip.setAttribute('stroke',area.color);ip.setAttribute('stroke-width','1.5');}
+    else{ip.setAttribute('fill','#EAE8F0');}
+    ip.setAttribute('stroke-width',ip.getAttribute('stroke-width')||'0.5');
+    ip.setAttribute('stroke',ip.getAttribute('stroke')||'white');
+    s.appendChild(ip);
+    // outer ring
+    const n=area.resources.length, rGap=1.2, rSweep=(sweep-rGap*(n-1))/n;
+    area.resources.forEach((r,ri)=>{
+      const ra1=a1+ri*(rSweep+rGap), ra2=ra1+rSweep;
+      const rl=conn?(conn.resourceLevels[r]||'none'):'none';
+      const op=document.createElementNS(NS,'path');
+      op.setAttribute('d',mArc(mr2+2,mout,ra1,ra2));
+      if(rl==='strong'){op.setAttribute('fill',area.color);}
+      else if(rl==='weak'){op.setAttribute('fill','none');op.setAttribute('stroke',area.color);op.setAttribute('stroke-width','1');}
+      else{op.setAttribute('fill','#EAE8F0');op.setAttribute('fill-opacity','0.4');}
+      op.setAttribute('stroke',op.getAttribute('stroke')||'white');
+      op.setAttribute('stroke-width',op.getAttribute('stroke-width')||'0.5');
+      s.appendChild(op);
+    });
+    mc=a2+mGap;
+  });
+  const h=document.createElementNS(NS,'circle');
+  h.setAttribute('cx',mcx);h.setAttribute('cy',mcy);h.setAttribute('r',mr1-1);h.setAttribute('fill','white');
+  s.appendChild(h);
+}
+
+const ALE_IDS=['howard','joon','lisa','khan'];
+let activeAle=null;
+
+function buildAles(){
+  const grid=document.getElementById('aleGrid'); grid.innerHTML='';
+  ALE_IDS.forEach(id=>{
+    const p=PERSONAS.find(x=>x.id===id);
+    const card=document.createElement('div');
+    card.className='ale-card'; card.dataset.id=id;
+    card.innerHTML=`
+      <svg class="ale-mini" viewBox="0 0 100 100" id="aleSvg_${id}"></svg>
+      <h4>${p.name}</h4>
+      <p class="ale-sub">${p.tagline.substring(0,65)}…</p>
+      <span class="ale-badge" style="background:${p.accent}">${p.modeLabel}</span>`;
+    card.addEventListener('click',()=>selectAle(id));
+    grid.appendChild(card);
+    drawMini(`aleSvg_${id}`,p);
+  });
+}
+
+function selectAle(id){
+  const p=PERSONAS.find(x=>x.id===id);
+  document.querySelectorAll('.ale-card').forEach(c=>c.classList.toggle('active',c.dataset.id===id));
+  const expand=document.getElementById('aleExpand');
+  if(activeAle===id){activeAle=null;expand.classList.remove('open');return;}
+  activeAle=id; expand.classList.add('open');
+  const strong=AREAS.filter(a=>p.connections[a.id]?.level==='strong');
+  const weak=AREAS.filter(a=>p.connections[a.id]?.level==='weak');
+  expand.innerHTML=`
+    <div>
+      <div style="font-size:.68rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--pink);margin-bottom:.3rem">${p.type}</div>
+      <h3 style="font-size:1.3rem;font-weight:800;margin-bottom:.4rem">${p.name}</h3>
+      <p style="font-size:.875rem;color:var(--muted);line-height:1.7;margin-bottom:1rem">${p.tagline}</p>
+      ${strong.length?`<div style="margin-bottom:.65rem"><div style="font-size:.65rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:.4rem">Connected to</div><div style="display:flex;flex-wrap:wrap;gap:.4rem">${strong.map(a=>`<span style="background:${a.color};color:white;padding:.25rem .65rem;border-radius:7px;font-size:.76rem;font-weight:600">${a.short}</span>`).join('')}</div></div>`:''}
+      ${weak.length?`<div><div style="font-size:.65rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:.4rem">Weak connection</div><div style="display:flex;flex-wrap:wrap;gap:.4rem">${weak.map(a=>`<span style="border:2px solid ${a.color};color:${a.color};padding:.25rem .65rem;border-radius:7px;font-size:.76rem;font-weight:600">${a.short}</span>`).join('')}</div></div>`:''}
+    </div>
+    <svg id="aleExpandSvg" viewBox="0 0 100 100" style="width:100%;max-width:180px;margin:auto;display:block"></svg>`;
+  drawMini('aleExpandSvg',p);
+}
+
+// ──────────────────────────────────────
+// CONCEPTS
+// ──────────────────────────────────────
+function buildConcepts(){
+  const grid=document.getElementById('conceptsGrid');
+  CONCEPTS.forEach(c=>{
+    const area=AREAS.find(a=>a.id===c.areaId);
+    const el=document.createElement('div'); el.className='c-card';
+    el.innerHTML=`<div class="c-num" style="background:${area.color}">${c.id}</div>
+      <div><div class="c-name">${c.name}</div><div class="c-area">${area.short}</div></div>`;
+    grid.appendChild(el);
+  });
+}
+
+// ──────────────────────────────────────
+// SCROLL FADE
+// ──────────────────────────────────────
+const io=new IntersectionObserver(entries=>{
+  entries.forEach(e=>{if(e.isIntersecting)e.target.classList.add('in')});
+},{threshold:.12});
+document.querySelectorAll('.fade').forEach(el=>io.observe(el));
+
+// ──────────────────────────────────────
+// INIT
+// ──────────────────────────────────────
+buildPersonaList();
+buildAles();
+buildConcepts();
+selectPersona('overview');
+</script>
+</body>
+</html>
