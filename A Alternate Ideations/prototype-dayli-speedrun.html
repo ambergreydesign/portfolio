@@ -1,0 +1,499 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dayli AI — Speed Run</title>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..900;1,9..144,300..900&family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&display=swap" rel="stylesheet" />
+  <style>
+    * { margin:0; padding:0; box-sizing:border-box; }
+    body { font-family:'DM Sans',sans-serif; background:#0f0a1a; color:#e2d9f0; overflow:hidden; width:100vw; height:100vh; display:flex; flex-direction:column; }
+    h1,h2,h3 { font-family:'Fraunces',serif; }
+
+    /* ---- Overlay ---- */
+    .overlay {
+      position:fixed; inset:0; z-index:50;
+      display:flex; flex-direction:column; align-items:center; justify-content:center;
+      background:#0f0a1a; transition:opacity 0.6s;
+    }
+    .overlay.hidden { opacity:0; pointer-events:none; }
+    .overlay-icon { font-size:3rem; margin-bottom:20px; animation:float 4s ease-in-out infinite; }
+    @keyframes float { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-8px)} }
+    .overlay-title {
+      font-family:'Fraunces',serif; font-size:2.4rem; font-weight:700;
+      text-align:center; margin-bottom:12px;
+      background:linear-gradient(135deg,#DBB0FF,#9230E3);
+      -webkit-background-clip:text; -webkit-text-fill-color:transparent;
+    }
+    .overlay-sub { font-size:0.9rem; color:rgba(219,176,255,0.4); text-align:center; max-width:520px; margin-bottom:10px; line-height:1.5; }
+    .overlay-task {
+      font-size:0.8rem; color:rgba(219,176,255,0.55); text-align:center; max-width:480px;
+      margin-bottom:32px; padding:12px 20px; border-radius:12px;
+      background:rgba(146,48,227,0.06); border:1px solid rgba(146,48,227,0.12);
+    }
+    .overlay-task strong { color:#DBB0FF; }
+    .overlay-btn {
+      padding:14px 36px; border-radius:12px; background:#9230E3; border:none;
+      color:white; font-family:'DM Sans',sans-serif; font-size:1rem; font-weight:600;
+      cursor:pointer; transition:all 0.2s;
+    }
+    .overlay-btn:hover { background:#7a24c4; transform:translateY(-2px); box-shadow:0 8px 24px rgba(146,48,227,0.3); }
+
+    /* ---- Vs header ---- */
+    .vs-bar {
+      display:flex; align-items:center; justify-content:center;
+      padding:16px 24px; gap:20px;
+      border-bottom:1px solid rgba(146,48,227,0.1);
+      flex-shrink:0;
+    }
+    .vs-label { font-family:'Fraunces',serif; font-size:0.85rem; font-weight:600; }
+    .vs-label.trad { color:#ff5f57; }
+    .vs-label.claude { color:#1FEEEA; }
+    .vs-badge {
+      padding:4px 12px; border-radius:6px; font-size:0.65rem; font-weight:700;
+      letter-spacing:0.1em; text-transform:uppercase;
+    }
+    .vs-badge.trad { background:rgba(255,95,87,0.1); color:#ff5f57; }
+    .vs-badge.claude { background:rgba(31,238,234,0.08); color:#1FEEEA; }
+    .vs-divider {
+      font-family:'Fraunces',serif; font-size:1.4rem; font-weight:700;
+      color:rgba(219,176,255,0.15);
+    }
+
+    /* ---- Race Lanes ---- */
+    .race { display:flex; flex:1; overflow:hidden; }
+    .lane {
+      flex:1; display:flex; flex-direction:column;
+      padding:28px 32px;
+      overflow-y:auto;
+    }
+    .lane.left { border-right:1px solid rgba(146,48,227,0.08); }
+
+    .lane-timer {
+      font-family:'Fraunces',serif; font-size:2.4rem; font-weight:800;
+      margin-bottom:4px; transition:color 0.3s;
+    }
+    .lane.left .lane-timer { color:#ff5f57; }
+    .lane.right .lane-timer { color:#1FEEEA; }
+
+    .lane-real-time { font-size:0.7rem; color:rgba(219,176,255,0.25); margin-bottom:24px; }
+
+    /* ---- Steps ---- */
+    .step {
+      display:flex; align-items:flex-start; gap:14px;
+      padding:12px 0; position:relative;
+      opacity:0.2; transition:opacity 0.4s;
+    }
+    .step.active { opacity:1; }
+    .step.done { opacity:0.5; }
+
+    .step-marker {
+      width:32px; height:32px; border-radius:50%; flex-shrink:0;
+      display:flex; align-items:center; justify-content:center;
+      font-size:0.8rem; font-weight:700; position:relative;
+      border:2px solid rgba(219,176,255,0.1); color:rgba(219,176,255,0.2);
+      transition:all 0.4s;
+    }
+    .step.active .step-marker { border-color:currentColor; color:inherit; }
+    .step.done .step-marker { border-color:transparent; }
+    .step.done .step-marker::after {
+      content:'✓'; position:absolute; font-size:0.9rem;
+    }
+    .lane.left .step.active .step-marker { border-color:#ff5f57; color:#ff5f57; }
+    .lane.left .step.done .step-marker::after { color:#ff5f57; }
+    .lane.right .step.active .step-marker { border-color:#9230E3; color:#9230E3; }
+    .lane.right .step.done .step-marker::after { color:#28c840; }
+
+    /* Connector line between steps */
+    .step:not(:last-child)::before {
+      content:''; position:absolute;
+      left:15px; top:44px; width:2px; height:calc(100% - 20px);
+      background:rgba(219,176,255,0.06);
+    }
+    .step.done:not(:last-child)::before { background:rgba(219,176,255,0.12); }
+
+    .step-content { flex:1; }
+    .step-label { font-size:0.85rem; font-weight:600; color:rgba(219,176,255,0.5); transition:color 0.4s; }
+    .step.active .step-label { color:#DBB0FF; }
+    .step-icon { margin-right:6px; }
+    .step-time { font-size:0.65rem; color:rgba(219,176,255,0.2); margin-top:2px; }
+    .step.active .step-time { color:rgba(219,176,255,0.35); }
+
+    /* Progress bar inside active step */
+    .step-progress {
+      height:3px; border-radius:2px; margin-top:8px;
+      background:rgba(219,176,255,0.06); overflow:hidden;
+    }
+    .step-progress-fill {
+      height:100%; width:0%; border-radius:2px;
+      transition:width 0.1s linear;
+    }
+    .lane.left .step-progress-fill { background:#ff5f57; }
+    .lane.right .step-progress-fill { background:#9230E3; }
+
+    /* ---- LIVE badge ---- */
+    .live-badge {
+      display:inline-flex; align-items:center; gap:6px;
+      padding:10px 24px; border-radius:12px; margin-top:20px;
+      font-family:'Fraunces',serif; font-size:1.1rem; font-weight:700;
+      opacity:0; transform:scale(0.8); transition:all 0.5s;
+    }
+    .live-badge.show { opacity:1; transform:scale(1); }
+    .live-badge.green { background:rgba(40,200,64,0.1); color:#28c840; border:1px solid rgba(40,200,64,0.2); }
+    .live-badge.waiting { background:rgba(255,95,87,0.06); color:rgba(255,95,87,0.4); border:1px solid rgba(255,95,87,0.1); font-size:0.8rem; }
+
+    @keyframes glow {
+      0%,100% { box-shadow:0 0 12px rgba(40,200,64,0.2); }
+      50% { box-shadow:0 0 24px rgba(40,200,64,0.4); }
+    }
+    .live-badge.green.show { animation:glow 2s ease-in-out infinite; }
+
+    /* ---- Bottom bar ---- */
+    .bottom-bar {
+      display:flex; align-items:center; justify-content:center; gap:32px;
+      padding:14px 24px;
+      border-top:1px solid rgba(146,48,227,0.1);
+      background:rgba(15,10,26,0.95);
+      flex-shrink:0;
+    }
+    .bottom-stat { text-align:center; }
+    .bottom-stat-num { font-family:'Fraunces',serif; font-size:1.2rem; font-weight:800; }
+    .bottom-stat-label { font-size:0.6rem; color:rgba(219,176,255,0.25); margin-top:2px; }
+
+    /* ---- Results overlay ---- */
+    .results {
+      position:fixed; inset:0; z-index:40;
+      display:flex; flex-direction:column; align-items:center; justify-content:center;
+      background:rgba(15,10,26,0.95); backdrop-filter:blur(10px);
+      opacity:0; pointer-events:none; transition:opacity 0.6s;
+    }
+    .results.show { opacity:1; pointer-events:all; }
+    .results-title {
+      font-family:'Fraunces',serif; font-size:2rem; font-weight:700;
+      margin-bottom:8px;
+      background:linear-gradient(135deg,#28c840,#1FEEEA);
+      -webkit-background-clip:text; -webkit-text-fill-color:transparent;
+    }
+    .results-sub { font-size:0.85rem; color:rgba(219,176,255,0.4); margin-bottom:28px; text-align:center; max-width:450px; line-height:1.5; }
+    .results-stats { display:flex; gap:40px; margin-bottom:32px; }
+    .results-stat { text-align:center; }
+    .results-stat-num { font-family:'Fraunces',serif; font-size:2.2rem; font-weight:800; }
+    .results-stat-label { font-size:0.65rem; color:rgba(219,176,255,0.3); margin-top:4px; }
+    .results-bar {
+      width:400px; display:flex; gap:4px; align-items:flex-end; margin-bottom:32px;
+    }
+    .results-bar-lane {
+      flex:1; border-radius:8px 8px 0 0; transition:height 1s ease;
+      display:flex; align-items:flex-end; justify-content:center;
+      padding-bottom:8px; font-size:0.7rem; font-weight:700;
+    }
+    .results-bar-lane.trad { background:rgba(255,95,87,0.15); color:#ff5f57; height:0; }
+    .results-bar-lane.claude { background:rgba(31,238,234,0.1); color:#1FEEEA; height:0; }
+  </style>
+</head>
+<body>
+
+<!-- ==================== INTRO ==================== -->
+<div class="overlay" id="intro">
+  <div class="overlay-icon">⚡</div>
+  <h1 class="overlay-title">The Speed Run</h1>
+  <p class="overlay-sub">Watch two workflows race to ship the same change. Same goal, very different paths.</p>
+  <div class="overlay-task"><strong>The task:</strong> Update the hero heading on Daily Living Labs to say "Where daily life gets hard... or easier"</div>
+  <button class="overlay-btn" onclick="startRace()">Race</button>
+</div>
+
+<!-- ==================== RESULTS ==================== -->
+<div class="results" id="results">
+  <div class="overlay-icon" style="animation:float 4s ease-in-out infinite;">🏁</div>
+  <div class="results-title">Same Change. Different Century.</div>
+  <p class="results-sub">Both workflows shipped the exact same hero copy update. One took days. One took a conversation.</p>
+  <div class="results-stats">
+    <div class="results-stat">
+      <div class="results-stat-num" style="color:#ff5f57;" id="resultTrad">—</div>
+      <div class="results-stat-label">Traditional</div>
+    </div>
+    <div class="results-stat">
+      <div class="results-stat-num" style="color:#1FEEEA;">vs</div>
+      <div class="results-stat-label">&nbsp;</div>
+    </div>
+    <div class="results-stat">
+      <div class="results-stat-num" style="color:#28c840;" id="resultClaude">—</div>
+      <div class="results-stat-label">Claude Code</div>
+    </div>
+  </div>
+  <div class="results-bar">
+    <div class="results-bar-lane trad" id="barTrad">3–5 days</div>
+    <div class="results-bar-lane claude" id="barClaude">&lt;2 min</div>
+  </div>
+  <button class="overlay-btn" onclick="location.reload()">Race Again</button>
+</div>
+
+<!-- ==================== MAIN ==================== -->
+<div class="vs-bar">
+  <span class="vs-badge trad">7 steps</span>
+  <span class="vs-label trad">Traditional Workflow</span>
+  <span class="vs-divider">vs</span>
+  <span class="vs-label claude">Claude Code</span>
+  <span class="vs-badge claude">4 steps</span>
+</div>
+
+<div class="race">
+  <!-- Left Lane: Traditional -->
+  <div class="lane left" id="laneLeft">
+    <div class="lane-timer" id="timerLeft">0:00</div>
+    <div class="lane-real-time" id="realLeft">Real time: —</div>
+
+    <div class="step" id="tStep1">
+      <div class="step-marker">1</div>
+      <div class="step-content">
+        <div class="step-label"><span class="step-icon">📋</span>Write Jira ticket</div>
+        <div class="step-time">~30 minutes</div>
+        <div class="step-progress"><div class="step-progress-fill" id="tProg1"></div></div>
+      </div>
+    </div>
+    <div class="step" id="tStep2">
+      <div class="step-marker">2</div>
+      <div class="step-content">
+        <div class="step-label"><span class="step-icon">👨‍💻</span>Assign to developer</div>
+        <div class="step-time">~2 hours (waiting in queue)</div>
+        <div class="step-progress"><div class="step-progress-fill" id="tProg2"></div></div>
+      </div>
+    </div>
+    <div class="step" id="tStep3">
+      <div class="step-marker">3</div>
+      <div class="step-content">
+        <div class="step-label"><span class="step-icon">🔀</span>Branch, develop, test</div>
+        <div class="step-time">~1 day</div>
+        <div class="step-progress"><div class="step-progress-fill" id="tProg3"></div></div>
+      </div>
+    </div>
+    <div class="step" id="tStep4">
+      <div class="step-marker">4</div>
+      <div class="step-content">
+        <div class="step-label"><span class="step-icon">👀</span>Code review</div>
+        <div class="step-time">~4 hours</div>
+        <div class="step-progress"><div class="step-progress-fill" id="tProg4"></div></div>
+      </div>
+    </div>
+    <div class="step" id="tStep5">
+      <div class="step-marker">5</div>
+      <div class="step-content">
+        <div class="step-label"><span class="step-icon">🔄</span>Merge to staging</div>
+        <div class="step-time">~1 hour</div>
+        <div class="step-progress"><div class="step-progress-fill" id="tProg5"></div></div>
+      </div>
+    </div>
+    <div class="step" id="tStep6">
+      <div class="step-marker">6</div>
+      <div class="step-content">
+        <div class="step-label"><span class="step-icon">🧪</span>QA testing</div>
+        <div class="step-time">~1 day</div>
+        <div class="step-progress"><div class="step-progress-fill" id="tProg6"></div></div>
+      </div>
+    </div>
+    <div class="step" id="tStep7">
+      <div class="step-marker">7</div>
+      <div class="step-content">
+        <div class="step-label"><span class="step-icon">🚀</span>Deploy to production</div>
+        <div class="step-time">~30 minutes</div>
+        <div class="step-progress"><div class="step-progress-fill" id="tProg7"></div></div>
+      </div>
+    </div>
+
+    <div class="live-badge waiting" id="tradBadge">⏳ Still deploying...</div>
+  </div>
+
+  <!-- Right Lane: Claude Code -->
+  <div class="lane right" id="laneRight">
+    <div class="lane-timer" id="timerRight">0:00</div>
+    <div class="lane-real-time" id="realRight">Real time: —</div>
+
+    <div class="step" id="cStep1">
+      <div class="step-marker">1</div>
+      <div class="step-content">
+        <div class="step-label"><span class="step-icon">💬</span>Describe change in chat</div>
+        <div class="step-time">~30 seconds</div>
+        <div class="step-progress"><div class="step-progress-fill" id="cProg1"></div></div>
+      </div>
+    </div>
+    <div class="step" id="cStep2">
+      <div class="step-marker">2</div>
+      <div class="step-content">
+        <div class="step-label"><span class="step-icon">🤖</span>Claude edits the code</div>
+        <div class="step-time">~45 seconds</div>
+        <div class="step-progress"><div class="step-progress-fill" id="cProg2"></div></div>
+      </div>
+    </div>
+    <div class="step" id="cStep3">
+      <div class="step-marker">3</div>
+      <div class="step-content">
+        <div class="step-label"><span class="step-icon">📦</span>git push</div>
+        <div class="step-time">~5 seconds</div>
+        <div class="step-progress"><div class="step-progress-fill" id="cProg3"></div></div>
+      </div>
+    </div>
+    <div class="step" id="cStep4">
+      <div class="step-marker">4</div>
+      <div class="step-content">
+        <div class="step-label"><span class="step-icon">🚀</span>Vercel auto-deploys</div>
+        <div class="step-time">~30 seconds</div>
+        <div class="step-progress"><div class="step-progress-fill" id="cProg4"></div></div>
+      </div>
+    </div>
+
+    <div class="live-badge green" id="claudeBadge">✓ LIVE</div>
+  </div>
+</div>
+
+<!-- Bottom -->
+<div class="bottom-bar">
+  <div class="bottom-stat">
+    <div class="bottom-stat-num" style="color:#ff5f57;" id="bottomTrad">0:00</div>
+    <div class="bottom-stat-label">Traditional</div>
+  </div>
+  <div class="bottom-stat">
+    <div class="bottom-stat-num" style="color:rgba(219,176,255,0.15);">vs</div>
+    <div class="bottom-stat-label">&nbsp;</div>
+  </div>
+  <div class="bottom-stat">
+    <div class="bottom-stat-num" style="color:#1FEEEA;" id="bottomClaude">0:00</div>
+    <div class="bottom-stat-label">Claude Code</div>
+  </div>
+</div>
+
+<script>
+  // Steps config: [duration in ms, stepEl id, progressFill id]
+  const tradSteps = [
+    { dur: 3000, step: 'tStep1', prog: 'tProg1', real: '30 min' },
+    { dur: 2000, step: 'tStep2', prog: 'tProg2', real: '2 hrs' },
+    { dur: 5000, step: 'tStep3', prog: 'tProg3', real: '1 day' },
+    { dur: 3000, step: 'tStep4', prog: 'tProg4', real: '4 hrs' },
+    { dur: 2000, step: 'tStep5', prog: 'tProg5', real: '1 hr' },
+    { dur: 4000, step: 'tStep6', prog: 'tProg6', real: '1 day' },
+    { dur: 2000, step: 'tStep7', prog: 'tProg7', real: '30 min' },
+  ];
+
+  const claudeSteps = [
+    { dur: 1500, step: 'cStep1', prog: 'cProg1', real: '30s' },
+    { dur: 2000, step: 'cStep2', prog: 'cProg2', real: '45s' },
+    { dur: 800,  step: 'cStep3', prog: 'cProg3', real: '5s' },
+    { dur: 1200, step: 'cStep4', prog: 'cProg4', real: '30s' },
+  ];
+
+  let raceStartTime = 0;
+  let tradDone = false, claudeDone = false;
+  let tradEndTime = 0, claudeEndTime = 0;
+  let animFrame;
+
+  function formatTime(ms) {
+    const s = Math.floor(ms / 1000);
+    const m = Math.floor(s / 60);
+    const sec = s % 60;
+    return `${m}:${String(sec).padStart(2,'0')}`;
+  }
+
+  async function runLane(steps, timerId, realId, badgeId, onDone) {
+    let elapsed = 0;
+    const realTimes = { 'tStep1':'30 min','tStep2':'2.5 hrs','tStep3':'1.5 days','tStep4':'2 days','tStep5':'2 days + 1 hr','tStep6':'3.5 days','tStep7':'3.5 days + 30 min', 'cStep1':'30s','cStep2':'1 min 15s','cStep3':'1 min 20s','cStep4':'1 min 50s' };
+
+    for (let i = 0; i < steps.length; i++) {
+      const s = steps[i];
+      const el = document.getElementById(s.step);
+      const prog = document.getElementById(s.prog);
+
+      // Activate
+      el.classList.add('active');
+
+      // Animate progress fill
+      const startT = performance.now();
+      await new Promise(resolve => {
+        function tick() {
+          const p = Math.min(1, (performance.now() - startT) / s.dur);
+          prog.style.width = (p * 100) + '%';
+          if (p < 1) requestAnimationFrame(tick);
+          else resolve();
+        }
+        requestAnimationFrame(tick);
+      });
+
+      elapsed += s.dur;
+      el.classList.remove('active');
+      el.classList.add('done');
+
+      // Update real time label
+      if (realTimes[s.step]) {
+        document.getElementById(realId).textContent = 'Real time: ~' + realTimes[s.step];
+      }
+    }
+
+    // Show badge
+    const badge = document.getElementById(badgeId);
+    badge.classList.add('show');
+    onDone(elapsed);
+  }
+
+  function updateTimers() {
+    if (!raceStartTime) return;
+    const now = performance.now();
+    const elapsed = now - raceStartTime;
+
+    if (!tradDone) {
+      document.getElementById('timerLeft').textContent = formatTime(elapsed);
+      document.getElementById('bottomTrad').textContent = formatTime(elapsed);
+    }
+    if (!claudeDone) {
+      document.getElementById('timerRight').textContent = formatTime(elapsed);
+      document.getElementById('bottomClaude').textContent = formatTime(elapsed);
+    }
+
+    if (!tradDone || !claudeDone) {
+      requestAnimationFrame(updateTimers);
+    }
+  }
+
+  function showResults() {
+    document.getElementById('resultTrad').textContent = '3–5 days';
+    document.getElementById('resultClaude').textContent = '<2 min';
+
+    const results = document.getElementById('results');
+    results.classList.add('show');
+
+    // Animate bars
+    setTimeout(() => {
+      document.getElementById('barTrad').style.height = '200px';
+      document.getElementById('barClaude').style.height = '28px';
+    }, 400);
+  }
+
+  function startRace() {
+    document.getElementById('intro').classList.add('hidden');
+    raceStartTime = performance.now();
+
+    requestAnimationFrame(updateTimers);
+
+    // Run both lanes in parallel
+    runLane(tradSteps, 'timerLeft', 'realLeft', 'tradBadge', (elapsed) => {
+      tradDone = true;
+      tradEndTime = elapsed;
+      document.getElementById('timerLeft').textContent = formatTime(elapsed);
+      document.getElementById('bottomTrad').textContent = formatTime(elapsed);
+      document.getElementById('realLeft').textContent = 'Real time: ~3–5 days';
+      // Both done → show results
+      if (claudeDone) setTimeout(showResults, 1000);
+    });
+
+    runLane(claudeSteps, 'timerRight', 'realRight', 'claudeBadge', (elapsed) => {
+      claudeDone = true;
+      claudeEndTime = elapsed;
+      document.getElementById('timerRight').textContent = formatTime(elapsed);
+      document.getElementById('bottomClaude').textContent = formatTime(elapsed);
+      document.getElementById('realRight').textContent = 'Real time: <2 minutes';
+      // Show waiting badge on traditional side
+      document.getElementById('tradBadge').classList.add('show');
+      if (tradDone) setTimeout(showResults, 1000);
+    });
+  }
+</script>
+
+</body>
+</html>

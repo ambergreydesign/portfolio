@@ -3,9 +3,67 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400;700&display=swap" rel="stylesheet">
 <title>Studio — Portfolio</title>
 <style>
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+/* ── INTRO ANIMATIONS ── */
+@keyframes introFade { from { opacity: 0; } to { opacity: 1; } }
+@keyframes introFadeUp { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes introFadeOut { 0% { opacity: 1; } 100% { opacity: 0; visibility: hidden; } }
+
+/* ── SKIP INTRO ON RETURN ── */
+.skip-intro #welcome-intro { display: none; }
+.skip-intro #studio-photo,
+.skip-intro #vignette,
+.skip-intro #overlay,
+.skip-intro .wordmark,
+.skip-intro .sig,
+.skip-intro #motes { opacity: 1; animation: none; }
+@keyframes sigDraw { from { stroke-dashoffset: 600; } to { stroke-dashoffset: 0; } }
+@keyframes sigFill { from { fill-opacity: 0; } to { fill-opacity: 1; } }
+
+/* ── WELCOME OVERLAY ── */
+#welcome-intro {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  z-index: 50;
+  pointer-events: none;
+  background: radial-gradient(ellipse 80% 70% at 50% 50%, rgba(6,12,18,0.65) 0%, rgba(6,12,18,0.4) 60%, transparent 100%);
+  animation: introFadeOut 1.2s ease-in 3.8s forwards;
+}
+.welcome-line {
+  font-family: 'Georgia', serif;
+  font-size: clamp(24px, 3vw, 42px);
+  color: rgba(224,212,192,0.95);
+  letter-spacing: 0.12em;
+  text-shadow: 0 2px 20px rgba(0,0,0,0.7), 0 0 40px rgba(0,0,0,0.4);
+  opacity: 0;
+  animation: introFadeUp 1.2s ease-out 0.5s forwards;
+}
+.welcome-sig {
+  width: clamp(220px, 26vw, 400px);
+  height: auto;
+  margin-top: 16px;
+  overflow: visible;
+  filter: drop-shadow(0 2px 12px rgba(0,0,0,0.6));
+}
+.welcome-sig text {
+  font-family: 'Dancing Script', cursive;
+  font-size: 42px;
+  fill: rgba(224,212,192,0.9);
+  fill-opacity: 0;
+  stroke: rgba(224,212,192,0.8);
+  stroke-width: 0.8;
+  stroke-dasharray: 600;
+  stroke-dashoffset: 600;
+  animation: sigDraw 2s ease-out 1.5s forwards, sigFill 0.6s ease-in 3s forwards;
+}
 
 html, body {
   width: 100%; height: 100%;
@@ -32,6 +90,8 @@ html, body {
   display: block;
   pointer-events: none;
   user-select: none;
+  opacity: 0;
+  animation: introFade 1.5s ease-out 0s forwards;
 }
 
 /* ── VIGNETTE OVER PHOTO ── */
@@ -42,6 +102,8 @@ html, body {
     radial-gradient(ellipse 120% 100% at 50% 50%, transparent 40%, rgba(6,12,18,0.45) 100%);
   pointer-events: none;
   z-index: 1;
+  opacity: 0;
+  animation: introFade 1.2s ease-out 0.8s forwards;
 }
 
 /* ── SVG OVERLAY (interaction layer) ── */
@@ -51,6 +113,8 @@ html, body {
   width: 100%; height: 100%;
   z-index: 2;
   /* viewBox 1440x900 — matches image native proportions */
+  opacity: 0;
+  animation: introFade 1s ease-out 5s forwards;
 }
 
 /* ── ZONE INTERACTION ── */
@@ -119,6 +183,8 @@ html, body {
   pointer-events: none;
   z-index: 10;
   text-shadow: 0 1px 6px rgba(0,0,0,0.6);
+  opacity: 0;
+  animation: introFadeUp 1s ease-out 4.5s forwards;
 }
 .sig {
   position: fixed;
@@ -128,9 +194,12 @@ html, body {
   color: rgba(200,185,165,0.25);
   pointer-events: none;
   z-index: 10;
+  opacity: 0;
+  animation: introFade 1s ease-out 5s forwards;
 }
 
 /* ── MOTES ── */
+#motes { opacity: 0; animation: introFade 1s ease-out 4.5s forwards; }
 .mote { position: absolute; border-radius: 50%; background: rgba(220,210,195,0.65); animation: mote-float var(--d,9s) ease-in-out infinite var(--delay,0s); pointer-events: none; }
 @keyframes mote-float { 0% { opacity:0; transform:translateY(0); } 10% { opacity:0.6; } 90% { opacity:0.2; } 100% { opacity:0; transform:translateY(-80vh) translateX(var(--dx,15px)); } }
 
@@ -498,6 +567,14 @@ html, body {
 
 </div><!-- #scene -->
 
+<!-- ── WELCOME INTRO ── -->
+<div id="welcome-intro">
+  <p class="welcome-line">Welcome to my studio.</p>
+  <svg class="welcome-sig" viewBox="0 0 260 50" xmlns="http://www.w3.org/2000/svg">
+    <text x="10" y="38">— Amber Grey</text>
+  </svg>
+</div>
+
 <div id="page-exit"></div>
 <div class="wordmark">Amber Grey</div>
 <div class="sig">Portfolio · 2025</div>
@@ -624,6 +701,15 @@ html, body {
 
 <script>
 'use strict';
+
+// ── SKIP INTRO ON RETURN VISITS (within same session) ──
+(function() {
+  if (sessionStorage.getItem('introSeen')) {
+    document.documentElement.classList.add('skip-intro');
+  } else {
+    sessionStorage.setItem('introSeen', '1');
+  }
+})();
 
 // ── DATA ────────────────────────────────────────────────────
 

@@ -1,0 +1,1536 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Landscape Playground</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bg:           #050a10;
+  --bg-alt:       #0b1c26;
+  --bg-panel:     rgba(8, 18, 26, 0.96);
+  --text:         rgba(224, 212, 192, 0.88);
+  --text-muted:   rgba(200, 185, 165, 0.55);
+  --text-dim:     rgba(200, 185, 165, 0.25);
+  --gold:         rgba(190, 155, 90, 0.80);
+  --gold-soft:    rgba(190, 155, 90, 0.12);
+  --gold-border:  rgba(190, 155, 90, 0.22);
+  --green-1:      #5a8a62;
+  --green-2:      #3d6b4a;
+  --green-3:      #2a5438;
+  --bloom-pink:   #c47a8e;
+  --bloom-gold:   #dca25b;
+  --bloom-blue:   #7aabde;
+  --bloom-violet: #a67abf;
+  --earth:        #8b6f4e;
+  --earth-soft:   rgba(139, 111, 78, 0.15);
+  --border:       rgba(255, 255, 255, 0.06);
+  --glass-bg:     rgba(200, 195, 222, 0.04);
+  --glass-border: rgba(255, 255, 255, 0.08);
+  --ease:         cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+html {
+  background: var(--bg);
+  scroll-behavior: smooth;
+  overflow-x: hidden;
+}
+
+body {
+  font-family: 'DM Sans', sans-serif;
+  color: var(--text);
+  overflow-x: hidden;
+}
+
+/* ── SCROLL PROGRESS ── */
+#scroll-progress {
+  position: fixed; top: 0; left: 0;
+  width: 0%; height: 2px;
+  background: linear-gradient(90deg, var(--gold), var(--bloom-gold));
+  z-index: 9000;
+  transition: width 0.1s linear;
+}
+
+/* ── BACK LINK ── */
+.back-link {
+  position: fixed; top: 20px; left: 20px;
+  display: flex; align-items: center; gap: 8px;
+  padding: 8px 18px 8px 14px;
+  border-radius: 100px;
+  background: rgba(255,255,255,0.04);
+  backdrop-filter: blur(12px);
+  border: 1px solid var(--border);
+  color: var(--text-muted);
+  text-decoration: none;
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  z-index: 8000;
+  transition: background 0.3s, color 0.3s;
+}
+.back-link:hover { background: rgba(255,255,255,0.08); color: var(--text); }
+.back-link svg { width: 14px; height: 14px; stroke: currentColor; fill: none; stroke-width: 1.5; }
+
+/* ── REVEAL SYSTEM ── */
+.reveal {
+  opacity: 0;
+  transform: translateY(32px);
+  transition: opacity 0.8s var(--ease), transform 0.8s var(--ease);
+}
+.reveal.visible { opacity: 1; transform: translateY(0); }
+.reveal-delay-1 { transition-delay: 0.1s; }
+.reveal-delay-2 { transition-delay: 0.2s; }
+.reveal-delay-3 { transition-delay: 0.3s; }
+.reveal-delay-4 { transition-delay: 0.4s; }
+
+/* ── SHARED LAYOUT ── */
+.section-inner {
+  max-width: 1040px;
+  margin: 0 auto;
+  padding: 0 40px;
+}
+.section-eyebrow {
+  font-size: 9px;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  color: var(--text-dim);
+  margin-bottom: 16px;
+}
+.section-heading {
+  font-family: 'Cormorant Garamond', serif;
+  font-weight: 300;
+  font-size: clamp(28px, 4vw, 44px);
+  line-height: 1.2;
+  color: var(--text);
+  margin-bottom: 48px;
+}
+
+/* ── PAGE TRANSITION ── */
+#page-exit {
+  position: fixed; inset: 0;
+  background: var(--bg);
+  opacity: 0; pointer-events: none;
+  transition: opacity 0.45s ease;
+  z-index: 9999;
+}
+#page-exit.active { opacity: 1; }
+
+/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+   SECTION 1: HERO
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+#hero {
+  position: relative;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  overflow: hidden;
+}
+.hero-ambient {
+  position: absolute; inset: 0;
+  background:
+    radial-gradient(ellipse 50% 40% at 30% 60%, rgba(74,122,82,0.08) 0%, transparent 100%),
+    radial-gradient(ellipse 40% 50% at 70% 40%, rgba(190,155,90,0.06) 0%, transparent 100%),
+    radial-gradient(ellipse 60% 60% at 50% 80%, rgba(139,111,78,0.05) 0%, transparent 100%);
+  pointer-events: none;
+}
+.hero-content { position: relative; z-index: 1; padding: 0 40px; }
+.hero-eyebrow {
+  font-size: 9px;
+  letter-spacing: 0.36em;
+  text-transform: uppercase;
+  color: var(--text-dim);
+  margin-bottom: 24px;
+  opacity: 0;
+  animation: fadeUp 1s var(--ease) 0.3s forwards;
+}
+.hero-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-weight: 300;
+  font-size: clamp(36px, 6vw, 72px);
+  line-height: 1.1;
+  color: var(--text);
+  margin-bottom: 20px;
+  opacity: 0;
+  animation: fadeUp 1.2s var(--ease) 0.6s forwards;
+}
+.hero-sub {
+  font-size: clamp(13px, 1.6vw, 16px);
+  color: var(--text-muted);
+  max-width: 480px;
+  margin: 0 auto;
+  line-height: 1.6;
+  opacity: 0;
+  animation: fadeUp 1s var(--ease) 1s forwards;
+}
+.hero-scroll-hint {
+  position: absolute;
+  bottom: 40px;
+  display: flex; flex-direction: column; align-items: center; gap: 12px;
+  opacity: 0;
+  animation: fadeUp 1s var(--ease) 1.6s forwards;
+}
+.hero-scroll-hint span {
+  font-size: 9px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--text-dim);
+}
+.scroll-line {
+  width: 1px; height: 40px;
+  background: linear-gradient(to bottom, var(--gold-border), transparent);
+  animation: scrollPulse 2s ease-in-out infinite;
+}
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(16px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes scrollPulse {
+  0%, 100% { opacity: 0.3; transform: scaleY(0.7); }
+  50%      { opacity: 0.8; transform: scaleY(1); }
+}
+
+/* ── HERO POLLEN ── */
+.pollen {
+  position: absolute;
+  border-radius: 50%;
+  pointer-events: none;
+  animation: pollenDrift var(--d, 12s) ease-in-out infinite var(--delay, 0s);
+}
+@keyframes pollenDrift {
+  0%   { opacity: 0; transform: translate(0, 0); }
+  15%  { opacity: var(--peak, 0.5); }
+  85%  { opacity: 0.15; }
+  100% { opacity: 0; transform: translate(var(--dx, 30px), var(--dy, -120px)); }
+}
+
+/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+   SECTION 2: GARDEN
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+#garden {
+  position: relative;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 60px 20px 40px;
+}
+.garden-title {
+  text-align: center;
+  margin-bottom: 32px;
+}
+.garden-title .section-eyebrow { margin-bottom: 10px; }
+.garden-title h2 {
+  font-family: 'Cormorant Garamond', serif;
+  font-weight: 300;
+  font-size: clamp(24px, 3vw, 36px);
+  color: var(--text);
+}
+
+.garden-viewport {
+  position: relative;
+  width: 100%;
+  max-width: 1200px;
+  aspect-ratio: 16 / 9;
+  border-radius: 16px;
+  overflow: hidden;
+  background:
+    radial-gradient(ellipse 100% 80% at 50% 100%, rgba(20,40,28,0.5) 0%, transparent 70%),
+    radial-gradient(ellipse 80% 60% at 30% 50%, rgba(30,45,35,0.2) 0%, transparent 70%),
+    radial-gradient(ellipse 80% 60% at 70% 40%, rgba(25,35,45,0.2) 0%, transparent 70%),
+    #060e14;
+  border: 1px solid var(--border);
+}
+#garden-svg {
+  width: 100%; height: 100%;
+  display: block;
+}
+
+/* ── BIOME STYLES ── */
+.biome-region {
+  opacity: 0.7;
+  transition: opacity 0.5s ease;
+}
+.biome-label {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 13px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  fill: var(--text-muted);
+  text-anchor: middle;
+  pointer-events: none;
+}
+
+/* ── PLANT STYLES ── */
+.plant-group {
+  cursor: pointer;
+  transition: filter 0.3s ease;
+}
+.plant-group:hover { filter: brightness(1.3) drop-shadow(0 0 8px rgba(190,155,90,0.3)); }
+
+/* Tree (case study) — gentle sway on whole tree */
+.tree-sway {
+  transform-origin: 0px 0px;
+  animation: treeSway var(--sway-d, 8s) ease-in-out infinite var(--sway-delay, 0s);
+}
+@keyframes treeSway {
+  0%, 100% { transform: rotate(-0.3deg); }
+  50%      { transform: rotate(0.3deg); }
+}
+
+/* Flower (prototype) — subtle scale pulse */
+.flower-nod {
+  transform-origin: 0px 0px;
+  animation: flowerPulse var(--nod-d, 6s) ease-in-out infinite var(--nod-delay, 0s);
+}
+@keyframes flowerPulse {
+  0%, 100% { transform: scale(1); }
+  50%      { transform: scale(1.03); }
+}
+
+/* Ground cover shimmer */
+.ground-shape {
+  animation: groundShimmer var(--shim-d, 6s) ease-in-out infinite var(--shim-delay, 0s);
+}
+@keyframes groundShimmer {
+  0%, 100% { opacity: 0.5; }
+  50%      { opacity: 0.65; }
+}
+
+/* Garden paths */
+.garden-path {
+  fill: none;
+  stroke: rgba(139, 111, 78, 0.22);
+  stroke-width: 2.5;
+  stroke-dasharray: 6 4;
+  stroke-linecap: round;
+}
+
+/* Fireflies */
+.firefly {
+  animation: fireflyGlow var(--ff-d, 6s) ease-in-out infinite var(--ff-delay, 0s);
+}
+@keyframes fireflyGlow {
+  0%, 100% { opacity: 0; transform: translate(0, 0); }
+  20%      { opacity: 0.8; }
+  50%      { opacity: 0.4; transform: translate(var(--ff-dx, 8px), var(--ff-dy, -6px)); }
+  80%      { opacity: 0.7; }
+}
+
+/* ── PLANT INFO CARD ── */
+#plant-card {
+  position: absolute;
+  width: 240px;
+  padding: 18px 20px;
+  background: var(--bg-panel);
+  backdrop-filter: blur(18px) saturate(1.2);
+  border: 1px solid var(--glass-border);
+  border-radius: 12px;
+  opacity: 0;
+  transform: translateY(6px);
+  transition: opacity 0.3s ease, transform 0.3s var(--ease);
+  pointer-events: none;
+  z-index: 100;
+}
+#plant-card.open {
+  opacity: 1;
+  transform: translateY(0);
+  pointer-events: all;
+}
+.plant-card-type {
+  font-size: 8px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin-bottom: 6px;
+}
+.plant-card-name {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 18px;
+  font-weight: 400;
+  color: var(--text);
+  margin-bottom: 8px;
+  line-height: 1.2;
+}
+.plant-card-desc {
+  font-size: 12px;
+  line-height: 1.5;
+  color: var(--text-muted);
+  margin-bottom: 12px;
+}
+.plant-card-link {
+  display: inline-block;
+  font-size: 10px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--gold);
+  text-decoration: none;
+  padding: 5px 12px;
+  border: 1px solid var(--gold-border);
+  border-radius: 100px;
+  transition: background 0.25s, color 0.25s;
+}
+.plant-card-link:hover {
+  background: var(--gold-soft);
+  color: rgba(224,212,192,0.95);
+}
+
+/* ── GARDEN LEGEND ── */
+.garden-legend {
+  display: flex; gap: 24px;
+  margin-top: 20px;
+  justify-content: center;
+}
+.legend-item {
+  display: flex; align-items: center; gap: 8px;
+  font-size: 11px;
+  color: var(--text-muted);
+}
+.legend-icon {
+  flex-shrink: 0;
+}
+.legend-icon svg {
+  display: block;
+}
+
+/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+   SECTION 3: DIFFERENTIATORS
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+#differentiators {
+  padding: 140px 0 100px;
+}
+.diff-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 24px;
+}
+.diff-card {
+  padding: 32px 28px;
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  border-radius: 14px;
+  backdrop-filter: blur(8px);
+}
+.diff-card h3 {
+  font-family: 'Cormorant Garamond', serif;
+  font-weight: 400;
+  font-size: 20px;
+  color: var(--text);
+  margin-bottom: 10px;
+}
+.diff-card p {
+  font-size: 13px;
+  line-height: 1.6;
+  color: var(--text-muted);
+  margin-bottom: 20px;
+}
+
+/* Mini-demo containers */
+.diff-demo {
+  border-radius: 10px;
+  background: rgba(0,0,0,0.25);
+  border: 1px solid var(--border);
+  padding: 16px;
+  min-height: 80px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Demo 1: Interactive toggle */
+.demo-toggle {
+  display: flex; gap: 12px; align-items: center;
+}
+.demo-toggle-btn {
+  padding: 6px 14px;
+  border-radius: 100px;
+  border: 1px solid var(--border);
+  background: transparent;
+  color: var(--text-muted);
+  font-family: 'DM Sans', sans-serif;
+  font-size: 10px;
+  letter-spacing: 0.08em;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+.demo-toggle-btn.active {
+  background: var(--gold-soft);
+  border-color: var(--gold-border);
+  color: var(--text);
+}
+
+/* Demo 2: Mini studio room */
+.demo-room {
+  position: relative;
+  width: 100%; height: 80px;
+}
+.demo-room-zone {
+  position: absolute;
+  border: 1px solid rgba(255,255,255,0.06);
+  border-radius: 4px;
+  cursor: pointer;
+  transition: border-color 0.4s, background 0.4s;
+  display: flex; align-items: center; justify-content: center;
+}
+.demo-room-zone:hover,
+.demo-room-zone.touched {
+  border-color: var(--gold-border);
+  background: rgba(190,155,90,0.06);
+}
+.demo-room-label {
+  font-size: 7px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--text-dim);
+  opacity: 0;
+  transition: opacity 0.5s;
+  pointer-events: none;
+  white-space: nowrap;
+}
+.demo-room-zone:hover .demo-room-label,
+.demo-room-zone.touched .demo-room-label {
+  opacity: 1;
+  color: var(--text-muted);
+}
+.demo-room-hint {
+  position: absolute;
+  bottom: 4px; right: 8px;
+  font-size: 8px;
+  color: var(--text-dim);
+  letter-spacing: 0.1em;
+}
+
+/* Demo 3: Multi-level disclosure */
+.demo-levels {
+  display: flex; gap: 8px; align-items: flex-start; width: 100%;
+}
+.demo-level {
+  flex: 1;
+  padding: 10px 12px;
+  border-radius: 8px;
+  background: rgba(255,255,255,0.03);
+  border: 1px solid var(--border);
+  cursor: pointer;
+  transition: all 0.4s var(--ease);
+  min-height: 50px;
+}
+.demo-level-tag {
+  font-size: 7px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--text-dim);
+  margin-bottom: 4px;
+}
+.demo-level-items {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.5s var(--ease);
+}
+.demo-level.open .demo-level-items { max-height: 60px; }
+.demo-level.open { border-color: var(--gold-border); background: rgba(190,155,90,0.04); }
+.demo-level-item {
+  font-size: 9px;
+  color: var(--text-muted);
+  padding: 2px 0;
+}
+
+/* Demo 4: Palette cycle */
+.demo-palettes {
+  display: flex; gap: 8px;
+}
+.demo-swatch {
+  width: 32px; height: 32px;
+  border-radius: 8px;
+  transition: background-color 1.2s ease, transform 0.3s;
+  border: 1px solid rgba(255,255,255,0.08);
+}
+.demo-swatch:hover { transform: scale(1.15); }
+
+/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+   SECTION 4: ARCHITECTURE
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+#architecture {
+  padding: 80px 0 120px;
+}
+.arch-flow {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 32px;
+}
+.arch-diagram {
+  display: flex;
+  align-items: center;
+  gap: 0;
+  width: 100%;
+  max-width: 800px;
+}
+.arch-level {
+  flex: 1;
+  padding: 24px 20px;
+  border-radius: 12px;
+  background: var(--glass-bg);
+  border: 1px solid var(--border);
+  text-align: center;
+  transition: all 0.5s var(--ease);
+  cursor: pointer;
+}
+.arch-level.active {
+  background: var(--gold-soft);
+  border-color: var(--gold-border);
+}
+.arch-level-num {
+  font-size: 28px;
+  font-family: 'Cormorant Garamond', serif;
+  font-weight: 300;
+  color: var(--gold);
+  margin-bottom: 4px;
+}
+.arch-level-name {
+  font-size: 12px;
+  letter-spacing: 0.06em;
+  color: var(--text);
+  margin-bottom: 4px;
+}
+.arch-level-desc {
+  font-size: 10px;
+  color: var(--text-muted);
+}
+.arch-arrow {
+  width: 40px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-dim);
+}
+.arch-arrow svg { width: 24px; height: 24px; stroke: currentColor; fill: none; stroke-width: 1.5; }
+
+/* Arch preview area */
+.arch-preview {
+  width: 100%;
+  max-width: 800px;
+  min-height: 140px;
+  border-radius: 12px;
+  background: rgba(0,0,0,0.25);
+  border: 1px solid var(--border);
+  padding: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.5s var(--ease);
+}
+.arch-preview-content {
+  text-align: center;
+}
+.arch-preview-content h4 {
+  font-family: 'Cormorant Garamond', serif;
+  font-weight: 400;
+  font-size: 18px;
+  color: var(--text);
+  margin-bottom: 8px;
+}
+.arch-preview-content p {
+  font-size: 12px;
+  line-height: 1.6;
+  color: var(--text-muted);
+  max-width: 400px;
+}
+
+/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+   SECTION 5: NUMBERS
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+#numbers {
+  padding: 80px 0 120px;
+}
+.stat-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 24px;
+  text-align: center;
+}
+.stat-cell {
+  padding: 32px 16px;
+  border-radius: 12px;
+  background: var(--glass-bg);
+  border: 1px solid var(--border);
+}
+.stat-num {
+  font-family: 'Cormorant Garamond', serif;
+  font-weight: 300;
+  font-size: 48px;
+  color: var(--text);
+  line-height: 1;
+  margin-bottom: 8px;
+}
+.stat-label {
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  color: var(--text-muted);
+}
+
+/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+   SECTION 6: FOOTER
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+#footer {
+  padding: 80px 0 100px;
+  text-align: center;
+}
+.footer-invite {
+  font-family: 'Cormorant Garamond', serif;
+  font-weight: 300;
+  font-size: clamp(22px, 3vw, 32px);
+  color: var(--text);
+  margin-bottom: 28px;
+}
+.footer-cta {
+  display: inline-block;
+  padding: 14px 40px;
+  border-radius: 100px;
+  border: 1px solid var(--gold-border);
+  background: var(--gold-soft);
+  color: var(--text);
+  text-decoration: none;
+  font-size: 12px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  transition: background 0.3s, border-color 0.3s;
+}
+.footer-cta:hover {
+  background: rgba(190,155,90,0.2);
+  border-color: var(--gold);
+}
+.footer-wordmark {
+  margin-top: 60px;
+  font-size: 9px;
+  letter-spacing: 0.2em;
+  color: var(--text-dim);
+}
+
+/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+   RESPONSIVE
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+@media (max-width: 768px) {
+  .section-inner { padding: 0 24px; }
+  .diff-grid { grid-template-columns: 1fr; }
+  .stat-grid { grid-template-columns: repeat(2, 1fr); }
+  .stat-grid .stat-cell:last-child { grid-column: 1 / -1; }
+  .garden-viewport { aspect-ratio: 4 / 3; }
+  .arch-diagram { flex-direction: column; }
+  .arch-arrow { transform: rotate(90deg); width: auto; height: 32px; }
+  #garden { padding: 40px 16px 30px; }
+}
+@media (max-width: 480px) {
+  .stat-grid { grid-template-columns: 1fr; }
+  .garden-legend { flex-direction: column; align-items: center; gap: 10px; }
+}
+</style>
+</head>
+<body>
+
+<div id="scroll-progress"></div>
+<div id="page-exit"></div>
+
+<a href="studio-portfolio.html" class="back-link">
+  <svg viewBox="0 0 24 24"><path d="M15 18l-6-6 6-6"/></svg>
+  Studio
+</a>
+
+<!-- ═══════ SECTION 1: HERO ═══════ -->
+<section id="hero">
+  <div class="hero-ambient"></div>
+  <div id="hero-pollen"></div>
+  <div class="hero-content">
+    <div class="hero-eyebrow">A Portfolio System</div>
+    <h1 class="hero-title">The Landscape<br>Playground</h1>
+    <p class="hero-sub">62 hand-built pages. Zero frameworks. One interconnected ecosystem where every project grows from the same soil.</p>
+  </div>
+  <div class="hero-scroll-hint">
+    <span>Explore the garden</span>
+    <div class="scroll-line"></div>
+  </div>
+</section>
+
+<!-- ═══════ SECTION 2: GARDEN ═══════ -->
+<section id="garden">
+  <div class="garden-title reveal">
+    <div class="section-eyebrow">The Ecosystem</div>
+    <h2>Five biomes, one living garden</h2>
+  </div>
+  <div class="garden-viewport reveal reveal-delay-1">
+    <svg id="garden-svg" viewBox="0 0 1600 900" preserveAspectRatio="xMidYMid meet">
+      <!-- Rendered by JS -->
+    </svg>
+    <div id="plant-card">
+      <div class="plant-card-type"></div>
+      <div class="plant-card-name"></div>
+      <p class="plant-card-desc"></p>
+      <a class="plant-card-link" href="#">Visit</a>
+    </div>
+  </div>
+  <div class="garden-legend reveal reveal-delay-2">
+    <div class="legend-item">
+      <span class="legend-icon"><svg width="16" height="22" viewBox="-8 -22 16 22" fill="none">
+        <path d="M0,0 C0,-4 0,-10 0,-16" stroke="rgba(200,185,165,0.6)" stroke-width="0.7" stroke-linecap="round"/>
+        <path d="M0,-6 C-4,-8 -6,-13 -5,-16 C-4,-13 -1,-10 0,-6" stroke="rgba(200,185,165,0.6)" stroke-width="0.5" fill="rgba(200,185,165,0.1)" stroke-linecap="round"/>
+        <path d="M0,-9 C4,-11 6,-16 5,-19 C4,-16 1,-13 0,-9" stroke="rgba(200,185,165,0.6)" stroke-width="0.5" fill="rgba(200,185,165,0.1)" stroke-linecap="round"/>
+        <path d="M0,-13 C-2,-17 -2,-20 0,-22 C2,-20 2,-17 0,-13" stroke="rgba(200,185,165,0.6)" stroke-width="0.45" fill="rgba(200,185,165,0.08)" stroke-linecap="round"/>
+      </svg></span> Case Study
+    </div>
+    <div class="legend-item">
+      <span class="legend-icon"><svg width="14" height="18" viewBox="-7 -16 14 16" fill="none">
+        <path d="M0,0 C0,-3 0,-7 0,-10" stroke="rgba(200,185,165,0.5)" stroke-width="0.6" stroke-linecap="round"/>
+        <path d="M0,-13 C-1.5,-14.5 -3.5,-14.2 -3.5,-13 C-3.5,-11.8 -1.5,-11.5 0,-13" stroke="rgba(200,185,165,0.6)" stroke-width="0.5" fill="rgba(200,185,165,0.1)" stroke-linecap="round"/>
+        <path d="M0,-13 C1.5,-14.5 3.5,-14.2 3.5,-13 C3.5,-11.8 1.5,-11.5 0,-13" stroke="rgba(200,185,165,0.6)" stroke-width="0.5" fill="rgba(200,185,165,0.1)" stroke-linecap="round"/>
+        <path d="M0,-13 C-1.2,-11.2 -1.2,-9.2 0,-9 C1.2,-9.2 1.2,-11.2 0,-13" stroke="rgba(200,185,165,0.6)" stroke-width="0.5" fill="rgba(200,185,165,0.1)" stroke-linecap="round"/>
+        <path d="M0,-13 C1.5,-15 1,-16 0,-16 C-1,-16 -1.5,-15 0,-13" stroke="rgba(200,185,165,0.6)" stroke-width="0.5" fill="rgba(200,185,165,0.1)" stroke-linecap="round"/>
+        <circle cx="0" cy="-13" r="1" fill="rgba(200,185,165,0.5)"/>
+      </svg></span> Prototype
+    </div>
+    <div class="legend-item">
+      <span class="legend-icon"><svg width="18" height="8" viewBox="-9 -6 18 8" fill="none">
+        <ellipse cx="0" cy="-2" rx="8" ry="3.5" fill="rgba(200,185,165,0.15)" stroke="rgba(200,185,165,0.4)" stroke-width="0.5"/>
+      </svg></span> Hub Page
+    </div>
+  </div>
+</section>
+
+<!-- ═══════ SECTION 3: DIFFERENTIATORS ═══════ -->
+<section id="differentiators">
+  <div class="section-inner">
+    <div class="section-eyebrow reveal">What Makes This Different</div>
+    <h2 class="section-heading reveal">Not a typical portfolio</h2>
+
+    <div class="diff-grid">
+      <!-- Card 1 -->
+      <div class="diff-card reveal">
+        <h3>Interactive, not static</h3>
+        <p>26 working prototypes you can actually use — not screenshots of designs, but functional experiences built in the browser.</p>
+        <div class="diff-demo">
+          <div class="demo-toggle">
+            <button class="demo-toggle-btn active" data-mode="static">Static</button>
+            <button class="demo-toggle-btn" data-mode="live">Live</button>
+            <div class="demo-toggle-preview" style="margin-left:12px;font-size:10px;color:var(--text-muted);transition:all 0.4s">
+              <span class="toggle-static">Screenshot.png</span>
+              <span class="toggle-live" style="display:none;color:var(--gold)">Try it yourself</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Card 2 -->
+      <div class="diff-card reveal reveal-delay-1">
+        <h3>Spatial navigation</h3>
+        <p>Explore a studio space, not a scrolling feed. Click physical objects to discover five zones of work.</p>
+        <div class="diff-demo">
+          <div class="demo-room" id="demo-room">
+            <div class="demo-room-zone" style="top:4px;left:4px;width:28%;height:45%"><span class="demo-room-label">Perspectives</span></div>
+            <div class="demo-room-zone" style="top:4px;left:34%;width:30%;height:38%"><span class="demo-room-label">Experiments</span></div>
+            <div class="demo-room-zone" style="top:44%;left:8%;width:35%;height:50%"><span class="demo-room-label">Systems</span></div>
+            <div class="demo-room-zone" style="top:8%;right:4px;width:30%;height:42%"><span class="demo-room-label">Sense Making</span></div>
+            <div class="demo-room-zone" style="bottom:4px;right:4px;width:28%;height:44%"><span class="demo-room-label">Interactions</span></div>
+            <span class="demo-room-hint">hover to discover</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Card 3 -->
+      <div class="diff-card reveal reveal-delay-2">
+        <h3>Multi-level disclosure</h3>
+        <p>Information revealed in layers — zones, then lists, then deep detail panels. Never overwhelming, always inviting.</p>
+        <div class="diff-demo">
+          <div class="demo-levels" id="demo-levels">
+            <div class="demo-level open" data-level="1">
+              <div class="demo-level-tag">Level 1 &mdash; Zones</div>
+              <div class="demo-level-items">
+                <div class="demo-level-item">Big-picture thinking</div>
+                <div class="demo-level-item" style="opacity:0.5;font-size:8px">Systems, Interactions, Perspectives</div>
+              </div>
+            </div>
+            <div class="demo-level" data-level="2">
+              <div class="demo-level-tag">Level 2 &mdash; Systems</div>
+              <div class="demo-level-items">
+                <div class="demo-level-item">How ideas are structured and built</div>
+                <div class="demo-level-item" style="opacity:0.5;font-size:8px">Contextual intelligence, Dev systems</div>
+              </div>
+            </div>
+            <div class="demo-level" data-level="3">
+              <div class="demo-level-tag">Level 3 &mdash; Experiences</div>
+              <div class="demo-level-items">
+                <div class="demo-level-item">The work in action</div>
+                <div class="demo-level-item" style="opacity:0.5;font-size:8px">Case studies, prototypes, research</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Card 4 -->
+      <div class="diff-card reveal reveal-delay-3">
+        <h3>Each project breathes</h3>
+        <p>Every case study gets its own color palette, animations, and atmosphere — matched to its subject matter.</p>
+        <div class="diff-demo">
+          <div class="demo-palettes" id="demo-palettes">
+            <div class="demo-swatch" style="background:#7aabde"></div>
+            <div class="demo-swatch" style="background:#c47a2e"></div>
+            <div class="demo-swatch" style="background:#68b078"></div>
+            <div class="demo-swatch" style="background:#bf55e0"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════ SECTION 4: ARCHITECTURE ═══════ -->
+<section id="architecture">
+  <div class="section-inner">
+    <div class="section-eyebrow reveal">System Architecture</div>
+    <h2 class="section-heading reveal">Three levels of depth</h2>
+
+    <div class="arch-flow reveal reveal-delay-1">
+      <div class="arch-diagram">
+        <div class="arch-level active" data-arch="1">
+          <div class="arch-level-num">1</div>
+          <div class="arch-level-name">Studio</div>
+          <div class="arch-level-desc">Click a zone</div>
+        </div>
+        <div class="arch-arrow"><svg viewBox="0 0 24 24"><path d="M9 6l6 6-6 6"/></svg></div>
+        <div class="arch-level" data-arch="2">
+          <div class="arch-level-num">2</div>
+          <div class="arch-level-name">Zone List</div>
+          <div class="arch-level-desc">Browse projects</div>
+        </div>
+        <div class="arch-arrow"><svg viewBox="0 0 24 24"><path d="M9 6l6 6-6 6"/></svg></div>
+        <div class="arch-level" data-arch="3">
+          <div class="arch-level-num">3</div>
+          <div class="arch-level-name">Deep Dive</div>
+          <div class="arch-level-desc">Case study or prototype</div>
+        </div>
+      </div>
+      <div class="arch-preview">
+        <div class="arch-preview-content" id="arch-preview-content">
+          <h4>The Studio</h4>
+          <p>This is my real workspace, the places where I think, build, and explore. Each object is a zone. Click to step inside how I work.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════ SECTION 5: NUMBERS ═══════ -->
+<section id="numbers">
+  <div class="section-inner">
+    <div class="section-eyebrow reveal" style="text-align:center">By the Numbers</div>
+    <div class="stat-grid">
+      <div class="stat-cell reveal">
+        <div class="stat-num" data-count="62">0</div>
+        <div class="stat-label">Pages Built</div>
+      </div>
+      <div class="stat-cell reveal reveal-delay-1">
+        <div class="stat-num" data-count="26">0</div>
+        <div class="stat-label">Working Prototypes</div>
+      </div>
+      <div class="stat-cell reveal reveal-delay-2">
+        <div class="stat-num" data-count="11">0</div>
+        <div class="stat-label">Case Studies</div>
+      </div>
+      <div class="stat-cell reveal reveal-delay-3">
+        <div class="stat-num" data-count="5">0</div>
+        <div class="stat-label">Content Zones</div>
+      </div>
+      <div class="stat-cell reveal reveal-delay-4">
+        <div class="stat-num" data-count="0">0</div>
+        <div class="stat-label">Frameworks Used</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════ SECTION 6: FOOTER ═══════ -->
+<section id="footer">
+  <div class="section-inner reveal">
+    <p class="footer-invite">Experience the full portfolio</p>
+    <a href="studio-portfolio.html" class="footer-cta">Enter the Studio</a>
+    <div class="footer-wordmark">AMBER GREY</div>
+  </div>
+</section>
+
+<script>
+'use strict';
+
+/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+   DATA
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+const GARDEN_DATA = {
+  perspectives: {
+    label: 'Perspectives',
+    subtitle: 'What shapes my lens',
+    color: '#7b9a6e',
+    colorSoft: 'rgba(123,154,110,0.12)',
+    cx: 200, cy: 420, rx: 200, ry: 170,
+    projects: [
+      { name: 'About Me', type: 'hub', desc: 'Design philosophy and how I work', href: 'about-me.html' },
+      { name: 'Making Ideas Visible', type: 'hub', desc: 'Where I learned to see differently as an artist', href: 'fine-art.html' },
+      { name: 'From Words to Visuals', type: 'hub', desc: 'Shaping a writer\'s story into something seen and felt', href: 'graphic-design.html' },
+      { name: 'Fine Art Constellation', type: 'prototype', desc: 'Interactive starfield of artwork nodes', href: 'prototype-fine-art.html' },
+      { name: 'Graphic Design Gallery', type: 'prototype', desc: 'Visual design portfolio showcase', href: 'prototype-graphic-design.html' },
+      { name: 'Interests', type: 'prototype', desc: 'Interest and profile exploration', href: 'prototype-interests.html' },
+    ]
+  },
+  experiments: {
+    label: 'Experiments',
+    subtitle: 'Creating to understand',
+    color: '#dca25b',
+    colorSoft: 'rgba(220,162,91,0.10)',
+    cx: 520, cy: 300, rx: 190, ry: 160,
+    projects: [
+      { name: 'Modeling Transformation', type: 'hub', desc: 'Mapping altered creative states into navigable structure', href: 'level-3-psilocybin.html' },
+      { name: 'Generating Worlds', type: 'hub', desc: 'How systems produce cohesive, multi-domain realities', href: 'level-3-matergenesis.html' },
+      { name: 'The Future Zoo', type: 'hub', desc: 'Reverence-centered zoo design in 100 years', href: 'level-3-future-zoo.html' },
+      { name: 'Psilocybin Synthesis', type: 'prototype', desc: 'Educational speculative visualization', href: 'prototype-psilocybin-synthesis.html' },
+      { name: 'MaterGenesis Timeline', type: 'prototype', desc: 'Comparative timeline of extinction and thriving', href: 'prototype-matergenesis-timeline.html' },
+      { name: 'MaterGenesis Gallery', type: 'prototype', desc: 'Multi-view project exploration', href: 'prototype-matergenesis-gallery.html' },
+      { name: 'MaterGenesis Map', type: 'prototype', desc: 'Spatial world visualization', href: 'prototype-matergenesis-map 5.11.08 PM.html' },
+      { name: 'MaterGenesis Story', type: 'prototype', desc: 'Narrative worldbuilding experience', href: 'prototype-matergenesis-story 5.11.08 PM.html' },
+      { name: 'Psilocybin', type: 'case-study', desc: 'Speculative design research', href: 'case-study-psilocybin.html' },
+      { name: 'MaterGenesis', type: 'case-study', desc: 'Generative worldbuilding case study', href: 'case-study-matergenesis.html' },
+    ]
+  },
+  systems: {
+    label: 'Systems',
+    subtitle: 'Structure as a way of thinking',
+    color: '#7aabde',
+    colorSoft: 'rgba(122,171,222,0.10)',
+    cx: 880, cy: 500, rx: 210, ry: 170,
+    projects: [
+      { name: 'Lowering the Barrier to Build', type: 'hub', desc: 'Ship at the speed of conversation', href: 'level-3-dev-system.html' },
+      { name: 'Contextual Intelligence', type: 'hub', desc: 'Systems that adapt to human context in real time', href: 'level-3-ci.html' },
+      { name: 'Daily Living Labs', type: 'hub', desc: 'A front door for community independence', href: 'level-3-dll.html' },
+      { name: 'Dayli Dev System', type: 'prototype', desc: 'Development system documentation', href: 'prototype-dayli-dev-system.html' },
+      { name: 'Dayli Setup', type: 'prototype', desc: 'Multi-step installation guide', href: 'prototype-dayli-setup.html' },
+      { name: 'Dayli System', type: 'prototype', desc: 'System overview and architecture', href: 'prototype-dayli-system.html' },
+      { name: 'Dayli Avatar', type: 'prototype', desc: 'Animated character responding to interaction', href: 'prototype-dayli-avatar.html' },
+      { name: 'Dayli Speedrun', type: 'prototype', desc: 'Time-based interaction simulation', href: 'prototype-dayli-speedrun.html' },
+      { name: 'Daily Living Labs', type: 'prototype', desc: 'Narrative about alternative economics', href: 'prototype-daily-living-labs.html' },
+      { name: 'Dayli AI', type: 'case-study', desc: 'Contextual intelligence for daily living', href: 'case-study-dayli.html' },
+      { name: 'Ticketing System', type: 'case-study', desc: 'Enterprise ticketing redesign', href: 'case-study-ticketing.html' },
+    ]
+  },
+  sensemaking: {
+    label: 'Sense Making',
+    subtitle: 'From raw signal to shaped meaning',
+    color: '#a67abf',
+    colorSoft: 'rgba(166,122,191,0.10)',
+    cx: 1180, cy: 340, rx: 190, ry: 170,
+    projects: [
+      { name: 'Making the Invisible Visible', type: 'hub', desc: 'Revealing who systems are built to miss', href: 'level-3-blv.html' },
+      { name: 'Tracing Invisible Systems', type: 'hub', desc: 'Making hidden structures legible through interaction', href: 'level-3-zoo.html' },
+      { name: 'SIGNS Framework', type: 'hub', desc: 'Transforming experience signals into structured insight', href: 'level-3-signs.html' },
+      { name: 'Revealing Hidden Misalignment', type: 'hub', desc: 'Making the gap between story and reality visible', href: 'level-3-rewilded.html' },
+      { name: 'GWI Visualizer', type: 'prototype', desc: 'Greenwashing Index analysis dashboard', href: 'prototype-gwi-visualizer.html' },
+      { name: 'SIGNS Framework', type: 'prototype', desc: 'Interactive framework prototype', href: 'prototype-signs-framework.html' },
+      { name: 'ReWilded Findings', type: 'prototype', desc: 'Research findings presentation', href: 'prototype-rewilded-findings.html' },
+      { name: 'GPT ReWilded', type: 'prototype', desc: 'GPT-driven research experiment', href: 'prototype-gpt-rewilded.html' },
+      { name: 'Rewilded', type: 'case-study', desc: 'Speculative design thesis on zoo transformation', href: 'case-study-rewilded.html' },
+      { name: 'Glidance', type: 'case-study', desc: 'Navigation for blind and low vision users', href: 'case-study-glidance.html' },
+    ]
+  },
+  interactions: {
+    label: 'Interactions',
+    subtitle: 'When behavior carries the argument',
+    color: '#c47a8e',
+    colorSoft: 'rgba(196,122,142,0.10)',
+    cx: 1420, cy: 480, rx: 170, ry: 165,
+    projects: [
+      { name: 'Waste Impact Calculator', type: 'hub', desc: 'Turning invisible systems into lived experience', href: 'level-3-takeabag.html' },
+      { name: 'Embodied Navigation', type: 'hub', desc: 'Translating information into sensation', href: 'level-3-hapturn.html' },
+      { name: 'Ambient Regulation', type: 'hub', desc: 'Interactions that support calm without interruption', href: 'level-3-dotcalm.html' },
+      { name: 'HapTurn Simulator', type: 'prototype', desc: 'Autonomous vehicle navigation prototype', href: 'prototype-hapturn.html' },
+      { name: 'dotCALM Wearable', type: 'prototype', desc: 'Breathing visualization and regulation', href: 'prototype-dotcalm.html' },
+      { name: 'TakeABag Impact', type: 'prototype', desc: 'Waste impact calculator prototype', href: 'prototype-takeabag-impact.html' },
+      { name: 'Dissonance as Signal', type: 'hub', desc: 'What contradicts is trying to tell you something', href: 'level-3-dissonance.html' },
+      { name: 'Dissonance Loop', type: 'prototype', desc: 'Branching narrative about moral choices', href: 'prototype-dissonance-loop.html' },
+      { name: 'Roommates Quiz', type: 'prototype', desc: 'Compatibility matching with scoring', href: 'prototype-roommates.html' },
+      { name: 'Plug Redesign', type: 'prototype', desc: 'Interactive 3D product challenge', href: 'prototype-plug.html' },
+      { name: 'Glidance Ecosystem', type: 'prototype', desc: 'Navigation ecosystem visualization', href: 'prototype-glidance-ecosystem.html' },
+      { name: 'HapTurn', type: 'case-study', desc: 'Haptic feedback navigation device', href: 'case-study-hapturn.html' },
+      { name: 'dotCALM', type: 'case-study', desc: 'Ambient stress regulation wearable', href: 'case-study-dotcalm.html' },
+      { name: 'TakeABag', type: 'case-study', desc: 'Behavioural design for waste reduction', href: 'case-study-takeabag.html' },
+      { name: 'Plug', type: 'case-study', desc: 'Redesigning the British plug', href: 'case-study-plug.html' },
+      { name: 'Roommates', type: 'case-study', desc: 'Compatibility matching for shared living', href: 'case-study-roommates.html' },
+    ]
+  }
+};
+
+const ARCH_PREVIEWS = [
+  { title: 'The Studio', text: 'This is my real workspace, the places where I think, build, and explore. Each object is a zone. Click to step inside how I work.' },
+  { title: 'Zone Lists', text: 'Each space holds a body of work, projects that explore the same questions from different angles.' },
+  { title: 'Deep Dive', text: 'Step into the full story, case studies, prototypes, and research in detail.' },
+];
+
+const PALETTE_SETS = [
+  ['#7aabde', '#c47a2e', '#68b078', '#bf55e0'],
+  ['#eac6ce', '#dca25b', '#4a7a52', '#7aabde'],
+  ['#a67abf', '#c47a8e', '#8b6f4e', '#5a8a62'],
+  ['#bf55e0', '#68b078', '#c47a2e', '#eac6ce'],
+];
+
+/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+   HERO POLLEN
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+function initPollen() {
+  const container = document.getElementById('hero-pollen');
+  for (let i = 0; i < 20; i++) {
+    const p = document.createElement('div');
+    p.className = 'pollen';
+    const size = 2 + Math.random() * 3;
+    const hue = 35 + Math.random() * 25;
+    p.style.cssText = `
+      width:${size}px; height:${size}px;
+      left:${Math.random() * 100}%;
+      top:${50 + Math.random() * 50}%;
+      background: hsla(${hue}, 50%, 70%, 0.5);
+      --d: ${8 + Math.random() * 10}s;
+      --delay: ${Math.random() * 8}s;
+      --dx: ${-30 + Math.random() * 60}px;
+      --dy: ${-80 - Math.random() * 100}px;
+      --peak: ${0.3 + Math.random() * 0.3};
+    `;
+    container.appendChild(p);
+  }
+}
+
+/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+   GARDEN RENDERER
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+const SVG_NS = 'http://www.w3.org/2000/svg';
+
+function createSVG(tag, attrs) {
+  const el = document.createElementNS(SVG_NS, tag);
+  for (const [k, v] of Object.entries(attrs)) el.setAttribute(k, v);
+  return el;
+}
+
+function placePlantsInBiome(cx, cy, rx, ry, count) {
+  const positions = [];
+  const golden = 2.399963;
+  for (let i = 0; i < count; i++) {
+    const r = Math.sqrt((i + 0.5) / count);
+    const theta = i * golden;
+    positions.push({
+      x: cx + r * rx * 0.68 * Math.cos(theta),
+      y: cy + r * ry * 0.68 * Math.sin(theta)
+    });
+  }
+  return positions;
+}
+
+function drawTree(x, y, color, index) {
+  const g = createSVG('g', { class: 'plant-group', transform: `translate(${x}, ${y})` });
+  const inner = createSVG('g', {
+    class: 'tree-sway',
+    style: `--sway-d:${7 + index % 4}s; --sway-delay:${(index * 0.8) % 5}s`
+  });
+  const sw = 1.0; // stroke width
+  const s = 1.6 + (index % 3) * 0.2; // scale
+  // Stem
+  inner.appendChild(createSVG('path', {
+    d: `M0,0 C0,-8 0,-18 0,${(-24*s).toFixed(1)}`,
+    stroke: color, 'stroke-width': String(sw), fill: 'none', 'stroke-linecap': 'round', opacity: '0.85'
+  }));
+  // Left leaf — arching curve
+  inner.appendChild(createSVG('path', {
+    d: `M0,${(-8*s).toFixed(1)} C${(-6*s).toFixed(1)},${(-11*s).toFixed(1)} ${(-10*s).toFixed(1)},${(-18*s).toFixed(1)} ${(-8*s).toFixed(1)},${(-24*s).toFixed(1)} C${(-6*s).toFixed(1)},${(-20*s).toFixed(1)} ${(-2*s).toFixed(1)},${(-14*s).toFixed(1)} 0,${(-8*s).toFixed(1)}`,
+    stroke: color, 'stroke-width': String(sw * 0.8), fill: color, 'fill-opacity': '0.15', 'stroke-linecap': 'round', opacity: '0.8'
+  }));
+  // Right leaf — arching curve
+  inner.appendChild(createSVG('path', {
+    d: `M0,${(-12*s).toFixed(1)} C${(6*s).toFixed(1)},${(-15*s).toFixed(1)} ${(10*s).toFixed(1)},${(-22*s).toFixed(1)} ${(8*s).toFixed(1)},${(-28*s).toFixed(1)} C${(6*s).toFixed(1)},${(-24*s).toFixed(1)} ${(2*s).toFixed(1)},${(-18*s).toFixed(1)} 0,${(-12*s).toFixed(1)}`,
+    stroke: color, 'stroke-width': String(sw * 0.8), fill: color, 'fill-opacity': '0.15', 'stroke-linecap': 'round', opacity: '0.8'
+  }));
+  // Center top leaf
+  inner.appendChild(createSVG('path', {
+    d: `M0,${(-18*s).toFixed(1)} C${(-3*s).toFixed(1)},${(-24*s).toFixed(1)} ${(-3*s).toFixed(1)},${(-30*s).toFixed(1)} 0,${(-34*s).toFixed(1)} C${(3*s).toFixed(1)},${(-30*s).toFixed(1)} ${(3*s).toFixed(1)},${(-24*s).toFixed(1)} 0,${(-18*s).toFixed(1)}`,
+    stroke: color, 'stroke-width': String(sw * 0.7), fill: color, 'fill-opacity': '0.12', 'stroke-linecap': 'round', opacity: '0.75'
+  }));
+  g.appendChild(inner);
+  return g;
+}
+
+function drawFlower(x, y, color, index) {
+  // Outer group for position
+  const g = createSVG('g', { class: 'plant-group', transform: `translate(${x}, ${y})` });
+  // Inner group for subtle scale animation from base
+  const inner = createSVG('g', {
+    class: 'flower-nod',
+    style: `--nod-d:${5 + index % 3}s; --nod-delay:${(index * 0.6) % 5}s`
+  });
+  const sw = 0.85;
+  // Stem — thin line
+  inner.appendChild(createSVG('path', {
+    d: 'M0,0 C0,-6 0,-14 0,-22',
+    stroke: color, 'stroke-width': String(sw * 0.8), fill: 'none', 'stroke-linecap': 'round', opacity: '0.5'
+  }));
+  // Flower head — petals as curved teardrop strokes from center
+  const hcy = -27;
+  const petalCount = 6 + (index % 3); // 6-8 petals
+  const petalR = 8 + (index % 2) * 2;
+  for (let p = 0; p < petalCount; p++) {
+    const angle = (p / petalCount) * Math.PI * 2;
+    const tipX = Math.cos(angle) * petalR;
+    const tipY = hcy + Math.sin(angle) * petalR;
+    // Control points for a rounded petal shape
+    const cw = petalR * 0.35; // petal width at widest
+    const perpX = -Math.sin(angle) * cw;
+    const perpY = Math.cos(angle) * cw;
+    const midX = Math.cos(angle) * petalR * 0.5;
+    const midY = hcy + Math.sin(angle) * petalR * 0.5;
+    inner.appendChild(createSVG('path', {
+      d: `M0,${hcy} C${(midX + perpX).toFixed(1)},${(midY + perpY).toFixed(1)} ${(tipX + perpX * 0.3).toFixed(1)},${(tipY + perpY * 0.3).toFixed(1)} ${tipX.toFixed(1)},${tipY.toFixed(1)} C${(tipX - perpX * 0.3).toFixed(1)},${(tipY - perpY * 0.3).toFixed(1)} ${(midX - perpX).toFixed(1)},${(midY - perpY).toFixed(1)} 0,${hcy}`,
+      stroke: color, 'stroke-width': String(sw * 0.65), fill: color, 'fill-opacity': '0.12',
+      'stroke-linecap': 'round', 'stroke-linejoin': 'round', opacity: '0.8'
+    }));
+  }
+  // Center dot
+  inner.appendChild(createSVG('circle', {
+    cx: '0', cy: String(hcy), r: '1.5',
+    fill: color, opacity: '0.9'
+  }));
+  g.appendChild(inner);
+  return g;
+}
+
+function drawGroundCover(x, y, color, index) {
+  const g = createSVG('g', { class: 'plant-group', transform: `translate(${x}, ${y})` });
+  g.appendChild(createSVG('ellipse', {
+    cx: '0', cy: '-5', rx: '24', ry: '10',
+    fill: color, opacity: '0.55', class: 'ground-shape',
+    style: `--shim-d:${4 + index % 3}s; --shim-delay:${(index * 0.6) % 5}s`
+  }));
+  return g;
+}
+
+function initGarden() {
+  const svg = document.getElementById('garden-svg');
+
+  // Draw subtle ground gradient
+  const defs = createSVG('defs', {});
+  Object.entries(GARDEN_DATA).forEach(([key, zone]) => {
+    const grad = createSVG('radialGradient', { id: `biome-grad-${key}`, cx: '50%', cy: '50%', r: '50%' });
+    const s1 = createSVG('stop', { offset: '0%', 'stop-color': zone.color, 'stop-opacity': '0.18' });
+    const s2 = createSVG('stop', { offset: '100%', 'stop-color': zone.color, 'stop-opacity': '0.02' });
+    grad.appendChild(s1);
+    grad.appendChild(s2);
+    defs.appendChild(grad);
+  });
+  svg.appendChild(defs);
+
+  // Draw paths between biomes
+  const zoneKeys = Object.keys(GARDEN_DATA);
+  const pathLayer = createSVG('g', {});
+  for (let i = 0; i < zoneKeys.length - 1; i++) {
+    const a = GARDEN_DATA[zoneKeys[i]];
+    const b = GARDEN_DATA[zoneKeys[i + 1]];
+    const mx = (a.cx + b.cx) / 2;
+    const my = (a.cy + b.cy) / 2 + (i % 2 === 0 ? -40 : 40);
+    pathLayer.appendChild(createSVG('path', {
+      d: `M${a.cx},${a.cy} Q${mx},${my} ${b.cx},${b.cy}`,
+      class: 'garden-path'
+    }));
+  }
+  svg.appendChild(pathLayer);
+
+  // Draw biomes and plants
+  Object.entries(GARDEN_DATA).forEach(([key, zone]) => {
+    const biomeGroup = createSVG('g', {});
+
+    // Biome background region
+    biomeGroup.appendChild(createSVG('ellipse', {
+      cx: zone.cx, cy: zone.cy, rx: zone.rx, ry: zone.ry,
+      fill: `url(#biome-grad-${key})`, class: 'biome-region'
+    }));
+
+    // Biome label (positioned below biome)
+    const label = createSVG('text', {
+      x: zone.cx, y: zone.cy + zone.ry + 24,
+      class: 'biome-label'
+    });
+    label.textContent = zone.label;
+    biomeGroup.appendChild(label);
+
+    // Place plants
+    const positions = placePlantsInBiome(zone.cx, zone.cy, zone.rx, zone.ry, zone.projects.length);
+    zone.projects.forEach((proj, i) => {
+      const pos = positions[i];
+      let plant;
+      if (proj.type === 'case-study') {
+        plant = drawTree(pos.x, pos.y, zone.color, i);
+      } else if (proj.type === 'prototype') {
+        plant = drawFlower(pos.x, pos.y, zone.color, i);
+      } else {
+        plant = drawGroundCover(pos.x, pos.y, zone.color, i);
+      }
+      plant.dataset.zone = key;
+      plant.dataset.index = i;
+      biomeGroup.appendChild(plant);
+    });
+
+    svg.appendChild(biomeGroup);
+  });
+
+  // Fireflies
+  const ffLayer = createSVG('g', {});
+  for (let i = 0; i < 30; i++) {
+    const zone = GARDEN_DATA[zoneKeys[i % zoneKeys.length]];
+    const fx = zone.cx + (Math.random() - 0.5) * zone.rx * 1.4;
+    const fy = zone.cy + (Math.random() - 0.5) * zone.ry * 1.4;
+    const ff = createSVG('circle', {
+      cx: fx, cy: fy, r: '2',
+      fill: '#dca25b', class: 'firefly',
+      style: `--ff-d:${5 + Math.random() * 6}s; --ff-delay:${Math.random() * 8}s; --ff-dx:${-10 + Math.random() * 20}px; --ff-dy:${-8 + Math.random() * 16}px`
+    });
+    ffLayer.appendChild(ff);
+  }
+  svg.appendChild(ffLayer);
+}
+
+/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+   PLANT CARD INTERACTION
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+function initPlantInteraction() {
+  const card = document.getElementById('plant-card');
+  const viewport = document.querySelector('.garden-viewport');
+  const svg = document.getElementById('garden-svg');
+  let activeGroup = null;
+
+  function showCard(group) {
+    const zoneKey = group.dataset.zone;
+    const idx = parseInt(group.dataset.index);
+    const zone = GARDEN_DATA[zoneKey];
+    const proj = zone.projects[idx];
+    if (!proj) return;
+
+    const typeLabels = { 'case-study': 'Case Study', 'prototype': 'Prototype', 'hub': 'Hub Page' };
+    card.querySelector('.plant-card-type').textContent = typeLabels[proj.type] || proj.type;
+    card.querySelector('.plant-card-name').textContent = proj.name;
+    card.querySelector('.plant-card-desc').textContent = proj.desc;
+    const link = card.querySelector('.plant-card-link');
+    if (proj.href) {
+      link.href = proj.href;
+      link.style.display = '';
+    } else {
+      link.style.display = 'none';
+    }
+
+    // Position card relative to viewport
+    const vRect = viewport.getBoundingClientRect();
+    const svgRect = svg.getBoundingClientRect();
+    const gRect = group.getBoundingClientRect();
+    const cardW = 240;
+    const cardH = 160;
+
+    let left = gRect.left - vRect.left + gRect.width / 2 + 12;
+    let top = gRect.top - vRect.top - 20;
+
+    // Clamp to viewport
+    if (left + cardW > vRect.width - 10) left = gRect.left - vRect.left - cardW - 12;
+    if (left < 10) left = 10;
+    if (top + cardH > vRect.height - 10) top = vRect.height - cardH - 10;
+    if (top < 10) top = 10;
+
+    card.style.left = left + 'px';
+    card.style.top = top + 'px';
+    card.classList.add('open');
+    activeGroup = group;
+  }
+
+  function hideCard() {
+    card.classList.remove('open');
+    activeGroup = null;
+  }
+
+  svg.addEventListener('mouseover', function(e) {
+    const group = e.target.closest('.plant-group');
+    if (group && group !== activeGroup) showCard(group);
+  });
+
+  svg.addEventListener('mouseout', function(e) {
+    const group = e.target.closest('.plant-group');
+    const toEl = e.relatedTarget;
+    if (group && (!toEl || !group.contains(toEl))) {
+      // Check if moving to the card
+      setTimeout(() => {
+        if (!card.matches(':hover') && !group.matches(':hover')) hideCard();
+      }, 100);
+    }
+  });
+
+  card.addEventListener('mouseleave', hideCard);
+
+  // Mobile: click to toggle
+  svg.addEventListener('click', function(e) {
+    const group = e.target.closest('.plant-group');
+    if (group) {
+      if (group === activeGroup) hideCard();
+      else showCard(group);
+    } else {
+      hideCard();
+    }
+  });
+}
+
+/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+   SCROLL SYSTEMS
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+function initScrollProgress() {
+  const bar = document.getElementById('scroll-progress');
+  window.addEventListener('scroll', function() {
+    const h = document.documentElement.scrollHeight - window.innerHeight;
+    bar.style.width = h > 0 ? (window.scrollY / h * 100) + '%' : '0%';
+  }, { passive: true });
+}
+
+function initRevealSystem() {
+  const obs = new IntersectionObserver(function(entries) {
+    entries.forEach(function(e) {
+      if (e.isIntersecting) {
+        e.target.classList.add('visible');
+        obs.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.15, rootMargin: '0px 0px -40px 0px' });
+  document.querySelectorAll('.reveal').forEach(function(r) { obs.observe(r); });
+}
+
+function initCounterAnimation() {
+  const obs = new IntersectionObserver(function(entries) {
+    entries.forEach(function(e) {
+      if (e.isIntersecting) {
+        const el = e.target;
+        const target = parseInt(el.dataset.count);
+        const duration = 1200;
+        const start = performance.now();
+        function tick(now) {
+          const t = Math.min((now - start) / duration, 1);
+          const eased = 1 - Math.pow(1 - t, 3);
+          el.textContent = Math.round(eased * target);
+          if (t < 1) requestAnimationFrame(tick);
+        }
+        requestAnimationFrame(tick);
+        obs.unobserve(el);
+      }
+    });
+  }, { threshold: 0.5 });
+  document.querySelectorAll('.stat-num[data-count]').forEach(function(el) { obs.observe(el); });
+}
+
+/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+   MINI DEMOS
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+function initDemos() {
+  // Demo 1: Interactive toggle
+  document.querySelectorAll('.demo-toggle-btn').forEach(function(btn) {
+    btn.addEventListener('click', function() {
+      const parent = btn.closest('.demo-toggle');
+      parent.querySelectorAll('.demo-toggle-btn').forEach(function(b) { b.classList.remove('active'); });
+      btn.classList.add('active');
+      const isLive = btn.dataset.mode === 'live';
+      parent.querySelector('.toggle-static').style.display = isLive ? 'none' : '';
+      parent.querySelector('.toggle-live').style.display = isLive ? '' : 'none';
+    });
+  });
+
+  // Demo 3: Multi-level disclosure
+  document.querySelectorAll('#demo-levels .demo-level').forEach(function(lvl) {
+    lvl.addEventListener('click', function() {
+      const level = parseInt(lvl.dataset.level);
+      document.querySelectorAll('#demo-levels .demo-level').forEach(function(l) {
+        const n = parseInt(l.dataset.level);
+        l.classList.toggle('open', n <= level);
+      });
+    });
+  });
+
+  // Demo 4: Palette cycle
+  let paletteIdx = 0;
+  setInterval(function() {
+    paletteIdx = (paletteIdx + 1) % PALETTE_SETS.length;
+    const swatches = document.querySelectorAll('#demo-palettes .demo-swatch');
+    swatches.forEach(function(s, i) {
+      s.style.backgroundColor = PALETTE_SETS[paletteIdx][i];
+    });
+  }, 2500);
+}
+
+/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+   ARCHITECTURE INTERACTION
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+function initArchitecture() {
+  const levels = document.querySelectorAll('.arch-level');
+  const preview = document.getElementById('arch-preview-content');
+
+  levels.forEach(function(lvl) {
+    lvl.addEventListener('click', function() {
+      const idx = parseInt(lvl.dataset.arch) - 1;
+      levels.forEach(function(l) { l.classList.remove('active'); });
+      lvl.classList.add('active');
+      const data = ARCH_PREVIEWS[idx];
+      preview.querySelector('h4').textContent = data.title;
+      preview.querySelector('p').textContent = data.text;
+    });
+  });
+}
+
+/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+   PAGE TRANSITIONS
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+function initPageTransitions() {
+  const exit = document.getElementById('page-exit');
+  document.querySelectorAll('a[href]').forEach(function(a) {
+    if (a.hostname && a.hostname !== location.hostname) return;
+    if (a.closest('#plant-card')) return; // plant card links handled separately
+    a.addEventListener('click', function(e) {
+      const href = a.getAttribute('href');
+      if (!href || href.startsWith('#') || href.startsWith('javascript')) return;
+      e.preventDefault();
+      exit.classList.add('active');
+      setTimeout(function() { location.href = href; }, 450);
+    });
+  });
+
+  // Plant card links
+  document.querySelector('#plant-card .plant-card-link').addEventListener('click', function(e) {
+    const href = this.getAttribute('href');
+    if (!href || href === '#') return;
+    e.preventDefault();
+    exit.classList.add('active');
+    setTimeout(function() { location.href = href; }, 450);
+  });
+}
+
+/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+   INIT
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+initPollen();
+initGarden();
+initPlantInteraction();
+initScrollProgress();
+initRevealSystem();
+initCounterAnimation();
+initDemos();
+initArchitecture();
+initPageTransitions();
+</script>
+</body>
+</html>

@@ -1,0 +1,1030 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dayli AI — Ship at the Speed of Conversation</title>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..900;1,9..144,300..900&family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&display=swap" rel="stylesheet" />
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: 'DM Sans', sans-serif; background: #0f0a1a; color: #e2d9f0; overflow: hidden; width: 100vw; height: 100vh; }
+    h1, h2, h3 { font-family: 'Fraunces', serif; }
+
+    /* ---- Slide System ---- */
+    .slides { position: relative; width: 100%; height: 100%; }
+    .slide {
+      position: absolute; inset: 0;
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      padding: 48px 60px;
+      opacity: 0; pointer-events: none; transition: opacity 0.5s ease;
+    }
+    .slide.active { opacity: 1; pointer-events: all; }
+
+    /* ---- Navigation ---- */
+    .nav-bar {
+      position: fixed; bottom: 0; left: 0; right: 0;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 14px 40px;
+      background: rgba(15, 10, 26, 0.92); backdrop-filter: blur(10px);
+      border-top: 1px solid rgba(146, 48, 227, 0.15);
+      z-index: 100;
+    }
+    .nav-dots { display: flex; gap: 5px; align-items: center; }
+    .nav-dot {
+      width: 8px; height: 8px; border-radius: 50%;
+      background: rgba(146, 48, 227, 0.2); cursor: pointer;
+      transition: all 0.3s; border: none;
+    }
+    .nav-dot.active { background: #9230E3; width: 24px; border-radius: 4px; box-shadow: 0 0 8px rgba(146, 48, 227, 0.5); }
+    .nav-divider {
+      width: 1px; height: 16px; background: rgba(146, 48, 227, 0.15); margin: 0 4px;
+    }
+    .nav-btn {
+      padding: 7px 18px; border-radius: 8px;
+      border: 1px solid rgba(146, 48, 227, 0.25); background: transparent;
+      color: #DBB0FF; font-family: 'DM Sans', sans-serif; font-size: 0.8rem;
+      cursor: pointer; transition: all 0.2s;
+    }
+    .nav-btn:hover { background: rgba(146, 48, 227, 0.12); }
+    .nav-section {
+      font-size: 0.65rem; color: rgba(219, 176, 255, 0.3);
+      letter-spacing: 0.1em; text-transform: uppercase;
+    }
+
+    /* ---- Chapter Progress ---- */
+    .chapter-bar {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      display: flex; height: 3px; background: rgba(146, 48, 227, 0.06);
+    }
+    .chapter-seg {
+      flex: 1; height: 100%; transition: background 0.4s ease;
+      background: transparent;
+    }
+    .chapter-seg.done { background: #9230E3; }
+    .chapter-seg.current { background: linear-gradient(90deg, #9230E3, rgba(146, 48, 227, 0.3)); }
+
+    /* ---- Shared Slide Helpers ---- */
+    .slide-label {
+      position: absolute; top: 28px; left: 40px;
+      font-size: 0.65rem; font-weight: 700; letter-spacing: 0.15em;
+      text-transform: uppercase; color: rgba(146, 48, 227, 0.35);
+    }
+    .slide-step {
+      position: absolute; top: 28px; right: 40px;
+      font-size: 0.65rem; color: rgba(219, 176, 255, 0.2);
+    }
+    .heading { font-size: 1.7rem; font-weight: 700; text-align: center; margin-bottom: 6px; color: #DBB0FF; }
+    .subtext { font-size: 0.85rem; color: rgba(219, 176, 255, 0.4); text-align: center; margin-bottom: 36px; max-width: 640px; line-height: 1.5; }
+    .gradient-text { background: linear-gradient(135deg, #DBB0FF, #9230E3); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+    .cyan-text { color: #1FEEEA; }
+
+    /* ---- Teach callout ---- */
+    .teach {
+      margin-top: 20px; padding: 12px 24px; border-radius: 12px;
+      background: rgba(146, 48, 227, 0.06); border: 1px solid rgba(146, 48, 227, 0.12);
+      font-size: 0.78rem; color: rgba(219, 176, 255, 0.5); text-align: center;
+      max-width: 700px; line-height: 1.5;
+    }
+    .teach strong { color: #DBB0FF; font-weight: 600; }
+    .teach .cyan { color: #1FEEEA; }
+
+    /* ---- Animations ---- */
+    @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
+    @keyframes fadeUp { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
+    .anim-float { animation: float 4s ease-in-out infinite; }
+    .anim-fade { animation: fadeUp 0.6s ease both; }
+
+    /* ---- Terminal ---- */
+    .terminal {
+      background: #1a1328; border-radius: 12px; border: 1px solid rgba(146, 48, 227, 0.15);
+      overflow: hidden; width: 100%; max-width: 700px;
+    }
+    .terminal-bar {
+      display: flex; align-items: center; gap: 8px; padding: 10px 14px;
+      background: rgba(146, 48, 227, 0.08); border-bottom: 1px solid rgba(146, 48, 227, 0.1);
+    }
+    .terminal-dot { width: 10px; height: 10px; border-radius: 50%; }
+    .terminal-dot.r { background: #ff5f57; } .terminal-dot.y { background: #ffbd2e; } .terminal-dot.g { background: #28c840; }
+    .terminal-title { font-size: 0.7rem; color: rgba(219, 176, 255, 0.3); margin-left: 8px; }
+    .terminal-body { padding: 16px; font-family: 'SF Mono', 'Fira Code', monospace; font-size: 0.75rem; line-height: 1.7; }
+    .t-prompt { color: #1FEEEA; }
+    .t-cmd { color: #DBB0FF; }
+    .t-output { color: rgba(219, 176, 255, 0.45); }
+    .t-success { color: #28c840; }
+    .t-highlight { color: #9230E3; font-weight: 600; }
+
+    /* ---- Chat Mock ---- */
+    .chat-mock {
+      background: #1a1328; border-radius: 12px; border: 1px solid rgba(146, 48, 227, 0.15);
+      overflow: hidden; width: 100%; max-width: 700px;
+    }
+    .chat-mock-header {
+      padding: 12px 16px; display: flex; align-items: center; gap: 10px;
+      background: rgba(146, 48, 227, 0.08); border-bottom: 1px solid rgba(146, 48, 227, 0.1);
+      font-size: 0.8rem; font-weight: 600; color: #DBB0FF;
+    }
+    .chat-mock-body { padding: 16px; display: flex; flex-direction: column; gap: 10px; }
+    .chat-bubble {
+      padding: 10px 14px; border-radius: 12px; font-size: 0.78rem; line-height: 1.45;
+      max-width: 80%; animation: fadeUp 0.4s ease both;
+    }
+    .chat-bubble.user {
+      background: rgba(146, 48, 227, 0.18); color: #DBB0FF;
+      align-self: flex-end; border-bottom-right-radius: 4px;
+    }
+    .chat-bubble.ai {
+      background: rgba(255, 255, 255, 0.05); color: rgba(219, 176, 255, 0.65);
+      align-self: flex-start; border-bottom-left-radius: 4px;
+    }
+    .chat-bubble code {
+      background: rgba(146, 48, 227, 0.15); padding: 1px 5px; border-radius: 4px;
+      font-family: monospace; font-size: 0.72rem;
+    }
+
+    /* ---- Flow Row ---- */
+    .flow-row {
+      display: flex; align-items: center; gap: 12px; margin-top: 16px;
+      justify-content: center; flex-wrap: wrap;
+    }
+    .flow-step {
+      padding: 8px 16px; border-radius: 10px; font-size: 0.75rem; font-weight: 600;
+      display: flex; align-items: center; gap: 6px;
+    }
+    .flow-step.purple { background: rgba(146, 48, 227, 0.12); color: #DBB0FF; }
+    .flow-step.cyan { background: rgba(31, 238, 234, 0.08); color: #1FEEEA; }
+    .flow-step.green { background: rgba(40, 200, 64, 0.1); color: #28c840; }
+    .flow-arrow { color: rgba(146, 48, 227, 0.3); font-size: 1rem; }
+
+    /* ---- Split Layout ---- */
+    .split { display: flex; gap: 28px; width: 100%; max-width: 960px; align-items: flex-start; }
+    .split-left, .split-right { flex: 1; }
+
+    /* ---- Cards Row ---- */
+    .cards-row { display: flex; gap: 16px; width: 100%; max-width: 900px; }
+    .info-card {
+      flex: 1; padding: 24px; border-radius: 16px;
+      background: rgba(146, 48, 227, 0.06); border: 1px solid rgba(146, 48, 227, 0.12);
+      transition: all 0.3s; cursor: default;
+    }
+    .info-card:hover { background: rgba(146, 48, 227, 0.12); border-color: #9230E3; transform: translateY(-4px); box-shadow: 0 8px 32px rgba(146, 48, 227, 0.15); }
+    .info-card .ic-icon { font-size: 1.8rem; margin-bottom: 10px; }
+    .info-card .ic-title { font-family: 'Fraunces', serif; font-size: 1rem; font-weight: 700; color: #DBB0FF; margin-bottom: 6px; }
+    .info-card .ic-desc { font-size: 0.75rem; color: rgba(219, 176, 255, 0.4); line-height: 1.5; }
+
+    /* ---- DB Table ---- */
+    .db-table {
+      width: 100%; border-collapse: collapse; font-size: 0.7rem;
+    }
+    .db-table th {
+      text-align: left; padding: 8px 10px; color: #9230E3; font-weight: 700;
+      border-bottom: 1px solid rgba(146, 48, 227, 0.2); font-size: 0.65rem;
+      letter-spacing: 0.05em; text-transform: uppercase;
+    }
+    .db-table td {
+      padding: 7px 10px; color: rgba(219, 176, 255, 0.5);
+      border-bottom: 1px solid rgba(146, 48, 227, 0.06);
+    }
+
+    /* ---- Comparison ---- */
+    .compare { display: flex; gap: 24px; width: 100%; max-width: 900px; }
+    .compare-col { flex: 1; padding: 24px; border-radius: 16px; }
+    .compare-col.old { background: rgba(255, 95, 87, 0.06); border: 1px solid rgba(255, 95, 87, 0.15); transition: all 0.3s; }
+    .compare-col.new { background: rgba(146, 48, 227, 0.06); border: 1px solid rgba(146, 48, 227, 0.2); transition: all 0.3s; }
+    .compare-col.old:hover { background: rgba(255, 95, 87, 0.1); border-color: rgba(255, 95, 87, 0.35); transform: translateY(-4px); box-shadow: 0 8px 32px rgba(255, 95, 87, 0.1); }
+    .compare-col.new:hover { background: rgba(146, 48, 227, 0.12); border-color: #9230E3; transform: translateY(-4px); box-shadow: 0 8px 32px rgba(146, 48, 227, 0.2); }
+    .compare-title { font-size: 0.8rem; font-weight: 700; margin-bottom: 12px; }
+    .compare-col.old .compare-title { color: #ff5f57; }
+    .compare-col.new .compare-title { color: #9230E3; }
+    .compare-item {
+      display: flex; align-items: center; gap: 8px;
+      font-size: 0.75rem; color: rgba(219, 176, 255, 0.45);
+      padding: 6px 8px; border-radius: 8px; transition: all 0.2s; cursor: default;
+    }
+    .compare-col.old .compare-item:hover { background: rgba(255, 95, 87, 0.08); color: #ff5f57; }
+    .compare-col.new .compare-item:hover { background: rgba(146, 48, 227, 0.1); color: #DBB0FF; }
+    .compare-item .ci-icon { font-size: 0.9rem; }
+
+    /* ---- Architecture Diagram ---- */
+    .arch-layout {
+      position: relative; width: 100%; max-width: 900px; height: 340px;
+    }
+    .arch-svg {
+      position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none;
+    }
+    .arch-svg line {
+      stroke: rgba(146, 48, 227, 0.12); stroke-width: 2; transition: all 0.4s ease;
+    }
+    .arch-node {
+      position: absolute; padding: 18px 24px; border-radius: 16px;
+      text-align: center; cursor: default; transition: all 0.35s ease; z-index: 2;
+    }
+    .arch-node.center {
+      background: linear-gradient(135deg, #9230E3, #6B1FAF);
+      padding: 28px 36px; box-shadow: 0 0 40px rgba(146, 48, 227, 0.3);
+      top: 50%; left: 50%; transform: translate(-50%, -50%);
+    }
+    .arch-node.center .arch-icon { font-size: 2rem; }
+    .arch-node.center .arch-name { font-size: 1.1rem; font-weight: 700; color: white; }
+    .arch-node.service {
+      background: rgba(146, 48, 227, 0.06); border: 1px solid rgba(146, 48, 227, 0.15);
+    }
+    .arch-node.service:hover {
+      background: rgba(146, 48, 227, 0.14); border-color: #9230E3;
+      box-shadow: 0 0 24px rgba(146, 48, 227, 0.2); transform: scale(1.05);
+    }
+    .arch-node.service .arch-tooltip {
+      position: absolute; bottom: -32px; left: 50%; transform: translateX(-50%);
+      padding: 5px 12px; border-radius: 8px; background: #9230E3; color: white;
+      font-size: 0.65rem; font-weight: 600; white-space: nowrap;
+      opacity: 0; transition: opacity 0.3s; pointer-events: none;
+    }
+    .arch-node.service:hover .arch-tooltip { opacity: 1; }
+    .arch-icon { font-size: 1.5rem; margin-bottom: 6px; }
+    .arch-name { font-size: 0.85rem; font-weight: 600; color: #DBB0FF; }
+    .arch-desc { font-size: 0.7rem; color: rgba(219, 176, 255, 0.4); margin-top: 4px; }
+    .arch-figma    { top: 15%; left: 5%; }
+    .arch-supabase { bottom: 10%; left: 8%; }
+    .arch-github   { top: 15%; right: 5%; }
+    .arch-vercel   { bottom: 10%; right: 8%; }
+    .arch-layout:has(.arch-figma:hover) .line-figma,
+    .arch-layout:has(.arch-supabase:hover) .line-supabase,
+    .arch-layout:has(.arch-github:hover) .line-github,
+    .arch-layout:has(.arch-vercel:hover) .line-vercel {
+      stroke: #9230E3; stroke-width: 3; filter: drop-shadow(0 0 6px rgba(146, 48, 227, 0.5));
+    }
+    .arch-layout:has(.service:hover) .arch-node.center {
+      box-shadow: 0 0 60px rgba(146, 48, 227, 0.5);
+    }
+    .arch-layout:has(.arch-github:hover) .line-gh-vercel,
+    .arch-layout:has(.arch-vercel:hover) .line-gh-vercel {
+      stroke: #1FEEEA; stroke-width: 2; stroke-dasharray: 6 4;
+      filter: drop-shadow(0 0 4px rgba(31, 238, 234, 0.4));
+    }
+
+    /* ---- Knowledge Cards ---- */
+    .knowledge-card {
+      background: rgba(146, 48, 227, 0.04); border: 1px solid rgba(146, 48, 227, 0.12);
+      border-radius: 16px; padding: 20px; cursor: default;
+      transition: all 0.35s ease; overflow: hidden;
+    }
+    .knowledge-card:hover {
+      background: rgba(146, 48, 227, 0.1); border-color: #9230E3;
+      box-shadow: 0 8px 32px rgba(146, 48, 227, 0.15); transform: translateY(-3px);
+    }
+    .kc-header { display: flex; align-items: center; gap: 10px; margin-bottom: 6px; }
+    .kc-icon { font-size: 1.4rem; }
+    .kc-title { font-family: 'Fraunces', serif; font-size: 1rem; font-weight: 700; color: #DBB0FF; }
+    .kc-preview { font-size: 0.75rem; color: rgba(219, 176, 255, 0.35); margin-bottom: 0; transition: all 0.3s; }
+    .kc-expanded { max-height: 0; overflow: hidden; transition: max-height 0.4s ease, margin-top 0.3s ease; margin-top: 0; }
+    .knowledge-card:hover .kc-preview { color: rgba(219, 176, 255, 0.5); margin-bottom: 4px; }
+    .knowledge-card:hover .kc-expanded { max-height: 250px; margin-top: 12px; }
+    .kc-file { display: flex; align-items: center; gap: 8px; font-size: 0.72rem; color: rgba(219, 176, 255, 0.45); padding: 4px 0; }
+    .kc-tag {
+      background: rgba(146, 48, 227, 0.12); color: #9230E3; padding: 2px 8px;
+      border-radius: 4px; font-size: 0.65rem; font-weight: 700; font-family: monospace; white-space: nowrap;
+    }
+    .kc-swatch-row { display: flex; gap: 6px; margin-bottom: 10px; }
+    .kc-swatch { width: 28px; height: 28px; border-radius: 8px; border: 2px solid rgba(255,255,255,0.06); transition: transform 0.2s; }
+    .kc-swatch:hover { transform: scale(1.2); }
+    .kc-flow {
+      display: flex; align-items: center; gap: 6px; flex-wrap: wrap;
+      margin-bottom: 10px; padding: 8px 10px; background: rgba(0,0,0,0.2); border-radius: 8px;
+    }
+    .kc-flow-step { font-size: 0.65rem; font-family: monospace; color: #DBB0FF; padding: 2px 6px; background: rgba(146, 48, 227, 0.1); border-radius: 4px; }
+    .kc-flow-arrow { color: rgba(146, 48, 227, 0.3); font-size: 0.75rem; }
+
+    /* ---- Key Hint ---- */
+    .key-hint {
+      position: fixed; top: 16px; right: 40px;
+      font-size: 0.65rem; color: rgba(219, 176, 255, 0.15); z-index: 100;
+    }
+    .key-hint kbd {
+      padding: 1px 5px; border-radius: 3px;
+      background: rgba(146, 48, 227, 0.08); border: 1px solid rgba(146, 48, 227, 0.15);
+      font-family: monospace; font-size: 0.6rem;
+    }
+  </style>
+</head>
+<body>
+
+<!-- Chapter progress bar -->
+<div class="chapter-bar" id="chapterBar"></div>
+
+<div class="key-hint"><kbd>&larr;</kbd> <kbd>&rarr;</kbd> to navigate</div>
+
+<div class="slides" id="slides">
+
+<!-- ================================================================
+     CHAPTER 1: THE SYSTEM
+================================================================= -->
+
+<!-- SLIDE 0: TITLE -->
+<div class="slide active">
+  <div style="font-size:3.5rem" class="anim-float">🦋</div>
+  <h1 class="heading" style="font-size:2.5rem; margin-top:20px;"><span class="gradient-text">Ship at the Speed of Conversation</span></h1>
+  <p class="subtext" style="margin-top:12px;">A walkthrough of the conversational development system behind Dayli AI and Daily Living Labs</p>
+  <div class="flow-row" style="margin-top:24px;">
+    <span class="flow-step purple">🤖 Claude Code</span>
+    <span class="flow-arrow">+</span>
+    <span class="flow-step purple">📦 GitHub</span>
+    <span class="flow-arrow">+</span>
+    <span class="flow-step cyan">🚀 Vercel</span>
+    <span class="flow-arrow">+</span>
+    <span class="flow-step purple">🎨 Figma</span>
+    <span class="flow-arrow">+</span>
+    <span class="flow-step cyan">🗄️ Supabase</span>
+  </div>
+  <div class="teach" style="margin-top:32px;">
+    <strong>What you'll learn:</strong> How five tools connect into a system where you describe changes in plain language and they go live in under two minutes.
+  </div>
+</div>
+
+<!-- SLIDE 1: ARCHITECTURE -->
+<div class="slide">
+  <div class="slide-label">The System</div>
+  <div class="slide-step">1 / 16</div>
+  <h2 class="heading">How It All Connects</h2>
+  <p class="subtext">Claude Code sits at the center, orchestrating four services. Hover each node to see what it does.</p>
+
+  <div class="arch-layout">
+    <svg class="arch-svg" viewBox="0 0 900 340" preserveAspectRatio="xMidYMid meet">
+      <line class="line-figma" x1="145" y1="95" x2="400" y2="170" />
+      <line class="line-supabase" x1="155" y1="270" x2="400" y2="170" />
+      <line class="line-github" x1="500" y1="170" x2="720" y2="95" />
+      <line class="line-vercel" x1="500" y1="170" x2="710" y2="270" />
+      <line class="line-gh-vercel" x1="755" y1="120" x2="745" y2="245" />
+    </svg>
+    <div class="arch-node center">
+      <div class="arch-icon">🤖</div>
+      <div class="arch-name">Claude Code</div>
+    </div>
+    <div class="arch-node service arch-figma">
+      <div class="arch-icon">🎨</div>
+      <div class="arch-name">Figma</div>
+      <div class="arch-desc">Design ↔ Code sync</div>
+      <div class="arch-tooltip">Reads designs, writes components via MCP</div>
+    </div>
+    <div class="arch-node service arch-supabase">
+      <div class="arch-icon">🗄️</div>
+      <div class="arch-name">Supabase</div>
+      <div class="arch-desc">DB + Auth + AI</div>
+      <div class="arch-tooltip">Tables, RLS, Edge Functions, Auth</div>
+    </div>
+    <div class="arch-node service arch-github">
+      <div class="arch-icon">📦</div>
+      <div class="arch-name">GitHub</div>
+      <div class="arch-desc">Monorepo</div>
+      <div class="arch-tooltip">Commits code → triggers Vercel deploy</div>
+    </div>
+    <div class="arch-node service arch-vercel">
+      <div class="arch-icon">🚀</div>
+      <div class="arch-name">Vercel</div>
+      <div class="arch-desc">Auto-deploy</div>
+      <div class="arch-tooltip">Live in 30 seconds from push</div>
+    </div>
+  </div>
+
+  <div class="teach"><strong>Key idea:</strong> Every change flows through Claude Code. You talk to Claude, Claude talks to the tools.</div>
+</div>
+
+<!-- SLIDE 2: MONOREPO -->
+<div class="slide">
+  <div class="slide-label">The System</div>
+  <div class="slide-step">2 / 16</div>
+  <h2 class="heading">The Monorepo</h2>
+  <p class="subtext">One repo, two apps, shared packages — all managed by Claude Code</p>
+  <div class="terminal" style="max-width:600px;">
+    <div class="terminal-bar">
+      <span class="terminal-dot r"></span><span class="terminal-dot y"></span><span class="terminal-dot g"></span>
+      <span class="terminal-title">monorepo structure</span>
+    </div>
+    <div class="terminal-body">
+      <span class="t-highlight">dayli/</span><br>
+      ├── <span class="t-cmd">apps/landing/</span> <span class="t-output">← Daily Living Labs (marketing site)</span><br>
+      ├── <span class="t-cmd">apps/web/</span> <span class="t-output">← Dayli AI (11-screen web app)</span><br>
+      ├── <span class="t-cmd">packages/ui/</span> <span class="t-output">← Shared design tokens</span><br>
+      ├── <span class="t-cmd">packages/supabase/</span> <span class="t-output">← Client, types, prompts</span><br>
+      └── <span class="t-cmd">supabase/</span> <span class="t-output">← Schema, edge functions</span>
+    </div>
+  </div>
+  <div class="flow-row">
+    <span class="flow-step purple">Claude edits code</span>
+    <span class="flow-arrow">→</span>
+    <span class="flow-step purple">git push</span>
+    <span class="flow-arrow">→</span>
+    <span class="flow-step cyan">Vercel auto-deploys</span>
+    <span class="flow-arrow">→</span>
+    <span class="flow-step green">✓ Live in 30s</span>
+  </div>
+  <div class="teach"><strong>Why a monorepo?</strong> Both apps share the same design tokens and database types. Change a color once, it updates everywhere.</div>
+</div>
+
+<!-- ================================================================
+     CHAPTER 2: SETUP
+================================================================= -->
+
+<!-- SLIDE 3: SETUP — GITHUB -->
+<div class="slide">
+  <div class="slide-label">Setup · 1 of 3</div>
+  <div class="slide-step">3 / 16</div>
+  <h2 class="heading">Connect Claude → GitHub</h2>
+  <p class="subtext">Link the monorepo so Claude can commit and pushes auto-deploy through Vercel</p>
+  <div class="terminal">
+    <div class="terminal-bar">
+      <span class="terminal-dot r"></span><span class="terminal-dot y"></span><span class="terminal-dot g"></span>
+      <span class="terminal-title">claude code — github setup</span>
+    </div>
+    <div class="terminal-body">
+      <span class="t-prompt">$</span> <span class="t-cmd">git init</span><br>
+      <span class="t-output">Initialized empty Git repository</span><br><br>
+      <span class="t-prompt">$</span> <span class="t-cmd">git remote add origin https://github.com/dayliai/monorepo.git</span><br><br>
+      <span class="t-prompt">$</span> <span class="t-cmd">git add --all && git commit -m "Initial commit"</span><br>
+      <span class="t-success">[main c51e6b9] Initial commit: Dayli AI monorepo</span><br>
+      <span class="t-output"> 79 files changed, 8180 insertions(+)</span><br><br>
+      <span class="t-prompt">$</span> <span class="t-cmd">git push -u origin main</span><br>
+      <span class="t-success">To https://github.com/dayliai/monorepo.git</span><br>
+      <span class="t-success"> * [new branch]  main → main</span>
+    </div>
+  </div>
+  <div class="teach"><strong>What this unlocks:</strong> Claude can now commit code directly. Every push triggers Vercel to auto-deploy — no CI/CD to configure.</div>
+</div>
+
+<!-- SLIDE 4: SETUP — FIGMA -->
+<div class="slide">
+  <div class="slide-label">Setup · 2 of 3</div>
+  <div class="slide-step">4 / 16</div>
+  <h2 class="heading">Connect Claude → Figma</h2>
+  <p class="subtext">Read designs and write components back to Figma files via MCP</p>
+  <div class="split">
+    <div class="split-left">
+      <div class="chat-mock" style="max-width:100%;">
+        <div class="chat-mock-header">🤖 Claude Code</div>
+        <div class="chat-mock-body">
+          <div class="chat-bubble user">Send the bathing ADL panel to this Figma file</div>
+          <div class="chat-bubble ai">I'll use <code>get_design_context</code> to inspect the file, then <code>use_figma</code> to create the component with auto-layout, correct tokens, and solution cards.</div>
+          <div class="chat-bubble ai" style="animation-delay:0.2s">✅ Created "ADL Panel — Bathing" at node 3:2 with 3 solution cards, CTAs, and meta rows.</div>
+        </div>
+      </div>
+    </div>
+    <div class="split-right">
+      <div style="background:rgba(146,48,227,0.06); border:1px solid rgba(146,48,227,0.12); border-radius:12px; padding:20px; text-align:center;">
+        <div style="font-size:2rem; margin-bottom:8px;">🎨</div>
+        <div style="font-size:0.85rem; font-weight:700; color:#DBB0FF; margin-bottom:4px;">Figma File</div>
+        <div style="font-size:0.7rem; color:rgba(219,176,255,0.4); margin-bottom:16px;">DLL-Interaction.fig</div>
+        <div style="background:rgba(0,0,0,0.2); border-radius:8px; padding:12px; text-align:left;">
+          <div style="font-size:0.65rem; color:#9230E3; font-weight:700; margin-bottom:6px;">ADL: BATHING</div>
+          <div style="display:flex; gap:6px;">
+            <div style="flex:1; background:rgba(146,48,227,0.08); border-radius:6px; padding:8px;">
+              <div style="font-size:0.6rem; font-weight:600; color:#DBB0FF;">Shower Bench</div>
+              <div style="font-size:0.5rem; color:rgba(219,176,255,0.3); margin-top:2px;">Robert P.</div>
+            </div>
+            <div style="flex:1; background:rgba(146,48,227,0.08); border-radius:6px; padding:8px;">
+              <div style="font-size:0.6rem; font-weight:600; color:#DBB0FF;">Grab Bars</div>
+              <div style="font-size:0.5rem; color:rgba(219,176,255,0.3); margin-top:2px;">Linda M.</div>
+            </div>
+            <div style="flex:1; background:rgba(146,48,227,0.08); border-radius:6px; padding:8px;">
+              <div style="font-size:0.6rem; font-weight:600; color:#DBB0FF;">Bath Sponge</div>
+              <div style="font-size:0.5rem; color:rgba(219,176,255,0.3); margin-top:2px;">Carol A.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="teach"><strong>What this unlocks:</strong> Two-way design sync. Claude reads Figma designs for context, and can push components back — keeping code and design in lockstep.</div>
+</div>
+
+<!-- SLIDE 5: SETUP — SUPABASE -->
+<div class="slide">
+  <div class="slide-label">Setup · 3 of 3</div>
+  <div class="slide-step">5 / 16</div>
+  <h2 class="heading">Connect Claude → Supabase</h2>
+  <p class="subtext">Database tables, RLS policies, edge functions, and seed data</p>
+  <div class="split">
+    <div class="split-left">
+      <div class="terminal" style="max-width:100%;">
+        <div class="terminal-bar">
+          <span class="terminal-dot r"></span><span class="terminal-dot y"></span><span class="terminal-dot g"></span>
+          <span class="terminal-title">SQL Editor — migrations</span>
+        </div>
+        <div class="terminal-body">
+          <span class="t-highlight">-- 001_initial_schema.sql</span><br>
+          <span class="t-cmd">CREATE TABLE</span> <span class="t-output">internal_solutions</span> (<br>
+          &nbsp;&nbsp;id uuid PRIMARY KEY,<br>
+          &nbsp;&nbsp;title text NOT NULL,<br>
+          &nbsp;&nbsp;adl_category text NOT NULL,<br>
+          &nbsp;&nbsp;...<br>
+          );<br><br>
+          <span class="t-highlight">-- 11 tables created ✓</span><br>
+          <span class="t-highlight">-- RLS policies applied ✓</span><br><br>
+          <span class="t-success">Success. No rows returned</span>
+        </div>
+      </div>
+    </div>
+    <div class="split-right">
+      <div style="font-size:0.75rem; font-weight:700; color:#9230E3; margin-bottom:10px; letter-spacing:0.05em;">DATABASE TABLES</div>
+      <table class="db-table">
+        <tr><th>Table</th><th>Purpose</th></tr>
+        <tr><td>internal_solutions</td><td>Curated ADL solutions</td></tr>
+        <tr><td>diagnostic_prompts</td><td>Assessment flow steps</td></tr>
+        <tr><td>solution_feedback</td><td>Thumbs up/down</td></tr>
+        <tr><td>user_liked_solutions</td><td>Heart saves</td></tr>
+        <tr><td>user_collections</td><td>Custom groupings</td></tr>
+        <tr><td>community_submissions</td><td>User-shared solutions</td></tr>
+        <tr><td>community_requests</td><td>Unsolved challenges</td></tr>
+        <tr><td>contacts</td><td>Notification opt-ins</td></tr>
+      </table>
+    </div>
+  </div>
+  <div class="teach"><strong>What this unlocks:</strong> A real backend — authentication, AI-powered search, community features, and persistent user data. All queryable by Claude.</div>
+</div>
+
+<!-- SLIDE 6: SYSTEM READY -->
+<div class="slide">
+  <div class="slide-label">Setup Complete</div>
+  <div class="slide-step">6 / 16</div>
+  <h2 class="heading">System Ready</h2>
+  <p class="subtext">Three chats, run once. Now the two working chats take over.</p>
+  <div class="cards-row">
+    <div class="info-card" style="text-align:center;">
+      <div class="ic-icon">📦</div>
+      <div class="ic-title">GitHub</div>
+      <div class="ic-desc">✅ Monorepo linked<br>Auto-deploy on push</div>
+    </div>
+    <div class="info-card" style="text-align:center;">
+      <div class="ic-icon">🎨</div>
+      <div class="ic-title">Figma</div>
+      <div class="ic-desc">✅ MCP connected<br>Design ↔ code sync</div>
+    </div>
+    <div class="info-card" style="text-align:center;">
+      <div class="ic-icon">🗄️</div>
+      <div class="ic-title">Supabase</div>
+      <div class="ic-desc">✅ 11 tables + RLS<br>Edge functions live</div>
+    </div>
+  </div>
+  <div class="teach" style="margin-top:28px;"><strong>From here on out:</strong> Two persistent chats — one for Daily Living Labs, one for Dayli AI — handle all day-to-day work.</div>
+</div>
+
+<!-- ================================================================
+     CHAPTER 3: WORKING
+================================================================= -->
+
+<!-- SLIDE 7: DLL — COPY CHANGE -->
+<div class="slide">
+  <div class="slide-label">Working · Daily Living Labs</div>
+  <div class="slide-step">7 / 16</div>
+  <h2 class="heading">Example: Update Hero Copy</h2>
+  <p class="subtext">Describe a change in plain language → Claude edits → push → live</p>
+  <div class="chat-mock" style="max-width:720px;">
+    <div class="chat-mock-header" style="background:linear-gradient(135deg, #9230E3, #6B1FAF); color:white;">🦋 Daily Living Labs Chat</div>
+    <div class="chat-mock-body">
+      <div class="chat-bubble user">Change the heading to "Where daily life gets hard... or easier" and make the subtitle say "Explore how small changes make big differences in Activities of Daily Living" with A, D, L bold and purple</div>
+      <div class="chat-bubble ai">Done. I've updated <code>Hero.tsx</code>:<br>• Heading split across two lines with italic purple styling<br>• Subtitle font reduced, A/D/L bold in vibrant purple<br>• Ready to push.</div>
+    </div>
+  </div>
+  <div class="flow-row">
+    <span class="flow-step purple">You describe</span>
+    <span class="flow-arrow">→</span>
+    <span class="flow-step purple">Claude edits Hero.tsx</span>
+    <span class="flow-arrow">→</span>
+    <span class="flow-step cyan">git push</span>
+    <span class="flow-arrow">→</span>
+    <span class="flow-step green">✓ dailylivinglabs.com updated</span>
+  </div>
+  <div class="teach"><strong>Notice:</strong> No file names, no code syntax — just a description of what you want. Claude finds the right file and makes the change.</div>
+</div>
+
+<!-- SLIDE 8: DLL — DESIGN ITERATION -->
+<div class="slide">
+  <div class="slide-label">Working · Daily Living Labs</div>
+  <div class="slide-step">8 / 16</div>
+  <h2 class="heading">Example: Redesign ADL Section</h2>
+  <p class="subtext">Prototype in an ideation folder → iterate → push to production</p>
+  <div class="split">
+    <div class="split-left">
+      <div class="chat-mock" style="max-width:100%;">
+        <div class="chat-mock-header" style="background:linear-gradient(135deg, #9230E3, #6B1FAF); color:white;">🦋 DLL Chat</div>
+        <div class="chat-mock-body">
+          <div class="chat-bubble user">I want to rebuild the ADL section like the n8n.io interaction — icons on the left auto-cycling, content on the right</div>
+          <div class="chat-bubble ai">I'll create a prototype in <code>Ideation/adl-carousel/</code> so we can iterate without affecting the live site.</div>
+          <div class="chat-bubble user">I like variation D with the progress ring. Remove the "auto in 6s" text.</div>
+          <div class="chat-bubble ai">Updated. Refresh to see the ring fill animation. When you're happy, I'll port it to the landing page component.</div>
+        </div>
+      </div>
+    </div>
+    <div class="split-right" style="display:flex; flex-direction:column; gap:12px;">
+      <div style="background:rgba(146,48,227,0.06); border:1px solid rgba(146,48,227,0.12); border-radius:10px; padding:14px;">
+        <div style="font-size:0.65rem; color:#9230E3; font-weight:700; margin-bottom:8px;">IDEATION → PRODUCTION</div>
+        <div style="display:flex; flex-direction:column; gap:6px;">
+          <div style="display:flex; align-items:center; gap:8px;">
+            <div style="width:24px; height:24px; border-radius:50%; background:rgba(146,48,227,0.15); display:flex; align-items:center; justify-content:center; font-size:0.7rem; color:#9230E3; font-weight:700;">1</div>
+            <span style="font-size:0.7rem; color:rgba(219,176,255,0.5);">Prototype in HTML</span>
+          </div>
+          <div style="display:flex; align-items:center; gap:8px;">
+            <div style="width:24px; height:24px; border-radius:50%; background:rgba(146,48,227,0.15); display:flex; align-items:center; justify-content:center; font-size:0.7rem; color:#9230E3; font-weight:700;">2</div>
+            <span style="font-size:0.7rem; color:rgba(219,176,255,0.5);">Iterate with variations</span>
+          </div>
+          <div style="display:flex; align-items:center; gap:8px;">
+            <div style="width:24px; height:24px; border-radius:50%; background:rgba(146,48,227,0.15); display:flex; align-items:center; justify-content:center; font-size:0.7rem; color:#9230E3; font-weight:700;">3</div>
+            <span style="font-size:0.7rem; color:rgba(219,176,255,0.5);">Refine in Figma</span>
+          </div>
+          <div style="display:flex; align-items:center; gap:8px;">
+            <div style="width:24px; height:24px; border-radius:50%; background:rgba(31,238,234,0.15); display:flex; align-items:center; justify-content:center; font-size:0.7rem; color:#1FEEEA; font-weight:700;">4</div>
+            <span style="font-size:0.7rem; color:rgba(219,176,255,0.5);">Port to React component</span>
+          </div>
+          <div style="display:flex; align-items:center; gap:8px;">
+            <div style="width:24px; height:24px; border-radius:50%; background:rgba(40,200,64,0.15); display:flex; align-items:center; justify-content:center; font-size:0.7rem; color:#28c840; font-weight:700;">5</div>
+            <span style="font-size:0.7rem; color:rgba(219,176,255,0.5);">Push → live</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="teach"><strong>Design workflow:</strong> Bigger changes go through an ideation folder first. You iterate freely, then promote to production when it's right.</div>
+</div>
+
+<!-- SLIDE 9: DAYLI AI — DATABASE -->
+<div class="slide">
+  <div class="slide-label">Working · Dayli AI</div>
+  <div class="slide-step">9 / 16</div>
+  <h2 class="heading">Example: Wire the Database</h2>
+  <p class="subtext">Replace hardcoded data with live Supabase queries</p>
+  <div class="chat-mock" style="max-width:720px;">
+    <div class="chat-mock-header" style="background:linear-gradient(135deg, #1FEEEA, #0EA5E9); color:#0f0a1a;">⚡ Dayli AI Chat</div>
+    <div class="chat-mock-body">
+      <div class="chat-bubble user">Wire the results page to pull solutions from Supabase instead of hardcoded data</div>
+      <div class="chat-bubble ai">Done. <code>ResultsScreen.tsx</code> now:<br>• Fetches from <code>internal_solutions</code> + <code>filter_options</code> on mount<br>• Shows loading spinner while fetching<br>• Maps DB columns to the existing Solution interface<br>• Categories derived from live data</div>
+      <div class="chat-bubble user">Also persist thumbs up/down to the database</div>
+      <div class="chat-bubble ai">Updated. Feedback now inserts to <code>solution_feedback</code> with an anonymous session ID. Works for all users, signed in or not.</div>
+    </div>
+  </div>
+  <div class="teach"><strong>Same pattern, different app:</strong> The Dayli AI chat handles backend wiring the same way — describe what you need, Claude writes the queries and components.</div>
+</div>
+
+<!-- ================================================================
+     CHAPTER 4: MEMORY
+================================================================= -->
+
+<!-- SLIDE 10: PERSISTENT MEMORY -->
+<div class="slide">
+  <div class="slide-label">Memory</div>
+  <div class="slide-step">10 / 16</div>
+  <h2 class="heading">Every Chat Remembers</h2>
+  <p class="subtext">Context carries forward — no re-explaining between sessions</p>
+  <div class="split" style="max-width:960px;">
+    <div class="split-left">
+      <div class="chat-mock" style="max-width:100%;">
+        <div class="chat-mock-header" style="background:rgba(146,48,227,0.12);">🦋 Daily Living Labs — Session 4</div>
+        <div class="chat-mock-body">
+          <div class="chat-bubble ai" style="background:rgba(146,48,227,0.06); border:1px solid rgba(146,48,227,0.12); color:rgba(219,176,255,0.5); font-size:0.7rem; max-width:100%; align-self:stretch;">
+            <span style="color:#9230E3; font-weight:700;">Memory loaded:</span><br>
+            • Dayli design system (Fraunces + DM Sans, purple tokens)<br>
+            • Deploy: git push → Vercel auto-deploy<br>
+            • Node 20 required (not 24)<br>
+            • ADL carousel uses progress ring nav<br>
+            • Amber prefers full-build approach
+          </div>
+          <div class="chat-bubble user">Add a new "Grooming" ADL category to the carousel</div>
+          <div class="chat-bubble ai">I see the carousel in <code>ADLSection.tsx</code> pulls from <code>adlData.ts</code>. I'll add Grooming with 3 solutions — the carousel will auto-include it.</div>
+        </div>
+      </div>
+    </div>
+    <div class="split-right">
+      <div class="chat-mock" style="max-width:100%;">
+        <div class="chat-mock-header" style="background:rgba(31,238,234,0.08);">⚡ Dayli AI — Session 7</div>
+        <div class="chat-mock-body">
+          <div class="chat-bubble ai" style="background:rgba(31,238,234,0.04); border:1px solid rgba(31,238,234,0.12); color:rgba(219,176,255,0.5); font-size:0.7rem; max-width:100%; align-self:stretch;">
+            <span style="color:#1FEEEA; font-weight:700;">Memory loaded:</span><br>
+            • Supabase project: xmqehnuguvlihvqrojme<br>
+            • ResultsScreen wired to internal_solutions<br>
+            • Feedback persists to solution_feedback<br>
+            • Auth is simulated (real Supabase Auth not yet wired)<br>
+            • User state persisted to localStorage
+          </div>
+          <div class="chat-bubble user">Add a "Save to Collection" feature on the results cards</div>
+          <div class="chat-bubble ai">Since auth is still simulated, I'll store collections in localStorage. When you wire real Auth later, we can migrate to the <code>user_collections</code> table that's already in the schema.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="teach"><strong>Why this matters:</strong> Session 1 or session 50 — Claude knows the project, the decisions made, and why. No onboarding tax.</div>
+</div>
+
+<!-- SLIDE 11: WHAT CLAUDE KNOWS -->
+<div class="slide">
+  <div class="slide-label">Memory</div>
+  <div class="slide-step">11 / 16</div>
+  <h2 class="heading">What Every Chat Already Knows</h2>
+  <p class="subtext">Hover each card to explore what Claude remembers</p>
+
+  <div style="display:grid; grid-template-columns:1fr 1fr; gap:20px; width:100%; max-width:880px;">
+    <div class="knowledge-card">
+      <div class="kc-header">
+        <div class="kc-icon">🏗️</div>
+        <div class="kc-title">Project Structure</div>
+      </div>
+      <div class="kc-preview">Monorepo layout, file locations, component hierarchy</div>
+      <div class="kc-expanded">
+        <div class="kc-file"><span class="kc-tag">apps/landing/</span> 8 components, 1 page, Vite + Tailwind</div>
+        <div class="kc-file"><span class="kc-tag">apps/web/</span> 11 screens, 3 providers, Framer Motion</div>
+        <div class="kc-file"><span class="kc-tag">packages/ui/</span> Color tokens, font families</div>
+        <div class="kc-file"><span class="kc-tag">packages/supabase/</span> Client, types, AI prompts</div>
+        <div class="kc-file"><span class="kc-tag">supabase/</span> 11 tables, edge functions, seed data</div>
+      </div>
+    </div>
+
+    <div class="knowledge-card">
+      <div class="kc-header">
+        <div class="kc-icon">🎨</div>
+        <div class="kc-title">Design System</div>
+      </div>
+      <div class="kc-preview">Fonts, colors, spacing, component patterns</div>
+      <div class="kc-expanded">
+        <div class="kc-swatch-row">
+          <div class="kc-swatch" style="background:#461F65;"></div>
+          <div class="kc-swatch" style="background:#9230E3;"></div>
+          <div class="kc-swatch" style="background:#DBB0FF;"></div>
+          <div class="kc-swatch" style="background:#F1E1FF;"></div>
+          <div class="kc-swatch" style="background:#1FEEEA;"></div>
+          <div class="kc-swatch" style="background:#F6F0FC;"></div>
+        </div>
+        <div class="kc-file"><span class="kc-tag">Heading</span> Fraunces (serif)</div>
+        <div class="kc-file"><span class="kc-tag">Body</span> DM Sans (sans-serif)</div>
+        <div class="kc-file"><span class="kc-tag">Rule</span> Never hardcode hex — use tokens</div>
+        <div class="kc-file"><span class="kc-tag">Rule</span> Errors use inline WCAG 2.2 red</div>
+      </div>
+    </div>
+
+    <div class="knowledge-card">
+      <div class="kc-header">
+        <div class="kc-icon">🚀</div>
+        <div class="kc-title">Deployment Workflow</div>
+      </div>
+      <div class="kc-preview">Git, Vercel, Supabase — the full pipeline</div>
+      <div class="kc-expanded">
+        <div class="kc-flow">
+          <span class="kc-flow-step">Edit code</span>
+          <span class="kc-flow-arrow">→</span>
+          <span class="kc-flow-step">git push</span>
+          <span class="kc-flow-arrow">→</span>
+          <span class="kc-flow-step" style="color:#28c840;">Live</span>
+        </div>
+        <div class="kc-file"><span class="kc-tag">Git</span> info@dailylivinglabs.com identity</div>
+        <div class="kc-file"><span class="kc-tag">Vercel</span> Landing + Web auto-deploy</div>
+        <div class="kc-file"><span class="kc-tag">Node</span> Must use v20 via nvm (not v24)</div>
+        <div class="kc-file"><span class="kc-tag">SQL</span> Run via Supabase Dashboard SQL Editor</div>
+      </div>
+    </div>
+
+    <div class="knowledge-card">
+      <div class="kc-header">
+        <div class="kc-icon">👤</div>
+        <div class="kc-title">Your Preferences</div>
+      </div>
+      <div class="kc-preview">How you like to work, decisions made, your priorities</div>
+      <div class="kc-expanded">
+        <div class="kc-file"><span class="kc-tag">Approach</span> Full-build, not incremental</div>
+        <div class="kc-file"><span class="kc-tag">Iteration</span> Prototype in Ideation folder first</div>
+        <div class="kc-file"><span class="kc-tag">Design</span> Iterate locally, push when happy</div>
+        <div class="kc-file"><span class="kc-tag">Figma</span> Design in Figma, sync to code via MCP</div>
+        <div class="kc-file"><span class="kc-tag">Priority</span> Accessibility-focused platform</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ================================================================
+     CHAPTER 5: WHY IT WORKS
+================================================================= -->
+
+<!-- SLIDE 12: SPEED -->
+<div class="slide">
+  <div class="slide-label">Why It Works</div>
+  <div class="slide-step">12 / 16</div>
+  <h2 class="heading">Speed</h2>
+  <p class="subtext">Idea to live deployment in under two minutes</p>
+  <div class="compare">
+    <div class="compare-col old">
+      <div class="compare-title">Traditional Workflow</div>
+      <div class="compare-item"><span class="ci-icon">📋</span> Write Jira ticket</div>
+      <div class="compare-item"><span class="ci-icon">👨‍💻</span> Assign to developer</div>
+      <div class="compare-item"><span class="ci-icon">🔀</span> Branch, develop, test</div>
+      <div class="compare-item"><span class="ci-icon">👀</span> Code review</div>
+      <div class="compare-item"><span class="ci-icon">🔄</span> Merge to staging</div>
+      <div class="compare-item"><span class="ci-icon">🧪</span> QA testing</div>
+      <div class="compare-item"><span class="ci-icon">🚀</span> Deploy to production</div>
+      <div style="margin-top:12px; font-size:0.8rem; color:#ff5f57; font-weight:700;">⏱ Days to weeks</div>
+    </div>
+    <div class="compare-col new">
+      <div class="compare-title">Claude Code Workflow</div>
+      <div class="compare-item"><span class="ci-icon">💬</span> Describe change in chat</div>
+      <div class="compare-item"><span class="ci-icon">🤖</span> Claude edits the code</div>
+      <div class="compare-item"><span class="ci-icon">📦</span> git push</div>
+      <div class="compare-item"><span class="ci-icon">🚀</span> Vercel auto-deploys</div>
+      <div style="margin-top:12px; font-size:0.8rem; color:#28c840; font-weight:700;">⏱ Under 2 minutes</div>
+    </div>
+  </div>
+  <div class="teach"><strong>The unlock:</strong> No ticket queue, no handoff, no staging environment. The person with the idea is the person who ships it.</div>
+</div>
+
+<!-- SLIDE 13: ACCESSIBILITY -->
+<div class="slide">
+  <div class="slide-label">Why It Works</div>
+  <div class="slide-step">13 / 16</div>
+  <h2 class="heading">Accessibility for Non-Engineers</h2>
+  <p class="subtext">Describe what you want in plain language — no code knowledge needed</p>
+  <div class="chat-mock" style="max-width:700px;">
+    <div class="chat-mock-header">🧑‍🎨 Non-technical team member</div>
+    <div class="chat-mock-body">
+      <div class="chat-bubble user">Make the sub heading text a dark grey except the A, D, and L</div>
+      <div class="chat-bubble ai">Done. The subtitle is now <code>text-gray-500</code> with A, D, L in bold vibrant purple.</div>
+      <div class="chat-bubble user">Can we reduce the font on the sub heading and have it on one line?</div>
+      <div class="chat-bubble ai">Updated — reduced from <code>text-xl</code> to <code>text-base</code> and removed max-width constraint.</div>
+    </div>
+  </div>
+  <div class="teach"><strong>No React. No Tailwind. No terminal commands.</strong> Just conversation. Anyone on the team can ship changes.</div>
+</div>
+
+<!-- SLIDE 14: SCALABILITY -->
+<div class="slide">
+  <div class="slide-label">Why It Works</div>
+  <div class="slide-step">14 / 16</div>
+  <h2 class="heading">Scalability</h2>
+  <p class="subtext">New team members or new Claude chats pick up the system instantly</p>
+  <div class="cards-row">
+    <div class="info-card">
+      <div class="ic-icon">📄</div>
+      <div class="ic-title">CLAUDE.md</div>
+      <div class="ic-desc">Project rules, design system, architecture constraints — loaded automatically in every chat</div>
+    </div>
+    <div class="info-card">
+      <div class="ic-icon">🧠</div>
+      <div class="ic-title">Memory Files</div>
+      <div class="ic-desc">Project context, user preferences, deployment workflow — persists across sessions</div>
+    </div>
+    <div class="info-card">
+      <div class="ic-icon">🏗️</div>
+      <div class="ic-title">Monorepo</div>
+      <div class="ic-desc">Shared tokens and types mean changes in one place propagate everywhere</div>
+    </div>
+  </div>
+  <div class="flow-row" style="margin-top:24px;">
+    <span class="flow-step purple">New team member starts chat</span>
+    <span class="flow-arrow">→</span>
+    <span class="flow-step purple">Context loads automatically</span>
+    <span class="flow-arrow">→</span>
+    <span class="flow-step green">Shipping in minutes</span>
+  </div>
+  <div class="teach"><strong>Zero onboarding:</strong> The system teaches itself to every new participant. CLAUDE.md is the team playbook, memory files are institutional knowledge.</div>
+</div>
+
+<!-- ================================================================
+     CHAPTER 6: CLOSE
+================================================================= -->
+
+<!-- SLIDE 15: CLOSING -->
+<div class="slide">
+  <div class="slide-label">Summary</div>
+  <div class="slide-step">15 / 16</div>
+  <div style="font-size:3rem;" class="anim-float">🦋</div>
+  <h1 class="heading" style="font-size:2.2rem; margin-top:20px;">
+    <span class="gradient-text">3 setup chats. 2 working chats.</span><br>
+    <span style="color:rgba(219,176,255,0.5); font-size:1.4rem;">Ship at the speed of conversation.</span>
+  </h1>
+  <div style="display:flex; gap:14px; margin-top:28px;">
+    <span class="flow-step purple" style="padding:12px 24px;">🦋 dailylivinglabs.com</span>
+    <span class="flow-step cyan" style="padding:12px 24px;">⚡ dayliai.org</span>
+  </div>
+  <div style="margin-top:32px; display:flex; gap:28px;">
+    <div style="text-align:center;">
+      <div style="font-size:1.8rem; font-weight:800; color:#9230E3; font-family:'Fraunces',serif;">3</div>
+      <div style="font-size:0.65rem; color:rgba(219,176,255,0.3);">Setup chats</div>
+    </div>
+    <div style="text-align:center;">
+      <div style="font-size:1.8rem; font-weight:800; color:#9230E3; font-family:'Fraunces',serif;">2</div>
+      <div style="font-size:0.65rem; color:rgba(219,176,255,0.3);">Working chats</div>
+    </div>
+    <div style="text-align:center;">
+      <div style="font-size:1.8rem; font-weight:800; color:#1FEEEA; font-family:'Fraunces',serif;">&lt;2m</div>
+      <div style="font-size:0.65rem; color:rgba(219,176,255,0.3);">Idea to live</div>
+    </div>
+    <div style="text-align:center;">
+      <div style="font-size:1.8rem; font-weight:800; color:#28c840; font-family:'Fraunces',serif;">0</div>
+      <div style="font-size:0.65rem; color:rgba(219,176,255,0.3);">Code required</div>
+    </div>
+  </div>
+</div>
+
+</div><!-- end .slides -->
+
+<!-- Navigation -->
+<div class="nav-bar">
+  <button class="nav-btn" onclick="prev()">← Back</button>
+  <div style="display:flex; flex-direction:column; align-items:center; gap:6px;">
+    <div class="nav-dots" id="navDots"></div>
+    <div class="nav-section" id="navLabel"></div>
+  </div>
+  <button class="nav-btn" onclick="next()">Next →</button>
+</div>
+
+<script>
+  const slides = document.querySelectorAll('.slide');
+  const dotsContainer = document.getElementById('navDots');
+  const navLabel = document.getElementById('navLabel');
+  let current = 0;
+
+  // Chapter definitions: [name, startIndex, endIndex]
+  const chapters = [
+    ['The System',    0,  2],
+    ['Setup',         3,  6],
+    ['Working',       7,  9],
+    ['Memory',        10, 11],
+    ['Why It Works',  12, 14],
+    ['Close',         15, 15]
+  ];
+
+  const sectionNames = [
+    'Intro',
+    'How It All Connects',
+    'The Monorepo',
+    'Setup — GitHub',
+    'Setup — Figma',
+    'Setup — Supabase',
+    'System Ready',
+    'Working — Copy Change',
+    'Working — Design Iteration',
+    'Working — Database',
+    'Persistent Memory',
+    'What Claude Knows',
+    'Why — Speed',
+    'Why — Accessibility',
+    'Why — Scalability',
+    'Closing'
+  ];
+
+  // Build chapter progress bar
+  const chapterBar = document.getElementById('chapterBar');
+  chapters.forEach((ch, i) => {
+    const seg = document.createElement('div');
+    seg.className = 'chapter-seg';
+    seg.dataset.chapter = i;
+    chapterBar.appendChild(seg);
+  });
+
+  // Build nav dots with chapter dividers
+  slides.forEach((_, i) => {
+    // Insert divider at chapter boundaries (skip first)
+    const chapterBoundary = chapters.findIndex(ch => ch[1] === i);
+    if (chapterBoundary > 0) {
+      const div = document.createElement('div');
+      div.className = 'nav-divider';
+      dotsContainer.appendChild(div);
+    }
+    const dot = document.createElement('button');
+    dot.className = 'nav-dot' + (i === 0 ? ' active' : '');
+    dot.onclick = () => goTo(i);
+    dotsContainer.appendChild(dot);
+  });
+
+  function getChapterIndex(slideIndex) {
+    for (let i = 0; i < chapters.length; i++) {
+      if (slideIndex >= chapters[i][1] && slideIndex <= chapters[i][2]) return i;
+    }
+    return 0;
+  }
+
+  function updateChapterBar() {
+    const ci = getChapterIndex(current);
+    chapterBar.querySelectorAll('.chapter-seg').forEach((seg, i) => {
+      seg.className = 'chapter-seg';
+      if (i < ci) seg.classList.add('done');
+      else if (i === ci) seg.classList.add('current');
+    });
+  }
+
+  function goTo(index) {
+    slides[current].classList.remove('active');
+    // Find and deactivate the correct dot
+    const dots = dotsContainer.querySelectorAll('.nav-dot');
+    dots[current].classList.remove('active');
+    current = index;
+    slides[current].classList.add('active');
+    dots[current].classList.add('active');
+    navLabel.textContent = sectionNames[current] || '';
+    updateChapterBar();
+  }
+
+  function next() { if (current < slides.length - 1) goTo(current + 1); }
+  function prev() { if (current > 0) goTo(current - 1); }
+
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'ArrowRight' || e.key === ' ') { e.preventDefault(); next(); }
+    if (e.key === 'ArrowLeft') prev();
+  });
+
+  navLabel.textContent = sectionNames[0];
+  updateChapterBar();
+</script>
+
+</body>
+</html>

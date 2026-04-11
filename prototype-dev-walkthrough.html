@@ -1,0 +1,497 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dayli AI — Development System Walkthrough</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,600;1,400;1,500&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html, body {
+  width: 100%; height: 100%;
+  overflow: hidden;
+  background: #0f0a1a;
+  font-family: 'DM Sans', sans-serif;
+  color: #e2d9f0;
+}
+
+/* ── LAYOUT: media top, copy bottom ── */
+.scene-track { position: fixed; inset: 0; }
+
+.scene {
+  position: absolute; inset: 0;
+  opacity: 0;
+  transition: opacity 1s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  pointer-events: none;
+  display: flex;
+  flex-direction: column;
+}
+.scene.active { opacity: 1; pointer-events: auto; }
+
+/* ── MEDIA AREA (top ~60%) ── */
+.scene-media {
+  flex: 1;
+  position: relative;
+  overflow: hidden;
+  min-height: 0;
+}
+.scene-media video,
+.scene-media img {
+  width: 100%; height: 100%;
+  object-fit: contain;
+  object-position: center;
+  background: #0f0a1a;
+}
+
+/* subtle fade at bottom of media into copy area */
+.scene-media::after {
+  content: '';
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  height: 60px;
+  background: linear-gradient(to bottom, transparent, #0f0a1a);
+  z-index: 1;
+}
+
+/* ── COPY AREA (bottom) ── */
+.scene-copy {
+  flex-shrink: 0;
+  padding: 24px 80px 72px;
+  position: relative;
+  z-index: 2;
+}
+
+.scene-section {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 9px; font-weight: 500;
+  letter-spacing: 0.3em; text-transform: uppercase;
+  color: rgba(31, 238, 234, 0.6);
+  margin-bottom: 10px;
+}
+
+.scene-text {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(18px, 2.2vw, 28px);
+  font-weight: 400; font-style: italic;
+  line-height: 1.5;
+  color: rgba(219, 176, 255, 0.85);
+  max-width: 720px;
+}
+
+/* Intro scene — bigger title */
+.scene.scene-intro .scene-text {
+  font-size: clamp(24px, 3vw, 42px);
+  color: #DBB0FF;
+  font-weight: 600; font-style: normal;
+}
+
+.scene-eyebrow {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 9px; font-weight: 500;
+  letter-spacing: 0.32em; text-transform: uppercase;
+  color: rgba(146, 48, 227, 0.7);
+  margin-bottom: 12px;
+}
+
+/* ── TEXT ENTRANCE ── */
+.scene.active .scene-copy {
+  animation: textEnter 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94) 0.3s both;
+}
+@keyframes textEnter {
+  from { opacity: 0; transform: translateY(12px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ── PROGRESS DOTS ── */
+.progress-bar {
+  position: fixed; bottom: 24px; left: 50%;
+  transform: translateX(-50%);
+  display: flex; gap: 10px; z-index: 100;
+}
+.progress-dot {
+  width: 6px; height: 6px; border-radius: 50%;
+  background: rgba(146, 48, 227, 0.2);
+  border: 1px solid rgba(146, 48, 227, 0.12);
+  cursor: pointer;
+  transition: background 0.4s, transform 0.3s, border-color 0.4s;
+}
+.progress-dot.active {
+  background: rgba(219, 176, 255, 0.7);
+  border-color: rgba(219, 176, 255, 0.4);
+  transform: scale(1.35);
+}
+.progress-dot:hover {
+  background: rgba(146, 48, 227, 0.4);
+}
+
+/* ── NAV ARROWS ── */
+.nav-arrow {
+  position: fixed; top: 50%; transform: translateY(-50%);
+  z-index: 100;
+  background: rgba(146, 48, 227, 0.06);
+  border: 1px solid rgba(146, 48, 227, 0.12);
+  border-radius: 50%;
+  width: 44px; height: 44px;
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer;
+  color: rgba(219, 176, 255, 0.35);
+  transition: all 0.25s;
+}
+.nav-arrow:hover {
+  background: rgba(146, 48, 227, 0.15);
+  color: rgba(219, 176, 255, 0.85);
+  border-color: rgba(146, 48, 227, 0.3);
+}
+.nav-arrow.hidden { opacity: 0; pointer-events: none; }
+.nav-prev { left: 20px; }
+.nav-next { right: 20px; }
+.nav-arrow svg {
+  width: 16px; height: 16px;
+  stroke: currentColor; fill: none;
+  stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round;
+}
+
+/* ── COUNTER ── */
+.scene-counter {
+  position: fixed; top: 24px; right: 28px;
+  font-size: 10px; font-weight: 400;
+  letter-spacing: 0.18em;
+  color: rgba(219, 176, 255, 0.25);
+  z-index: 100;
+}
+
+/* ── MOBILE ── */
+@media (max-width: 680px) {
+  .scene-copy { padding: 20px 24px 64px; }
+  .nav-arrow { width: 36px; height: 36px; }
+  .nav-prev { left: 8px; }
+  .nav-next { right: 8px; }
+  .progress-bar { bottom: 16px; gap: 8px; }
+}
+</style>
+</head>
+<body>
+
+<div class="scene-counter"><span id="counter-current">1</span> / <span id="counter-total">18</span></div>
+
+<button class="nav-arrow nav-prev hidden" id="nav-prev" aria-label="Previous">
+  <svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"></polyline></svg>
+</button>
+<button class="nav-arrow nav-next" id="nav-next" aria-label="Next">
+  <svg viewBox="0 0 24 24"><polyline points="9 6 15 12 9 18"></polyline></svg>
+</button>
+
+<div class="progress-bar" id="progress-bar"></div>
+
+<div class="scene-track">
+
+  <!-- 1. Intro -->
+  <div class="scene scene-intro active">
+    <div class="scene-media">
+      <video autoplay muted loop playsinline>
+        <source src="A Images/Video/Dayli AI Dev System/1. Dayli Avatar.mp4" type="video/mp4">
+      </video>
+    </div>
+    <div class="scene-copy">
+      <div class="scene-eyebrow">Development System · Dayli AI</div>
+      <p class="scene-text">Welcome to the Dayli AI Development System</p>
+    </div>
+  </div>
+
+  <!-- 2. DAI DLL -->
+  <div class="scene">
+    <div class="scene-media">
+      <video muted loop playsinline>
+        <source src="A Images/Video/Dayli AI Dev System/2. DAI DLL.mp4" type="video/mp4">
+      </video>
+    </div>
+    <div class="scene-copy">
+      <div class="scene-section">The Products</div>
+      <p class="scene-text">This is how we build, iterate, and ship Dayli AI and Daily Living Labs Landing</p>
+    </div>
+  </div>
+
+  <!-- 3. Overview -->
+  <div class="scene">
+    <div class="scene-media">
+      <video muted loop playsinline>
+        <source src="A Images/Video/Dayli AI Dev System/3. Overview.mp4" type="video/mp4">
+      </video>
+    </div>
+    <div class="scene-copy">
+      <div class="scene-section">The Stack</div>
+      <p class="scene-text">We use Claude Code as our development engine connected to GitHub, Vercel, Figma, and Supabase. Here's how the system works and why it matters for our team now, and new teams in the future.</p>
+    </div>
+  </div>
+
+  <!-- 4. Connects -->
+  <div class="scene">
+    <div class="scene-media">
+      <img src="A Images/Video/Dayli AI Dev System/4. Connects.png" alt="Architecture">
+    </div>
+    <div class="scene-copy">
+      <div class="scene-section">Architecture</div>
+      <p class="scene-text">Everything runs through Claude Code. Claude writes and edits our codebase.</p>
+    </div>
+  </div>
+
+  <!-- 5. Monorepo -->
+  <div class="scene">
+    <div class="scene-media">
+      <img src="A Images/Video/Dayli AI Dev System/5. Monorepo.png" alt="Monorepo">
+    </div>
+    <div class="scene-copy">
+      <div class="scene-section">Architecture</div>
+      <p class="scene-text">Our codebase lives in a single monorepo</p>
+    </div>
+  </div>
+
+  <!-- 6. 2 Apps -->
+  <div class="scene">
+    <div class="scene-media">
+      <video muted loop playsinline>
+        <source src="A Images/Video/Dayli AI Dev System/6. 2 apps.mp4" type="video/mp4">
+      </video>
+    </div>
+    <div class="scene-copy">
+      <div class="scene-section">Architecture</div>
+      <p class="scene-text">The monorepo connects to two apps through Vercel — the Daily Living Labs landing page and the main Dayli AI web app.</p>
+    </div>
+  </div>
+
+  <!-- 7. Auto Deploy -->
+  <div class="scene">
+    <div class="scene-media">
+      <video muted loop playsinline>
+        <source src="A Images/Video/Dayli AI Dev System/7. Auto Deploy.mp4" type="video/mp4">
+      </video>
+    </div>
+    <div class="scene-copy">
+      <div class="scene-section">Deploy</div>
+      <p class="scene-text">When we push code to GitHub, Vercel automatically deploys it live within 30 seconds.</p>
+    </div>
+  </div>
+
+  <!-- 8. Supabase -->
+  <div class="scene">
+    <div class="scene-media">
+      <video muted loop playsinline>
+        <source src="A Images/Video/Dayli AI Dev System/8. Superbase.mp4" type="video/mp4">
+      </video>
+    </div>
+    <div class="scene-copy">
+      <div class="scene-section">Backend</div>
+      <p class="scene-text">Supabase handles our database, authentication, and AI chat functions.</p>
+    </div>
+  </div>
+
+  <!-- 9. Figma -->
+  <div class="scene">
+    <div class="scene-media">
+      <video muted loop playsinline>
+        <source src="A Images/Video/Dayli AI Dev System/9. Figma.mp4" type="video/mp4">
+      </video>
+    </div>
+    <div class="scene-copy">
+      <div class="scene-section">Design</div>
+      <p class="scene-text">And Figma is where we can get hands on with our design.</p>
+    </div>
+  </div>
+
+  <!-- 10. Setup -->
+  <div class="scene">
+    <div class="scene-media">
+      <video muted loop playsinline>
+        <source src="A Images/Video/Dayli AI Dev System/10. Setup.mp4" type="video/mp4">
+      </video>
+    </div>
+    <div class="scene-copy">
+      <div class="scene-section">Onboarding</div>
+      <p class="scene-text">The repo has a step by step visual setup, and a built-in slash command — /setup. Once you're in Claude Code, type /setup and Claude walks you through the same checklist conversationally. It runs each check for you, tells you what passed and what needs fixing, and guides you through the fix in plain language.</p>
+    </div>
+  </div>
+
+  <!-- 11. Daily Work -->
+  <div class="scene">
+    <div class="scene-media">
+      <video muted loop playsinline>
+        <source src="A Images/Video/Dayli AI Dev System/11. Daily Work.mp4" type="video/mp4">
+      </video>
+    </div>
+    <div class="scene-copy">
+      <div class="scene-section">Daily Workflow</div>
+      <p class="scene-text">For development work, you start a chat and tell Claude which app you're working on — the landing page or the web app. Describe the changes, Claude codes, push to git, and it's live.</p>
+    </div>
+  </div>
+
+  <!-- 12. Fresh Session -->
+  <div class="scene">
+    <div class="scene-media">
+      <video muted loop playsinline>
+        <source src="A Images/Video/Dayli AI Dev System/12. Fresh Session.mp4" type="video/mp4">
+      </video>
+    </div>
+    <div class="scene-copy">
+      <div class="scene-section">Memory</div>
+      <p class="scene-text">Each session is fresh, but Claude picks up the full project context automatically by reading the project rules, memory files, and codebase. What carries between sessions is the code in git and the memory files, not the conversation itself.</p>
+    </div>
+  </div>
+
+  <!-- 13. Persistent Memory -->
+  <div class="scene">
+    <div class="scene-media">
+      <video muted loop playsinline>
+        <source src="A Images/Video/Dayli AI Dev System/13. Persistent Memory.mp4" type="video/mp4">
+      </video>
+    </div>
+    <div class="scene-copy">
+      <div class="scene-section">Memory</div>
+      <p class="scene-text">Each Claude session has persistent memory. It knows the project structure, the design system, the deployment workflow, and the team preferences. You don't have to re-explain context between sessions.</p>
+    </div>
+  </div>
+
+  <!-- 14. 3 Reasons -->
+  <div class="scene">
+    <div class="scene-media">
+      <video muted loop playsinline>
+        <source src="A Images/Video/Dayli AI Dev System/14. 3 Reasons.mp4" type="video/mp4">
+      </video>
+    </div>
+    <div class="scene-copy">
+      <div class="scene-section">Why It Works</div>
+      <p class="scene-text">There are three main reasons for this structure.</p>
+    </div>
+  </div>
+
+  <!-- 15. Speed -->
+  <div class="scene">
+    <div class="scene-media">
+      <video muted loop playsinline>
+        <source src="A Images/Video/Dayli AI Dev System/15. Speed.mp4" type="video/mp4">
+      </video>
+    </div>
+    <div class="scene-copy">
+      <div class="scene-section">Why · Speed</div>
+      <p class="scene-text">#1: Speed. A design change goes from idea to live, in under two minutes. No build pipeline to babysit, no staging environment to maintain.</p>
+    </div>
+  </div>
+
+  <!-- 16. Non Engineers -->
+  <div class="scene">
+    <div class="scene-media">
+      <img src="A Images/Video/Dayli AI Dev System/16. Non Engineers.png" alt="Accessibility">
+    </div>
+    <div class="scene-copy">
+      <div class="scene-section">Why · Accessibility</div>
+      <p class="scene-text">#2: Accessibility for non-engineers. You don't need to know React or Tailwind to ship changes. Describe what you want in plain language, review the result, push it live.</p>
+    </div>
+  </div>
+
+  <!-- 17. Scale -->
+  <div class="scene">
+    <div class="scene-media">
+      <video muted loop playsinline>
+        <source src="A Images/Video/Dayli AI Dev System/17. Scale.mp4" type="video/mp4">
+      </video>
+    </div>
+    <div class="scene-copy">
+      <div class="scene-section">Why · Scalability</div>
+      <p class="scene-text">#3: Scalability for future teams. The monorepo structure, shared design tokens, and Supabase backend mean a new developer, or a new Claude chat, can pick up any part of the system without breaking the rest.</p>
+    </div>
+  </div>
+
+  <!-- 18. Closing -->
+  <div class="scene scene-closing">
+    <div class="scene-media">
+      <video muted loop playsinline>
+        <source src="A Images/Video/Dayli AI Dev System/18. The System.mp4" type="video/mp4">
+      </video>
+    </div>
+    <div class="scene-copy">
+      <p class="scene-text" style="font-style:normal; font-weight:600; color:#DBB0FF;">That's the system. Three tool connections, two setup guides to get your machine ready, one entry point to keep everyone aligned, and a workflow that lets anyone on the team iterate at the speed of conversation.</p>
+    </div>
+  </div>
+
+</div>
+
+<script>
+'use strict';
+
+const scenes = document.querySelectorAll('.scene');
+const total  = scenes.length;
+const bar    = document.getElementById('progress-bar');
+const prevB  = document.getElementById('nav-prev');
+const nextB  = document.getElementById('nav-next');
+const cCur   = document.getElementById('counter-current');
+let current  = 0;
+let locked   = false;
+
+scenes.forEach((_, i) => {
+  const d = document.createElement('div');
+  d.className = 'progress-dot' + (i === 0 ? ' active' : '');
+  d.addEventListener('click', () => goTo(i));
+  bar.appendChild(d);
+});
+const dots = bar.querySelectorAll('.progress-dot');
+
+function goTo(idx) {
+  if (locked || idx === current || idx < 0 || idx >= total) return;
+  locked = true;
+
+  const oldVid = scenes[current].querySelector('video');
+  if (oldVid) oldVid.pause();
+
+  scenes[current].classList.remove('active');
+  dots[current].classList.remove('active');
+
+  current = idx;
+
+  scenes[current].classList.add('active');
+  dots[current].classList.add('active');
+  cCur.textContent = current + 1;
+
+  const newVid = scenes[current].querySelector('video');
+  if (newVid) {
+    newVid.currentTime = 0;
+    newVid.play().catch(() => {});
+  }
+
+  prevB.classList.toggle('hidden', current === 0);
+  nextB.classList.toggle('hidden', current === total - 1);
+
+  setTimeout(() => { locked = false; }, 900);
+}
+
+prevB.addEventListener('click', () => goTo(current - 1));
+nextB.addEventListener('click', () => goTo(current + 1));
+
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'ArrowRight' || e.key === 'ArrowDown') goTo(current + 1);
+  if (e.key === 'ArrowLeft'  || e.key === 'ArrowUp')   goTo(current - 1);
+});
+
+let touchX = 0;
+document.addEventListener('touchstart', (e) => { touchX = e.touches[0].clientX; }, { passive: true });
+document.addEventListener('touchend', (e) => {
+  const dx = e.changedTouches[0].clientX - touchX;
+  if (Math.abs(dx) > 50) { dx < 0 ? goTo(current + 1) : goTo(current - 1); }
+}, { passive: true });
+
+let wheelCooldown = false;
+document.addEventListener('wheel', (e) => {
+  if (wheelCooldown) return;
+  wheelCooldown = true;
+  if (e.deltaY > 0) goTo(current + 1);
+  else if (e.deltaY < 0) goTo(current - 1);
+  setTimeout(() => { wheelCooldown = false; }, 1200);
+}, { passive: true });
+
+const firstVid = scenes[0].querySelector('video');
+if (firstVid) firstVid.play().catch(() => {});
+</script>
+
+</body>
+</html>

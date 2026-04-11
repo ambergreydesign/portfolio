@@ -1,0 +1,656 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dayli AI — Ship at the Speed of Conversation</title>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..900;1,9..144,300..900&family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&display=swap" rel="stylesheet" />
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: #0f0a1a;
+      color: #e2d9f0;
+      overflow: hidden;
+      width: 100vw; height: 100vh;
+      display: flex; flex-direction: column;
+    }
+    h1,h2,h3 { font-family: 'Fraunces', serif; }
+    code { font-family: 'SF Mono','Fira Code', monospace; font-size: 0.75rem; background: rgba(146,48,227,0.15); padding: 1px 5px; border-radius: 4px; }
+
+    /* ---- Layout ---- */
+    .top-bar {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 12px 24px;
+      border-bottom: 1px solid rgba(146,48,227,0.12);
+      background: rgba(15,10,26,0.95);
+      flex-shrink: 0;
+    }
+    .top-title { font-family: 'Fraunces', serif; font-size: 0.95rem; font-weight: 600; color: #DBB0FF; }
+    .top-scenario { font-size: 0.7rem; color: rgba(219,176,255,0.35); letter-spacing: 0.1em; text-transform: uppercase; }
+
+    .main { display: flex; flex: 1; overflow: hidden; }
+
+    /* ---- Chat Panel ---- */
+    .chat-panel {
+      width: 55%; display: flex; flex-direction: column;
+      border-right: 1px solid rgba(146,48,227,0.1);
+    }
+    .chat-header {
+      padding: 14px 20px; display: flex; align-items: center; gap: 10px;
+      font-weight: 600; font-size: 0.85rem;
+      border-bottom: 1px solid rgba(146,48,227,0.1);
+    }
+    .chat-header.dll { background: linear-gradient(135deg, rgba(146,48,227,0.15), rgba(107,31,175,0.1)); color: #DBB0FF; }
+    .chat-header.dai { background: linear-gradient(135deg, rgba(31,238,234,0.1), rgba(14,165,233,0.05)); color: #1FEEEA; }
+
+    .chat-body {
+      flex: 1; overflow-y: auto; padding: 20px;
+      display: flex; flex-direction: column; gap: 10px;
+    }
+    .chat-bubble {
+      padding: 10px 14px; border-radius: 14px; font-size: 0.8rem; line-height: 1.45;
+      max-width: 85%; opacity: 0; transform: translateY(8px);
+      transition: opacity 0.4s, transform 0.4s;
+    }
+    .chat-bubble.show { opacity: 1; transform: translateY(0); }
+    .chat-bubble.user {
+      background: rgba(146,48,227,0.2); color: #DBB0FF;
+      align-self: flex-end; border-bottom-right-radius: 4px;
+    }
+    .chat-bubble.ai {
+      background: rgba(255,255,255,0.05); color: rgba(219,176,255,0.7);
+      align-self: flex-start; border-bottom-left-radius: 4px;
+    }
+
+    .typing { display: flex; gap: 4px; padding: 10px 14px; align-self: flex-start; }
+    .typing-dot {
+      width: 7px; height: 7px; border-radius: 50%; background: #9230E3; opacity: 0.3;
+      animation: pulse 1.2s ease-in-out infinite;
+    }
+    .typing-dot:nth-child(2) { animation-delay: 0.15s; }
+    .typing-dot:nth-child(3) { animation-delay: 0.3s; }
+    @keyframes pulse { 0%,100% { opacity:0.3; transform:translateY(0); } 50% { opacity:1; transform:translateY(-3px); } }
+
+    /* ---- Prompt Selector ---- */
+    .prompt-area {
+      padding: 16px 20px;
+      border-top: 1px solid rgba(146,48,227,0.1);
+      display: flex; flex-direction: column; gap: 8px;
+    }
+    .prompt-label { font-size: 0.65rem; color: rgba(219,176,255,0.3); text-transform: uppercase; letter-spacing: 0.1em; }
+    .prompt-pills { display: flex; flex-wrap: wrap; gap: 8px; }
+    .prompt-pill {
+      padding: 10px 16px; border-radius: 12px;
+      background: rgba(146,48,227,0.08); border: 1px solid rgba(146,48,227,0.2);
+      color: #DBB0FF; font-size: 0.78rem; cursor: pointer;
+      transition: all 0.2s; font-family: 'DM Sans', sans-serif;
+    }
+    .prompt-pill:hover { background: rgba(146,48,227,0.18); border-color: #9230E3; transform: translateY(-2px); }
+    .prompt-pill:active { transform: translateY(0); }
+
+    /* ---- Right Panels ---- */
+    .right-panels { width: 45%; display: flex; flex-direction: column; }
+
+    .code-panel {
+      flex: 1; border-bottom: 1px solid rgba(146,48,227,0.1);
+      display: flex; flex-direction: column; overflow: hidden;
+    }
+    .code-header {
+      padding: 10px 16px; display: flex; align-items: center; gap: 8px;
+      background: rgba(146,48,227,0.06); border-bottom: 1px solid rgba(146,48,227,0.08);
+      font-size: 0.7rem; color: rgba(219,176,255,0.4);
+    }
+    .code-dot { width: 8px; height: 8px; border-radius: 50%; }
+    .code-dot.r { background: #ff5f57; } .code-dot.y { background: #ffbd2e; } .code-dot.g { background: #28c840; }
+    .code-filename { margin-left: 8px; font-family: monospace; color: rgba(219,176,255,0.3); }
+    .code-body {
+      flex: 1; padding: 14px 16px; overflow-y: auto;
+      font-family: 'SF Mono','Fira Code', monospace; font-size: 0.72rem; line-height: 1.8;
+      color: rgba(219,176,255,0.4);
+    }
+    .code-line { display: flex; gap: 12px; }
+    .code-num { color: rgba(219,176,255,0.15); min-width: 24px; text-align: right; user-select: none; }
+    .code-del { background: rgba(255,95,87,0.08); color: #ff5f57; text-decoration: line-through; opacity: 0.6; }
+    .code-add { background: rgba(40,200,64,0.08); color: #28c840; }
+    .code-highlight { opacity: 0; transition: opacity 0.5s; }
+    .code-highlight.show { opacity: 1; }
+
+    /* ---- Browser Mock ---- */
+    .browser-panel {
+      flex: 1; display: flex; flex-direction: column; overflow: hidden;
+    }
+    .browser-bar {
+      display: flex; align-items: center; gap: 8px; padding: 8px 14px;
+      background: rgba(146,48,227,0.04);
+      border-bottom: 1px solid rgba(146,48,227,0.08);
+    }
+    .browser-dots { display: flex; gap: 4px; }
+    .browser-dots span { width: 8px; height: 8px; border-radius: 50%; }
+    .browser-url {
+      flex: 1; padding: 4px 10px; border-radius: 6px;
+      background: rgba(0,0,0,0.3); font-size: 0.65rem; color: rgba(219,176,255,0.3);
+      font-family: monospace;
+    }
+    .browser-body {
+      flex: 1; display: flex; align-items: center; justify-content: center;
+      padding: 20px; position: relative; overflow: hidden;
+    }
+    .browser-content {
+      text-align: center; opacity: 0; transform: translateY(6px);
+      transition: opacity 0.5s, transform 0.5s;
+    }
+    .browser-content.show { opacity: 1; transform: translateY(0); }
+
+    /* ---- Deploy Flow ---- */
+    .deploy-bar {
+      padding: 12px 20px;
+      border-top: 1px solid rgba(146,48,227,0.1);
+      display: flex; align-items: center; justify-content: center; gap: 10px;
+      flex-shrink: 0; min-height: 48px;
+    }
+    .deploy-step {
+      padding: 6px 14px; border-radius: 8px; font-size: 0.7rem; font-weight: 600;
+      opacity: 0.2; transition: all 0.4s;
+    }
+    .deploy-step.active { opacity: 1; }
+    .deploy-step.purple { background: rgba(146,48,227,0.12); color: #DBB0FF; }
+    .deploy-step.cyan { background: rgba(31,238,234,0.08); color: #1FEEEA; }
+    .deploy-step.green { background: rgba(40,200,64,0.1); color: #28c840; }
+    .deploy-arrow { color: rgba(146,48,227,0.2); font-size: 0.8rem; transition: color 0.4s; }
+    .deploy-arrow.active { color: rgba(146,48,227,0.6); }
+
+    /* ---- Progress Bar ---- */
+    .progress-bar {
+      display: flex; align-items: center; gap: 6px;
+      padding: 10px 24px;
+      background: rgba(15,10,26,0.95);
+      border-top: 1px solid rgba(146,48,227,0.1);
+      flex-shrink: 0;
+    }
+    .progress-dot {
+      width: 8px; height: 8px; border-radius: 50%;
+      background: rgba(146,48,227,0.15); transition: all 0.3s;
+    }
+    .progress-dot.done { background: #9230E3; }
+    .progress-dot.current { background: #9230E3; width: 20px; border-radius: 4px; box-shadow: 0 0 8px rgba(146,48,227,0.4); }
+    .progress-label { font-size: 0.65rem; color: rgba(219,176,255,0.25); margin-left: auto; }
+
+    /* ---- Teach Note ---- */
+    .teach-note {
+      padding: 10px 16px; margin: 8px 20px 0;
+      border-radius: 10px; background: rgba(146,48,227,0.06);
+      border: 1px solid rgba(146,48,227,0.1);
+      font-size: 0.72rem; color: rgba(219,176,255,0.45); line-height: 1.4;
+      opacity: 0; transition: opacity 0.5s;
+    }
+    .teach-note.show { opacity: 1; }
+    .teach-note strong { color: #DBB0FF; }
+
+    /* ---- Intro/Outro Overlay ---- */
+    .overlay {
+      position: fixed; inset: 0; z-index: 50;
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      background: #0f0a1a;
+      transition: opacity 0.6s;
+    }
+    .overlay.hidden { opacity: 0; pointer-events: none; }
+    .overlay-icon { font-size: 3rem; margin-bottom: 20px; animation: float 4s ease-in-out infinite; }
+    @keyframes float { 0%,100% { transform:translateY(0); } 50% { transform:translateY(-8px); } }
+    .overlay-title {
+      font-family: 'Fraunces', serif; font-size: 2.2rem; font-weight: 700;
+      text-align: center; margin-bottom: 10px;
+      background: linear-gradient(135deg, #DBB0FF, #9230E3);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    }
+    .overlay-sub { font-size: 0.9rem; color: rgba(219,176,255,0.4); text-align: center; max-width: 500px; margin-bottom: 32px; line-height: 1.5; }
+    .overlay-btn {
+      padding: 12px 32px; border-radius: 12px;
+      background: #9230E3; border: none; color: white;
+      font-family: 'DM Sans', sans-serif; font-size: 0.9rem; font-weight: 600;
+      cursor: pointer; transition: all 0.2s;
+    }
+    .overlay-btn:hover { background: #7a24c4; transform: translateY(-2px); box-shadow: 0 8px 24px rgba(146,48,227,0.3); }
+
+    .outro-stats { display: flex; gap: 28px; margin-bottom: 28px; }
+    .outro-stat { text-align: center; }
+    .outro-stat-num { font-family: 'Fraunces', serif; font-size: 1.8rem; font-weight: 800; color: #9230E3; }
+    .outro-stat-label { font-size: 0.65rem; color: rgba(219,176,255,0.3); }
+  </style>
+</head>
+<body>
+
+<!-- ==================== INTRO ==================== -->
+<div class="overlay" id="intro">
+  <div class="overlay-icon">🦋</div>
+  <h1 class="overlay-title">Ship at the Speed of Conversation</h1>
+  <p class="overlay-sub">Experience how we build Dayli AI — describe a change, watch Claude Code ship it live in under 2 minutes.</p>
+  <button class="overlay-btn" onclick="startSim()">Try It</button>
+</div>
+
+<!-- ==================== OUTRO ==================== -->
+<div class="overlay hidden" id="outro">
+  <div class="overlay-icon">🦋</div>
+  <h1 class="overlay-title">That's the System</h1>
+  <p class="overlay-sub">3 scenarios. Plain language in, live code out. No React, no Tailwind, no terminal — just conversation.</p>
+  <div class="outro-stats">
+    <div class="outro-stat"><div class="outro-stat-num">3</div><div class="outro-stat-label">Scenarios</div></div>
+    <div class="outro-stat"><div class="outro-stat-num" style="color:#1FEEEA;">&lt;2m</div><div class="outro-stat-label">Idea to live</div></div>
+    <div class="outro-stat"><div class="outro-stat-num" style="color:#28c840;">0</div><div class="outro-stat-label">Code required</div></div>
+  </div>
+  <button class="overlay-btn" onclick="location.reload()">Replay</button>
+</div>
+
+<!-- ==================== MAIN UI ==================== -->
+<div class="top-bar">
+  <div class="top-title">Dayli AI Development System</div>
+  <div class="top-scenario" id="scenarioLabel">Scenario 1 of 3</div>
+</div>
+
+<div class="main">
+  <!-- Chat -->
+  <div class="chat-panel">
+    <div class="chat-header dll" id="chatHeader">🦋 Daily Living Labs Chat</div>
+    <div class="chat-body" id="chatBody"></div>
+    <div class="teach-note" id="teachNote"></div>
+    <div class="prompt-area" id="promptArea">
+      <div class="prompt-label">Choose a command</div>
+      <div class="prompt-pills" id="promptPills"></div>
+    </div>
+  </div>
+
+  <!-- Right panels -->
+  <div class="right-panels">
+    <div class="code-panel">
+      <div class="code-header">
+        <span class="code-dot r"></span><span class="code-dot y"></span><span class="code-dot g"></span>
+        <span class="code-filename" id="codeFilename">waiting...</span>
+      </div>
+      <div class="code-body" id="codeBody">
+        <div style="color:rgba(219,176,255,0.15); text-align:center; margin-top:40px;">Select a prompt to begin</div>
+      </div>
+    </div>
+    <div class="browser-panel">
+      <div class="browser-bar">
+        <div class="browser-dots"><span class="code-dot r"></span><span class="code-dot y"></span><span class="code-dot g"></span></div>
+        <div class="browser-url" id="browserUrl">dailylivinglabs.com</div>
+      </div>
+      <div class="browser-body">
+        <div class="browser-content show" id="browserContent">
+          <div style="font-family:'Fraunces',serif; font-size:1.2rem; color:#DBB0FF; margin-bottom:6px;">Daily Living Labs</div>
+          <div style="font-size:0.7rem; color:rgba(219,176,255,0.3);">Waiting for changes...</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Deploy Flow -->
+<div class="deploy-bar" id="deployBar">
+  <span class="deploy-step purple" id="ds1">Claude edits</span>
+  <span class="deploy-arrow" id="da1">→</span>
+  <span class="deploy-step purple" id="ds2">git push</span>
+  <span class="deploy-arrow" id="da2">→</span>
+  <span class="deploy-step cyan" id="ds3">Vercel deploys</span>
+  <span class="deploy-arrow" id="da3">→</span>
+  <span class="deploy-step green" id="ds4">✓ Live</span>
+</div>
+
+<!-- Progress -->
+<div class="progress-bar">
+  <div class="progress-dot current" id="pd1"></div>
+  <div class="progress-dot" id="pd2"></div>
+  <div class="progress-dot" id="pd3"></div>
+  <div class="progress-label" id="progressLabel">Update Hero Copy</div>
+</div>
+
+<script>
+  // ---- Elements ----
+  const chatBody = document.getElementById('chatBody');
+  const promptPills = document.getElementById('promptPills');
+  const promptArea = document.getElementById('promptArea');
+  const codeBody = document.getElementById('codeBody');
+  const codeFilename = document.getElementById('codeFilename');
+  const browserContent = document.getElementById('browserContent');
+  const browserUrl = document.getElementById('browserUrl');
+  const teachNote = document.getElementById('teachNote');
+  const chatHeader = document.getElementById('chatHeader');
+  const scenarioLabel = document.getElementById('scenarioLabel');
+  const progressLabel = document.getElementById('progressLabel');
+
+  // ---- Helpers ----
+  function wait(ms) { return new Promise(r => setTimeout(r, ms)); }
+
+  function addBubble(type, html) {
+    const el = document.createElement('div');
+    el.className = `chat-bubble ${type}`;
+    el.innerHTML = html;
+    chatBody.appendChild(el);
+    chatBody.scrollTop = chatBody.scrollHeight;
+    requestAnimationFrame(() => el.classList.add('show'));
+    return el;
+  }
+
+  async function showTyping(duration) {
+    const el = document.createElement('div');
+    el.className = 'typing';
+    el.innerHTML = '<div class="typing-dot"></div><div class="typing-dot"></div><div class="typing-dot"></div>';
+    chatBody.appendChild(el);
+    chatBody.scrollTop = chatBody.scrollHeight;
+    await wait(duration);
+    el.remove();
+  }
+
+  async function animateDeploy() {
+    const steps = ['ds1','ds2','ds3','ds4'];
+    const arrows = ['da1','da2','da3'];
+    for (let i = 0; i < steps.length; i++) {
+      document.getElementById(steps[i]).classList.add('active');
+      if (i > 0) document.getElementById(arrows[i-1]).classList.add('active');
+      await wait(500);
+    }
+  }
+
+  function resetDeploy() {
+    ['ds1','ds2','ds3','ds4'].forEach(id => document.getElementById(id).classList.remove('active'));
+    ['da1','da2','da3'].forEach(id => document.getElementById(id).classList.remove('active'));
+  }
+
+  function setCode(filename, lines) {
+    codeFilename.textContent = filename;
+    codeBody.innerHTML = '';
+    lines.forEach((line, i) => {
+      const el = document.createElement('div');
+      el.className = 'code-line code-highlight';
+      const cls = line.startsWith('-') ? 'code-del' : line.startsWith('+') ? 'code-add' : '';
+      el.innerHTML = `<span class="code-num">${i+1}</span><span class="${cls}">${line}</span>`;
+      codeBody.appendChild(el);
+      setTimeout(() => el.classList.add('show'), i * 60);
+    });
+  }
+
+  function setBrowser(html) {
+    browserContent.classList.remove('show');
+    setTimeout(() => {
+      browserContent.innerHTML = html;
+      browserContent.classList.add('show');
+    }, 300);
+  }
+
+  function showTeach(html) {
+    teachNote.innerHTML = html;
+    teachNote.classList.add('show');
+  }
+  function hideTeach() { teachNote.classList.remove('show'); }
+
+  function setPrompts(options, callback) {
+    promptPills.innerHTML = '';
+    promptArea.style.display = '';
+    options.forEach(opt => {
+      const btn = document.createElement('button');
+      btn.className = 'prompt-pill';
+      btn.textContent = opt.label;
+      btn.onclick = () => {
+        promptArea.style.display = 'none';
+        callback(opt);
+      };
+      promptPills.appendChild(btn);
+    });
+  }
+
+  function updateProgress(current) {
+    [1,2,3].forEach(i => {
+      const dot = document.getElementById('pd' + i);
+      dot.className = 'progress-dot';
+      if (i < current) dot.classList.add('done');
+      else if (i === current) dot.classList.add('current');
+    });
+  }
+
+  // ---- SCENARIOS ----
+
+  async function scenario1() {
+    scenarioLabel.textContent = 'Scenario 1 of 3';
+    progressLabel.textContent = 'Update Hero Copy';
+    updateProgress(1);
+    chatHeader.className = 'chat-header dll';
+    chatHeader.innerHTML = '🦋 Daily Living Labs Chat';
+    browserUrl.textContent = 'dailylivinglabs.com';
+    setBrowser(`<div style="font-family:'Fraunces',serif; font-size:1.1rem; color:#DBB0FF;">Welcome to Daily Living Labs</div><div style="font-size:0.7rem; color:rgba(219,176,255,0.3); margin-top:4px;">Discover solutions for daily living</div>`);
+
+    setPrompts([
+      { label: "Change the heading to 'Where daily life gets hard... or easier'", id: 'hero' },
+      { label: "Update subtitle with bold A, D, L in purple", id: 'sub' },
+    ], async (opt) => {
+      hideTeach();
+      addBubble('user', opt.label);
+      await wait(400);
+      await showTyping(1500);
+
+      addBubble('ai', `Done. I've updated <code>Hero.tsx</code>:<br>• Heading now reads "Where daily life gets hard... <em>or easier</em>"<br>• Italic purple styling on "or easier"<br>• Ready to push.`);
+
+      await wait(600);
+      setCode('apps/landing/src/components/Hero.tsx', [
+        '  // Hero heading',
+        '- <h1>Welcome to Daily Living Labs</h1>',
+        '+ <h1>Where daily life gets hard...</h1>',
+        '+ <h1 className="italic text-purple">or easier</h1>',
+        '  ',
+        '  // Subtitle',
+        '- <p>Discover solutions for daily living</p>',
+        '+ <p>Explore how small changes make big',
+        '+   differences in <b>A</b>ctivities of',
+        '+   <b>D</b>aily <b>L</b>iving</p>',
+      ]);
+
+      await wait(800);
+      resetDeploy();
+      await animateDeploy();
+
+      setBrowser(`<div style="font-family:'Fraunces',serif; font-size:1.1rem; color:#DBB0FF;">Where daily life gets hard...</div><div style="font-family:'Fraunces',serif; font-size:1.1rem; color:#9230E3; font-style:italic;">or easier</div><div style="font-size:0.65rem; color:rgba(219,176,255,0.4); margin-top:8px;">Explore how small changes make big differences in <strong style='color:#9230E3'>A</strong>ctivities of <strong style='color:#9230E3'>D</strong>aily <strong style='color:#9230E3'>L</strong>iving</div>`);
+
+      await wait(600);
+      showTeach(`<strong>What just happened:</strong> You described a change in plain language. Claude found <code>Hero.tsx</code>, edited the copy, pushed to GitHub, and Vercel auto-deployed. Live in under 2 minutes.`);
+
+      await wait(1200);
+      setPrompts([{ label: "Next: Wire the database →", id: 'next' }], () => scenario2());
+    });
+  }
+
+  async function scenario2() {
+    chatBody.innerHTML = '';
+    resetDeploy();
+    hideTeach();
+    scenarioLabel.textContent = 'Scenario 2 of 3';
+    progressLabel.textContent = 'Wire the Database';
+    updateProgress(2);
+    chatHeader.className = 'chat-header dai';
+    chatHeader.innerHTML = '⚡ Dayli AI Chat';
+    browserUrl.textContent = 'dayliai.org/results';
+    codeBody.innerHTML = '<div style="color:rgba(219,176,255,0.15); text-align:center; margin-top:40px;">Select a prompt to begin</div>';
+    codeFilename.textContent = 'waiting...';
+    setBrowser(`<div style="font-family:'Fraunces',serif; font-size:1rem; color:#1FEEEA;">Dayli AI — Results</div><div style="font-size:0.7rem; color:rgba(219,176,255,0.3); margin-top:4px;">[Hardcoded data]</div><div style="display:flex; gap:6px; margin-top:12px;"><div style="background:rgba(31,238,234,0.06); border:1px solid rgba(31,238,234,0.15); border-radius:8px; padding:8px 12px; font-size:0.6rem; color:rgba(219,176,255,0.4);">Shower Bench</div><div style="background:rgba(31,238,234,0.06); border:1px solid rgba(31,238,234,0.15); border-radius:8px; padding:8px 12px; font-size:0.6rem; color:rgba(219,176,255,0.4);">Grab Bars</div></div>`);
+
+    setPrompts([
+      { label: "Wire the results page to pull solutions from Supabase", id: 'wire' },
+      { label: "Replace hardcoded data with live database queries", id: 'wire2' },
+    ], async (opt) => {
+      hideTeach();
+      addBubble('user', opt.label);
+      await wait(400);
+      await showTyping(2000);
+
+      addBubble('ai', `Done. <code>ResultsScreen.tsx</code> now:<br>• Fetches from <code>internal_solutions</code> + <code>filter_options</code> on mount<br>• Shows loading spinner while fetching<br>• Maps DB columns to the Solution interface<br>• Categories derived from live data`);
+
+      await wait(600);
+      setCode('apps/web/src/screens/ResultsScreen.tsx', [
+        '  import { supabase } from "@/lib/supabase"',
+        '  ',
+        '- const solutions = HARDCODED_DATA;',
+        '+ const [solutions, setSolutions] = useState([]);',
+        '+ const [loading, setLoading] = useState(true);',
+        '  ',
+        '+ useEffect(() => {',
+        '+   const fetch = async () => {',
+        '+     const { data } = await supabase',
+        '+       .from("internal_solutions")',
+        '+       .select("*");',
+        '+     setSolutions(data);',
+        '+     setLoading(false);',
+        '+   };',
+        '+   fetch();',
+        '+ }, []);',
+      ]);
+
+      await wait(800);
+      resetDeploy();
+      await animateDeploy();
+
+      setBrowser(`<div style="font-family:'Fraunces',serif; font-size:1rem; color:#1FEEEA;">Dayli AI — Results</div><div style="font-size:0.6rem; color:#28c840; margin-top:4px;">✓ Live from Supabase</div><div style="display:flex; gap:6px; margin-top:12px; flex-wrap:wrap;"><div style="background:rgba(31,238,234,0.06); border:1px solid rgba(31,238,234,0.15); border-radius:8px; padding:8px 12px; font-size:0.6rem; color:rgba(219,176,255,0.5);">🛁 Shower Bench<br><span style='font-size:0.5rem; color:rgba(219,176,255,0.25)'>Robert P.</span></div><div style="background:rgba(31,238,234,0.06); border:1px solid rgba(31,238,234,0.15); border-radius:8px; padding:8px 12px; font-size:0.6rem; color:rgba(219,176,255,0.5);">🚿 Grab Bars<br><span style='font-size:0.5rem; color:rgba(219,176,255,0.25)'>Linda M.</span></div><div style="background:rgba(31,238,234,0.06); border:1px solid rgba(31,238,234,0.15); border-radius:8px; padding:8px 12px; font-size:0.6rem; color:rgba(219,176,255,0.5);">🧽 Bath Sponge<br><span style='font-size:0.5rem; color:rgba(219,176,255,0.25)'>Carol A.</span></div></div>`);
+
+      await wait(800);
+
+      // Follow-up prompt
+      setPrompts([
+        { label: "Also persist thumbs up/down to the database", id: 'feedback' },
+      ], async (opt2) => {
+        addBubble('user', opt2.label);
+        await wait(400);
+        await showTyping(1500);
+
+        addBubble('ai', `Updated. Feedback now inserts to <code>solution_feedback</code> with an anonymous session ID. Works for all users, signed in or not.`);
+
+        await wait(500);
+        setCode('apps/web/src/screens/ResultsScreen.tsx', [
+          '+ const handleFeedback = async (solutionId, type) => {',
+          '+   await supabase',
+          '+     .from("solution_feedback")',
+          '+     .insert({',
+          '+       solution_id: solutionId,',
+          '+       feedback_type: type,',
+          '+       session_id: getAnonId()',
+          '+     });',
+          '+ };',
+          '  ',
+          '  // In solution card:',
+          '+ <button onClick={() => handleFeedback(s.id, "up")}>👍</button>',
+          '+ <button onClick={() => handleFeedback(s.id, "down")}>👎</button>',
+        ]);
+
+        await wait(600);
+        resetDeploy();
+        await animateDeploy();
+
+        showTeach(`<strong>Same pattern, deeper change:</strong> You described a backend feature in plain language. Claude wrote the Supabase query, added UI components, and deployed — all without you touching code.`);
+
+        await wait(1200);
+        setPrompts([{ label: "Next: Design iteration flow →", id: 'next' }], () => scenario3());
+      });
+    });
+  }
+
+  async function scenario3() {
+    chatBody.innerHTML = '';
+    resetDeploy();
+    hideTeach();
+    scenarioLabel.textContent = 'Scenario 3 of 3';
+    progressLabel.textContent = 'Design Iteration';
+    updateProgress(3);
+    chatHeader.className = 'chat-header dll';
+    chatHeader.innerHTML = '🦋 Daily Living Labs Chat';
+    browserUrl.textContent = 'localhost:5173/ideation';
+    codeBody.innerHTML = '<div style="color:rgba(219,176,255,0.15); text-align:center; margin-top:40px;">Select a prompt to begin</div>';
+    codeFilename.textContent = 'waiting...';
+    setBrowser(`<div style="font-family:'Fraunces',serif; font-size:1rem; color:#DBB0FF;">ADL Section</div><div style="font-size:0.7rem; color:rgba(219,176,255,0.3); margin-top:4px;">Current version — static grid</div>`);
+
+    setPrompts([
+      { label: "Rebuild the ADL section like n8n.io — icons auto-cycling, content on the right", id: 'adl' },
+      { label: "Create a more interactive ADL section with auto-rotation", id: 'adl2' },
+    ], async (opt) => {
+      hideTeach();
+      addBubble('user', opt.label);
+      await wait(400);
+      await showTyping(1800);
+
+      addBubble('ai', `I'll create a prototype in <code>Ideation/adl-carousel/</code> so we can iterate without affecting the live site. Building 4 variations now.`);
+
+      await wait(600);
+      setCode('Ideation/adl-carousel/', [
+        '  adl-carousel/',
+        '  ├── variation-a.html   ← Tab-based',
+        '  ├── variation-b.html   ← Horizontal scroll',
+        '  ├── variation-c.html   ← Vertical stack',
+        '  └── variation-d.html   ← Progress ring nav',
+        '  ',
+        '  // Each variation uses the same data:',
+        '  const adlCategories = [',
+        '    { name: "Bathing", icon: "🛁", count: 12 },',
+        '    { name: "Dressing", icon: "👔", count: 8 },',
+        '    { name: "Toileting", icon: "🚽", count: 6 },',
+        '    { name: "Mobility", icon: "🦽", count: 15 },',
+        '  ];',
+      ]);
+
+      await wait(800);
+      browserUrl.textContent = 'localhost:5173/ideation/adl-carousel';
+      setBrowser(`<div style="font-size:0.65rem; color:#9230E3; font-weight:700; margin-bottom:8px;">4 VARIATIONS</div><div style="display:grid; grid-template-columns:1fr 1fr; gap:8px;"><div style="background:rgba(146,48,227,0.06); border:1px solid rgba(146,48,227,0.12); border-radius:8px; padding:10px; font-size:0.6rem; color:rgba(219,176,255,0.5); text-align:center;">A — Tabs</div><div style="background:rgba(146,48,227,0.06); border:1px solid rgba(146,48,227,0.12); border-radius:8px; padding:10px; font-size:0.6rem; color:rgba(219,176,255,0.5); text-align:center;">B — Scroll</div><div style="background:rgba(146,48,227,0.06); border:1px solid rgba(146,48,227,0.12); border-radius:8px; padding:10px; font-size:0.6rem; color:rgba(219,176,255,0.5); text-align:center;">C — Stack</div><div style="background:rgba(146,48,227,0.08); border:1px solid #9230E3; border-radius:8px; padding:10px; font-size:0.6rem; color:#DBB0FF; text-align:center; box-shadow:0 0 12px rgba(146,48,227,0.15);">D — Ring ✨</div></div>`);
+
+      await wait(1200);
+
+      setPrompts([
+        { label: "I like variation D with the progress ring. Remove the 'auto in 6s' text.", id: 'pickD' },
+      ], async (opt2) => {
+        addBubble('user', opt2.label);
+        await wait(400);
+        await showTyping(1500);
+
+        addBubble('ai', `Updated variation D — removed auto-cycle text, kept the ring fill animation. When you're happy, I'll port it to the landing page component.`);
+
+        await wait(400);
+        addBubble('user', "Ship it.");
+        await wait(400);
+        await showTyping(1200);
+
+        addBubble('ai', `Ported to <code>ADLSection.tsx</code>. Pushed to main.`);
+
+        await wait(500);
+        setCode('apps/landing/src/components/ADLSection.tsx', [
+          '+ // Ported from Ideation/adl-carousel/variation-d',
+          '+ import { ProgressRing } from "./ProgressRing"',
+          '  ',
+          '- <div className="adl-grid">',
+          '-   {categories.map(cat => <StaticCard />)}',
+          '- </div>',
+          '+ <div className="adl-carousel">',
+          '+   <ProgressRing active={current} total={4} />',
+          '+   <CategoryIcons onSelect={setCurrent} />',
+          '+   <ContentPanel category={categories[current]} />',
+          '+ </div>',
+        ]);
+
+        await wait(600);
+        resetDeploy();
+        browserUrl.textContent = 'dailylivinglabs.com';
+        await animateDeploy();
+
+        setBrowser(`<div style="font-family:'Fraunces',serif; font-size:0.9rem; color:#DBB0FF; margin-bottom:8px;">Activities of Daily Living</div><div style="display:flex; gap:12px; align-items:center;"><div style="width:36px; height:36px; border-radius:50%; border:3px solid #9230E3; display:flex; align-items:center; justify-content:center; font-size:0.9rem; box-shadow:0 0 10px rgba(146,48,227,0.3);">🛁</div><div style="flex:1;"><div style="font-size:0.7rem; font-weight:700; color:#DBB0FF;">Bathing</div><div style="font-size:0.55rem; color:rgba(219,176,255,0.35);">12 solutions from the community</div></div></div>`);
+
+        showTeach(`<strong>The iteration flow:</strong> Prototype in an ideation folder → try variations safely → pick a winner → port to production. All through conversation, never touching the live site until you're ready.`);
+
+        await wait(1500);
+        setPrompts([{ label: "Finish →", id: 'end' }], () => {
+          document.getElementById('outro').classList.remove('hidden');
+        });
+      });
+    });
+  }
+
+  // ---- Start ----
+  function startSim() {
+    document.getElementById('intro').classList.add('hidden');
+    scenario1();
+  }
+</script>
+
+</body>
+</html>

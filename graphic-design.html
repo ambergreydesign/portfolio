@@ -14,21 +14,89 @@ html{
   width:100%;min-height:100%;
   overflow-y:auto;overflow-x:hidden;
   background-color:#0b1c26;
-  background-image:
-    linear-gradient(rgba(31,15,56,0.5),rgba(31,15,56,0.5)),
-    url('Studio_Edited.webp');
-  background-size:cover;
-  background-position:center top;
-  background-repeat:no-repeat;
-  background-attachment:fixed;
 }
 body{
   width:100%;min-height:100%;
   overflow:visible;
   font-family:'DM Sans',sans-serif;
   color:rgba(228,218,200,0.88);
-  display:flex;align-items:flex-start;justify-content:center;
-  padding:100px 40px 60px;
+  display:flex;flex-direction:column;align-items:center;
+  background-color:#0b1c26;
+  background-image:
+    linear-gradient(rgba(31,15,56,0.5),rgba(31,15,56,0.5)),
+    url('Studio_Edited.png');
+  background-size:cover;
+  background-position:center top;
+  background-repeat:no-repeat;
+  background-attachment:fixed;
+}
+
+/* ── hero ── */
+.hero{
+  position:relative;width:100%;min-height:100vh;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  overflow:hidden;
+  background:
+    linear-gradient(rgba(14,10,24,0.55),rgba(14,10,24,0.45)),
+    url('A Images/Graphic Design Hero.jpg');
+  background-size:cover;background-position:center;
+}
+.hero-grid{
+  position:absolute;inset:0;
+  background-image:
+    linear-gradient(rgba(255,255,255,0.015) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(255,255,255,0.015) 1px,transparent 1px);
+  background-size:80px 80px;pointer-events:none;
+  mask-image:radial-gradient(ellipse 70% 60% at 50% 50%,black 20%,transparent 100%);
+  -webkit-mask-image:radial-gradient(ellipse 70% 60% at 50% 50%,black 20%,transparent 100%);
+}
+.hero-title{
+  font-family:'Cormorant Garamond',serif;
+  font-size:clamp(52px,8vw,96px);font-weight:300;font-style:italic;
+  color:rgba(235,225,208,0.95);letter-spacing:0.06em;
+  text-align:center;line-height:1;
+  text-shadow:0 2px 20px rgba(0,0,0,0.5);
+  opacity:0;transform:translateY(24px);
+  transition:opacity .8s cubic-bezier(.25,.46,.45,.94) .3s,transform .8s cubic-bezier(.25,.46,.45,.94) .3s;
+}
+body.visible .hero-title{opacity:1;transform:translateY(0)}
+.hero-statement{
+  font-family:'DM Sans',sans-serif;
+  font-size:clamp(13px,1.4vw,16px);font-weight:300;
+  color:rgba(228,218,200,0.62);margin-top:28px;
+  text-align:center;max-width:520px;line-height:1.8;
+  letter-spacing:0.02em;text-shadow:0 1px 12px rgba(0,0,0,0.4);
+  padding:0 20px;
+  opacity:0;transform:translateY(16px);
+  transition:opacity .8s cubic-bezier(.25,.46,.45,.94) .55s,transform .8s cubic-bezier(.25,.46,.45,.94) .55s;
+}
+body.visible .hero-statement{opacity:1;transform:translateY(0)}
+.scroll-hint{
+  position:absolute;bottom:36px;left:50%;transform:translateX(-50%);
+  display:flex;flex-direction:column;align-items:center;gap:8px;
+  opacity:0;transition:opacity .6s cubic-bezier(.25,.46,.45,.94) 1s;
+}
+body.visible .scroll-hint{opacity:1}
+.scroll-hint span{
+  font-size:8px;font-weight:400;letter-spacing:0.3em;
+  text-transform:uppercase;color:rgba(200,185,165,0.55);
+}
+.scroll-chevron-wrap{animation:scrollBounce 2s ease-in-out infinite}
+.scroll-chevron{
+  width:14px;height:14px;
+  border-right:1px solid rgba(190,155,90,0.35);
+  border-bottom:1px solid rgba(190,155,90,0.35);
+  transform:rotate(45deg);
+}
+@keyframes scrollBounce{
+  0%,100%{opacity:0.3;transform:translateY(0)}
+  50%{opacity:1;transform:translateY(6px)}
+}
+
+/* ── gallery section ── */
+.gallery-section{
+  width:100%;max-width:920px;
+  padding:60px 40px 60px;
 }
 
 /* ── page transitions ── */
@@ -330,7 +398,7 @@ body.visible .studio-crumb{opacity:1;transform:translateY(0)}
   .gallery-grid{columns:2}
 }
 @media(max-width:768px){
-  body{padding:72px 16px 52px}
+  .gallery-section{padding:40px 16px 52px}
   #content-wrap{gap:16px}
   .glass-card{padding:28px 20px 24px}
   .back-link{top:16px;left:16px}
@@ -367,7 +435,19 @@ body.visible .studio-crumb{opacity:1;transform:translateY(0)}
 <!-- wordmark -->
 <div class="wordmark">Amber Grey</div>
 
-<!-- main -->
+<!-- hero -->
+<section class="hero">
+  <div class="hero-grid"></div>
+  <h1 class="hero-title">graphic design</h1>
+  <p class="hero-statement">Graphic design taught me how to bring someone else's vision to life without losing its essence. Through collaboration, I learned to listen deeply, translate abstract ideas, and shape them into something tangible that others can see, feel, and understand.</p>
+  <div class="scroll-hint">
+    <span>Explore</span>
+    <div class="scroll-chevron-wrap"><div class="scroll-chevron"></div></div>
+  </div>
+</section>
+
+<!-- gallery -->
+<div class="gallery-section">
 <div id="content-wrap">
   <div class="glass-card">
     <div class="card-inner">
@@ -394,6 +474,7 @@ body.visible .studio-crumb{opacity:1;transform:translateY(0)}
     </svg>
     <span class="crumb-text">Return to Perspectives</span>
   </a>
+</div>
 </div>
 
 <!-- lightbox -->

@@ -8,6 +8,12 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,600;1,400;1,500&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
+@property --glow-angle {
+  syntax: '<angle>';
+  initial-value: 135deg;
+  inherits: false;
+}
+
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
 :root {
@@ -330,11 +336,12 @@ body.visible { opacity: 1; }
   padding: 36px 32px 32px;
   display: flex; flex-direction: column; gap: 0;
   position: relative; overflow: hidden;
-  transition: border-color 0.3s ease, transform 0.3s ease;
+  transition: border-color 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease;
 }
 .stream-card:hover {
-  border-color: rgba(146,48,227,0.32);
+  border-color: #9230E3;
   transform: translateY(-3px);
+  box-shadow: 0 0 12px rgba(146,48,227,0.25), 0 0 0 1px #9230E3;
 }
 .stream-card::before {
   content: ''; position: absolute; inset: 0;
@@ -343,9 +350,10 @@ body.visible { opacity: 1; }
 }
 
 .stream-num {
-  font-family: 'Cormorant Garamond', serif;
-  font-size: 11px; font-weight: 400; letter-spacing: 0.22em;
-  color: rgba(146,48,227,0.4); margin-bottom: 20px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 9px; font-weight: 500; letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: rgba(219,176,255,0.55); margin-bottom: 20px;
 }
 
 .stream-title {
@@ -368,19 +376,19 @@ body.visible { opacity: 1; }
 .stream-status {
   font-size: 9px; font-weight: 500; letter-spacing: 0.2em; text-transform: uppercase;
   padding: 4px 10px; border-radius: 100px;
-  color: rgba(146,48,227,0.75);
-  border: 1px solid rgba(146,48,227,0.22);
-  background: rgba(146,48,227,0.06);
+  color: rgba(219,176,255,0.7);
+  border: 1px solid rgba(146,48,227,0.3);
+  background: rgba(146,48,227,0.1);
 }
 .stream-status.active {
-  color: rgba(31,238,234,0.85);
-  border-color: rgba(31,238,234,0.28);
-  background: rgba(31,238,234,0.06);
+  color: rgba(31,238,234,0.95);
+  border-color: rgba(31,238,234,0.35);
+  background: rgba(31,238,234,0.08);
 }
 
 .stream-link {
-  font-size: 10px; font-weight: 400; letter-spacing: 0.14em;
-  color: rgba(146,48,227,0.55);
+  font-size: 10px; font-weight: 500; letter-spacing: 0.14em;
+  color: rgba(219,176,255,0.6);
   text-decoration: none; text-transform: uppercase;
   display: flex; align-items: center; gap: 6px;
   transition: color 0.2s ease;
@@ -755,6 +763,9 @@ body.visible { opacity: 1; }
   if (from === 'ci') {
     btn.onclick = function(){ navigateTo('level-3-ci.html'); };
     label.textContent = 'Contextual Intelligence';
+  } else if (from === 'dev') {
+    btn.onclick = function(){ navigateTo('level-3-dev-system.html'); };
+    label.textContent = 'Lowering the Barrier to Build';
   } else {
     btn.onclick = function(){ navigateTo('level-3-dll.html'); };
     label.textContent = 'Daily Living Labs';
@@ -770,13 +781,16 @@ body.visible { opacity: 1; }
   <div class="hero-grid"></div>
   <div class="hero-fade"></div>
   <div class="hero-content">
-    <div class="hero-eyebrow">Systems · AI Design · Community UX</div>
+    <div class="wip-banner" style="margin-bottom:20px;">
+      <div class="wip-dot"></div>
+      <span class="wip-text">Case Study in Progress</span>
+    </div>
     <h1 class="hero-title">Dayli AI |<br>Daily Living Labs</h1>
     <p class="hero-subtitle">The gap between a problem and its solution is almost always information.</p>
     <div class="hero-meta">
       <div class="hero-meta-item">
         <span class="hero-meta-label">Role</span>
-        <span class="hero-meta-value">UX Research &amp; Interaction Design</span>
+        <span class="hero-meta-value">UX Design · AI Systems · Dev Ops</span>
       </div>
       <div class="hero-meta-item">
         <span class="hero-meta-label">Context</span>
@@ -787,8 +801,8 @@ body.visible { opacity: 1; }
         <span class="hero-meta-value">2026</span>
       </div>
       <div class="hero-meta-item">
-        <span class="hero-meta-label">Type</span>
-        <span class="hero-meta-value">Prototype / AI System</span>
+        <span class="hero-meta-label">What I Did</span>
+        <span class="hero-meta-value">Research · Interaction Design · Prototyping · AI Agent Design · Dev System Architecture</span>
       </div>
     </div>
   </div>
@@ -800,52 +814,7 @@ body.visible { opacity: 1; }
 <section class="cs-section">
   <div class="section-inner">
 
-    <div class="reveal">
-      <div class="wip-banner">
-        <div class="wip-dot"></div>
-        <span class="wip-text">Case Study in Progress</span>
-      </div>
-    </div>
 
-    <div class="reveal">
-      <p class="overview-intro">
-        Most people who need help don't think of themselves as someone who needs a solution —
-        they think of themselves as someone who <em>deals with it.</em>
-        Dayli AI exists for those people. My work is about designing the systems that
-        connect them to what already exists, and building the team infrastructure to make sure
-        we never stop finding those connections.
-      </p>
-    </div>
-
-    <div class="reveal">
-      <div class="proj-meta-outer" id="chipPanelOuter">
-        <div class="chip-panel">
-          <div class="chip-group">
-            <div class="chip-group-label">Skills</div>
-            <div class="chip-row">
-              <button class="chip-btn" data-detail="Rethinking how people discover and engage with the Daily Living Labs community.">Interaction Design</button>
-              <button class="chip-btn" data-detail="Designing the architecture for how the platform connects users, community, and knowledge.">Systems Design</button>
-              <button class="chip-btn" data-detail="Configuring AI tools to surface the right context — for users and for the team.">Prompt Engineering</button>
-              <button class="chip-btn" data-detail="Designing for how caregivers, differently-abled users, and innovators find each other.">Community UX</button>
-              <button class="chip-btn" data-detail="Synthesizing user insight and team knowledge into systems that persist.">Research Synthesis</button>
-            </div>
-          </div>
-          <div class="chip-group">
-            <div class="chip-group-label">Methods</div>
-            <div class="chip-row">
-              <button class="chip-btn" data-detail="Understanding the existing platform, user flows, and the gaps between them.">Platform Research</button>
-              <button class="chip-btn" data-detail="Mapping the relationships between community, platform, and team knowledge.">Systems Mapping</button>
-              <button class="chip-btn" data-detail="Building the interaction layer for the community landing experience.">Prototyping</button>
-              <button class="chip-btn" data-detail="Designing the logic and context-handling of the AI systems.">AI System Design</button>
-              <button class="chip-btn" data-detail="Creating documentation that lives in the system, not in people's heads.">Documentation Design</button>
-            </div>
-          </div>
-        </div>
-        <div class="chip-detail-wrap">
-          <p class="chip-detail" id="chipDetail">Hover a chip to learn more.</p>
-        </div>
-      </div>
-    </div>
 
   </div>
 </section>
@@ -877,8 +846,8 @@ body.visible { opacity: 1; }
         <div class="mission-card-title">Dayli AI</div>
         <div class="mission-card-tagline">"Personalized Solutions for Daily Living"</div>
         <p class="mission-card-body">The AI-powered product built on top of Daily Living Labs — designed to surface relevant solutions based on a person's specific context and situation. Not a search engine. Not a chatbot. A system that learns what someone actually needs and connects them to it.</p>
-        <a class="mission-card-link" href="https://dayli-ai.lovable.app" target="_blank" rel="noopener">
-          dayli-ai.lovable.app →
+        <a class="mission-card-link" href="https://dayliai.org" target="_blank" rel="noopener">
+          dayliai.org →
         </a>
       </div>
     </div>
@@ -893,14 +862,8 @@ body.visible { opacity: 1; }
 
     <div class="reveal">
       <div class="section-label">The Heart of It</div>
-      <h2 class="section-heading">Most people don't need to think outside the box.</h2>
-    </div>
-
-    <div class="reveal">
-      <div class="pull-quote-wrap">
-        <p class="pull-quote">"I am not a think outside of the box kind of person.<br>I just deal with the inconvenience."</p>
-        <p class="pull-quote-attr">— A neighbor, SAHM to five kids, one of whom is differently-abled</p>
-      </div>
+      <h2 class="section-heading">"I am not a think outside of the box kind of person. I just deal with the inconvenience."</h2>
+      <p class="pull-quote-attr" style="margin-top:-8px; margin-bottom:32px;">— A neighbor, SAHM to five kids, one of whom is differently-abled</p>
     </div>
 
     <div class="narrative-cols reveal">
@@ -938,64 +901,106 @@ body.visible { opacity: 1; }
   <div class="section-inner">
 
     <div class="reveal">
-      <div class="section-label">The Work</div>
-      <h2 class="section-heading">Three threads. One mission.</h2>
+      <div class="section-label">What I Built</div>
+      <h2 class="section-heading">The Full Picture</h2>
       <p class="streams-intro">
-        Each work stream addresses a different layer of the same problem: making Dayli AI more connected, more contextual, and more navigable — for the people it serves and the team building it.
+        From AI agents to landing pages, from development infrastructure to design systems — everything built for the Daily Living Labs ecosystem.
       </p>
     </div>
 
-    <div class="stream-grid reveal">
+    <div class="stream-grid reveal" style="grid-template-columns:1fr 1fr; gap:16px;">
 
-      <div class="stream-card">
-        <div class="stream-num">01 — Interaction</div>
-        <h3 class="stream-title">Community Interaction Layer</h3>
-        <p class="stream-desc">
-          Redesigning the landing page experience so that someone like Rachel — who doesn't know what she's looking for — can still find her way in. An interaction model built for discovery, not search.
-        </p>
-        <div class="stream-footer">
-          <span class="stream-status">In Progress</span>
-          <a class="stream-link"
-             href="https://www.figma.com/make/QAUA5wCsHiNEWgqMt4Ance/ADL-Interaction-Layer-Design"
-             target="_blank" rel="noopener">
-            View in Figma <span class="stream-link-arrow">→</span>
-          </a>
-        </div>
-      </div>
-
-      <div class="stream-card">
-        <div class="stream-num">02 — Architecture</div>
-        <h3 class="stream-title">DLL Interaction Architecture</h3>
-        <p class="stream-desc">
-          A new framework for how the Daily Living Labs community connects — from first contact to ongoing engagement. Designing the relationship layer so that the right people find each other, not by accident.
-        </p>
-        <div class="stream-footer">
-          <span class="stream-status">In Progress</span>
-          <a class="stream-link"
-             href="https://www.figma.com/board/YkQaaPR5Bvav94xik34xw4/Dayli-Brainstorming-Space?node-id=655-1950"
-             target="_blank" rel="noopener">
-            View in Figma <span class="stream-link-arrow">→</span>
-          </a>
-        </div>
-      </div>
-
-      <div class="stream-card">
-        <div class="stream-num">03 — Team Intelligence</div>
-        <h3 class="stream-title">AI Systems for the Team</h3>
-        <p class="stream-desc">
-          The same thinking applied internally. Two AI tools designed so the team is never blocked, never starting from zero, and never waiting on the right person to be available.
-        </p>
+      <!-- Dev System -->
+      <a class="stream-card" href="prototype-dayli-dev-system.html" target="_blank" rel="noopener" style="text-decoration:none; cursor:pointer;">
+        <div class="stream-num">Dev System Architecture</div>
+        <h3 class="stream-title">Development System</h3>
+        <p class="stream-desc">Designed and built a conversational dev system using Claude Code + GitHub + Vercel + Figma + Supabase. Idea to live in under 2 minutes.</p>
         <div class="stream-footer">
           <span class="stream-status active">Active</span>
-          <a class="stream-link"
-             href="https://chatgpt.com/g/g-69adfac177608191b031e67343d2004a-dayli-research-analyst"
-             target="_blank" rel="noopener">
-            Open GPT <span class="stream-link-arrow">→</span>
-          </a>
+          <span class="stream-link">Explore <span class="stream-link-arrow">→</span></span>
+        </div>
+      </a>
+
+      <!-- Daily Living Labs Landing -->
+      <a class="stream-card" href="https://dailylivinglabs.com" target="_blank" rel="noopener" style="text-decoration:none; cursor:pointer;">
+        <div class="stream-num">Product</div>
+        <h3 class="stream-title">Daily Living Labs Landing</h3>
+        <p class="stream-desc">Community-facing landing page with ADL carousel, onboarding flow, and solution discovery — built on Vite + Tailwind.</p>
+        <div class="stream-footer">
+          <span class="stream-status active">Live</span>
+          <span class="stream-link">dailylivinglabs.com <span class="stream-link-arrow">→</span></span>
+        </div>
+      </a>
+
+      <!-- Socratic Agent -->
+      <a class="stream-card" href="https://dailylivinglabs.com/contribute" target="_blank" rel="noopener" style="text-decoration:none; cursor:pointer;">
+        <div class="stream-num">AI Agent</div>
+        <h3 class="stream-title">Socratic Dialogue Agent</h3>
+        <p class="stream-desc">Conversational AI that gathers user needs through empathetic follow-up questions — replacing forms with understanding.</p>
+        <div class="stream-footer">
+          <span class="stream-status active">Active</span>
+          <span class="stream-link">Try it <span class="stream-link-arrow">→</span></span>
+        </div>
+      </a>
+
+      <!-- Research Analyst -->
+      <a class="stream-card" href="https://chatgpt.com/g/g-69adfac177608191b031e67343d2004a-dayli-research-analyst" target="_blank" rel="noopener" style="text-decoration:none; cursor:pointer;">
+        <div class="stream-num">AI Tool</div>
+        <h3 class="stream-title">Research Analyst GPT</h3>
+        <p class="stream-desc">AI system that surfaces relevant research insights based on user situation — contextual intelligence for the team.</p>
+        <div class="stream-footer">
+          <span class="stream-status active">Public</span>
+          <span class="stream-link">Open GPT <span class="stream-link-arrow">→</span></span>
+        </div>
+      </a>
+
+      <!-- Dayli Dev GPT -->
+      <div class="stream-card">
+        <div class="stream-num">AI Tool</div>
+        <h3 class="stream-title">Dayli Dev GPT</h3>
+        <p class="stream-desc">Internal GPT with full migration context — architecture decisions, known issues, and environment quirks. The team's single source of truth.</p>
+        <div class="stream-footer">
+          <span class="stream-status">Internal</span>
         </div>
       </div>
 
+      <!-- Avatar -->
+      <a class="stream-card" href="prototype-dayli-avatar.html" target="_blank" rel="noopener" style="text-decoration:none; cursor:pointer;">
+        <div class="stream-num">Brand</div>
+        <h3 class="stream-title">Dayli Avatar</h3>
+        <p class="stream-desc">Animated brand character with smile eyes, blinking, mouse tracking, and personality states — the friendly face of Dayli AI.</p>
+        <div class="stream-footer">
+          <span class="stream-status active">Prototype</span>
+          <span class="stream-link">View <span class="stream-link-arrow">→</span></span>
+        </div>
+      </a>
+
     </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════
+     DEV SYSTEM
+══════════════════════════════════ -->
+<section class="cs-section alt-bg">
+  <div class="section-inner">
+
+    <div class="reveal">
+      <div class="section-eyebrow" style="font-size:9px; font-weight:500; letter-spacing:0.34em; text-transform:uppercase; color:rgba(146,48,227,0.5); margin-bottom:16px;">My Biggest Contribution</div>
+      <h2 class="section-title" style="font-family:'Cormorant Garamond',serif; font-size:clamp(26px,3.5vw,42px); font-weight:600; color:var(--lavender); margin-bottom:20px;">The Development System</h2>
+      <p style="font-size:15px; font-weight:300; line-height:1.8; color:rgba(200,155,240,0.7); max-width:720px; margin-bottom:40px;">
+        I designed and built a conversational development system that lets anyone on the team ship changes by describing them in plain language. No React. No terminal commands. No waiting for a developer. Claude Code orchestrates GitHub, Vercel, Figma, and Supabase — turning a description into a live deployment in under two minutes.
+      </p>
+    </div>
+
+    <!-- Embedded Dev System Prototype -->
+    <div class="reveal">
+      <div style="max-width:900px; margin:0 auto; border-radius:16px; overflow:hidden; border:1px solid rgba(146,48,227,0.25); box-shadow:0 8px 40px rgba(0,0,0,0.5), 0 0 0 1px rgba(146,48,227,0.1); aspect-ratio:16/10;">
+        <iframe src="prototype-dayli-dev-system.html" style="width:100%; height:100%; border:none;" loading="lazy"></iframe>
+      </div>
+      <p style="font-size:8.5px; font-weight:500; letter-spacing:0.28em; text-transform:uppercase; color:rgba(219,176,255,0.4); margin-top:12px; text-align:center;">Interactive · Video · Walkthrough · Speed Run · Setup Guide</p>
+    </div>
+
   </div>
 </section>
 
@@ -1084,6 +1089,65 @@ body.visible { opacity: 1; }
           <div class="try-this-label">Why It's Not Public</div>
           <p class="try-this-text">Dayli Dev holds detailed migration context, technical architecture, and environment-specific information. Sharing it publicly would expose sensitive system details — so the demo above illustrates its value without showing the real thing.</p>
         </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════
+     SOCRATIC AGENT
+══════════════════════════════════ -->
+<section class="cs-section">
+  <div class="section-inner">
+    <div class="tool-section reveal">
+
+      <div>
+        <div class="tool-label">Core Interaction · AI Agent</div>
+        <h2 class="tool-heading">The Socratic Agent</h2>
+        <p class="tool-body">
+          Instead of asking users to fill out forms or search databases, Dayli uses a Socratic dialogue model — warm, conversational prompts that naturally gather the information needed to surface relevant solutions.
+        </p>
+        <p class="tool-body">
+          The agent collects context through empathetic follow-up questions: what's difficult, what they've tried, what their situation looks like. No clinical intake forms. No keyword search. Just a conversation that leads to understanding.
+        </p>
+        <p class="tool-body">
+          Behind the dialogue, the system maps responses to ADL categories (Bathing, Dressing, Mobility, Toileting, Transferring, Eating) and matches against community-sourced solutions — connecting people to answers that came from lived experience.
+        </p>
+        <div class="try-this">
+          <div class="try-this-label">Two Layers</div>
+          <p class="try-this-text">A structured diagnostic questionnaire captures baseline context (who, what, how much help). Then the Socratic agent refines understanding through open conversation — the combination of structure and warmth is what makes it work.</p>
+        </div>
+      </div>
+
+      <div class="chat-demo">
+        <div class="chat-demo-header">
+          <div class="chat-demo-dot"></div>
+          <div class="chat-demo-title">Dayli AI — Socratic Dialogue</div>
+        </div>
+        <div class="chat-demo-body">
+          <div class="chat-msg assistant">
+            <div class="chat-msg-label">Dayli</div>
+            <div class="chat-msg-bubble">Hi! Tell me about a daily activity that's been difficult lately.</div>
+          </div>
+          <div class="chat-msg user">
+            <div class="chat-msg-label">User</div>
+            <div class="chat-msg-bubble">Bathing has been really hard since my shoulder surgery.</div>
+          </div>
+          <div class="chat-msg assistant">
+            <div class="chat-msg-label">Dayli</div>
+            <div class="chat-msg-bubble">I understand — reaching and balancing can be tough after shoulder surgery. Can you tell me more about what specifically is most difficult? Is it getting in and out of the tub, washing certain areas, or something else?</div>
+          </div>
+          <div class="chat-msg user">
+            <div class="chat-msg-label">User</div>
+            <div class="chat-msg-bubble">Mostly reaching my back and holding the showerhead at the same time.</div>
+          </div>
+          <div class="chat-msg assistant">
+            <div class="chat-msg-label">Dayli</div>
+            <div class="chat-msg-bubble">That makes sense. I've found 3 solutions from people in similar situations: a wall-mounted showerhead holder, a long-handle bath sponge, and a shower bench that frees up both hands. Want to explore any of these?</div>
+          </div>
+        </div>
+        <div class="chat-demo-note">Illustrative dialogue — the agent gathers context through conversation, not forms</div>
       </div>
 
     </div>

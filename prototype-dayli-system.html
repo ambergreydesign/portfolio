@@ -334,15 +334,12 @@
     <span class="flow-arrow">+</span>
     <span class="flow-step cyan">🗄️ Supabase</span>
   </div>
-  <div class="teach" style="margin-top:32px;">
-    <strong>What you'll learn:</strong> How five tools connect into a system where you describe changes in plain language and they go live in under two minutes.
-  </div>
 </div>
 
 <!-- SLIDE 1: ARCHITECTURE -->
 <div class="slide">
   <div class="slide-label">The System</div>
-  <div class="slide-step">1 / 16</div>
+  <div class="slide-step">1 / 19</div>
   <h2 class="heading">How It All Connects</h2>
   <p class="subtext">Claude Code sits at the center, orchestrating four services. Hover each node to see what it does.</p>
 
@@ -390,7 +387,7 @@
 <!-- SLIDE 2: MONOREPO -->
 <div class="slide">
   <div class="slide-label">The System</div>
-  <div class="slide-step">2 / 16</div>
+  <div class="slide-step">2 / 19</div>
   <h2 class="heading">The Monorepo</h2>
   <p class="subtext">One repo, two apps, shared packages — all managed by Claude Code</p>
   <div class="terminal" style="max-width:600px;">
@@ -423,11 +420,40 @@
      CHAPTER 2: SETUP
 ================================================================= -->
 
-<!-- SLIDE 3: SETUP — GITHUB -->
+<!-- SLIDE 3: 3 SETUP TOOLS -->
+<div class="slide">
+  <div class="slide-label">Onboarding</div>
+  <div class="slide-step">3 / 19</div>
+  <h2 class="heading">3 Setup Tools</h2>
+  <p class="subtext">Connect the tools once, then you're ready to build</p>
+
+  <div style="display:flex; gap:24px; width:100%; max-width:1000px;">
+    <div style="flex:1; background:rgba(146,48,227,0.06); border:1px solid rgba(146,48,227,0.15); border-radius:20px; padding:32px 24px; text-align:center; transition:all 0.3s; cursor:default;" onmouseenter="this.style.borderColor='rgba(146,48,227,0.4)'; this.style.background='rgba(146,48,227,0.1)'; this.style.transform='translateY(-4px)'" onmouseleave="this.style.borderColor='rgba(146,48,227,0.15)'; this.style.background='rgba(146,48,227,0.06)'; this.style.transform='translateY(0)'">
+      <div style="width:40px; height:40px; border-radius:50%; background:#9230E3; color:white; font-weight:700; font-size:1.1rem; display:flex; align-items:center; justify-content:center; margin:0 auto 16px;">1</div>
+      <div style="font-size:2rem; margin-bottom:12px;">📦</div>
+      <div style="font-family:'Fraunces',serif; font-size:1.15rem; font-weight:700; color:#DBB0FF; margin-bottom:8px;">Terminal → GitHub</div>
+      <div style="font-size:0.8rem; color:rgba(219,176,255,0.5); line-height:1.5;">Link the monorepo so Claude can commit and pushes auto-deploy through Vercel</div>
+    </div>
+    <div style="flex:1; background:rgba(146,48,227,0.06); border:1px solid rgba(146,48,227,0.15); border-radius:20px; padding:32px 24px; text-align:center; transition:all 0.3s; cursor:default;" onmouseenter="this.style.borderColor='rgba(146,48,227,0.4)'; this.style.background='rgba(146,48,227,0.1)'; this.style.transform='translateY(-4px)'" onmouseleave="this.style.borderColor='rgba(146,48,227,0.15)'; this.style.background='rgba(146,48,227,0.06)'; this.style.transform='translateY(0)'">
+      <div style="width:40px; height:40px; border-radius:50%; background:#9230E3; color:white; font-weight:700; font-size:1.1rem; display:flex; align-items:center; justify-content:center; margin:0 auto 16px;">2</div>
+      <div style="font-size:2rem; margin-bottom:12px;">🎨</div>
+      <div style="font-family:'Fraunces',serif; font-size:1.15rem; font-weight:700; color:#DBB0FF; margin-bottom:8px;">Claude → Figma</div>
+      <div style="font-size:0.8rem; color:rgba(219,176,255,0.5); line-height:1.5;">Connect via MCP so Claude reads designs and writes components back to Figma</div>
+    </div>
+    <div style="flex:1; background:rgba(146,48,227,0.06); border:1px solid rgba(146,48,227,0.15); border-radius:20px; padding:32px 24px; text-align:center; transition:all 0.3s; cursor:default;" onmouseenter="this.style.borderColor='rgba(146,48,227,0.4)'; this.style.background='rgba(146,48,227,0.1)'; this.style.transform='translateY(-4px)'" onmouseleave="this.style.borderColor='rgba(146,48,227,0.15)'; this.style.background='rgba(146,48,227,0.06)'; this.style.transform='translateY(0)'">
+      <div style="width:40px; height:40px; border-radius:50%; background:#9230E3; color:white; font-weight:700; font-size:1.1rem; display:flex; align-items:center; justify-content:center; margin:0 auto 16px;">3</div>
+      <div style="font-size:2rem; margin-bottom:12px;">🗄️</div>
+      <div style="font-family:'Fraunces',serif; font-size:1.15rem; font-weight:700; color:#DBB0FF; margin-bottom:8px;">Claude → Supabase</div>
+      <div style="font-size:0.8rem; color:rgba(219,176,255,0.5); line-height:1.5;">Wire up the database, migrations, and edge functions for the AI backend</div>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 4: SETUP — GITHUB -->
 <div class="slide">
   <div class="slide-label">Setup · 1 of 3</div>
-  <div class="slide-step">3 / 16</div>
-  <h2 class="heading">Connect Claude → GitHub</h2>
+  <div class="slide-step">4 / 19</div>
+  <h2 class="heading">Connect to GitHub</h2>
   <p class="subtext">Link the monorepo so Claude can commit and pushes auto-deploy through Vercel</p>
   <div class="terminal">
     <div class="terminal-bar">
@@ -449,10 +475,10 @@
   <div class="teach"><strong>What this unlocks:</strong> Claude can now commit code directly. Every push triggers Vercel to auto-deploy — no CI/CD to configure.</div>
 </div>
 
-<!-- SLIDE 4: SETUP — FIGMA -->
+<!-- SLIDE 5: SETUP — FIGMA -->
 <div class="slide">
   <div class="slide-label">Setup · 2 of 3</div>
-  <div class="slide-step">4 / 16</div>
+  <div class="slide-step">5 / 19</div>
   <h2 class="heading">Connect Claude → Figma</h2>
   <p class="subtext">Read designs and write components back to Figma files via MCP</p>
   <div class="split">
@@ -494,10 +520,10 @@
   <div class="teach"><strong>What this unlocks:</strong> Two-way design sync. Claude reads Figma designs for context, and can push components back — keeping code and design in lockstep.</div>
 </div>
 
-<!-- SLIDE 5: SETUP — SUPABASE -->
+<!-- SLIDE 6: SETUP — SUPABASE -->
 <div class="slide">
   <div class="slide-label">Setup · 3 of 3</div>
-  <div class="slide-step">5 / 16</div>
+  <div class="slide-step">6 / 19</div>
   <h2 class="heading">Connect Claude → Supabase</h2>
   <p class="subtext">Database tables, RLS policies, edge functions, and seed data</p>
   <div class="split">
@@ -539,10 +565,10 @@
   <div class="teach"><strong>What this unlocks:</strong> A real backend — authentication, AI-powered search, community features, and persistent user data. All queryable by Claude.</div>
 </div>
 
-<!-- SLIDE 6: SYSTEM READY -->
+<!-- SLIDE 7: SYSTEM READY -->
 <div class="slide">
   <div class="slide-label">Setup Complete</div>
-  <div class="slide-step">6 / 16</div>
+  <div class="slide-step">7 / 19</div>
   <h2 class="heading">System Ready</h2>
   <p class="subtext">Three chats, run once. Now the two working chats take over.</p>
   <div class="cards-row">
@@ -562,7 +588,6 @@
       <div class="ic-desc">✅ 11 tables + RLS<br>Edge functions live</div>
     </div>
   </div>
-  <div class="teach" style="margin-top:28px;"><strong>From here on out:</strong> Two persistent chats — one for Daily Living Labs, one for Dayli AI — handle all day-to-day work.</div>
 </div>
 
 <!-- ================================================================
@@ -572,7 +597,7 @@
 <!-- SLIDE 7: DLL — COPY CHANGE -->
 <div class="slide">
   <div class="slide-label">Working · Daily Living Labs</div>
-  <div class="slide-step">7 / 16</div>
+  <div class="slide-step">8 / 19</div>
   <h2 class="heading">Example: Update Hero Copy</h2>
   <p class="subtext">Describe a change in plain language → Claude edits → push → live</p>
   <div class="chat-mock" style="max-width:720px;">
@@ -597,7 +622,7 @@
 <!-- SLIDE 8: DLL — DESIGN ITERATION -->
 <div class="slide">
   <div class="slide-label">Working · Daily Living Labs</div>
-  <div class="slide-step">8 / 16</div>
+  <div class="slide-step">9 / 19</div>
   <h2 class="heading">Example: Redesign ADL Section</h2>
   <p class="subtext">Prototype in an ideation folder → iterate → push to production</p>
   <div class="split">
@@ -646,7 +671,7 @@
 <!-- SLIDE 9: DAYLI AI — DATABASE -->
 <div class="slide">
   <div class="slide-label">Working · Dayli AI</div>
-  <div class="slide-step">9 / 16</div>
+  <div class="slide-step">10 / 19</div>
   <h2 class="heading">Example: Wire the Database</h2>
   <p class="subtext">Replace hardcoded data with live Supabase queries</p>
   <div class="chat-mock" style="max-width:720px;">
@@ -661,59 +686,176 @@
   <div class="teach"><strong>Same pattern, different app:</strong> The Dayli AI chat handles backend wiring the same way — describe what you need, Claude writes the queries and components.</div>
 </div>
 
+<!-- SLIDE 10: ADJUST SPACING -->
+<div class="slide">
+  <div class="slide-label">Working · Daily Living Labs</div>
+  <div class="slide-step">11 / 19</div>
+  <h2 class="heading">Example: Adjust Spacing</h2>
+  <p class="subtext">Even the smallest visual tweaks work the same way</p>
+  <div class="chat-mock" style="max-width:720px;">
+    <div class="chat-mock-header" style="background:linear-gradient(135deg, #9230E3, #6B1FAF); color:white;">🦋 Daily Living Labs Chat</div>
+    <div class="chat-mock-body">
+      <div class="chat-bubble user">The gap between the hero heading and the subtitle feels too tight. Can we add more breathing room?</div>
+      <div class="chat-bubble ai">Done. I've increased the margin between the heading and subtitle in <code>Hero.tsx</code> from <code>mb-2</code> to <code>mb-6</code>. The section padding also went from <code>py-16</code> to <code>py-20</code> for a more open feel. Ready to push.</div>
+      <div class="chat-bubble user">Actually can we also tighten the letter spacing on the heading? It feels a bit wide.</div>
+      <div class="chat-bubble ai">Updated — set <code>tracking-tight</code> on the h1. The heading feels more compact now while the spacing below it still breathes.</div>
+    </div>
+  </div>
+  <div class="flow-row">
+    <span class="flow-step purple">You describe the feel</span>
+    <span class="flow-arrow">→</span>
+    <span class="flow-step purple">Claude adjusts the CSS</span>
+    <span class="flow-arrow">→</span>
+    <span class="flow-step cyan">git push</span>
+    <span class="flow-arrow">→</span>
+    <span class="flow-step green">✓ Live</span>
+  </div>
+  <div class="teach"><strong>No pixel values needed:</strong> "More breathing room" and "feels a bit wide" are enough. Claude translates visual intent into the right Tailwind classes.</div>
+</div>
+
 <!-- ================================================================
      CHAPTER 4: MEMORY
 ================================================================= -->
 
-<!-- SLIDE 10: PERSISTENT MEMORY -->
+<!-- SLIDE 11: CONVERSATION → CHANGES -->
 <div class="slide">
-  <div class="slide-label">Memory</div>
-  <div class="slide-step">10 / 16</div>
-  <h2 class="heading">Every Chat Remembers</h2>
-  <p class="subtext">Context carries forward — no re-explaining between sessions</p>
-  <div class="split" style="max-width:960px;">
-    <div class="split-left">
-      <div class="chat-mock" style="max-width:100%;">
-        <div class="chat-mock-header" style="background:rgba(146,48,227,0.12);">🦋 Daily Living Labs — Session 4</div>
-        <div class="chat-mock-body">
-          <div class="chat-bubble ai" style="background:rgba(146,48,227,0.06); border:1px solid rgba(146,48,227,0.12); color:rgba(219,176,255,0.5); font-size:0.7rem; max-width:100%; align-self:stretch;">
-            <span style="color:#9230E3; font-weight:700;">Memory loaded:</span><br>
-            • Dayli design system (Fraunces + DM Sans, purple tokens)<br>
-            • Deploy: git push → Vercel auto-deploy<br>
-            • Node 20 required (not 24)<br>
-            • ADL carousel uses progress ring nav<br>
-            • Amber prefers full-build approach
-          </div>
-          <div class="chat-bubble user">Add a new "Grooming" ADL category to the carousel</div>
-          <div class="chat-bubble ai">I see the carousel in <code>ADLSection.tsx</code> pulls from <code>adlData.ts</code>. I'll add Grooming with 3 solutions — the carousel will auto-include it.</div>
+  <div class="slide-label">Daily Workflow</div>
+  <div class="slide-step">12 / 19</div>
+  <h2 class="heading">Conversation → Changes</h2>
+  <p class="subtext">One entry point — describe changes in plain language, push to ship</p>
+
+  <div style="display:flex; gap:40px; width:100%; max-width:1000px;">
+    <!-- DLL panel -->
+    <div style="flex:1; border-radius:20px; overflow:hidden; border:1px solid rgba(146,48,227,0.2);">
+      <div style="padding:16px 20px; display:flex; align-items:center; gap:12px; font-weight:700; font-size:0.95rem; background:linear-gradient(135deg, #9230E3, #6B1FAF); color:white;">🦋 Daily Living Labs</div>
+      <div style="padding:20px; background:rgba(15,10,26,0.8); display:flex; flex-direction:column; gap:12px;">
+        <div class="chat-bubble user" style="opacity:1; transform:none;">Update the hero heading to say "Where daily life gets hard... or easier"</div>
+        <div class="chat-bubble ai" style="opacity:1; transform:none;">Done. I've updated the Hero component with the new copy and made "hard... or easier" italic in vibrant purple.</div>
+        <div style="display:flex; align-items:center; gap:8px; padding:12px 16px; background:rgba(146,48,227,0.06); border-radius:10px; margin-top:4px;">
+          <span style="font-size:0.7rem; color:rgba(219,176,255,0.5); padding:4px 10px; border-radius:6px; background:rgba(146,48,227,0.1);">Claude edits</span>
+          <span style="color:#9230E3; font-size:0.8rem;">→</span>
+          <span style="font-size:0.7rem; color:rgba(219,176,255,0.5); padding:4px 10px; border-radius:6px; background:rgba(146,48,227,0.1);">git push</span>
+          <span style="color:#9230E3; font-size:0.8rem;">→</span>
+          <span style="font-size:0.7rem; color:rgba(219,176,255,0.5); padding:4px 10px; border-radius:6px; background:rgba(146,48,227,0.1);">Live in 30s</span>
         </div>
       </div>
     </div>
-    <div class="split-right">
-      <div class="chat-mock" style="max-width:100%;">
-        <div class="chat-mock-header" style="background:rgba(31,238,234,0.08);">⚡ Dayli AI — Session 7</div>
-        <div class="chat-mock-body">
-          <div class="chat-bubble ai" style="background:rgba(31,238,234,0.04); border:1px solid rgba(31,238,234,0.12); color:rgba(219,176,255,0.5); font-size:0.7rem; max-width:100%; align-self:stretch;">
-            <span style="color:#1FEEEA; font-weight:700;">Memory loaded:</span><br>
-            • Supabase project: xmqehnuguvlihvqrojme<br>
-            • ResultsScreen wired to internal_solutions<br>
-            • Feedback persists to solution_feedback<br>
-            • Auth is simulated (real Supabase Auth not yet wired)<br>
-            • User state persisted to localStorage
-          </div>
-          <div class="chat-bubble user">Add a "Save to Collection" feature on the results cards</div>
-          <div class="chat-bubble ai">Since auth is still simulated, I'll store collections in localStorage. When you wire real Auth later, we can migrate to the <code>user_collections</code> table that's already in the schema.</div>
+
+    <!-- Dayli AI panel -->
+    <div style="flex:1; border-radius:20px; overflow:hidden; border:1px solid rgba(31,238,234,0.2);">
+      <div style="padding:16px 20px; display:flex; align-items:center; gap:12px; font-weight:700; font-size:0.95rem; background:linear-gradient(135deg, #1FEEEA, #0EA5E9); color:#0f0a1a;">⚡ Dayli AI Web App</div>
+      <div style="padding:20px; background:rgba(15,10,26,0.8); display:flex; flex-direction:column; gap:12px;">
+        <div class="chat-bubble user" style="opacity:1; transform:none;">Wire the results page to pull solutions from Supabase instead of hardcoded data</div>
+        <div class="chat-bubble ai" style="opacity:1; transform:none;">Done. ResultsScreen now fetches from internal_solutions and filter_options tables on mount. Loading state shows while data loads.</div>
+        <div style="display:flex; align-items:center; gap:8px; padding:12px 16px; background:rgba(31,238,234,0.04); border-radius:10px; margin-top:4px;">
+          <span style="font-size:0.7rem; color:rgba(219,176,255,0.5); padding:4px 10px; border-radius:6px; background:rgba(31,238,234,0.06);">Claude edits</span>
+          <span style="color:#1FEEEA; font-size:0.8rem;">→</span>
+          <span style="font-size:0.7rem; color:rgba(219,176,255,0.5); padding:4px 10px; border-radius:6px; background:rgba(31,238,234,0.06);">git push</span>
+          <span style="color:#1FEEEA; font-size:0.8rem;">→</span>
+          <span style="font-size:0.7rem; color:rgba(219,176,255,0.5); padding:4px 10px; border-radius:6px; background:rgba(31,238,234,0.06);">Live in 30s</span>
         </div>
       </div>
     </div>
   </div>
-  <div class="teach"><strong>Why this matters:</strong> Session 1 or session 50 — Claude knows the project, the decisions made, and why. No onboarding tax.</div>
 </div>
 
-<!-- SLIDE 11: WHAT CLAUDE KNOWS -->
+<!-- SLIDE 12: CONTEXT STAYS -->
+<div class="slide" id="memorySlide">
+  <div class="slide-label">Memory</div>
+  <div class="slide-step">13 / 19</div>
+  <h2 class="heading">Context Stays</h2>
+  <p class="subtext">Each new chat starts fresh, but picks up context automatically using persistent memory.</p>
+
+  <div style="width:100%; max-width:900px;">
+
+    <!-- Row 1: What Claude reads -->
+    <div style="margin-bottom:20px;">
+      <div style="font-size:0.65rem; color:#9230E3; font-weight:700; letter-spacing:0.12em; text-transform:uppercase; margin-bottom:12px;">Claude reads these to understand the project</div>
+      <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:14px;">
+
+        <div class="knowledge-card">
+          <div class="kc-header">
+            <div class="kc-icon">📄</div>
+            <div class="kc-title">Project Rules</div>
+          </div>
+          <div class="kc-preview">CLAUDE.md — loaded every session</div>
+          <div class="kc-expanded">
+            <div class="kc-file"><span class="kc-tag">Design</span> Fraunces + DM Sans, purple tokens</div>
+            <div class="kc-file"><span class="kc-tag">Rule</span> Never hardcode hex — use tokens</div>
+            <div class="kc-file"><span class="kc-tag">Deploy</span> git push → Vercel, Node 20 only</div>
+          </div>
+        </div>
+
+        <div class="knowledge-card">
+          <div class="kc-header">
+            <div class="kc-icon">🧠</div>
+            <div class="kc-title">Memory Files</div>
+          </div>
+          <div class="kc-preview">Decisions, preferences, workflow</div>
+          <div class="kc-expanded">
+            <div class="kc-file"><span class="kc-tag">Workflow</span> Prototype in Ideation first</div>
+            <div class="kc-file"><span class="kc-tag">Preference</span> Full-build, not incremental</div>
+            <div class="kc-file"><span class="kc-tag">Decision</span> Auth simulated, not yet wired</div>
+          </div>
+        </div>
+
+        <div class="knowledge-card">
+          <div class="kc-header">
+            <div class="kc-icon">📦</div>
+            <div class="kc-title">Codebase</div>
+          </div>
+          <div class="kc-preview">The actual code in git</div>
+          <div class="kc-expanded">
+            <div class="kc-file"><span class="kc-tag">apps/</span> Landing + Web app</div>
+            <div class="kc-file"><span class="kc-tag">packages/</span> Shared tokens, Supabase client</div>
+            <div class="kc-file"><span class="kc-tag">Recent</span> Last commit, branch, diffs</div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Row 2: What carries between sessions -->
+    <div style="margin-bottom:16px;">
+      <div style="font-size:0.65rem; color:#28c840; font-weight:700; letter-spacing:0.12em; text-transform:uppercase; margin-bottom:12px;">What carries between sessions</div>
+      <div style="display:flex; gap:14px;">
+
+        <div style="flex:1; background:rgba(40,200,64,0.04); border:1px solid rgba(40,200,64,0.12); border-radius:14px; padding:14px 16px; display:flex; align-items:center; gap:10px; cursor:default; transition:all 0.3s;" onmouseenter="this.style.background='rgba(40,200,64,0.08)'; this.style.borderColor='rgba(40,200,64,0.25)'; this.style.transform='translateY(-2px)'" onmouseleave="this.style.background='rgba(40,200,64,0.04)'; this.style.borderColor='rgba(40,200,64,0.12)'; this.style.transform='translateY(0)'">
+          <span style="color:#28c840; font-size:1rem;">✓</span>
+          <div>
+            <div style="font-size:0.78rem; font-weight:600; color:#DBB0FF;">Code in git</div>
+            <div style="font-size:0.65rem; color:rgba(219,176,255,0.35);">The source of truth</div>
+          </div>
+        </div>
+
+        <div style="flex:1; background:rgba(40,200,64,0.04); border:1px solid rgba(40,200,64,0.12); border-radius:14px; padding:14px 16px; display:flex; align-items:center; gap:10px; cursor:default; transition:all 0.3s;" onmouseenter="this.style.background='rgba(40,200,64,0.08)'; this.style.borderColor='rgba(40,200,64,0.25)'; this.style.transform='translateY(-2px)'" onmouseleave="this.style.background='rgba(40,200,64,0.04)'; this.style.borderColor='rgba(40,200,64,0.12)'; this.style.transform='translateY(0)'">
+          <span style="color:#28c840; font-size:1rem;">✓</span>
+          <div>
+            <div style="font-size:0.78rem; font-weight:600; color:#DBB0FF;">Memory files</div>
+            <div style="font-size:0.65rem; color:rgba(219,176,255,0.35);">Decisions, preferences, context</div>
+          </div>
+        </div>
+
+        <div style="flex:1; background:rgba(255,95,87,0.03); border:1px solid rgba(255,95,87,0.1); border-radius:14px; padding:14px 16px; display:flex; align-items:center; gap:10px; cursor:default; transition:all 0.3s;" onmouseenter="this.style.background='rgba(255,95,87,0.06)'; this.style.borderColor='rgba(255,95,87,0.2)'; this.style.transform='translateY(-2px)'" onmouseleave="this.style.background='rgba(255,95,87,0.03)'; this.style.borderColor='rgba(255,95,87,0.1)'; this.style.transform='translateY(0)'">
+          <span style="color:#ff5f57; font-size:1rem;">✗</span>
+          <div>
+            <div style="font-size:0.78rem; font-weight:600; color:rgba(219,176,255,0.4);">The conversation</div>
+            <div style="font-size:0.65rem; color:rgba(219,176,255,0.25);">Each chat is new</div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+
+  <div class="teach"><strong>You don't re-explain the architecture or design system.</strong> Claude reads the project rules, memory files, and codebase to understand the project. What carries between sessions is the code and the memory — not the conversation itself.</div>
+</div>
+
+<!-- SLIDE 13: WHAT CLAUDE KNOWS -->
 <div class="slide">
   <div class="slide-label">Memory</div>
-  <div class="slide-step">11 / 16</div>
+  <div class="slide-step">14 / 19</div>
   <h2 class="heading">What Every Chat Already Knows</h2>
   <p class="subtext">Hover each card to explore what Claude remembers</p>
 
@@ -797,10 +939,10 @@
      CHAPTER 5: WHY IT WORKS
 ================================================================= -->
 
-<!-- SLIDE 12: SPEED -->
+<!-- SLIDE 14: SPEED -->
 <div class="slide">
   <div class="slide-label">Why It Works</div>
-  <div class="slide-step">12 / 16</div>
+  <div class="slide-step">15 / 19</div>
   <h2 class="heading">Speed</h2>
   <p class="subtext">Idea to live deployment in under two minutes</p>
   <div class="compare">
@@ -827,10 +969,10 @@
   <div class="teach"><strong>The unlock:</strong> No ticket queue, no handoff, no staging environment. The person with the idea is the person who ships it.</div>
 </div>
 
-<!-- SLIDE 13: ACCESSIBILITY -->
+<!-- SLIDE 15: ACCESSIBILITY -->
 <div class="slide">
   <div class="slide-label">Why It Works</div>
-  <div class="slide-step">13 / 16</div>
+  <div class="slide-step">16 / 19</div>
   <h2 class="heading">Accessibility for Non-Engineers</h2>
   <p class="subtext">Describe what you want in plain language — no code knowledge needed</p>
   <div class="chat-mock" style="max-width:700px;">
@@ -845,10 +987,10 @@
   <div class="teach"><strong>No React. No Tailwind. No terminal commands.</strong> Just conversation. Anyone on the team can ship changes.</div>
 </div>
 
-<!-- SLIDE 14: SCALABILITY -->
+<!-- SLIDE 16: SCALABILITY -->
 <div class="slide">
   <div class="slide-label">Why It Works</div>
-  <div class="slide-step">14 / 16</div>
+  <div class="slide-step">17 / 19</div>
   <h2 class="heading">Scalability</h2>
   <p class="subtext">New team members or new Claude chats pick up the system instantly</p>
   <div class="cards-row">
@@ -882,13 +1024,13 @@
      CHAPTER 6: CLOSE
 ================================================================= -->
 
-<!-- SLIDE 15: CLOSING -->
+<!-- SLIDE 17: CLOSING -->
 <div class="slide">
   <div class="slide-label">Summary</div>
-  <div class="slide-step">15 / 16</div>
+  <div class="slide-step">18 / 19</div>
   <div style="font-size:3rem;" class="anim-float">🦋</div>
   <h1 class="heading" style="font-size:2.2rem; margin-top:20px;">
-    <span class="gradient-text">3 setup chats. 2 working chats.</span><br>
+    <span class="gradient-text">3 connections. 2 setup guides. 1 entry point.</span><br>
     <span style="color:rgba(219,176,255,0.5); font-size:1.4rem;">Ship at the speed of conversation.</span>
   </h1>
   <div style="display:flex; gap:14px; margin-top:28px;">
@@ -898,11 +1040,15 @@
   <div style="margin-top:32px; display:flex; gap:28px;">
     <div style="text-align:center;">
       <div style="font-size:1.8rem; font-weight:800; color:#9230E3; font-family:'Fraunces',serif;">3</div>
-      <div style="font-size:0.65rem; color:rgba(219,176,255,0.3);">Setup chats</div>
+      <div style="font-size:0.65rem; color:rgba(219,176,255,0.3);">Connections</div>
     </div>
     <div style="text-align:center;">
       <div style="font-size:1.8rem; font-weight:800; color:#9230E3; font-family:'Fraunces',serif;">2</div>
-      <div style="font-size:0.65rem; color:rgba(219,176,255,0.3);">Working chats</div>
+      <div style="font-size:0.65rem; color:rgba(219,176,255,0.3);">Setup guides</div>
+    </div>
+    <div style="text-align:center;">
+      <div style="font-size:1.8rem; font-weight:800; color:#9230E3; font-family:'Fraunces',serif;">1</div>
+      <div style="font-size:0.65rem; color:rgba(219,176,255,0.3);">Entry point</div>
     </div>
     <div style="text-align:center;">
       <div style="font-size:1.8rem; font-weight:800; color:#1FEEEA; font-family:'Fraunces',serif;">&lt;2m</div>
@@ -936,17 +1082,18 @@
   // Chapter definitions: [name, startIndex, endIndex]
   const chapters = [
     ['The System',    0,  2],
-    ['Setup',         3,  6],
-    ['Working',       7,  9],
-    ['Memory',        10, 11],
-    ['Why It Works',  12, 14],
-    ['Close',         15, 15]
+    ['Setup',         3,  7],
+    ['Working',       8,  12],
+    ['Memory',        13, 14],
+    ['Why It Works',  15, 17],
+    ['Close',         18, 18]
   ];
 
   const sectionNames = [
     'Intro',
     'How It All Connects',
     'The Monorepo',
+    '3 Setup Tools',
     'Setup — GitHub',
     'Setup — Figma',
     'Setup — Supabase',
@@ -954,7 +1101,9 @@
     'Working — Copy Change',
     'Working — Design Iteration',
     'Working — Database',
-    'Persistent Memory',
+    'Working — Adjust Spacing',
+    'Conversation → Changes',
+    'Context Stays',
     'What Claude Knows',
     'Why — Speed',
     'Why — Accessibility',

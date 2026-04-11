@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dayli AI — Avatar Animation</title>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..900;1,9..144,300..900&display=swap" rel="stylesheet" />
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: #F1E1FF;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      overflow: hidden;
+      cursor: default;
+    }
+
+    .stage {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 24px;
+    }
+
+    .eyes-container {
+      width: 240px;
+      height: 120px;
+      position: relative;
+    }
+
+    .eyes-svg {
+      width: 240px;
+      height: 120px;
+      overflow: visible;
+    }
+
+    .logo {
+      opacity: 0;
+      transform: translateY(8px);
+      transition: opacity 0.8s ease, transform 0.8s ease;
+    }
+    .logo.show {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .logo-wordmark {
+      display: flex;
+      align-items: baseline;
+      gap: 0;
+      user-select: none;
+    }
+
+    .logo-wordmark span {
+      font-family: 'Fraunces', serif;
+      font-size: 8rem;
+      font-weight: 700;
+      color: #23304D;
+      letter-spacing: -0.02em;
+      line-height: 1;
+    }
+
+    .logo-ai-i {
+      position: relative;
+      display: inline-block;
+    }
+
+    .logo-ai-i::before {
+      content: '';
+      position: absolute;
+      width: 18px;
+      height: 18px;
+      background: #1FEEEA;
+      border-radius: 50%;
+      top: -0.02em;
+      left: 50%;
+      transform: translateX(-50%);
+    }
+
+    .replay-btn {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      padding: 10px 20px;
+      border-radius: 12px;
+      background: white;
+      border: 1px solid rgba(146, 48, 227, 0.12);
+      box-shadow: 0 2px 12px rgba(146, 48, 227, 0.06);
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.8rem;
+      color: #6b5985;
+      cursor: pointer;
+      transition: all 0.2s;
+      opacity: 0;
+    }
+    .replay-btn.show { opacity: 1; }
+    .replay-btn:hover { color: #9230E3; border-color: #9230E3; }
+  </style>
+</head>
+<body>
+
+  <div class="stage" id="stage">
+    <div class="eyes-container" id="eyesContainer">
+      <svg class="eyes-svg" viewBox="0 0 120 60" id="eyesSvg">
+        <!-- Left eye: a line/arc -->
+        <path id="eyeL" d="" fill="none" stroke="#9230E3" stroke-width="5" stroke-linecap="round" opacity="0" />
+        <!-- Right eye -->
+        <path id="eyeR" d="" fill="none" stroke="#9230E3" stroke-width="5" stroke-linecap="round" opacity="0" />
+      </svg>
+    </div>
+
+    <div class="logo" id="logo">
+      <div class="logo-wordmark">
+        <span>Dayli A</span><span class="logo-ai-i">i</span>
+      </div>
+    </div>
+  </div>
+
+  <button class="replay-btn" id="replayBtn" onclick="location.reload()">Replay Animation</button>
+
+  <script>
+    const eyeL = document.getElementById('eyeL');
+    const eyeR = document.getElementById('eyeR');
+    const eyesContainer = document.getElementById('eyesContainer');
+    const logo = document.getElementById('logo');
+    const replayBtn = document.getElementById('replayBtn');
+
+    // Helpers
+    function easeOut(t) { return 1 - Math.pow(1 - t, 3); }
+    function easeInOut(t) { return t < 0.5 ? 4*t*t*t : 1 - Math.pow(-2*t+2,3)/2; }
+    function elasticOut(t) {
+      if (t === 0 || t === 1) return t;
+      return Math.pow(2, -10*t) * Math.sin((t*10 - 0.75) * (2*Math.PI)/3) + 1;
+    }
+    function lerp(a, b, t) { return a + (b - a) * t; }
+    function clamp(v, lo, hi) { return Math.max(lo, Math.min(hi, v)); }
+
+    // Geometry
+    const EYE_LX = 35, EYE_RX = 85, EYE_Y = 30;
+    const LINE_W = 20;    // width of eye line
+    const BLINK_W = 22;   // slightly wider when blinking
+
+    // Eye shape builders
+    // Vertical line (open/neutral) — just a straight vertical stroke
+    function openEye(cx, cy, height) {
+      const y1 = cy - height / 2;
+      const y2 = cy + height / 2;
+      return `M ${cx} ${y1} L ${cx} ${y2}`;
+    }
+
+    // Horizontal line (blink/closed)
+    function closedEye(cx, cy, width) {
+      const x1 = cx - width / 2;
+      const x2 = cx + width / 2;
+      return `M ${x1} ${cy} L ${x2} ${cy}`;
+    }
+
+    // Arc curving upward (^) — happy/smile eye
+    function happyEye(cx, cy, width, height) {
+      const x1 = cx - width / 2;
+      const x2 = cx + width / 2;
+      const cpY = cy - height;
+      return `M ${x1} ${cy} Q ${cx} ${cpY}, ${x2} ${cy}`;
+    }
+
+    // Interpolate between two path shapes using a control point approach
+    // We'll transition by morphing the vertical line → horizontal line → arc
+    function setEyePath(el, d, opacity) {
+      el.setAttribute('d', d);
+      if (opacity !== undefined) el.setAttribute('opacity', opacity);
+    }
+
+    // State
+    let startTime = null;
+    let alive = false;
+    let breathPhase = 0;
+    let blinkTimer = 2.5 + Math.random() * 2;
+    let isBlinking = false;
+    let blinkProgress = 0;
+    let lookX = 0, lookY = 0;
+
+    // Mouse
+    let mouseX = window.innerWidth / 2;
+    let mouseY = window.innerHeight / 2;
+    document.addEventListener('mousemove', (e) => {
+      mouseX = e.clientX;
+      mouseY = e.clientY;
+    });
+
+    function animate(timestamp) {
+      if (!startTime) startTime = timestamp;
+      const elapsed = (timestamp - startTime) / 1000;
+      const dt = 0.016;
+
+      const ARC_W = 22, ARC_H = 16, ARC_CY = EYE_Y + 4;
+
+      // ---- PHASE 1: 0–0.7s — Happy arcs draw in ----
+      if (elapsed < 0.7) {
+        const t = easeOut(elapsed / 0.6);
+        const w = ARC_W * clamp(t, 0, 1);
+        const h = ARC_H * clamp(t, 0, 1);
+        setEyePath(eyeL, happyEye(EYE_LX, ARC_CY, w, h), t);
+        setEyePath(eyeR, happyEye(EYE_RX, ARC_CY, w, h), t);
+      }
+
+      // ---- PHASE 2: 0.7–1.0s — Hold ----
+      else if (elapsed < 1.0) {
+        setEyePath(eyeL, happyEye(EYE_LX, ARC_CY, ARC_W, ARC_H), 1);
+        setEyePath(eyeR, happyEye(EYE_RX, ARC_CY, ARC_W, ARC_H), 1);
+      }
+
+      // ---- PHASE 3: 1.0–1.3s — First blink (arc → flat line → arc) ----
+      else if (elapsed < 1.3) {
+        const t = (elapsed - 1.0) / 0.3;
+        const lx = EYE_LX, rx = EYE_RX;
+
+        if (t < 0.25) {
+          // Arc flattens: height decreases to 0
+          const p = easeOut(t / 0.25);
+          const h = lerp(ARC_H, 0, p);
+          setEyePath(eyeL, happyEye(lx, ARC_CY, ARC_W, h));
+          setEyePath(eyeR, happyEye(rx, ARC_CY, ARC_W, h));
+        } else if (t < 0.4) {
+          // Flat line (closed)
+          setEyePath(eyeL, closedEye(lx, ARC_CY, BLINK_W));
+          setEyePath(eyeR, closedEye(rx, ARC_CY, BLINK_W));
+        } else {
+          // Line curves back up to arc
+          const p = easeOut((t - 0.4) / 0.6);
+          const h = lerp(0, ARC_H, p);
+          setEyePath(eyeL, happyEye(lx, ARC_CY, ARC_W, h));
+          setEyePath(eyeR, happyEye(rx, ARC_CY, ARC_W, h));
+        }
+      }
+
+      // ---- PHASE 4: 1.3–2.0s — Look around (arcs shift) ----
+      else if (elapsed < 2.0) {
+        const t = (elapsed - 1.3) / 0.7;
+        let shift = 0;
+        if (t < 0.25)      shift = easeInOut(t / 0.25) * -6;
+        else if (t < 0.4)  shift = lerp(-6, 0, (t - 0.25) / 0.15);
+        else if (t < 0.65) shift = easeInOut((t - 0.4) / 0.25) * 6;
+        else               shift = lerp(6, 0, (t - 0.65) / 0.35);
+
+        setEyePath(eyeL, happyEye(EYE_LX + shift, ARC_CY, ARC_W, ARC_H));
+        setEyePath(eyeR, happyEye(EYE_RX + shift, ARC_CY, ARC_W, ARC_H));
+
+        if (t > 0.5 && !alive) {
+          alive = true;
+          setTimeout(() => logo.classList.add('show'), 200);
+          setTimeout(() => replayBtn.classList.add('show'), 1200);
+        }
+      }
+
+      // ---- ALIVE ----
+      else {
+        // Breathing
+        const breathY = 0;
+
+        // Blink: arc flattens to line then curves back
+        blinkTimer -= dt;
+        let arcHeight = ARC_H;
+
+        if (blinkTimer <= 0 && !isBlinking) {
+          isBlinking = true;
+          blinkProgress = 0;
+        }
+
+        if (isBlinking) {
+          blinkProgress += dt;
+          if (blinkProgress < 0.05) {
+            // Flatten
+            const p = blinkProgress / 0.05;
+            arcHeight = lerp(ARC_H, -1, easeOut(p));
+          } else if (blinkProgress < 0.09) {
+            // Hold flat
+            arcHeight = -1;
+          } else if (blinkProgress < 0.16) {
+            // Curve back up
+            const p = (blinkProgress - 0.09) / 0.07;
+            arcHeight = lerp(-1, ARC_H, easeOut(p));
+          } else {
+            arcHeight = ARC_H;
+            isBlinking = false;
+            blinkTimer = 2.5 + Math.random() * 3;
+            if (Math.random() < 0.2) blinkTimer = 0.25;
+          }
+        }
+
+        // Mouse follow
+        const rect = eyesContainer.getBoundingClientRect();
+        const ecx = rect.left + rect.width / 2;
+        const ecy = rect.top + rect.height / 2;
+        const dx = (mouseX - ecx) / (window.innerWidth * 0.5);
+        const dy = (mouseY - ecy) / (window.innerHeight * 0.5);
+        const targetX = clamp(dx, -1, 1) * 4;
+        const targetY = clamp(dy, -1, 1) * 2;
+        lookX += (targetX - lookX) * 0.05;
+        lookY += (targetY - lookY) * 0.05;
+
+        const ey = ARC_CY - breathY + lookY;
+        const lx = EYE_LX + lookX;
+        const rx = EYE_RX + lookX;
+
+        if (arcHeight <= 0) {
+          // Flat/closed
+          setEyePath(eyeL, closedEye(lx, ey, BLINK_W));
+          setEyePath(eyeR, closedEye(rx, ey, BLINK_W));
+        } else {
+          setEyePath(eyeL, happyEye(lx, ey, ARC_W, arcHeight));
+          setEyePath(eyeR, happyEye(rx, ey, ARC_W, arcHeight));
+        }
+      }
+
+      requestAnimationFrame(animate);
+    }
+
+    requestAnimationFrame(animate);
+  </script>
+
+</body>
+</html>

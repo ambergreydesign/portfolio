@@ -4,320 +4,56 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Dayli AI — Avatar Animation</title>
-  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..900;1,9..144,300..900&family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..900;1,9..144,300..900&display=swap" rel="stylesheet" />
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
     body {
       font-family: 'DM Sans', sans-serif;
       background: #F1E1FF;
-      color: #121928;
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
       min-height: 100vh;
       overflow: hidden;
+      cursor: default;
     }
 
-    :root {
-      --purple: #9230E3;
-      --purple-deep: #461F65;
-      --purple-light: #DBB0FF;
-      --purple-pale: #F1E1FF;
-      --cyan: #1FEEEA;
-      --navy: #23304D;
-      --bg: #F6F0FC;
-      --card-bg: #FFFFFF;
-      --text: #121928;
-      --text-muted: #6b5985;
+    .stage {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 24px;
     }
 
-    /* ---- Avatar Container ---- */
-    .avatar-stage {
+    .eyes-container {
+      width: 240px;
+      height: 120px;
       position: relative;
-      width: 140px;
-      height: 140px;
-      margin-bottom: 24px;
     }
 
-    .avatar-svg {
-      width: 140px;
-      height: 140px;
+    .eyes-svg {
+      width: 240px;
+      height: 120px;
       overflow: visible;
     }
 
-    /* ---- Arc ---- */
-    .arc-group {
-      transform-origin: 70px 70px;
-      animation: arcRotate 3.5s cubic-bezier(0.34, 1.2, 0.64, 1) forwards;
-    }
-
-    .arc-path {
-      fill: none;
-      stroke: var(--purple);
-      stroke-width: 10;
-      stroke-linecap: round;
-      stroke-dasharray: 90;
-      stroke-dashoffset: 90;
-      animation: arcDraw 0.8s ease-out 0.3s forwards;
-    }
-
-    /* Draw in the arc */
-    @keyframes arcDraw {
-      to { stroke-dashoffset: 0; }
-    }
-
-    /* Rotate: start top → tilt left → swing around to bottom */
-    @keyframes arcRotate {
-      0%   { transform: rotate(0deg); }
-      /* hold as top arc */
-      20%  { transform: rotate(0deg); }
-      /* tilt left (image 2) */
-      35%  { transform: rotate(-70deg); }
-      /* continue swinging through left side */
-      50%  { transform: rotate(-120deg); }
-      /* pass through bottom-right (image 3) */
-      65%  { transform: rotate(-200deg); }
-      /* arrive at bottom = smile position (180°) */
-      78%  { transform: rotate(-185deg); }
-      85%  { transform: rotate(-177deg); }
-      92%  { transform: rotate(-181deg); }
-      100% { transform: rotate(-180deg); }
-    }
-
-    /* ---- Center dot: expands in, then splits ---- */
-    .dot-center {
-      fill: var(--purple);
-      transform-origin: 70px 80px;
-      opacity: 0;
-      animation:
-        dotAppear 0.6s ease-out 0.5s forwards,
-        dotFade   0.5s ease    2.2s forwards;
-    }
-
-    @keyframes dotAppear {
-      0%   { opacity: 0; transform: scale(0); }
-      60%  { opacity: 1; transform: scale(1.1); }
-      100% { opacity: 1; transform: scale(1); }
-    }
-
-    @keyframes dotFade {
-      to { opacity: 0; transform: scale(0.5); }
-    }
-
-    /* ---- Eyes: split out from center dot ---- */
-    .eye-left {
-      fill: var(--purple);
-      opacity: 0;
-      animation: eyeSplitLeft 0.7s cubic-bezier(0.34, 1.4, 0.64, 1) 2.2s forwards;
-    }
-
-    .eye-right {
-      fill: var(--purple);
-      opacity: 0;
-      animation: eyeSplitRight 0.7s cubic-bezier(0.34, 1.4, 0.64, 1) 2.2s forwards;
-    }
-
-    @keyframes eyeSplitLeft {
-      0%   { opacity: 1; cx: 70; cy: 80; r: 11; }
-      30%  { opacity: 1; cx: 58; cy: 72; r: 10; }
-      100% { opacity: 1; cx: 50; cy: 55; r: 10; }
-    }
-
-    @keyframes eyeSplitRight {
-      0%   { opacity: 1; cx: 70; cy: 80; r: 11; }
-      30%  { opacity: 1; cx: 82; cy: 72; r: 10; }
-      100% { opacity: 1; cx: 90; cy: 55; r: 10; }
-    }
-
-    /* ---- Blink (after intro settles) ---- */
-    .eye-blink-group {
-      transform-origin: center;
-    }
-
-    .blink-active {
-      animation: blink 3.5s ease-in-out infinite;
-    }
-
-    .blink-active-offset {
-      animation: blink 3.5s ease-in-out infinite;
-      animation-delay: 0.06s;
-    }
-
-    @keyframes blink {
-      0%, 40%, 44%, 100% { transform: scaleY(1); }
-      42% { transform: scaleY(0.08); }
-    }
-
-    /* ---- Cheek blush ---- */
-    .cheek {
-      fill: var(--purple-light);
-      opacity: 0;
-      animation: cheekIn 0.5s ease forwards;
-      animation-delay: 3.2s;
-    }
-
-    @keyframes cheekIn {
-      to { opacity: 0.3; }
-    }
-
-    /* ---- Idle float ---- */
-    .avatar-stage.alive {
-      animation: gentleFloat 3s ease-in-out infinite;
-    }
-
-    @keyframes gentleFloat {
-      0%, 100% { transform: translateY(0); }
-      50% { transform: translateY(-6px); }
-    }
-
-    /* ---- Reactions ---- */
-    .avatar-stage.thinking {
-      animation: thinkTilt 1.5s ease-in-out infinite;
-    }
-
-    @keyframes thinkTilt {
-      0%, 100% { transform: rotate(0deg) translateY(0); }
-      25% { transform: rotate(-8deg) translateY(-4px); }
-      75% { transform: rotate(5deg) translateY(-2px); }
-    }
-
-    .avatar-stage.happy {
-      animation: happyBounce 0.5s ease-in-out;
-    }
-
-    @keyframes happyBounce {
-      0%, 100% { transform: translateY(0) scale(1); }
-      30% { transform: translateY(-16px) scale(1.08); }
-      60% { transform: translateY(-4px) scale(1.02); }
-    }
-
-    /* ---- Chat Interface ---- */
-    .chat-container {
-      width: 100%;
-      max-width: 440px;
-      opacity: 0;
-      transform: translateY(20px);
-      animation: chatAppear 0.8s ease forwards;
-      animation-delay: 4s;
-    }
-
-    @keyframes chatAppear {
-      to { opacity: 1; transform: translateY(0); }
-    }
-
-    .chat-window {
-      background: var(--card-bg);
-      border-radius: 24px;
-      box-shadow:
-        0 4px 24px rgba(146, 48, 227, 0.08),
-        0 1px 3px rgba(146, 48, 227, 0.04);
-      overflow: hidden;
-    }
-
-    .chat-messages {
-      padding: 24px 20px;
-      min-height: 200px;
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-    }
-
-    .chat-msg {
-      padding: 12px 16px;
-      border-radius: 18px;
-      font-size: 0.88rem;
-      line-height: 1.45;
-      max-width: 82%;
+    .logo {
       opacity: 0;
       transform: translateY(8px);
+      transition: opacity 0.8s ease, transform 0.8s ease;
+    }
+    .logo.show {
+      opacity: 1;
+      transform: translateY(0);
     }
 
-    .chat-msg.visible {
-      animation: msgIn 0.4s ease forwards;
+    .logo-img {
+      height: 160px;
+      width: auto;
+      display: block;
     }
 
-    @keyframes msgIn {
-      to { opacity: 1; transform: translateY(0); }
-    }
-
-    .chat-msg.ai {
-      background: var(--purple-pale);
-      color: var(--purple-deep);
-      align-self: flex-start;
-      border-bottom-left-radius: 6px;
-    }
-
-    .chat-msg.user {
-      background: var(--purple);
-      color: white;
-      align-self: flex-end;
-      border-bottom-right-radius: 6px;
-    }
-
-    .typing-indicator {
-      display: flex;
-      gap: 4px;
-      padding: 12px 16px;
-      align-self: flex-start;
-      opacity: 0;
-    }
-
-    .typing-indicator.visible { opacity: 1; }
-
-    .typing-dot {
-      width: 8px; height: 8px;
-      border-radius: 50%;
-      background: var(--purple);
-      opacity: 0.4;
-      animation: typingPulse 1.2s ease-in-out infinite;
-    }
-    .typing-dot:nth-child(2) { animation-delay: 0.15s; }
-    .typing-dot:nth-child(3) { animation-delay: 0.3s; }
-
-    @keyframes typingPulse {
-      0%, 100% { opacity: 0.3; transform: translateY(0); }
-      50% { opacity: 1; transform: translateY(-4px); }
-    }
-
-    .chat-input-bar {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      padding: 14px 16px;
-      border-top: 1px solid rgba(146, 48, 227, 0.08);
-    }
-
-    .chat-input {
-      flex: 1;
-      padding: 10px 16px;
-      border-radius: 20px;
-      border: 1px solid rgba(146, 48, 227, 0.15);
-      background: var(--bg);
-      font-family: 'DM Sans', sans-serif;
-      font-size: 0.85rem;
-      color: var(--text);
-      outline: none;
-    }
-
-    .chat-input::placeholder { color: var(--text-muted); }
-    .chat-input:focus { border-color: var(--purple); }
-
-    .chat-send {
-      width: 40px; height: 40px;
-      border-radius: 50%;
-      background: var(--purple);
-      border: none;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      transition: transform 0.15s, background 0.2s;
-    }
-    .chat-send:hover { transform: scale(1.08); background: var(--purple-deep); }
-    .chat-send svg { fill: white; width: 18px; height: 18px; }
-
-    /* ---- Replay ---- */
     .replay-btn {
       position: fixed;
       bottom: 24px;
@@ -329,132 +65,321 @@
       box-shadow: 0 2px 12px rgba(146, 48, 227, 0.06);
       font-family: 'DM Sans', sans-serif;
       font-size: 0.8rem;
-      color: var(--text-muted);
+      color: #6b5985;
       cursor: pointer;
       transition: all 0.2s;
       opacity: 0;
-      animation: fadeIn 0.4s ease forwards;
-      animation-delay: 6s;
     }
-    .replay-btn:hover { color: var(--purple); border-color: var(--purple); }
-
-    @keyframes fadeIn { to { opacity: 1; } }
+    .replay-btn.show { opacity: 1; }
+    .replay-btn:hover { color: #9230E3; border-color: #9230E3; }
   </style>
 </head>
 <body>
 
-  <!-- Avatar -->
-  <div class="avatar-stage" id="avatarStage">
-    <svg class="avatar-svg" viewBox="0 0 140 140">
+  <div class="stage" id="stage">
+    <div class="eyes-container" id="eyesContainer">
+      <svg class="eyes-svg" viewBox="0 0 120 60" id="eyesSvg">
+        <!-- Glow behind eyes -->
+        <ellipse id="glowL" cx="35" cy="34" rx="18" ry="14" fill="#DBB0FF" opacity="0" filter="url(#blur)" />
+        <ellipse id="glowR" cx="85" cy="34" rx="18" ry="14" fill="#DBB0FF" opacity="0" filter="url(#blur)" />
+        <!-- Left eye -->
+        <path id="eyeL" d="" fill="none" stroke="#9230E3" stroke-width="5" stroke-linecap="round" opacity="0" />
+        <!-- Right eye -->
+        <path id="eyeR" d="" fill="none" stroke="#9230E3" stroke-width="5" stroke-linecap="round" opacity="0" />
+        <defs>
+          <filter id="blur"><feGaussianBlur stdDeviation="6" /></filter>
+        </defs>
+      </svg>
+    </div>
 
-      <!-- Arc: draws in at top, then rotates around to bottom = smile -->
-      <g class="arc-group">
-        <path class="arc-path" d="M 35 62 Q 70 25, 105 62" />
-      </g>
-
-      <!-- Center dot: appears, then fades as eyes split -->
-      <circle class="dot-center" cx="70" cy="80" r="12" />
-
-      <!-- Left eye: animates from center to final position -->
-      <g class="eye-blink-group" id="eyeLeftGroup" style="transform-origin: 50px 55px;">
-        <circle class="eye-left" cx="70" cy="80" r="0" />
-      </g>
-
-      <!-- Right eye: animates from center to final position -->
-      <g class="eye-blink-group" id="eyeRightGroup" style="transform-origin: 90px 55px;">
-        <circle class="eye-right" cx="70" cy="80" r="0" />
-      </g>
-
-      <!-- Cheek blushes -->
-      <circle class="cheek" cx="32" cy="76" r="10" />
-      <circle class="cheek" cx="108" cy="76" r="10" />
-    </svg>
-  </div>
-
-  <!-- Chat Interface -->
-  <div class="chat-container" id="chatContainer">
-    <div class="chat-window">
-      <div class="chat-messages" id="chatMessages">
-        <div class="chat-msg ai" id="msg1">Hi! I'm Dayli. Tell me about a daily activity that's been difficult lately.</div>
-        <div class="typing-indicator" id="typing">
-          <div class="typing-dot"></div>
-          <div class="typing-dot"></div>
-          <div class="typing-dot"></div>
-        </div>
-      </div>
-      <div class="chat-input-bar">
-        <input class="chat-input" placeholder="Describe your challenge..." readonly />
-        <button class="chat-send" id="sendBtn">
-          <svg viewBox="0 0 24 24"><path d="M2 21l21-9L2 3v7l15 2-15 2z"/></svg>
-        </button>
-      </div>
+    <div class="logo" id="logo">
+      <img class="logo-img" src="dayli-ai-logo-text.png" alt="Dayli AI" />
     </div>
   </div>
 
-  <button class="replay-btn" onclick="location.reload()">Replay Animation</button>
+  <button class="replay-btn" id="replayBtn" onclick="location.reload()">Replay Animation</button>
 
   <script>
-    const stage = document.getElementById('avatarStage');
-    const eyeL = document.getElementById('eyeLeftGroup');
-    const eyeR = document.getElementById('eyeRightGroup');
-    const typing = document.getElementById('typing');
+    const eyeL = document.getElementById('eyeL');
+    const eyeR = document.getElementById('eyeR');
+    const glowL = document.getElementById('glowL');
+    const glowR = document.getElementById('glowR');
+    const sparkle = document.getElementById('sparkle');
+    const eyesContainer = document.getElementById('eyesContainer');
+    const logo = document.getElementById('logo');
+    const replayBtn = document.getElementById('replayBtn');
+    const svg = document.getElementById('eyesSvg');
 
-    // After intro settles (~3.5s), start idle float + blink
-    setTimeout(() => {
-      stage.classList.add('alive');
-      eyeL.classList.add('blink-active');
-      eyeR.classList.add('blink-active-offset');
-    }, 3800);
+    function easeOut(t) { return 1 - Math.pow(1 - t, 3); }
+    function easeInOut(t) { return t < 0.5 ? 4*t*t*t : 1 - Math.pow(-2*t+2,3)/2; }
+    function elasticOut(t) {
+      if (t === 0 || t === 1) return t;
+      return Math.pow(2, -10*t) * Math.sin((t*10 - 0.75) * (2*Math.PI)/3) + 1;
+    }
+    function lerp(a, b, t) { return a + (b - a) * t; }
+    function clamp(v, lo, hi) { return Math.max(lo, Math.min(hi, v)); }
 
-    // Show first AI message
-    setTimeout(() => {
-      document.getElementById('msg1').classList.add('visible');
-      stage.classList.remove('alive');
-      stage.classList.add('happy');
-      setTimeout(() => {
-        stage.classList.remove('happy');
-        stage.classList.add('alive');
-      }, 600);
-    }, 4800);
+    const EYE_LX = 35, EYE_RX = 85, EYE_Y = 30;
+    const ARC_W = 22, ARC_H = 16, ARC_CY = EYE_Y + 4;
+    const BLINK_W = 22, BASE_STROKE = 5;
 
-    // Conversation
-    const conversation = [
-      { type: 'user', text: "Bathing has been really hard since my shoulder surgery.", delay: 7000 },
-      { type: 'think', delay: 8500 },
-      { type: 'ai', text: "I understand — reaching and balancing can be tough after shoulder surgery. Let me find some solutions that could help.", delay: 10500 },
-      { type: 'ai', text: "I found 3 options: a shower bench, a handheld showerhead, and long-handle sponges. Want to explore any of these?", delay: 13500 }
-    ];
+    function closedEye(cx, cy, w) { return `M ${cx-w/2} ${cy} L ${cx+w/2} ${cy}`; }
+    function happyEye(cx, cy, w, h) { return `M ${cx-w/2} ${cy} Q ${cx} ${cy-h}, ${cx+w/2} ${cy}`; }
+    function setPath(el, d, op) { el.setAttribute('d', d); if (op !== undefined) el.setAttribute('opacity', op); }
 
-    conversation.forEach(({ type, text, delay }) => {
-      setTimeout(() => {
-        if (type === 'think') {
-          typing.classList.add('visible');
-          stage.classList.remove('alive');
-          stage.classList.add('thinking');
-          return;
-        }
+    // State
+    let startTime = null, alive = false, aliveTime = 0;
+    let blinkTimer = 2.5 + Math.random() * 2, isBlinking = false, blinkProgress = 0;
+    let lookX = 0, lookY = 0;
+    let mouseX = window.innerWidth/2, mouseY = window.innerHeight/2;
+    let prevMouseX = mouseX, prevMouseY = mouseY, mouseSpeed = 0;
+    let lookAwayTimer = 5 + Math.random() * 6, lookAwayX = 0, lookAwayTargetX = 0;
+    let isLookingAway = false, lookAwayProgress = 0;
+    let tiltAngle = 0, surpriseAmount = 0;
+    let strokePhase = 0, glowPulse = 0;
+    // Resting / looking down
+    let idleTimer = 0, lastMouseMove = 0;
+    let restAmount = 0; // 0 = alert, 1 = fully resting
+    let lookDownAmount = 0;
+    let lookDownTimer = 8 + Math.random() * 10;
+    let isLookingDown = false, lookDownProgress = 0;
 
-        typing.classList.remove('visible');
-        stage.classList.remove('thinking');
-        stage.classList.add('alive');
-
-        const msg = document.createElement('div');
-        msg.className = `chat-msg ${type}`;
-        msg.textContent = text;
-        const messages = document.getElementById('chatMessages');
-        messages.insertBefore(msg, typing);
-        requestAnimationFrame(() => msg.classList.add('visible'));
-
-        if (type === 'ai') {
-          stage.classList.remove('alive');
-          stage.classList.add('happy');
-          setTimeout(() => {
-            stage.classList.remove('happy');
-            stage.classList.add('alive');
-          }, 600);
-        }
-      }, delay);
+    document.addEventListener('mousemove', e => {
+      prevMouseX = mouseX; prevMouseY = mouseY;
+      mouseX = e.clientX; mouseY = e.clientY;
+      lastMouseMove = performance.now() / 1000;
     });
+
+    function animate(timestamp) {
+      if (!startTime) startTime = timestamp;
+      const elapsed = (timestamp - startTime) / 1000;
+      const dt = 0.016;
+
+      // ---- INTRO ----
+      if (elapsed < 0.7) {
+        const t = easeOut(elapsed / 0.6);
+        const w = ARC_W * clamp(t,0,1), h = ARC_H * clamp(t,0,1);
+        setPath(eyeL, happyEye(EYE_LX, ARC_CY, w, h), t);
+        setPath(eyeR, happyEye(EYE_RX, ARC_CY, w, h), t);
+        glowL.setAttribute('opacity', 0.1 * t);
+        glowR.setAttribute('opacity', 0.1 * t);
+      }
+      else if (elapsed < 1.0) {
+        setPath(eyeL, happyEye(EYE_LX, ARC_CY, ARC_W, ARC_H), 1);
+        setPath(eyeR, happyEye(EYE_RX, ARC_CY, ARC_W, ARC_H), 1);
+      }
+      // First blink
+      else if (elapsed < 1.3) {
+        const t = (elapsed - 1.0) / 0.3;
+        if (t < 0.25) {
+          const p = easeOut(t/0.25);
+          setPath(eyeL, happyEye(EYE_LX, ARC_CY, ARC_W, lerp(ARC_H,0,p)));
+          setPath(eyeR, happyEye(EYE_RX, ARC_CY, ARC_W, lerp(ARC_H,0,p)));
+        } else if (t < 0.4) {
+          setPath(eyeL, closedEye(EYE_LX, ARC_CY, BLINK_W));
+          setPath(eyeR, closedEye(EYE_RX, ARC_CY, BLINK_W));
+        } else {
+          const p = easeOut((t-0.4)/0.6);
+          setPath(eyeL, happyEye(EYE_LX, ARC_CY, ARC_W, lerp(0,ARC_H,p)));
+          setPath(eyeR, happyEye(EYE_RX, ARC_CY, ARC_W, lerp(0,ARC_H,p)));
+        }
+      }
+      // Look around with tilt
+      else if (elapsed < 2.0) {
+        const t = (elapsed - 1.3) / 0.7;
+        let shift = 0;
+        if (t < 0.25) shift = easeInOut(t/0.25) * -6;
+        else if (t < 0.4) shift = lerp(-6, 0, (t-0.25)/0.15);
+        else if (t < 0.65) shift = easeInOut((t-0.4)/0.25) * 6;
+        else shift = lerp(6, 0, (t-0.65)/0.35);
+
+        svg.style.transform = `rotate(${shift * 0.4}deg)`;
+        setPath(eyeL, happyEye(EYE_LX + shift, ARC_CY, ARC_W, ARC_H));
+        setPath(eyeR, happyEye(EYE_RX + shift, ARC_CY, ARC_W, ARC_H));
+
+        if (t > 0.5 && !alive) {
+          alive = true;
+          svg.style.transform = '';
+          setTimeout(() => logo.classList.add('show'), 200);
+          setTimeout(() => replayBtn.classList.add('show'), 1200);
+        }
+      }
+
+      // ---- ALIVE ----
+      else {
+        aliveTime += dt;
+        const now = performance.now() / 1000;
+        const rect = eyesContainer.getBoundingClientRect();
+        const ecx = rect.left + rect.width/2, ecy = rect.top + rect.height/2;
+
+        // Mouse distance → closeness
+        const distX = mouseX - ecx, distY = mouseY - ecy;
+        const dist = Math.sqrt(distX*distX + distY*distY);
+        const maxDist = Math.sqrt(window.innerWidth**2 + window.innerHeight**2) * 0.5;
+        const closeness = 1 - clamp(dist / maxDist, 0, 1);
+
+        // Mouse speed → surprise
+        const spdX = mouseX - prevMouseX, spdY = mouseY - prevMouseY;
+        mouseSpeed = mouseSpeed * 0.85 + Math.sqrt(spdX*spdX + spdY*spdY) * 0.15;
+        surpriseAmount = mouseSpeed > 40
+          ? Math.min(1, surpriseAmount + dt * 8)
+          : Math.max(0, surpriseAmount - dt * 3);
+
+        // ---- Resting state (no mouse movement for a while) ----
+        const idleDuration = now - lastMouseMove;
+        const restTarget = idleDuration > 6 ? clamp((idleDuration - 6) / 3, 0, 1) : 0;
+        // Wake up instantly on mouse move
+        if (mouseSpeed > 2) {
+          restAmount = Math.max(0, restAmount - dt * 6);
+        } else {
+          restAmount += (restTarget - restAmount) * 0.02;
+        }
+
+        // ---- Looking down (autonomous, occasional) ----
+        lookDownTimer -= dt;
+        if (lookDownTimer <= 0 && !isLookingDown && !isLookingAway && restAmount < 0.3) {
+          isLookingDown = true;
+          lookDownProgress = 0;
+        }
+        if (isLookingDown) {
+          lookDownProgress += dt;
+          if (lookDownProgress < 0.5) {
+            lookDownAmount = easeInOut(lookDownProgress / 0.5);
+          } else if (lookDownProgress < 1.8) {
+            lookDownAmount = 1;
+          } else if (lookDownProgress < 2.3) {
+            lookDownAmount = 1 - easeInOut((lookDownProgress - 1.8) / 0.5);
+          } else {
+            lookDownAmount = 0;
+            isLookingDown = false;
+            lookDownTimer = 10 + Math.random() * 15;
+          }
+          // Wake from look-down on mouse move
+          if (mouseSpeed > 5) {
+            lookDownAmount = Math.max(0, lookDownAmount - dt * 4);
+            if (lookDownAmount < 0.05) { isLookingDown = false; lookDownAmount = 0; lookDownTimer = 8 + Math.random() * 10; }
+          }
+        } else {
+          lookDownAmount = Math.max(0, lookDownAmount - dt * 3);
+        }
+
+        // ---- Arc shape ----
+        // Active: reacts to closeness
+        let aH = lerp(ARC_H * 0.7, ARC_H * 1.15, closeness);
+        let aW = lerp(ARC_W * 0.9, ARC_W * 1.05, closeness);
+
+        // Surprise: wider, flatter
+        aH = lerp(aH, ARC_H * 0.4, surpriseAmount * 0.6);
+        aW = lerp(aW, ARC_W * 1.3, surpriseAmount * 0.5);
+
+        // Squint when very close
+        if (closeness > 0.85) {
+          const sq = (closeness - 0.85) / 0.15;
+          aW = lerp(aW, ARC_W * 0.8, sq * 0.4);
+          aH = lerp(aH, ARC_H * 1.3, sq * 0.3);
+        }
+
+        // Resting: arcs flatten and narrow
+        aH = lerp(aH, ARC_H * 0.25, restAmount);
+        aW = lerp(aW, ARC_W * 0.7, restAmount);
+
+        // Looking down: arcs flatten significantly, shift down
+        aH = lerp(aH, ARC_H * 0.15, lookDownAmount);
+        aW = lerp(aW, ARC_W * 0.65, lookDownAmount);
+
+        // ---- Blink ----
+        blinkTimer -= dt;
+        let arcHeight = aH, blinkClosed = false;
+        // Blink more when resting
+        const blinkInterval = restAmount > 0.5 ? 1.5 + Math.random() * 2 : 2.5 + Math.random() * 3;
+        if (blinkTimer <= 0 && !isBlinking) { isBlinking = true; blinkProgress = 0; }
+        if (isBlinking) {
+          blinkProgress += dt;
+          // Slower blink when resting
+          const blinkSpeed = restAmount > 0.5 ? 1.4 : 1;
+          const bp = blinkProgress * blinkSpeed;
+          if (bp < 0.05) arcHeight = lerp(aH, -1, easeOut(bp/0.05));
+          else if (bp < 0.09) { arcHeight = -1; blinkClosed = true; }
+          else if (bp < 0.16) arcHeight = lerp(-1, aH, easeOut((bp-0.09)/0.07));
+          else {
+            isBlinking = false;
+            blinkTimer = blinkInterval;
+            if (Math.random() < 0.2) blinkTimer = 0.25;
+          }
+        }
+
+        // ---- Mouse follow ----
+        const dx = (mouseX - ecx) / (window.innerWidth * 0.5);
+        const dy = (mouseY - ecy) / (window.innerHeight * 0.5);
+        let targetX = clamp(dx, -1, 1) * 4;
+        let targetY = clamp(dy, -1, 1) * 2;
+
+        // Dampen mouse follow when resting
+        targetX *= (1 - restAmount * 0.8);
+        targetY *= (1 - restAmount * 0.8);
+
+        // Looking down: override Y
+        if (isLookingDown) {
+          targetY = lerp(targetY, 4, lookDownAmount);
+          targetX *= (1 - lookDownAmount * 0.7);
+        }
+
+        // Autonomous look-away
+        lookAwayTimer -= dt;
+        if (lookAwayTimer <= 0 && !isLookingAway && !isBlinking && !isLookingDown && restAmount < 0.3) {
+          isLookingAway = true; lookAwayProgress = 0;
+          lookAwayTargetX = (Math.random() > 0.5 ? 1 : -1) * (3 + Math.random() * 3);
+        }
+        if (isLookingAway) {
+          lookAwayProgress += dt;
+          if (lookAwayProgress < 0.4) lookAwayX = lerp(0, lookAwayTargetX, easeInOut(lookAwayProgress/0.4));
+          else if (lookAwayProgress < 1.2) lookAwayX = lookAwayTargetX;
+          else if (lookAwayProgress < 1.6) lookAwayX = lerp(lookAwayTargetX, 0, easeInOut((lookAwayProgress-1.2)/0.4));
+          else { lookAwayX = 0; isLookingAway = false; lookAwayTimer = 6 + Math.random() * 8; }
+          if (mouseSpeed > 5) { isLookingAway = false; lookAwayX = 0; lookAwayTimer = 4 + Math.random() * 5; }
+          targetX = lookAwayX; targetY = lerp(targetY, 0, 0.5);
+        }
+
+        lookX += (targetX - lookX) * 0.06;
+        lookY += (targetY - lookY) * 0.06;
+
+        // ---- Tilt ----
+        const targetTilt = lookX * 0.7 + lookDownAmount * 3;
+        tiltAngle += (targetTilt - tiltAngle) * 0.08;
+        svg.style.transform = `rotate(${tiltAngle}deg)`;
+
+        // ---- Stroke breathing ----
+        strokePhase += dt * 1.5;
+        const sw = BASE_STROKE + Math.sin(strokePhase) * 0.3 - restAmount * 0.5;
+        eyeL.setAttribute('stroke-width', Math.max(3.5, sw));
+        eyeR.setAttribute('stroke-width', Math.max(3.5, sw));
+
+        // ---- Glow ----
+        glowPulse += dt * 0.8;
+        const glowBase = lerp(0.06, 0.03, restAmount);
+        const glowOp = glowBase + Math.sin(glowPulse) * 0.03 + closeness * 0.06 * (1 - restAmount);
+        glowL.setAttribute('opacity', glowOp);
+        glowR.setAttribute('opacity', glowOp);
+        glowL.setAttribute('cx', EYE_LX + lookX);
+        glowL.setAttribute('cy', ARC_CY + lookY);
+        glowR.setAttribute('cx', EYE_RX + lookX);
+        glowR.setAttribute('cy', ARC_CY + lookY);
+
+        // ---- Apply ----
+        const lx = EYE_LX + lookX, rx = EYE_RX + lookX, ey = ARC_CY + lookY;
+        if (blinkClosed || arcHeight <= 0) {
+          setPath(eyeL, closedEye(lx, ey, BLINK_W * (1 - restAmount * 0.2)));
+          setPath(eyeR, closedEye(rx, ey, BLINK_W * (1 - restAmount * 0.2)));
+        } else {
+          setPath(eyeL, happyEye(lx, ey, aW, arcHeight));
+          setPath(eyeR, happyEye(rx, ey, aW, arcHeight));
+        }
+      }
+
+      requestAnimationFrame(animate);
+    }
+
+    requestAnimationFrame(animate);
   </script>
 
 </body>
