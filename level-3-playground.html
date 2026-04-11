@@ -1,0 +1,557 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Portfolio Playground System — Amber Grey</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,600;1,400;1,500&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+/* ── BASE ── */
+html {
+  width: 100%; height: 100%;
+  overflow: hidden;
+  background-color: #0b1c26;
+  background-image:
+    linear-gradient(rgba(31, 15, 56, 0.5), rgba(31, 15, 56, 0.5)),
+    url('Studio_Edited.webp');
+  background-size: cover;
+  background-position: center top;
+  background-repeat: no-repeat;
+}
+
+body {
+  width: 100%; height: 100%;
+  overflow: hidden;
+  font-family: 'DM Sans', sans-serif;
+  opacity: 0;
+  transition: opacity 0.55s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+body.visible { opacity: 1; }
+
+/* ── PAGE EXIT ── */
+#page-exit {
+  position: fixed; inset: 0;
+  background: #0b1c26;
+  opacity: 0; pointer-events: none;
+  transition: opacity 0.28s ease-in;
+  z-index: 9999;
+}
+#page-exit.active { opacity: 1; }
+
+/* ── LEFT CANVAS ── */
+#left-canvas {
+  position: absolute;
+  left: 0; top: 0;
+  width: 1020px;
+  height: 900px;
+  transform-origin: top left;
+}
+
+/* ── LEFT AREA ── */
+.left-area {
+  width: 100%; height: 100%;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  padding: 96px 99px 40px;
+}
+
+/* ── BACK NAV ── */
+.nav-back {
+  position: fixed;
+  top: 28px; left: 32px;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  background: rgba(255, 255, 255, 0.06);
+  backdrop-filter: blur(14px) saturate(1.2);
+  -webkit-backdrop-filter: blur(14px) saturate(1.2);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 100px;
+  padding: 9px 18px 9px 14px;
+  cursor: pointer;
+  color: rgba(200, 185, 165, 0.75);
+  font-family: 'DM Sans', sans-serif;
+  font-size: 10px;
+  font-weight: 400;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  transition: background 0.25s ease, color 0.25s ease, border-color 0.25s ease;
+  z-index: 100;
+}
+.nav-back:hover {
+  background: rgba(255, 255, 255, 0.11);
+  color: rgba(200, 185, 165, 1);
+  border-color: rgba(255, 255, 255, 0.18);
+}
+.nav-back-arrow {
+  display: inline-block;
+  width: 16px; height: 1px;
+  background: currentColor;
+  position: relative; flex-shrink: 0;
+}
+.nav-back-arrow::before {
+  content: '';
+  position: absolute;
+  left: 0; top: -3px;
+  width: 6px; height: 6px;
+  border-left: 1px solid currentColor;
+  border-bottom: 1px solid currentColor;
+  transform: rotate(45deg);
+}
+
+/* ── CARD SECTION ── */
+.card-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+}
+
+/* ── ARTIFACT CARD ── */
+.artifact-card {
+  width: 100%;
+  max-width: 822px;
+  height: 659px;
+  margin-bottom: 33px;
+  border-radius: 14px;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  overflow: hidden;
+  position: relative;
+}
+
+.artifact-card iframe {
+  width: 100%;
+  height: 100%;
+  border: none;
+  display: block;
+  border-radius: 13px;
+}
+
+/* ── ARTIFACT LABEL ── */
+.artifact-label {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 20px;
+  font-weight: 500;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: #dec7f8;
+  white-space: nowrap;
+}
+
+/* ── WORDMARK ── */
+.wordmark {
+  position: fixed;
+  bottom: 24px; left: 21px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 13px;
+  font-weight: 300;
+  letter-spacing: 0.2em;
+  color: rgba(210, 195, 172, 0.18);
+  pointer-events: none;
+  z-index: 10;
+}
+
+/* ── RIGHT PANEL ── */
+.info-panel {
+  position: fixed;
+  right: 0; top: 0; bottom: 0;
+  width: 380px;
+  background: rgba(23, 18, 35, 0.8);
+  overflow: hidden;
+  z-index: 10;
+  font-size: clamp(10px, 1.78vh, 16px);
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  padding: 2em 1.5em 1.75em 2em;
+}
+
+.zone-badge {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 1em;
+  font-weight: 500;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: #dca25b;
+  margin-bottom: 1.5em;
+}
+
+.project-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 3em;
+  font-weight: 600;
+  font-style: normal;
+  line-height: 1.1;
+  color: #eac6ce;
+  margin-bottom: 1.25em;
+}
+
+.project-desc {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 1.25em;
+  font-weight: 500;
+  line-height: 1.95;
+  letter-spacing: 0.05em;
+  color: #bca6a1;
+  margin-bottom: 1.75em;
+}
+
+/* ── META TABLE ── */
+.meta-table {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75em;
+  margin-bottom: 2.5em;
+}
+.meta-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+}
+.meta-label {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 1.25em;
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: #75576e;
+}
+.meta-value {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 1.25em;
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  color: #cca190;
+  text-align: right;
+}
+
+/* mobile-only tool disclaimer — hidden on desktop */
+.mob-tool-link { display: none; }
+
+/* hidden on desktop, shown in mobile stack */
+.details-label { display: none; }
+
+/* ── DIVIDER ── */
+.meta-divider {
+  width: 100%;
+  height: 1px;
+  background: rgba(180, 150, 160, 0.2);
+  margin-bottom: 0.625em;
+}
+
+/* ── REFLECTION ── */
+.reflection-label {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 1.125em;
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: #75576e;
+  margin-bottom: 0.875em;
+}
+.reflection-quote {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.5em;
+  font-weight: 400;
+  font-style: italic;
+  line-height: 1.5;
+  color: #eac6ce;
+}
+
+/* ── MOBILE ≤ 1000px ── */
+@media (max-width: 1000px) {
+  html { overflow-y: auto; background-attachment: fixed; }
+  body { overflow: visible; height: auto; }
+
+  #left-canvas {
+    position: static;
+    width: 100%;
+    height: auto;
+    transform: none !important;
+  }
+
+  .left-area {
+    height: 100svh;
+    min-height: unset;
+    padding: 72px 24px 32px;
+    justify-content: center;
+  }
+
+  .nav-back { position: fixed; left: 20px; top: 20px; }
+
+  .artifact-card {
+    width: 100%;
+    max-width: min(822px, calc((100svh - 180px) * 822 / 659));
+    height: auto;
+    aspect-ratio: 822 / 659;
+    margin-bottom: 24px;
+  }
+
+  .artifact-label { font-size: 13px; letter-spacing: 0.28em; }
+
+  .info-panel {
+    position: static;
+    width: 100%;
+    height: auto;
+    overflow: visible;
+    font-size: 13px;
+    padding: 48px 40px 56px;
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    grid-template-rows: auto auto 1fr;
+    column-gap: 32px;
+    align-items: start;
+  }
+
+  .zone-badge        { grid-column: 1; grid-row: 1; margin-bottom: 0.75em; }
+  .project-title     { grid-column: 1; grid-row: 2; font-size: 2em; margin-bottom: 0.75em; }
+  .project-desc      { grid-column: 1; grid-row: 3; font-size: 1em; line-height: 1.8; margin-bottom: 0; }
+
+  .meta-divider      { display: none; }
+  .details-label     {
+    display: block;
+    grid-column: 2; grid-row: 1;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 1em; font-weight: 500;
+    letter-spacing: 0.06em; text-transform: uppercase;
+    color: #75576e; margin-bottom: 0.75em;
+  }
+  .meta-table        { grid-column: 2; grid-row: 2 / 4; margin-bottom: 0; gap: 0.6em; }
+  .meta-label, .meta-value { font-size: 1em; }
+
+  .reflection-label  { grid-column: 3; grid-row: 1; margin-bottom: 0.75em; font-size: 1em; }
+  .reflection-quote  { grid-column: 3; grid-row: 2; font-size: 1.25em; }
+}
+
+/* ══ MOBILE (≤520px) — single column stack ══════════════════ */
+@media (max-width: 520px) {
+
+  .left-area {
+    padding: 56px 20px 20px;
+    height: auto;
+    min-height: 100svh;
+  }
+
+  .mob-tool-link {
+    display: block;
+    margin-bottom: 10px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 11px;
+    font-weight: 400;
+    font-style: italic;
+    letter-spacing: 0.03em;
+    color: rgba(204,161,144,0.6);
+  }
+
+  .artifact-card {
+    max-width: calc(100vw - 40px);
+    width: 100%;
+    aspect-ratio: unset;
+    height: 68svh;
+  }
+
+  .info-panel {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    padding: 32px 20px 44px;
+    font-size: 12px;
+  }
+
+  .zone-badge, .project-title, .project-desc,
+  .meta-divider, .details-label, .meta-table,
+  .reflection-label, .reflection-quote {
+    grid-column: unset;
+    grid-row: unset;
+    margin: 0;
+  }
+
+  .project-title {
+    font-size: clamp(1em, 3.8vw, 1.4em);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    line-height: 1.15;
+  }
+
+  .project-desc  { font-size: 1em; line-height: 1.75; }
+  .meta-divider  { display: none; }
+  .details-label { display: block; }
+
+  .meta-table { gap: 0.5em; width: 100%; }
+  .meta-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    width: 100%;
+    gap: 0.75em;
+  }
+  .meta-value { text-align: right; flex-shrink: 0; }
+  .reflection-quote { font-size: 1.1em; }
+  .nav-back { top: 16px; left: 16px; }
+}
+
+/* ── STUDIO CRUMB ── */
+.studio-crumb {
+  position: absolute;
+  bottom: 4px;
+  left: 50%;
+  transform: translateX(-50%) translateY(8px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+  color: rgba(210,195,172,0.55);
+  transition: color 0.3s ease,
+              opacity 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94) 0.12s,
+              transform 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94) 0.12s;
+  user-select: none;
+  opacity: 0;
+  z-index: 5;
+}
+.studio-crumb:hover { color: rgba(210,195,172,0.9); }
+body.visible .studio-crumb {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}
+@keyframes plantSway {
+  0%, 100% { transform: rotate(-3deg); }
+  50%       { transform: rotate(3deg); }
+}
+.crumb-plant {
+  transform-box: fill-box;
+  transform-origin: 50% 100%;
+  animation: plantSway 6s ease-in-out infinite;
+}
+.crumb-text {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 7px;
+  font-weight: 300;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+}
+</style>
+</head>
+<body>
+
+<div id="page-exit"></div>
+
+<div class="wordmark">Amber Grey</div>
+<button class="nav-back" onclick="navigateTo('level-2-systems.html')">
+  <span class="nav-back-arrow"></span>
+  Systems
+</button>
+
+<!-- Left canvas -->
+<div id="left-canvas">
+  <div class="left-area">
+    <div class="card-section">
+      <p class="mob-tool-link">Open on desktop for full tool functionality</p>
+      <div class="artifact-card">
+        <iframe src="prototype-landscape-playground.html" title="Portfolio Playground System" loading="lazy"></iframe>
+      </div>
+      <div class="artifact-label">Portfolio Playground System</div>
+    </div>
+    <div class="studio-crumb" onclick="navigateTo('studio-portfolio.html')">
+  <svg class="crumb-plant" width="30" height="48" viewBox="0 0 30 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M8 47 L22 47 L24 37 L6 37Z" stroke="currentColor" stroke-width="0.75" stroke-linejoin="round"/>
+    <path d="M5 37 L25 37" stroke="currentColor" stroke-width="0.75" stroke-linecap="round"/>
+    <path d="M15 37 L15 28" stroke="currentColor" stroke-width="0.7" stroke-linecap="round"/>
+    <path d="M15 31 C9 28 5 22 7 16 C8 12 12 11 14 14 C15 16 15 24 15 31" stroke="currentColor" stroke-width="0.65" stroke-linecap="round"/>
+    <path d="M15 28 C21 25 25 19 23 13 C22 9 18 8 16 11 C15 13 15 21 15 28" stroke="currentColor" stroke-width="0.65" stroke-linecap="round"/>
+    <path d="M15 28 C12 23 12 17 15 14 C18 17 18 23 15 28" stroke="currentColor" stroke-width="0.6" stroke-linecap="round"/>
+  </svg>
+  <span class="crumb-text">Studio</span>
+</div>
+  </div>
+</div>
+
+<!-- Right panel -->
+<div class="info-panel">
+  <div class="zone-badge">Systems</div>
+  <h1 class="project-title">A living system<br>for showing work</h1>
+  <p class="project-desc">62 hand-built pages, zero frameworks, five navigable zones — a portfolio that works like the design thinking it contains.</p>
+
+  <div class="meta-divider"></div>
+  <div class="details-label">Details</div>
+
+  <div class="meta-table">
+    <div class="meta-row">
+      <span class="meta-label">Type</span>
+      <span class="meta-value">Portfolio System</span>
+    </div>
+    <div class="meta-row">
+      <span class="meta-label">Year</span>
+      <span class="meta-value">2026</span>
+    </div>
+    <div class="meta-row">
+      <span class="meta-label">Methods</span>
+      <span class="meta-value">Narrative Interaction</span>
+    </div>
+    <div class="meta-row">
+      <span class="meta-label">Stack</span>
+      <span class="meta-value">HTML, CSS, Vanilla JS</span>
+    </div>
+  </div>
+
+  <div class="reflection-label">What I Wanted to Show</div>
+  <p class="reflection-quote">I designed this portfolio the same way I design systems, as something to experience, not just view.</p>
+</div>
+
+<script>
+'use strict';
+
+const LEFT_W    = 1020;
+const DESIGN_H  = 900;
+const PANEL_W   = 380;
+const MOBILE_BP = 1000;
+
+function fitToViewport() {
+  if (window.innerWidth <= MOBILE_BP) return;
+  const availW  = window.innerWidth - PANEL_W;
+  const scale   = Math.min(availW / LEFT_W, window.innerHeight / DESIGN_H);
+  const offsetX = Math.max(0, (availW - LEFT_W * scale) / 2);
+  const offsetY = Math.max(0, (window.innerHeight - DESIGN_H * scale) / 2);
+  document.getElementById('left-canvas').style.transform =
+    `translate(${offsetX}px, ${offsetY}px) scale(${scale})`;
+}
+
+fitToViewport();
+window.addEventListener('resize', fitToViewport);
+
+function navigateTo(url) {
+  const canvas = document.getElementById('left-canvas');
+  if (canvas) {
+    canvas.style.transition = 'opacity 0.28s ease-in';
+    canvas.style.opacity = '0';
+  }
+  const panel = document.querySelector('.info-panel');
+  if (panel) {
+    panel.style.transition = 'opacity 0.28s ease-in';
+    panel.style.opacity = '0';
+  }
+  const crumb = document.querySelector('.studio-crumb');
+  if (crumb) {
+    crumb.style.transition = 'opacity 0.2s ease-in, transform 0.2s ease-in';
+    crumb.style.opacity = '0';
+    crumb.style.transform = 'translateX(-50%) translateY(-6px)';
+  }
+  const exit = document.getElementById('page-exit');
+  setTimeout(() => { exit.classList.add('active'); }, 200);
+  setTimeout(() => { window.location.href = url; }, 430);
+}
+
+requestAnimationFrame(() => {
+  requestAnimationFrame(() => { document.body.classList.add('visible'); });
+});
+</script>
+
+</body>
+</html>

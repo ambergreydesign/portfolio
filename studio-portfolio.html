@@ -772,6 +772,7 @@ const PROJECTS = {
   'contradiction-mode':   { category:'Interaction', title:'Contradiction Mode',   subtitle:'Holding tensions as productive design material',            block:'pb-contradiction-mode'   },
   'signal-translation':   { category:'Sensemaking', title:'Signal Translation',   subtitle:'Turning complex observations into structured insight',      block:'pb-signal-translation'   },
   'signs-framework':      { category:'Sensemaking', title:'SIGNS Framework',      subtitle:'An interactive framework for transforming experience signals', block:'pb-signs-framework'   },
+  'portfolio-playground': { category:'Systems',     title:'Portfolio Playground', subtitle:'A living system for showing work',                           href:'level-3-playground.html' },
 };
 
 const MAP_NODES = [
@@ -887,8 +888,8 @@ const ZONE_PAGES = {
   interaction:  'level-2-interactions.html',
 };
 
-function navigateToZone(key) {
-  const url = ZONE_PAGES[key];
+function navigateToZone(key, directUrl) {
+  const url = directUrl || ZONE_PAGES[key];
   if (!url) return;
 
   // Default fade transition for other zones
@@ -909,6 +910,10 @@ let chatReady = false, mapReady = false, contraReady = false;
 function openL3(item, zoneName) {
   document.querySelectorAll('.proto-block').forEach(b => b.classList.remove('on'));
   const proj = PROJECTS[item.id];
+  if (proj && proj.href) {
+    navigateToZone(null, proj.href);
+    return;
+  }
   if (proj) {
     document.getElementById('l3Cat').textContent   = proj.category;
     document.getElementById('l3Title').textContent = proj.title;
