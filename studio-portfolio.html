@@ -1075,6 +1075,8 @@ function setContra(i) {
   let isPan     = false;
   let hintGone  = false;
   let rafId     = null;
+  let centeredOnce = false;
+  const isFirstVisit = !document.documentElement.classList.contains('skip-intro');
 
   // ── Append ↗ to each zone label ─────────────────────────
   document.querySelectorAll('.zone-lbl').forEach(el => {
@@ -1091,6 +1093,11 @@ function setContra(i) {
     const sceneW = Math.round(window.innerHeight * ASPECT);
     scene.style.width = sceneW + 'px';
     maxPan = Math.max(0, sceneW - window.innerWidth);
+    // Center the scene on first load
+    if (!centeredOnce) {
+      panX = maxPan / 2;
+      centeredOnce = true;
+    }
     panX   = Math.max(0, Math.min(maxPan, panX));
     scene.style.transform = `translateX(${-panX}px)`;
   }
@@ -1112,6 +1119,7 @@ function setContra(i) {
   function playPanHint() {
     const target = Math.min(52, maxPan * 0.12);
     if (target < 4) return;
+    const center = maxPan / 2;
     let start = null;
     function step(ts) {
       if (!start) start = ts;
@@ -1121,11 +1129,13 @@ function setContra(i) {
       const back = t > 0.55 ? (t - 0.55) / 0.45 : 0;
       const eased = go * (1 - back);
       const easeOut = p => 1 - Math.pow(1 - p, 3);
-      setPan(target * easeOut(eased));
+      setPan(center + target * easeOut(eased));
       if (t < 1) requestAnimationFrame(step);
-      else setPan(0);
+      else setPan(center);
     }
-    setTimeout(() => requestAnimationFrame(step), 1100);
+    // Delay until after intro on first visit, otherwise short delay
+    const delay = isFirstVisit ? 5200 : 1100;
+    setTimeout(() => requestAnimationFrame(step), delay);
   }
 
   // ── Touch: start ─────────────────────────────────────────
