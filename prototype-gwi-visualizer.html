@@ -444,39 +444,59 @@ html, body {
 
 /* ── MOBILE ≤ 600px ── */
 @media (max-width: 600px) {
-  #app { flex-direction: column; }
+  #app { flex-direction: row; }
 
   #zoo-panel {
-    width: 100%;
-    height: auto;
-    max-height: 28vh;
-    border-right: none;
-    border-bottom: 1px solid rgba(100, 140, 80, 0.12);
+    width: 140px;
+    flex-shrink: 0;
+    height: 100%;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
   }
 
-  #zoo-header { padding: 12px 14px 10px; }
-  .zoo-header-title { font-size: 14px; margin-bottom: 8px; }
+  #zoo-header { padding: 10px 10px 8px; }
+  .zoo-header-eyebrow { font-size: 6px; margin-bottom: 4px; }
+  .zoo-header-title { font-size: 12px; margin-bottom: 6px; }
 
-  #zoo-list { padding: 2px 0; }
-  .zoo-item { padding: 6px 14px; gap: 8px; }
-  .zoo-item-name { font-size: 10px; }
-  .zoo-item-city { font-size: 8px; }
+  #filter-tabs { gap: 2px; flex-wrap: wrap; }
+  .filter-tab { font-size: 6px; padding: 3px 5px; }
+
+  #zoo-list {
+    flex: 1;
+    min-height: 0;
+    overflow-y: auto;
+    padding: 2px 0;
+  }
+  .zoo-item { padding: 5px 10px; gap: 6px; }
+  .zoo-item-name { font-size: 9px; }
+  .zoo-item-city { font-size: 7px; }
+  .zoo-gwi-badge { font-size: 8px; }
 
   #analysis-panel {
     flex: 1;
     overflow-y: auto;
-    padding: 20px 18px;
+    padding: 16px 14px;
   }
 
-  #zoo-name { font-size: 22px; }
-  #gwi-score-number { font-size: 38px; }
+  #zoo-name { font-size: 20px; }
+  #zoo-location { font-size: 8px; }
+  #gwi-score-number { font-size: 36px; }
+  #gwi-score-label { font-size: 10px; }
 
   #metrics-row {
     grid-template-columns: 1fr 1fr;
     gap: 8px;
   }
-  .metric-card { padding: 10px 12px; }
-  .metric-value { font-size: 20px; }
+  .metric-card { padding: 8px 10px; }
+  .metric-value { font-size: 18px; }
+  .metric-label { font-size: 6px; }
+  .metric-sub { font-size: 8px; }
+
+  .section-label { font-size: 6px; }
+  #mission-statement { font-size: 13px; }
+  #signal-text { font-size: 11px; }
+  #visitor-impact { font-size: 10px; }
 }
 
 /* ── DATA NOTE ── */
