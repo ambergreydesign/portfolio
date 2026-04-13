@@ -769,6 +769,23 @@ body.visible { opacity: 1; }
 }
 @media (max-width: 560px) {
   .gwi-embed-wrap { height: 480px; }
+  .signs-signals {
+    grid-template-columns: repeat(3, 1fr);
+  }
+  .signs-signal-item:nth-child(4) { border-right: none; }
+  .signs-signal-item:nth-child(4),
+  .signs-signal-item:nth-child(5) {
+    border-top: 1px solid var(--border);
+  }
+}
+@media (max-width: 400px) {
+  .signs-signals {
+    grid-template-columns: 1fr 1fr;
+  }
+  .signs-signal-item { border-right: none; }
+  .signs-signal-item:nth-child(n+3) {
+    border-top: 1px solid var(--border);
+  }
 }
 
 /* ── REFLECTION ── */
@@ -1441,17 +1458,17 @@ body.visible { opacity: 1; }
     <div class="horizon-row">
       <div class="horizon-card">
         <div class="horizon-label">Now</div>
-        <div class="horizon-heading">Where we are</div>
+        <h3 class="horizon-heading">Where we are</h3>
         <p class="horizon-body">Zoos face a credibility crisis with younger audiences. The spectacle model that sustained them for decades is the exact thing Gen Z distrusts most.</p>
       </div>
       <div class="horizon-card">
         <div class="horizon-label">New</div>
-        <div class="horizon-heading">What's emerging</div>
+        <h3 class="horizon-heading">What's emerging</h3>
         <p class="horizon-body">Conservation funding data is public — 990s, IRS filings, mission statements. But it's never been made legible to the people asking the questions.</p>
       </div>
       <div class="horizon-card">
         <div class="horizon-label">Next</div>
-        <div class="horizon-heading">Where this could go</div>
+        <h3 class="horizon-heading">Where this could go</h3>
         <p class="horizon-body">A zoo that shows its receipts. Experiences designed around honesty rather than aspiration. Revenue models that don't require hiding the gap.</p>
       </div>
     </div>
@@ -1723,27 +1740,27 @@ body.visible { opacity: 1; }
     <div class="signs-signals">
       <div class="signs-signal-item">
         <div class="signs-signal-from">Spectacle</div>
-        <div class="signs-signal-arrow">↓</div>
+        <div class="signs-signal-arrow" aria-hidden="true">↓</div>
         <div class="signs-signal-to">Story</div>
       </div>
       <div class="signs-signal-item">
         <div class="signs-signal-from">Information</div>
-        <div class="signs-signal-arrow">↓</div>
+        <div class="signs-signal-arrow" aria-hidden="true">↓</div>
         <div class="signs-signal-to">Interaction</div>
       </div>
       <div class="signs-signal-item">
         <div class="signs-signal-from">Gaps</div>
-        <div class="signs-signal-arrow">↓</div>
+        <div class="signs-signal-arrow" aria-hidden="true">↓</div>
         <div class="signs-signal-to">Guidance</div>
       </div>
       <div class="signs-signal-item">
         <div class="signs-signal-from">Neglect</div>
-        <div class="signs-signal-arrow">↓</div>
+        <div class="signs-signal-arrow" aria-hidden="true">↓</div>
         <div class="signs-signal-to">Nurture</div>
       </div>
       <div class="signs-signal-item">
         <div class="signs-signal-from">Stigma</div>
-        <div class="signs-signal-arrow">↓</div>
+        <div class="signs-signal-arrow" aria-hidden="true">↓</div>
         <div class="signs-signal-to">Support</div>
       </div>
     </div>
