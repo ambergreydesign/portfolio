@@ -329,6 +329,69 @@ html, body {
 .fade-up-6 { animation: fadeUp 0.7s ease 0.90s both; }
 @keyframes fadeUp { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: translateY(0); } }
 .step-panel:not(.active) [class*="fade-up-"] { animation: none; }
+
+/* ── MOBILE ≤ 600px ── */
+@media (max-width: 600px) {
+  html, body { overflow-y: auto; overflow-x: hidden; }
+
+  .step-panel {
+    position: absolute;
+    padding: 48px 22px 40px;
+    align-items: flex-start;
+  }
+  .step-content { max-width: 100%; }
+
+  #picker { padding: 40px 22px 36px; }
+  .picker-heading { font-size: clamp(24px, 6vw, 34px); }
+  .picker-sub { font-size: 12px; margin-bottom: 32px; }
+  .scenario-grid { grid-template-columns: 1fr; gap: 14px; max-width: 100%; }
+  .scenario-card { padding: 22px 20px; }
+  .card-title { font-size: 22px; }
+  .card-tease { font-size: 12px; }
+
+  .step-heading { font-size: clamp(22px, 5.5vw, 34px); }
+  .step-body { font-size: 13px; line-height: 1.8; }
+  .scene-block { font-size: clamp(14px, 3.8vw, 19px); line-height: 1.75; }
+
+  .choice-grid { grid-template-columns: 1fr; gap: 8px; }
+  .choice-btn { padding: 13px 16px; }
+  .choice-q { font-size: clamp(20px, 5vw, 28px); }
+
+  .response-cards { grid-template-columns: 1fr; gap: 10px; }
+  .response-card { padding: 16px 18px; }
+
+  .context-scene { font-size: clamp(15px, 3.6vw, 20px); }
+  .fact-card { padding: 18px 20px; }
+  .fact-text { font-size: 12px; }
+
+  .closure-title { font-size: clamp(22px, 5.5vw, 34px); }
+  .closure-body { font-size: 12.5px; line-height: 1.8; }
+  .closure-quote { font-size: clamp(13px, 3.2vw, 17px); }
+  .loop-diagram { flex-wrap: wrap; gap: 6px 0; }
+  .loop-node { width: 22px; height: 22px; font-size: 8px; }
+  .loop-node-label { font-size: 6.5px; }
+
+  .speaker-block { padding: 16px 18px; }
+  .speaker-text { font-size: 12px; }
+
+  .back-btn { top: 14px; left: 16px; font-size: 9px; }
+  .step-tracker { top: 14px; right: 16px; }
+  .framework-ghost { top: 34px; right: 16px; font-size: 7px; }
+
+  .end-actions { flex-direction: column; gap: 14px; align-items: flex-start; }
+
+  .witness-card { padding: 10px 14px; }
+  .witness-quote { font-size: 14px; }
+}
+
+/* ── VERY SMALL ≤ 380px ── */
+@media (max-width: 380px) {
+  .step-panel { padding: 44px 16px 32px; }
+  #picker { padding: 36px 16px 28px; }
+  .picker-heading { font-size: 22px; }
+  .card-title { font-size: 20px; }
+  .scenario-card { padding: 18px 16px; }
+}
 </style>
 </head>
 <body>

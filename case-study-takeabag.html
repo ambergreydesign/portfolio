@@ -17,7 +17,7 @@
   --bg:          #060e0e;
   --bg-alt:      #091413;
   --text:        rgba(198, 228, 224, 0.90);
-  --text-muted:  rgba(59, 168, 160, 0.65);
+  --text-muted:  rgba(59, 168, 160, 0.75);
   --accent-bright: #8ad4cc;
   --amber:       #c8a050;
   --border:      rgba(255, 255, 255, 0.055);
@@ -78,11 +78,12 @@ body.visible { opacity: 1; }
   -webkit-backdrop-filter: blur(14px);
   border: 1px solid rgba(255,255,255,0.09);
   border-radius: 100px;
-  padding: 9px 18px 9px 14px;
+  padding: 11px 20px 11px 16px;
+  min-height: 44px;
   cursor: pointer;
-  color: rgba(105,210,200,0.85);
+  color: rgba(105,210,200,0.88);
   font-family: 'DM Sans', sans-serif;
-  font-size: 10px; font-weight: 400; letter-spacing: 0.22em; text-transform: uppercase;
+  font-size: 11px; font-weight: 400; letter-spacing: 0.22em; text-transform: uppercase;
   transition: all 0.25s; z-index: 100;
 }
 .nav-back:hover { background: rgba(255,255,255,0.09); color: rgba(130,235,225,1); border-color: rgba(255,255,255,0.16); }
@@ -105,7 +106,7 @@ body.visible { opacity: 1; }
 }
 
 .switch-plate {
-  width: 36px; height: 56px;
+  width: 44px; height: 56px;
   background: #061a18;
   border-radius: 6px;
   border: 2px solid var(--accent);
@@ -142,9 +143,9 @@ body.visible { opacity: 1; }
   position: absolute;
   bottom: -18px; left: 50%;
   transform: translateX(-50%);
-  font-size: 7px; font-weight: 500;
+  font-size: 9px; font-weight: 500;
   letter-spacing: 0.15em; text-transform: uppercase;
-  color: rgba(59, 168, 160, 0.6);
+  color: rgba(59, 168, 160, 0.72);
   white-space: nowrap;
   transition: color 0.3s;
 }
@@ -288,7 +289,7 @@ body.visible { opacity: 1; }
 }
 .thesis-attr {
   font-size: 10px; font-weight: 400; letter-spacing: 0.2em; text-transform: uppercase;
-  color: rgba(90,170,160,0.55);
+  color: rgba(90,170,160,0.68);
 }
 
 /* ── BODY TEXT ── */
@@ -319,10 +320,10 @@ body.visible { opacity: 1; }
 }
 .stat-label {
   font-size: 10px; font-weight: 400; letter-spacing: 0.14em; text-transform: uppercase;
-  color: rgba(105,210,200,0.58);
+  color: rgba(105,210,200,0.72);
 }
 .stat-sub {
-  font-size: 11px; font-weight: 300; color: rgba(160,200,195,0.58); line-height: 1.5;
+  font-size: 11px; font-weight: 300; color: rgba(160,200,195,0.68); line-height: 1.5;
 }
 
 /* ── FRAMEWORK GRID ── */
@@ -357,7 +358,7 @@ body.visible { opacity: 1; }
 }
 .framework-desc {
   font-size: 12px; font-weight: 300; line-height: 1.7;
-  color: rgba(160,200,195,0.62);
+  color: rgba(160,200,195,0.70);
   transition: color 0.25s ease;
 }
 
@@ -383,7 +384,7 @@ body.visible { opacity: 1; }
 }
 .pillar-num {
   font-size: 9px; font-weight: 500; letter-spacing: 0.2em;
-  color: rgba(105,210,200,0.45); margin-bottom: 12px;
+  color: rgba(105,210,200,0.58); margin-bottom: 12px;
 }
 .pillar-title {
   font-family: 'Cormorant Garamond', serif;
@@ -392,11 +393,11 @@ body.visible { opacity: 1; }
 }
 .pillar-desc {
   font-size: 12px; font-weight: 300; line-height: 1.7;
-  color: rgba(160,200,195,0.62);
+  color: rgba(160,200,195,0.70);
 }
 .pillar-toggle {
   font-size: 10px; font-weight: 400; letter-spacing: 0.10em;
-  color: rgba(105,210,200,0.58);
+  color: rgba(105,210,200,0.70);
   margin-top: 14px;
   display: block;
   transition: color 0.2s;
@@ -447,7 +448,7 @@ body.visible { opacity: 1; }
 .pain-item:focus-within { background: rgba(59,168,160,0.07); }
 .pain-icon {
   font-size: 9px; font-weight: 500; letter-spacing: 0.2em;
-  color: rgba(105,210,200,0.5);
+  color: rgba(105,210,200,0.62);
 }
 .pain-name {
   font-family: 'Cormorant Garamond', serif;
@@ -456,7 +457,7 @@ body.visible { opacity: 1; }
 }
 .pain-desc {
   font-size: 11px; font-weight: 300; line-height: 1.65;
-  color: rgba(160,200,195,0.58);
+  color: rgba(160,200,195,0.68);
 }
 .pain-response {
   font-size: 10.5px;
@@ -509,7 +510,7 @@ body.visible { opacity: 1; }
 }
 .persona-desc {
   font-size: 12px; font-weight: 300; line-height: 1.7;
-  color: rgba(160,200,195,0.62);
+  color: rgba(160,200,195,0.70);
   transition: color 0.25s ease;
 }
 
@@ -538,7 +539,7 @@ body.visible { opacity: 1; }
   transition: color 0.25s ease;
 }
 .wil-title { font-size: 11px; font-weight: 500; letter-spacing: 0.12em; text-transform: uppercase; color: rgba(59,168,160,0.72); margin-bottom: 10px; transition: color 0.25s ease; }
-.wil-body { font-size: 13px; font-weight: 300; line-height: 1.75; color: rgba(198,228,224,0.6); transition: color 0.25s ease; }
+.wil-body { font-size: 13px; font-weight: 300; line-height: 1.75; color: rgba(198,228,224,0.72); transition: color 0.25s ease; }
 
 /* ── REFLECTION ── */
 .reflection-quote {
@@ -550,7 +551,7 @@ body.visible { opacity: 1; }
 }
 .reflection-attr {
   font-size: 10px; font-weight: 400; letter-spacing: 0.22em;
-  text-transform: uppercase; color: rgba(90,170,160,0.52);
+  text-transform: uppercase; color: rgba(90,170,160,0.65);
   padding-left: 36px;
 }
 
@@ -564,6 +565,8 @@ body.visible { opacity: 1; }
 /* ── REDUCED MOTION ── */
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
+  body { transition: none; }
+  #page-exit { transition: none; }
   .hero::before { animation: none; }
   .reveal { opacity: 1; transform: none; transition: none; }
   .reveal.is-visible { opacity: 1; transform: none; }
@@ -647,6 +650,14 @@ body.visible { opacity: 1; }
   cursor: pointer;
   transition: background 0.25s, border-color 0.25s, transform 0.25s;
   outline: none;
+}
+/* Invisible touch target expansion to meet 44px minimum */
+.snav-dot::before {
+  content: '';
+  position: absolute;
+  top: 50%; left: 50%;
+  width: 44px; height: 44px;
+  transform: translate(-50%, -50%);
 }
 .snav-dot:hover,
 .snav-dot.active {

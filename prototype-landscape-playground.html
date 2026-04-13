@@ -1450,6 +1450,15 @@ function initDemos() {
     });
   });
 
+  // Demo 2: Spatial navigation — tap-to-reveal on touch devices
+  document.querySelectorAll('#demo-room .demo-room-zone').forEach(function(zone) {
+    zone.addEventListener('click', function() {
+      document.querySelectorAll('#demo-room .demo-room-zone').forEach(function(z) {
+        z.classList.toggle('touched', z === zone && !zone.classList.contains('touched'));
+      });
+    });
+  });
+
   // Demo 3: Multi-level disclosure
   document.querySelectorAll('#demo-levels .demo-level').forEach(function(lvl) {
     lvl.addEventListener('click', function() {
