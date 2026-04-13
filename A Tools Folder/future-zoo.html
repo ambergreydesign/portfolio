@@ -219,15 +219,48 @@ html, body {
   to   { opacity: 1; transform: translateY(0); }
 }
 
-/* ── MOBILE ── */
+/* ── MOBILE — column layout (media top, copy bottom) ── */
 @media (max-width: 680px) {
-  .scene-content { padding: 0 28px 72px; }
+  .scene {
+    flex-direction: column;
+    align-items: stretch;
+    justify-content: flex-start;
+  }
+  .scene-media {
+    flex: 1; min-height: 0;
+  }
+  .scene-media video,
+  .scene-media img {
+    object-fit: contain;
+    object-position: center;
+    background: #060e0a;
+  }
+  .scene-media::after {
+    height: 40px;
+    background: linear-gradient(to bottom, transparent, #060e0a);
+  }
+  .scene-content {
+    flex-shrink: 0;
+    padding: 16px 24px 64px;
+    max-width: 100%;
+  }
   .scene.scene-intro .scene-content,
-  .scene.scene-closing .scene-content { padding: 0 28px; }
-  .nav-arrow { width: 40px; height: 40px; }
-  .nav-prev { left: 12px; }
-  .nav-next { right: 12px; }
-  .progress-bar { bottom: 20px; gap: 10px; }
+  .scene.scene-closing .scene-content {
+    padding: 16px 24px 64px;
+  }
+  .scene-text {
+    font-size: clamp(16px, 3.5vw, 24px);
+    line-height: 1.5;
+  }
+  .scene.scene-intro .scene-text {
+    font-size: clamp(20px, 4.5vw, 32px);
+  }
+  .scene-eyebrow { font-size: 8px; margin-bottom: 10px; }
+  .scene-location { font-size: 8px; margin-bottom: 10px; }
+  .nav-arrow { width: 36px; height: 36px; }
+  .nav-prev { left: 8px; }
+  .nav-next { right: 8px; }
+  .progress-bar { bottom: 16px; gap: 8px; }
 }
 </style>
 </head>
@@ -265,8 +298,7 @@ html, body {
   <!-- 2 · WELCOME — Aerial Footage -->
   <div class="scene" data-video="../A Images/Video/Future Zoo/Aerial view.mp4" data-poster="../A Images/Video/Future Zoo/Aeriel View.webp">
     <div class="scene-media">
-      <video muted loop playsinline poster="../A Images/Video/Future Zoo/Aeriel View.webp">
-        <source src="../A Images/Video/Future Zoo/Aerial view.mp4" type="video/mp4">
+      <video muted loop playsinline poster="../A Images/Video/Future Zoo/Aeriel View.webp" preload="none">
       </video>
     </div>
     <div class="scene-content">
@@ -278,8 +310,7 @@ html, body {
   <!-- 3 · GIRAFFE HUB -->
   <div class="scene" data-video="../A Images/Video/Future Zoo/Giraffe Hub.mp4" data-poster="../A Images/Video/Future Zoo/Giraffe Hub.webp">
     <div class="scene-media">
-      <video muted loop playsinline poster="../A Images/Video/Future Zoo/Giraffe Hub.webp">
-        <source src="../A Images/Video/Future Zoo/Giraffe Hub.mp4" type="video/mp4">
+      <video muted loop playsinline poster="../A Images/Video/Future Zoo/Giraffe Hub.webp" preload="none">
       </video>
     </div>
     <div class="scene-content">
@@ -291,8 +322,7 @@ html, body {
   <!-- 4 · TREEHOUSE CAFÉ -->
   <div class="scene" data-video="../A Images/Video/Future Zoo/Treehouse  Cafe.mp4" data-poster="../A Images/Video/Future Zoo/Treehouse Cafe.webp">
     <div class="scene-media">
-      <video muted loop playsinline poster="../A Images/Video/Future Zoo/Treehouse Cafe.webp">
-        <source src="../A Images/Video/Future Zoo/Treehouse  Cafe.mp4" type="video/mp4">
+      <video muted loop playsinline poster="../A Images/Video/Future Zoo/Treehouse Cafe.webp" preload="none">
       </video>
     </div>
     <div class="scene-content">
@@ -304,8 +334,7 @@ html, body {
   <!-- 5 · TACTILE PLAYGROUND -->
   <div class="scene" data-video="../A Images/Video/Future Zoo/Giraffe Themed Tactile Playground.mp4" data-poster="../A Images/Video/Future Zoo/Giraffe Themed Tactile Playground.webp">
     <div class="scene-media">
-      <video muted loop playsinline poster="../A Images/Video/Future Zoo/Giraffe Themed Tactile Playground.webp">
-        <source src="../A Images/Video/Future Zoo/Giraffe Themed Tactile Playground.mp4" type="video/mp4">
+      <video muted loop playsinline poster="../A Images/Video/Future Zoo/Giraffe Themed Tactile Playground.webp" preload="none">
       </video>
     </div>
     <div class="scene-content">
@@ -317,8 +346,7 @@ html, body {
   <!-- 6 · Central Park -->
   <div class="scene" data-video="../A Images/Video/Future Zoo/Central Park .mp4" data-poster="../A Images/Video/Future Zoo/Central Park.webp">
     <div class="scene-media">
-      <video muted loop playsinline poster="../A Images/Video/Future Zoo/Central Park.webp">
-        <source src="../A Images/Video/Future Zoo/Central Park .mp4" type="video/mp4">
+      <video muted loop playsinline poster="../A Images/Video/Future Zoo/Central Park.webp" preload="none">
       </video>
     </div>
     <div class="scene-content">
@@ -330,8 +358,7 @@ html, body {
   <!-- 7 · CLOSING — Reverence ReWilded -->
   <div class="scene scene-closing" data-video="../A Images/Video/Future Zoo/Reverence ReWilded.mp4" data-poster="../A Images/Video/Future Zoo/Central Park.webp">
     <div class="scene-media">
-      <video muted loop playsinline poster="../A Images/Video/Future Zoo/Central Park.webp">
-        <source src="../A Images/Video/Future Zoo/Reverence ReWilded.mp4" type="video/mp4">
+      <video muted loop playsinline poster="../A Images/Video/Future Zoo/Central Park.webp" preload="none">
       </video>
     </div>
     <div class="scene-content">
@@ -379,9 +406,19 @@ function goTo(idx) {
   dots[current].classList.add('active');
   cCur.textContent = current + 1;
 
-  // play new video
+  // lazy-load & play new video
   const newVid = scenes[current].querySelector('video');
   if (newVid) {
+    if (!newVid.querySelector('source')) {
+      const src = scenes[current].dataset.video;
+      if (src) {
+        const source = document.createElement('source');
+        source.src = src;
+        source.type = 'video/mp4';
+        newVid.appendChild(source);
+        newVid.load();
+      }
+    }
     newVid.currentTime = 0;
     newVid.play().catch(() => {});
   }
