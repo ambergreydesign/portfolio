@@ -454,6 +454,10 @@ html, body {
   .sig { display: none; }
 
   /* ── Pan hint (fades after first swipe) ──────────────────── */
+  @keyframes hintDrift {
+    0%, 100% { transform: translateX(-50%); }
+    50%      { transform: translateX(-42%); }
+  }
   #mob-pan-hint {
     position: fixed;
     bottom: 44px;
@@ -467,10 +471,12 @@ html, body {
     pointer-events: none;
     z-index: 50;
     white-space: nowrap;
-    opacity: 1;
+    opacity: 0;
     transition: opacity 0.7s ease;
+    animation: hintDrift 2.8s ease-in-out infinite;
   }
-  #mob-pan-hint.gone { opacity: 0; }
+  #mob-pan-hint.visible { opacity: 1; }
+  #mob-pan-hint.gone { opacity: 0; animation: none; }
 
   /* ── Desktop nudge ───────────────────────────────────────── */
   #mob-desktop-note {
@@ -1115,27 +1121,12 @@ function setContra(i) {
     if (panHint) panHint.classList.add('gone');
   }
 
-  // ── Brief intro drift so user knows it's pannable ────────
-  function playPanHint() {
-    const target = Math.min(52, maxPan * 0.12);
-    if (target < 4) return;
-    const center = maxPan / 2;
-    let start = null;
-    function step(ts) {
-      if (!start) start = ts;
-      const t = Math.min((ts - start) / 900, 1);
-      // ease out right, ease back left
-      const go   = t < 0.55 ? t / 0.55 : 1;
-      const back = t > 0.55 ? (t - 0.55) / 0.45 : 0;
-      const eased = go * (1 - back);
-      const easeOut = p => 1 - Math.pow(1 - p, 3);
-      setPan(center + target * easeOut(eased));
-      if (t < 1) requestAnimationFrame(step);
-      else setPan(center);
+  // ── Show hint text after intro completes ──────────────────
+  function showHint() {
+    if (panHint) {
+      const delay = isFirstVisit ? 5200 : 800;
+      setTimeout(() => panHint.classList.add('visible'), delay);
     }
-    // Delay until after intro on first visit, otherwise short delay
-    const delay = isFirstVisit ? 5200 : 1100;
-    setTimeout(() => requestAnimationFrame(step), delay);
   }
 
   // ── Touch: start ─────────────────────────────────────────
@@ -1180,7 +1171,7 @@ function setContra(i) {
   }, { passive: true });
 
   resize();
-  playPanHint();
+  showHint();
   window.addEventListener('resize', resize);
 })();
 
