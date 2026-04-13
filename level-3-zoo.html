@@ -382,12 +382,23 @@ body.visible { opacity: 1; }
   /* Hide iframe, show placeholder image on mobile */
   .artifact-card iframe { display: none; }
   .mob-placeholder { display: block; width: 100%; height: 100%; }
+  .mob-tool-link {
+    display: block;
+    margin-bottom: 10px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 11px;
+    font-weight: 400;
+    font-style: italic;
+    letter-spacing: 0.03em;
+    color: rgba(204,161,144,0.6);
+  }
 
   .artifact-card {
     max-width: calc(100vw - 40px);
     width: 100%;
-    aspect-ratio: 16 / 9;
+    aspect-ratio: 822 / 659;
     height: auto;
+    max-height: 60svh;
   }
 
   /* Info panel: flex column, no grid */
@@ -492,6 +503,7 @@ body.visible .studio-crumb {
 <div id="left-canvas">
   <div class="left-area">
     <div class="card-section">
+      <p class="mob-tool-link">Open on desktop for full interactive experience</p>
       <div class="artifact-card">
         <iframe src="A Tools Folder/zoo-economy.html" title="Zoo Economy Interactive Map" loading="lazy"></iframe>
         <div class="mob-placeholder">
