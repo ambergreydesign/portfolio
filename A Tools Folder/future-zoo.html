@@ -221,13 +221,18 @@ html, body {
 
 /* ── MOBILE — column layout (media top, copy bottom) ── */
 @media (max-width: 680px) {
+  .scene-track { position: fixed; inset: 0; }
   .scene {
+    position: absolute; inset: 0;
+    display: flex;
     flex-direction: column;
     align-items: stretch;
     justify-content: flex-start;
   }
   .scene-media {
+    position: relative; inset: auto;
     flex: 1; min-height: 0;
+    z-index: 0;
   }
   .scene-media video,
   .scene-media img {
@@ -240,6 +245,7 @@ html, body {
     background: linear-gradient(to bottom, transparent, #060e0a);
   }
   .scene-content {
+    position: relative;
     flex-shrink: 0;
     padding: 16px 24px 64px;
     max-width: 100%;
@@ -249,11 +255,11 @@ html, body {
     padding: 16px 24px 64px;
   }
   .scene-text {
-    font-size: clamp(16px, 3.5vw, 24px);
+    font-size: clamp(14px, 3.2vw, 20px);
     line-height: 1.5;
   }
   .scene.scene-intro .scene-text {
-    font-size: clamp(20px, 4.5vw, 32px);
+    font-size: clamp(18px, 4.2vw, 28px);
   }
   .scene-eyebrow { font-size: 8px; margin-bottom: 10px; }
   .scene-location { font-size: 8px; margin-bottom: 10px; }
