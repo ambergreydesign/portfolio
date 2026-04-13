@@ -223,50 +223,56 @@ html, body {
 @media (max-width: 680px) {
   .scene-track { position: fixed; inset: 0; }
   .scene {
-    position: absolute; inset: 0;
-    display: flex;
-    flex-direction: column;
-    align-items: stretch;
-    justify-content: flex-start;
+    position: absolute !important; inset: 0 !important;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: stretch !important;
+    justify-content: flex-start !important;
   }
   .scene-media {
-    position: relative; inset: auto;
-    flex: 1; min-height: 0;
-    z-index: 0;
+    position: relative !important;
+    inset: auto !important;
+    flex: 1 1 0% !important;
+    min-height: 0;
+    overflow: hidden;
   }
   .scene-media video,
   .scene-media img {
-    object-fit: contain;
+    width: 100%; height: 100%;
+    object-fit: contain !important;
     object-position: center;
     background: #060e0a;
   }
   .scene-media::after {
-    height: 40px;
-    background: linear-gradient(to bottom, transparent, #060e0a);
+    height: 40px !important;
+    background: linear-gradient(to bottom, transparent, #060e0a) !important;
+    inset: auto 0 0 0 !important;
   }
   .scene-content {
-    position: relative;
-    flex-shrink: 0;
-    padding: 16px 24px 64px;
-    max-width: 100%;
+    position: relative !important;
+    flex-shrink: 0 !important;
+    padding: 12px 24px 64px !important;
+    max-width: 100% !important;
+    z-index: 2;
   }
   .scene.scene-intro .scene-content,
   .scene.scene-closing .scene-content {
-    padding: 16px 24px 64px;
+    padding: 12px 24px 64px !important;
   }
   .scene-text {
-    font-size: clamp(14px, 3.2vw, 20px);
-    line-height: 1.5;
+    font-size: clamp(13px, 3vw, 18px) !important;
+    line-height: 1.5 !important;
   }
   .scene.scene-intro .scene-text {
-    font-size: clamp(18px, 4.2vw, 28px);
+    font-size: clamp(16px, 4vw, 24px) !important;
   }
-  .scene-eyebrow { font-size: 8px; margin-bottom: 10px; }
-  .scene-location { font-size: 8px; margin-bottom: 10px; }
-  .nav-arrow { width: 36px; height: 36px; }
-  .nav-prev { left: 8px; }
-  .nav-next { right: 8px; }
-  .progress-bar { bottom: 16px; gap: 8px; }
+  .scene-eyebrow { font-size: 8px; margin-bottom: 8px; }
+  .scene-location { font-size: 8px; margin-bottom: 8px; }
+  .scene-counter { top: 12px; right: 16px; }
+  .nav-arrow { width: 32px; height: 32px; }
+  .nav-prev { left: 6px; }
+  .nav-next { right: 6px; }
+  .progress-bar { bottom: 12px; gap: 8px; }
 }
 </style>
 </head>
