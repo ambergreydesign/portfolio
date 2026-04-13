@@ -309,6 +309,69 @@ html, body {
 #rightPanel::-webkit-scrollbar { width: 4px; }
 #rightPanel::-webkit-scrollbar-track { background: transparent; }
 #rightPanel::-webkit-scrollbar-thumb { background: rgba(155,109,255,0.15); border-radius: 2px; }
+
+/* ── MOBILE ── */
+@media (max-width: 768px) {
+  html, body { overflow: auto; overflow-x: hidden; height: auto; min-height: 100%; }
+
+  #shell {
+    flex-direction: column;
+    height: auto; min-height: 100vh;
+  }
+
+  /* Canvas panel */
+  #canvasPanel {
+    flex: none;
+    width: 100%;
+    padding: 50px 12px 20px;
+    display: flex; align-items: center; justify-content: center;
+    min-height: auto;
+  }
+  #canvasArea {
+    width: calc(100vw - 24px);
+    height: calc(100vw - 24px);
+    max-width: 580px;
+    max-height: 580px;
+  }
+  .canvas-label { position: relative; bottom: auto; margin-top: 8px; }
+
+  /* Right panel becomes bottom panel */
+  #rightPanel {
+    width: 100%;
+    flex-shrink: 0;
+    border-left: none;
+    border-top: 1px solid var(--border);
+    padding: 20px 16px 40px;
+    overflow-y: visible;
+  }
+
+  .panel-title { font-size: 22px; }
+  .panel-subtitle { font-size: 11px; margin-bottom: 20px; }
+
+  .artwork-tray {
+    grid-template-columns: repeat(4, 1fr);
+    gap: 5px;
+  }
+
+  .nav-back { top: 44px; left: 10px; padding: 6px 12px 6px 9px; }
+
+  #statusBar { padding: 0 12px; }
+
+  .wordmark { display: none; }
+
+  /* Ambient toning */
+  .ambient-orb { display: none; }
+}
+
+@media (max-width: 400px) {
+  #canvasArea {
+    width: calc(100vw - 16px);
+    height: calc(100vw - 16px);
+  }
+  #canvasPanel { padding: 48px 8px 16px; }
+  #rightPanel { padding: 16px 12px 40px; }
+  .artwork-tray { grid-template-columns: repeat(4, 1fr); gap: 4px; }
+}
 </style>
 </head>
 <body>
@@ -527,32 +590,40 @@ artworks.forEach(art => {
 // ── REUSABLE DRAG HANDLER ──
 function attachDrag(piece, art) {
   const size = 160;
-  piece.addEventListener('mousedown', e => {
-    e.preventDefault();
+  function startDrag(e) {
+    const isTouch = e.type === 'touchstart';
+    if (isTouch) { e.preventDefault(); }
+    else { e.preventDefault(); }
+    const point = isTouch ? e.touches[0] : e;
+
     selectPiece(art.id);
     piece.classList.add('dragging');
     saveState();
     const canvasRect = canvas.getBoundingClientRect();
-    const offsetX = e.clientX - canvasRect.left - piece.offsetLeft;
-    const offsetY = e.clientY - canvasRect.top - piece.offsetTop;
+    const offsetX = point.clientX - canvasRect.left - piece.offsetLeft;
+    const offsetY = point.clientY - canvasRect.top - piece.offsetTop;
 
     const onMove = ev => {
+      const pt = isTouch ? ev.touches[0] : ev;
       const cr = canvas.getBoundingClientRect();
-      let nx = ev.clientX - cr.left - offsetX;
-      let ny = ev.clientY - cr.top - offsetY;
+      let nx = pt.clientX - cr.left - offsetX;
+      let ny = pt.clientY - cr.top - offsetY;
       nx = Math.max(-size/2, Math.min(canvas.offsetWidth - size/2, nx));
       ny = Math.max(-size/2, Math.min(canvas.offsetHeight - size/2, ny));
       piece.style.left = nx + 'px';
       piece.style.top = ny + 'px';
+      if (isTouch) ev.preventDefault();
     };
     const onUp = () => {
       piece.classList.remove('dragging');
-      document.removeEventListener('mousemove', onMove);
-      document.removeEventListener('mouseup', onUp);
+      document.removeEventListener(isTouch ? 'touchmove' : 'mousemove', onMove);
+      document.removeEventListener(isTouch ? 'touchend' : 'mouseup', onUp);
     };
-    document.addEventListener('mousemove', onMove);
-    document.addEventListener('mouseup', onUp);
-  });
+    document.addEventListener(isTouch ? 'touchmove' : 'mousemove', onMove, { passive: false });
+    document.addEventListener(isTouch ? 'touchend' : 'mouseup', onUp);
+  }
+  piece.addEventListener('mousedown', startDrag);
+  piece.addEventListener('touchstart', startDrag, { passive: false });
 }
 
 // ── PLACE ARTWORK ───────────────────────────────────────
@@ -628,7 +699,9 @@ function selectPiece(id) {
 // ── CONTROLS ────────────────────────────────────────────
 // Save once when user starts dragging a slider
 ['opacitySlider','scaleSlider','rotationSlider'].forEach(id => {
-  document.getElementById(id).addEventListener('mousedown', () => saveState(), { once: false });
+  const el = document.getElementById(id);
+  el.addEventListener('mousedown', () => saveState(), { once: false });
+  el.addEventListener('touchstart', () => saveState(), { once: false, passive: true });
 });
 
 document.getElementById('opacitySlider').addEventListener('input', e => {
