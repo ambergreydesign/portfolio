@@ -272,7 +272,7 @@ html { background: var(--bg); scroll-behavior: smooth; }
 body {
   font-family: 'DM Sans', sans-serif;
   color: var(--text);
-  overflow-x: hidden;
+  overflow-x: clip;
   opacity: 0;
   transition: opacity 0.55s cubic-bezier(0.25, 0.46, 0.45, 0.94);
 }
@@ -969,14 +969,52 @@ body.visible { opacity: 1; }
   .wordmark { display: none; }
   .chip-panel { padding: 24px 22px; }
   .chip-group + .chip-group { border-left: none; padding-left: 0; border-top: 1px solid rgba(146,48,227,0.1); padding-top: 20px; }
-  .chip-btn { font-size: 12px; padding: 8px 16px; min-height: 36px; }
+  .chip-btn { font-size: 12px; padding: 10px 16px; min-height: 44px; }
   .pull-quote-wrap { padding-left: 24px; }
+
+  /* Touch targets — minimum 44px */
+  .nav-back { min-height: 44px; padding: 10px 18px 10px 14px; }
+  .switch-plate { width: 44px; }
+  .gpt-cta { min-height: 44px; padding: 12px 24px; }
+  .mission-card-link { min-height: 44px; display: inline-flex; align-items: center; }
+  .stream-status { padding: 6px 12px; }
+
+  /* Font floor — raise 7–9px labels to 11px minimum */
+  .hero-eyebrow { font-size: 11px; }
+  .hero-meta-label { font-size: 11px; }
+  .section-label { font-size: 11px; }
+  .chip-group-label { font-size: 11px; }
+  .stat-label { font-size: 11px; }
+  .stream-num { font-size: 11px; }
+  .stream-status { font-size: 10px; }
+  .stream-link { font-size: 11px; }
+  .gpt-label { font-size: 11px; }
+  .tool-embed-label { font-size: 10px; }
+  .mission-card-eyebrow { font-size: 10px; }
+  .mission-card-link { font-size: 11px; }
+  .narrative-callout-label { font-size: 10px; }
+  .tool-label { font-size: 11px; }
+  .try-this-label { font-size: 10px; }
+  .chat-demo-title { font-size: 10px; }
+  .chat-msg-label { font-size: 10px; }
+  .reflection-label { font-size: 11px; }
+  .switch-label { font-size: 9px; }
+
+  /* Contrast boost — raise low-opacity text */
+  .stream-num { color: rgba(219,176,255,0.72); }
+  .gpt-body { color: rgba(200,155,240,0.78); }
+  .situation-body { color: rgba(219,176,255,0.78); }
+  .narrative-body { color: rgba(219,176,255,0.78); }
+  .switch-label { color: rgba(219,176,255,0.5); }
+  .stream-link { color: rgba(219,176,255,0.78); }
+  .nav-back { color: rgba(200,185,165,0.88); }
+  .hero-meta-label { color: rgba(219,176,255,0.78); }
 }
 @media (max-width: 480px) {
   .hero-title { font-size: 38px; }
   .hero-meta { flex-direction: column; gap: 14px; }
   .section-heading { font-size: clamp(22px, 5.5vw, 32px); }
-  .nav-back { padding: 8px 14px 8px 10px; font-size: 9px; }
+  .nav-back { padding: 10px 14px 10px 10px; font-size: 10px; min-height: 44px; }
 }
 
 /* ══════════════════════════════════
@@ -1019,7 +1057,7 @@ noscript .reveal { opacity: 1; transform: none; }
 <body>
 
 <!-- Light switch -->
-<div class="light-switch" onclick="document.body.classList.toggle('light-mode')" role="switch" aria-checked="false" aria-label="Toggle light mode" tabindex="0" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();this.click();this.setAttribute('aria-checked',document.body.classList.contains('light-mode'))}">
+<div class="light-switch" onclick="document.body.classList.toggle('light-mode');this.setAttribute('aria-checked',document.body.classList.contains('light-mode'))" role="switch" aria-checked="false" aria-label="Toggle light mode" tabindex="0" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();this.click()}">
   <div class="switch-plate">
     <div class="switch-toggle"></div>
   </div>
@@ -1096,7 +1134,7 @@ noscript .reveal { opacity: 1; transform: none; }
 <!-- ══════════════════════════════════
      THE PLATFORM
 ══════════════════════════════════ -->
-<section class="cs-section alt-bg">
+<section class="cs-section alt-bg" aria-label="The Platform">
   <div class="section-inner">
     <div class="reveal">
       <div class="section-label">The Platform</div>
@@ -1171,7 +1209,7 @@ noscript .reveal { opacity: 1; transform: none; }
 <!-- ══════════════════════════════════
      WORK STREAMS
 ══════════════════════════════════ -->
-<section class="cs-section alt-bg">
+<section class="cs-section alt-bg" aria-label="What I Built">
   <div class="section-inner">
 
     <div class="reveal">
@@ -1256,7 +1294,7 @@ noscript .reveal { opacity: 1; transform: none; }
 <!-- ══════════════════════════════════
      DEV SYSTEM
 ══════════════════════════════════ -->
-<section class="cs-section alt-bg">
+<section class="cs-section alt-bg" aria-label="The Development System">
   <div class="section-inner">
 
     <div class="reveal">
@@ -1281,7 +1319,7 @@ noscript .reveal { opacity: 1; transform: none; }
 <!-- ══════════════════════════════════
      DAYLI RESEARCH ANALYST
 ══════════════════════════════════ -->
-<section class="cs-section dark-persist">
+<section class="cs-section dark-persist" aria-label="Dayli Research Analyst">
   <div class="section-inner">
     <div class="tool-section reveal">
 
@@ -1321,7 +1359,7 @@ noscript .reveal { opacity: 1; transform: none; }
 <!-- ══════════════════════════════════
      DAYLI DEV
 ══════════════════════════════════ -->
-<section class="cs-section alt-bg dark-persist">
+<section class="cs-section alt-bg dark-persist" aria-label="Dayli Dev">
   <div class="section-inner">
     <div class="tool-section reveal">
 
@@ -1372,7 +1410,7 @@ noscript .reveal { opacity: 1; transform: none; }
 <!-- ══════════════════════════════════
      SOCRATIC AGENT
 ══════════════════════════════════ -->
-<section class="cs-section dark-persist">
+<section class="cs-section dark-persist" aria-label="The Socratic Agent">
   <div class="section-inner">
     <div class="tool-section reveal">
 
@@ -1431,7 +1469,7 @@ noscript .reveal { opacity: 1; transform: none; }
 <!-- ══════════════════════════════════
      REFLECTION
 ══════════════════════════════════ -->
-<div class="reflection-wrap">
+<section class="reflection-wrap" aria-label="Reflection">
   <div class="reflection-inner reveal">
     <div class="reflection-label">What I Wanted to Show</div>
     <p class="reflection-quote">
@@ -1439,7 +1477,7 @@ noscript .reveal { opacity: 1; transform: none; }
       They just need to know the box exists.
     </p>
   </div>
-</div>
+</section>
 </main>
 
 <script>
