@@ -635,6 +635,9 @@ body, .nav-back, .cs-section, .reflection-wrap,
 .chip-btn:focus-visible { outline-offset: 1px; border-radius: 100px; background: var(--chip-active-bg); border-color: var(--chip-active-border); color: var(--chip-active-color); }
 .figma-cta:focus-visible { outline-offset: 2px; border-radius: 100px; }
 
+/* ── SR-ONLY ── */
+.sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0; }
+
 /* ── SKIP NAV ── */
 .skip-link {
   position: absolute; top: -100%; left: 16px;
@@ -659,7 +662,7 @@ body, .nav-back, .cs-section, .reflection-wrap,
 
 /* ── MOBILE ── */
 @media (max-width: 860px) {
-  .hero { padding: 0 32px 64px; }
+  .hero { padding: 0 32px 64px; background-attachment: scroll; }
   .cs-section { padding: 72px 32px; }
   .reflection-wrap { padding: 72px 32px 96px; }
   .stat-row { flex-direction: column; }
@@ -669,7 +672,29 @@ body, .nav-back, .cs-section, .reflection-wrap,
   .persona-grid { grid-template-columns: 1fr; gap: 16px; }
   .competitor-grid { grid-template-columns: 1fr; gap: 12px; }
   .prototype-grid { grid-template-columns: 1fr; gap: 36px; }
-  .chip-panel { grid-template-columns: 1fr; gap: 28px; }
+  .chip-panel { grid-template-columns: 1fr; gap: 28px; padding: 28px 24px; }
+  .chip-group + .chip-group { border-left: none; padding-left: 0; border-top: 1px solid var(--card-border); padding-top: 24px; }
+  .chip-detail-wrap { padding: 0 24px 20px; }
+  .carplay-embed { height: 420px; }
+  .wil-card[style*="max-width: 50%"] { max-width: 100% !important; }
+
+  /* Touch targets: min 44px */
+  .chip-btn { min-height: 44px; padding: 10px 16px; font-size: 12px; display: inline-flex; align-items: center; }
+  .nav-back { min-height: 44px; padding: 10px 18px 10px 14px; }
+  .figma-cta { min-height: 44px; padding: 12px 24px; }
+  .light-switch .switch-plate { min-width: 44px; min-height: 56px; }
+
+  /* Font floor: nothing below 12px on mobile */
+  .hero-eyebrow { font-size: 10px; }
+  .section-eyebrow { font-size: 10px; }
+  .hero-meta-label { font-size: 10px; }
+  .chip-group-label { font-size: 10px; }
+  .wip-banner { font-size: 10px; }
+  .motor-cols, .switch-label { font-size: 10px; }
+  .reflection-label { font-size: 10px; }
+  .lofi-caption { font-size: 11px; }
+  .carplay-embed-label { font-size: 10px; }
+  .wil-title { font-size: 12px; }
 }
 @media (max-width: 560px) {
   .hero { padding: 0 22px 48px; }
@@ -677,6 +702,42 @@ body, .nav-back, .cs-section, .reflection-wrap,
   .reflection-wrap { padding: 56px 22px 80px; }
   .hero-meta { gap: 24px; }
   .north-star { flex-direction: column; gap: 12px; }
+  .nav-back { top: 16px; left: 16px; }
+  .carplay-embed { height: 340px; }
+  .chip-panel { padding: 22px 18px; }
+  .chip-detail-wrap { padding: 0 18px 16px; }
+}
+
+/* ── HIGH CONTRAST ── */
+@media (prefers-contrast: more) {
+  :root {
+    --body-color: rgba(224, 242, 241, 0.92);
+    --text-muted: #7ec4bb;
+    --chip-color: #7ec4bb;
+    --stat-label-color: rgba(224, 242, 241, 0.88);
+    --meta-label: #7ec4bb;
+    --meta-value: #5eead4;
+    --section-eyebrow: #5eead4;
+    --quote-color: rgba(224, 242, 241, 0.95);
+    --persona-body-color: rgba(224, 242, 241, 0.9);
+    --wil-body: rgba(224, 242, 241, 0.9);
+    --body-em: #5eead4;
+    --body-strong: #5eead4;
+    --border: rgba(255, 255, 255, 0.14);
+    --card-border: rgba(13, 148, 136, 0.3);
+    --stat-border: rgba(13, 148, 136, 0.3);
+  }
+  [data-theme="light"] {
+    --body-color: rgba(26, 46, 44, 0.92);
+    --text-muted: #2e6b62;
+    --chip-color: #0d6e64;
+    --stat-label-color: rgba(26, 46, 44, 0.88);
+    --meta-label: #2e6b62;
+    --section-eyebrow: #0a5e55;
+    --quote-color: rgba(26, 46, 44, 0.95);
+    --card-border: rgba(13, 148, 136, 0.3);
+    --stat-border: rgba(13, 148, 136, 0.3);
+  }
 }
 
 /* ── LIGHT SWITCH TOGGLE ── */
@@ -855,7 +916,8 @@ body, .nav-back, .cs-section, .reflection-wrap,
         <div class="stat-label">the most common cluster: moderately stressed drivers missing exits 3+ times per trip</div>
       </div>
       <div class="stat-cell">
-        <div class="stat-num">↑</div>
+        <div class="stat-num" aria-hidden="true">↑</div>
+        <span class="sr-only">Highest</span>
         <div class="stat-label">drivers with both ADHD and anxiety miss exits at the highest frequency of any group studied</div>
       </div>
       <div class="stat-cell">
@@ -881,24 +943,24 @@ body, .nav-back, .cs-section, .reflection-wrap,
       <p class="problem-body">User research combined quantitative surveys with ethnographic interviews to understand not just the frequency of the problem, but the emotional texture of it. Survey data revealed the correlation between stress and missed exits. Interviews revealed the human cost — the anxiety that compounds every time a prompt arrives too late.</p>
     </div>
 
-    <div class="pull-quote-wrap reveal">
+    <blockquote class="pull-quote-wrap reveal">
       <p class="pull-quote">"I am a focused woman,<br>except in my car."</p>
       <p class="pull-quote-attr">— Jordan, 28, Software Developer · User Persona</p>
-    </div>
+    </blockquote>
 
     <div class="quote-grid reveal">
-      <div class="quote-card">
+      <blockquote class="quote-card">
         <p class="quote-text">"Yeah, I don't like last minute GPS changes. I don't like that. I wanna know. I need enough time to prepare for that shift."</p>
         <p class="quote-attr">— Participant 1, Ethnographic Interview</p>
-      </div>
-      <div class="quote-card">
+      </blockquote>
+      <blockquote class="quote-card">
         <p class="quote-text">"I feel like I miss turns all the time because I get distracted, and by the time I realize, it's too late. It just adds more stress to an already stressful drive."</p>
         <p class="quote-attr">— Participant 4, Ethnographic Interview</p>
-      </div>
-      <div class="quote-card">
+      </blockquote>
+      <blockquote class="quote-card">
         <p class="quote-text">"I tend to zone out while I am driving to keep calm, so if the directions change I need a heads up. Also the visuals are not always clear. It can be really confusing."</p>
         <p class="quote-attr">— Participant 2, Ethnographic Interview</p>
-      </div>
+      </blockquote>
     </div>
 
     <div class="reveal">
@@ -923,14 +985,14 @@ body, .nav-back, .cs-section, .reflection-wrap,
         <p class="persona-tag">Persona 01</p>
         <h3 class="persona-name">Jordan</h3>
         <p class="persona-role">28 · Software Developer · Seattle, WA</p>
-        <p class="persona-quote">"When I'm commuting to work, I'll often miss turns I know well because I zone out. It's frustrating because I feel like I lose focus even on familiar routes, and that just adds more stress to my day."</p>
+        <blockquote class="persona-quote">"When I'm commuting to work, I'll often miss turns I know well because I zone out. It's frustrating because I feel like I lose focus even on familiar routes, and that just adds more stress to my day."</blockquote>
         <p class="persona-body">Jordan is tech-savvy and high-functioning — she manages complex systems at work every day. Behind the wheel, something shifts. She suspects ADHD but is undiagnosed. Her biggest challenge isn't <strong>unfamiliar routes</strong>. It's the familiar ones that trip her up, because she stops actively paying attention to roads she thinks she knows.</p>
       </div>
       <div class="persona-card">
         <p class="persona-tag">Persona 02</p>
         <h3 class="persona-name">Alex</h3>
         <p class="persona-role">35 · Graphic Designer · Portland, OR</p>
-        <p class="persona-quote">"Driving in new places is always stressful for me. I rely on GPS, but sometimes the directions are too complicated or come too late, which makes me anxious about missing turns."</p>
+        <blockquote class="persona-quote">"Driving in new places is always stressful for me. I rely on GPS, but sometimes the directions are too complicated or come too late, which makes me anxious about missing turns."</blockquote>
         <p class="persona-body">Alex is diagnosed with ADHD and describes driving as the <strong>only time he feels stressed.</strong> Complex GPS prompts overwhelm him — he needs directions that are simpler, earlier, and more frequent. The anxiety isn't about the road. It's about not trusting the system to give him enough time to respond.</p>
       </div>
     </div>
