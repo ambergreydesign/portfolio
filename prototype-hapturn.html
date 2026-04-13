@@ -217,6 +217,39 @@
   #btnDemo.running { background:rgba(13,148,136,.18); border:1px solid rgba(94,234,212,.32);
     color:var(--cyan); box-shadow:none; }
   .ctrl-hint { font-size:10.5px; color:rgba(94,234,212,.28); letter-spacing:.03em; }
+
+  /* ── MOBILE ─────────────────────────────────────────────────── */
+  @media (max-width:680px) {
+    #main { flex-direction:column; }
+    #divider { display:none; }
+
+    /* map: fixed aspect, shows the full SVG */
+    #mapPanel { flex:none; width:100%; height:42vw; min-height:160px; }
+    #mapSvg   { preserveAspectRatio:xMidYMid meet; }
+
+    /* right panel: scrollable column underneath */
+    #rightPanel {
+      width:100%; flex:1; min-height:0;
+      padding:10px 14px 8px; gap:6px;
+      overflow-y:auto; -webkit-overflow-scrolling:touch;
+    }
+
+    /* shrink wheel for small screens */
+    #wheelWrap { width:min(180px,38vw); height:min(180px,38vw); }
+
+    /* let buttons breathe */
+    .btnP { height:38px; font-size:11.5px; }
+
+    /* nav bar tighter */
+    #navBar { height:46px; padding:0 12px; gap:8px; }
+    #navInstr { font-size:11.5px; }
+    #navInstr .sub { font-size:9.5px; }
+    #etaTime { font-size:12px; }
+
+    /* control bar tighter */
+    #ctrlBar { height:46px; gap:12px; }
+    #btnDemo { height:34px; padding:0 18px; font-size:12px; }
+  }
 </style>
 </head>
 <body>
@@ -234,7 +267,7 @@
     <!-- MAP -->
     <div id="mapPanel">
       <div id="mapFlash"></div>
-      <svg id="mapSvg" viewBox="0 0 620 400" preserveAspectRatio="xMinYMid slice">
+      <svg id="mapSvg" viewBox="0 0 620 400" preserveAspectRatio="xMidYMid meet">
         <rect width="620" height="400" fill="#061110"/>
 
         <!-- city blocks: row 1 (y 0–86) -->
