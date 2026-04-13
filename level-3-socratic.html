@@ -487,30 +487,65 @@ body.visible .studio-crumb {
   letter-spacing: 0.3em;
   text-transform: uppercase;
 }
+
+/* ── ACCESSIBILITY ── */
+.skip-link {
+  position: fixed;
+  top: -100%;
+  left: 16px;
+  z-index: 9999;
+  padding: 8px 16px;
+  background: #0b1c26;
+  color: #dca25b;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 13px;
+  border: 2px solid #dca25b;
+  border-radius: 6px;
+  text-decoration: none;
+  transition: top 0.2s ease;
+}
+.skip-link:focus {
+  top: 16px;
+}
+
+:focus-visible {
+  outline: 2px solid #dca25b;
+  outline-offset: 3px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
 </style>
 </head>
 <body>
 
-<div id="page-exit"></div>
+<a href="#main-content" class="skip-link">Skip to content</a>
+<div id="page-exit" aria-hidden="true"></div>
 
-<div class="wordmark">Amber Grey</div>
-<button class="nav-back" onclick="navigateTo('level-2-systems.html')">
-  <span class="nav-back-arrow"></span>
+<div class="wordmark" aria-hidden="true">Amber Grey</div>
+<button class="nav-back" aria-label="Back to Systems" onclick="navigateTo('level-2-systems.html')">
+  <span class="nav-back-arrow" aria-hidden="true"></span>
   Systems
 </button>
 
 <!-- Left canvas -->
+<main id="main-content">
 <div id="left-canvas">
   <div class="left-area">
     <div class="card-section">
       <p class="mob-tool-link">Open on desktop for full tool functionality</p>
       <div class="artifact-card">
-        <iframe src="prototype-daily-socratic.html" title="The Socratic Agent" loading="lazy"></iframe>
+        <iframe src="prototype-daily-socratic.html" title="The Socratic Agent — interactive prototype" loading="lazy"></iframe>
       </div>
-      <div class="artifact-label">The Socratic Agent</div>
+      <h2 class="artifact-label">The Socratic Agent</h2>
     </div>
-    <div class="studio-crumb" onclick="navigateTo('studio-portfolio.html')">
-  <svg class="crumb-plant" width="30" height="48" viewBox="0 0 30 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <div class="studio-crumb" role="button" tabindex="0" aria-label="Go to Studio portfolio" onclick="navigateTo('studio-portfolio.html')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();navigateTo('studio-portfolio.html')}">
+  <svg class="crumb-plant" width="30" height="48" viewBox="0 0 30 48" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
     <path d="M8 47 L22 47 L24 37 L6 37Z" stroke="currentColor" stroke-width="0.75" stroke-linejoin="round"/>
     <path d="M5 37 L25 37" stroke="currentColor" stroke-width="0.75" stroke-linecap="round"/>
     <path d="M15 37 L15 28" stroke="currentColor" stroke-width="0.7" stroke-linecap="round"/>
@@ -523,11 +558,13 @@ body.visible .studio-crumb {
   </div>
 </div>
 
+</main>
+
 <!-- Right panel -->
 <div class="info-panel">
   <div class="zone-badge">Systems</div>
   <h1 class="project-title">Replacing forms<br>with conversation</h1>
-  <p class="project-desc">A Socratic dialogue agent that gathers user needs through warm, empathetic follow-up questions. No forms, no checkboxes, just a conversation that leads to understanding. Try it live at <a href="https://dailylivinglabs.com/contribute" target="_blank" rel="noopener" style="color:#dca25b; text-decoration:none;">dailylivinglabs.com/contribute</a></p>
+  <p class="project-desc">A Socratic dialogue agent that gathers user needs through warm, empathetic follow-up questions. No forms, no checkboxes, just a conversation that leads to understanding. Try it live at <a href="https://dailylivinglabs.com/contribute" target="_blank" rel="noopener" style="color:#dca25b; text-decoration:underline; text-decoration-color:rgba(220,162,91,0.35); text-underline-offset:3px;">dailylivinglabs.com/contribute</a></p>
 
   <div class="meta-divider"></div>
   <div class="details-label">Details</div>
@@ -556,7 +593,7 @@ body.visible .studio-crumb {
 
   <button class="case-study-link" onclick="navigateTo('case-study-dayli.html?from=socratic')">
     Case Study
-    <span class="case-study-arrow"></span>
+    <span class="case-study-arrow" aria-hidden="true"></span>
   </button>
 </div>
 
