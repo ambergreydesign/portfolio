@@ -73,6 +73,15 @@
     #panel-speedrun iframe {
       width:100%; height:100%; border:none;
     }
+
+    /* ── Mobile ── */
+    @media (max-width: 600px) {
+      .tab {
+        padding: 10px 10px;
+        font-size: 0.7rem;
+      }
+      .tab-icon { margin-right: 3px; }
+    }
   </style>
 
   <!-- Setup Guide Styles (scoped under .setup-scope) -->
@@ -393,7 +402,28 @@
     }
     .success-banner .next-step.purple { background: rgba(146, 48, 227, 0.12); color: #DBB0FF; }
     .success-banner .next-step.cyan { background: rgba(31, 238, 234, 0.08); color: #1FEEEA; }
-  
+
+    /* ── Mobile ── */
+    @media (max-width: 600px) {
+      .setup-scope { padding: 24px 16px 60px; }
+      .header { margin-bottom: 20px; }
+      .header-icon { font-size: 2rem; }
+      .header h1 { font-size: 1.4rem; margin-top: 10px; }
+      .header p { font-size: 0.78rem; }
+
+      .platform-toggle {
+        max-width: 240px;
+        padding: 4px;
+        margin-bottom: 20px;
+      }
+      .platform-btn {
+        padding: 8px 12px;
+        font-size: 0.75rem;
+        gap: 5px;
+      }
+      .platform-btn .icon { font-size: 0.9rem; }
+    }
+
   </style>
 </head>
 <body>
