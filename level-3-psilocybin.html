@@ -367,6 +367,11 @@ body.visible { opacity: 1; }
 /* ── MOBILE (≤520px) ── */
 @media (max-width: 520px) {
 
+  /* Touch targets — min 44px */
+  .nav-back { min-height: 44px; min-width: 44px; }
+  .case-study-link { min-height: 44px; }
+  .studio-crumb { min-height: 44px; min-width: 44px; }
+
   .left-area {
     padding: 56px 20px 20px;
     height: auto;
@@ -480,18 +485,55 @@ body.visible .studio-crumb {
   letter-spacing: 0.3em;
   text-transform: uppercase;
 }
+
+/* ── SKIP LINK ── */
+.skip-link {
+  position: absolute;
+  top: -100%;
+  left: 16px;
+  background: #9b6dff;
+  color: #fff;
+  padding: 10px 18px;
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 500;
+  z-index: 9999;
+  text-decoration: none;
+  transition: top 0.2s ease;
+}
+.skip-link:focus { top: 16px; }
+
+/* ── FOCUS STYLES ── */
+:focus-visible {
+  outline: 2px solid #9b6dff;
+  outline-offset: 3px;
+}
+
+/* ── REDUCED MOTION ── */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
 </style>
 </head>
 <body>
 
-<div id="page-exit"></div>
+<a class="skip-link" href="#main-content">Skip to main content</a>
+<div id="page-exit" aria-hidden="true"></div>
 
-<div class="wordmark">Amber Grey</div>
-<button class="nav-back" onclick="navigateTo('level-2-experiments.html')">
-  <span class="nav-back-arrow"></span>
+<div class="wordmark" aria-hidden="true">Amber Grey</div>
+<nav aria-label="Back navigation">
+<button class="nav-back" aria-label="Back to Experiments" onclick="navigateTo('level-2-experiments.html')">
+  <span class="nav-back-arrow" aria-hidden="true"></span>
   Experiments
 </button>
+</nav>
 
+<main id="main-content">
 <!-- Left canvas -->
 <div id="left-canvas">
   <div class="left-area">
@@ -502,8 +544,8 @@ body.visible .studio-crumb {
       </div>
       <div class="artifact-label">Prototype / Artifact</div>
     </div>
-    <div class="studio-crumb" onclick="navigateTo('studio-portfolio.html')">
-  <svg class="crumb-mushroom" width="24" height="36" viewBox="0 0 24 36" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <div class="studio-crumb" onclick="navigateTo('studio-portfolio.html')" role="link" tabindex="0" aria-label="Go to Studio" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();this.click()}">
+  <svg class="crumb-mushroom" width="24" height="36" viewBox="0 0 24 36" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
     <ellipse cx="12" cy="12" rx="11" ry="10" stroke="currentColor" stroke-width="0.75"/>
     <path d="M9 22 L9 33" stroke="currentColor" stroke-width="0.75" stroke-linecap="round"/>
     <path d="M15 22 L15 33" stroke="currentColor" stroke-width="0.75" stroke-linecap="round"/>
@@ -519,8 +561,10 @@ body.visible .studio-crumb {
   </div>
 </div>
 
+</main>
+
 <!-- Right panel -->
-<div class="info-panel">
+<aside class="info-panel" aria-label="Project details">
   <div class="zone-badge">Experiments</div>
   <h1 class="project-title">Psilocybin<br>as System</h1>
   <p class="project-desc">A speculative interface mapping internal, non-linear experience into a structured, navigable system — making the deeply subjective legible through interaction.</p>
@@ -550,11 +594,11 @@ body.visible .studio-crumb {
   <div class="reflection-label">What I Wanted to Show</div>
   <p class="reflection-quote">Even the most abstract experiences can be explored through structure, revealing patterns that are otherwise invisible.</p>
 
-  <button class="case-study-link" onclick="navigateTo('case-study-psilocybin.html')">
+  <button class="case-study-link" aria-label="View case study" onclick="navigateTo('case-study-psilocybin.html')">
     Case Study
-    <span class="case-study-arrow"></span>
+    <span class="case-study-arrow" aria-hidden="true"></span>
   </button>
-</div>
+</aside>
 
 <script>
 'use strict';

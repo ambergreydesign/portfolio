@@ -361,6 +361,12 @@ html, body {
 
   /* Ambient toning */
   .ambient-orb { display: none; }
+
+  /* Touch targets — min 44px */
+  .tray-thumb { min-height: 44px; }
+  .action-btn { min-height: 44px; padding: 12px 0; }
+  .control-slider { height: 6px; }
+  .control-slider::-webkit-slider-thumb { width: 24px; height: 24px; }
 }
 
 @media (max-width: 400px) {
@@ -372,14 +378,29 @@ html, body {
   #rightPanel { padding: 16px 12px 40px; }
   .artwork-tray { grid-template-columns: repeat(4, 1fr); gap: 4px; }
 }
+
+/* ── FOCUS STYLES ── */
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+}
+
+/* ── REDUCED MOTION ── */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
 </style>
 </head>
 <body>
 
-<div class="ambient"></div>
-<div class="ambient-orb ambient-orb-1"></div>
-<div class="ambient-orb ambient-orb-2"></div>
-<div class="wordmark">Amber Grey</div>
+<div class="ambient" aria-hidden="true"></div>
+<div class="ambient-orb ambient-orb-1" aria-hidden="true"></div>
+<div class="ambient-orb ambient-orb-2" aria-hidden="true"></div>
+<div class="wordmark" aria-hidden="true">Amber Grey</div>
 
 <!-- STATUS BAR -->
 <div id="statusBar">
@@ -395,12 +416,12 @@ html, body {
 </div>
 
 
-<div id="shell">
+<main id="shell" role="main">
 
   <!-- LEFT: CANVAS -->
   <div id="canvasPanel">
-    <div id="canvasArea">
-      <div class="empty-state" id="emptyState">
+    <div id="canvasArea" role="img" aria-label="Synthesis canvas — drag and arrange artworks here">
+      <div class="empty-state" id="emptyState" aria-hidden="true">
         <div class="empty-icon">+</div>
         <div class="empty-text">Click artworks from the tray<br>to place them on the canvas</div>
       </div>
@@ -409,12 +430,12 @@ html, body {
   </div>
 
   <!-- RIGHT: PANEL -->
-  <div id="rightPanel">
-    <div class="panel-title">The Synthesis Table</div>
+  <aside id="rightPanel" aria-label="Artwork controls">
+    <h2 class="panel-title">The Synthesis Table</h2>
     <div class="panel-subtitle">Each piece below was created by non-artists during a psilocybin ritual. Click to add to the canvas, rotate, blend, stack, and scale to create something new.</div>
 
-    <div class="tray-label">Ceremony Artworks</div>
-    <div class="artwork-tray" id="artworkTray"></div>
+    <h3 class="tray-label">Ceremony Artworks</h3>
+    <div class="artwork-tray" id="artworkTray" role="grid" aria-label="Ceremony artworks — click to place on canvas"></div>
 
     <div class="controls-section" id="controlsSection" style="display:none;">
       <div class="controls-label">Selected Artwork</div>
@@ -448,8 +469,8 @@ html, body {
 
 
 
-  </div>
-</div>
+  </aside>
+</main>
 
 
 <script>
