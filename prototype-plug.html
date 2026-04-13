@@ -191,6 +191,7 @@ html, body { width: 100%; height: 100%; background: var(--bg); font-family: 'DM 
    MODE 2: 3D DESIGN ANATOMY
 ═══════════════════════════ */
 #anatomy-view { padding-top: 70px; gap: 16px; }
+.anatomy-stage { margin-top: 32px; }
 .anatomy-toggle {
   display: flex; gap: 4px; background: rgba(255,255,255,0.05);
   border: 1px solid rgba(255,255,255,0.09); border-radius: 100px; padding: 3px;
@@ -205,7 +206,7 @@ html, body { width: 100%; height: 100%; background: var(--bg); font-family: 'DM 
 .anatomy-toggle-btn.active { background: rgba(196,122,46,0.15); color: var(--copper); }
 
 .anatomy-stage {
-  display: flex; gap: 80px; align-items: flex-start; justify-content: center;
+  display: flex; gap: 80px; align-items: stretch; justify-content: center;
   perspective: 900px; position: relative;
 }
 
@@ -213,12 +214,13 @@ html, body { width: 100%; height: 100%; background: var(--bg); font-family: 'DM 
 .plug-assembly {
   display: flex; flex-direction: column; align-items: center; gap: 4px;
   transform: rotateY(-5deg) rotateX(2deg);
+  margin-top: 45px;
   transform-style: preserve-3d;
   position: relative;
 }
 .comp-label {
   font-size: 8px; font-weight: 500; letter-spacing: 0.22em; text-transform: uppercase;
-  color: rgba(240,208,140,0.3); margin-top: 10px;
+  color: rgba(240,208,140,0.3); margin-top: auto; padding-top: 10px;
 }
 
 .plug-render {
@@ -356,6 +358,7 @@ html, body { width: 100%; height: 100%; background: var(--bg); font-family: 'DM 
   transform: rotateY(8deg) rotateX(2deg);
   transform-style: preserve-3d;
   position: relative;
+  padding-bottom: 6px;
 }
 
 /* Tall dual wall plate */
@@ -554,7 +557,7 @@ html, body { width: 100%; height: 100%; background: var(--bg); font-family: 'DM 
 .ad3-title { font-family: 'Cormorant Garamond', serif; font-size: 18px; font-weight: 600; color: var(--warm); line-height: 1.2; margin-bottom: 8px; }
 .ad3-body { font-size: 12px; font-weight: 300; line-height: 1.7; color: rgba(240,208,140,0.55); }
 
-.standard-msg { font-size: 12px; font-weight: 300; color: rgba(240,208,140,0.28); font-style: italic; text-align: center; }
+.standard-msg { font-size: 12px; font-weight: 300; color: rgba(240,208,140,0.55); font-style: italic; text-align: center; }
 
 .explode-toggle {
   display: flex; align-items: center; gap: 8px; cursor: pointer;
@@ -568,14 +571,84 @@ html, body { width: 100%; height: 100%; background: var(--bg); font-family: 'DM 
 .phase-view { display: none; gap: 80px; align-items: flex-start; justify-content: center; perspective: 900px; }
 .phase-view.active { display: flex; }
 
-@media (max-width: 860px) {
+/* ── MOBILE GATE ── */
+.mobile-gate {
+  display: none;
+  position: absolute; inset: 0; z-index: 200;
+  background: var(--bg);
+  flex-direction: column; align-items: center; justify-content: center;
+  padding: 40px 28px; text-align: center; gap: 28px;
+}
+.mobile-gate-icon {
+  width: 64px; height: 64px; border-radius: 50%;
+  background: rgba(196,122,46,0.08);
+  border: 1px solid rgba(196,122,46,0.18);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 28px; color: var(--copper);
+}
+.mobile-gate-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 24px; font-weight: 600; color: var(--warm); line-height: 1.2;
+}
+.mobile-gate-body {
+  font-size: 13px; font-weight: 300; line-height: 1.75;
+  color: rgba(240,208,140,0.55); max-width: 320px;
+}
+.mobile-gate-body em { color: rgba(240,218,160,0.85); font-style: italic; }
+.mobile-gate-summary {
+  display: flex; flex-direction: column; gap: 16px; width: 100%; max-width: 300px;
+}
+.mobile-gate-card {
+  background: rgba(196,122,46,0.05);
+  border: 1px solid rgba(196,122,46,0.15);
+  border-radius: 12px; padding: 18px 20px;
+  text-align: left;
+}
+.mobile-gate-card-label {
+  font-size: 8px; font-weight: 500; letter-spacing: 0.22em; text-transform: uppercase;
+  color: rgba(196,122,46,0.5); margin-bottom: 6px;
+}
+.mobile-gate-card-text {
+  font-size: 12px; font-weight: 300; line-height: 1.65; color: rgba(240,208,140,0.65);
+}
+.mobile-gate-hint {
+  font-size: 10px; font-weight: 400; letter-spacing: 0.08em;
+  color: rgba(196,122,46,0.4); font-style: italic;
+}
+
+@media (max-width: 680px) {
+  .mobile-gate { display: flex; }
+  #mode-selector, #app, .nav-back, .wordmark { display: none; }
+}
+
+@media (min-width: 681px) and (max-width: 860px) {
   .challenge-arena { gap: 40px; flex-wrap: wrap; }
   .anatomy-stage { gap: 40px; }
   .anat3d-detail { position: static; transform: none; margin-top: 16px; right: auto; }
+  #mode-selector { font-size: 8px; }
+  .mode-btn { padding: 6px 14px; font-size: 8px; }
+  .challenge-hud { gap: 24px; }
 }
 </style>
 </head>
 <body>
+
+<div class="mobile-gate">
+  <div class="mobile-gate-icon">&#x1F50C;</div>
+  <div class="mobile-gate-title">Interactive Prototype</div>
+  <p class="mobile-gate-body">This prototype uses <em>drag-to-rotate</em> 3D interactions and <em>side-by-side comparisons</em> designed for larger screens.</p>
+  <div class="mobile-gate-summary">
+    <div class="mobile-gate-card">
+      <div class="mobile-gate-card-label">Orientation Challenge</div>
+      <div class="mobile-gate-card-text">Rotate a plug to match an outlet — first without guidance, then with the tactile redesign. Compares your accuracy and speed across both phases.</div>
+    </div>
+    <div class="mobile-gate-card">
+      <div class="mobile-gate-card-label">Design Anatomy</div>
+      <div class="mobile-gate-card-text">Explore the clip add-on (plug) and guide clips (outlet) in a 3D exploded view. Phase II shows the magnetic alternative.</div>
+    </div>
+  </div>
+  <p class="mobile-gate-hint">Open on a tablet or desktop for the full experience</p>
+</div>
 
 <button class="nav-back" onclick="navigateTo('case-study-plug.html')">
   <span class="nav-back-arrow"></span>
@@ -686,12 +759,11 @@ html, body { width: 100%; height: 100%; background: var(--bg); font-family: 'DM 
           </div>
 
           <!-- Hotspot on clip -->
-          <div class="hs3d" id="hs-plug-clip" style="top: 20%; right: -34px;" onclick="show3dDetail(0)">1</div>
+          <div class="hs3d" id="hs-plug-clip" style="top: 45%; left: 50%; transform: translateX(-50%);" onclick="show3dDetail(0)">1</div>
         </div>
         <div class="plug-cord-grip"></div>
         <div class="plug-cord-3d"></div>
         <div class="clip-closeup" id="a3-closeup"></div>
-        <div class="comp-label">Plug with Add-On</div>
       </div>
 
       <!-- Dual outlet with guide clips -->
@@ -724,9 +796,8 @@ html, body { width: 100%; height: 100%; background: var(--bg); font-family: 'DM 
           <div class="plate-screw"></div>
 
           <!-- Hotspot on guides -->
-          <div class="hs3d" id="hs-guides" style="top: 50%; right: -30px; margin-top: -14px;" onclick="show3dDetail(1)">2</div>
+          <div class="hs3d" id="hs-guides" style="top: 50%; right: -38px; margin-top: -14px;" onclick="show3dDetail(1)">2</div>
         </div>
-        <div class="comp-label">Standard Dual Outlet</div>
       </div>
 
       <!-- Detail panel -->
@@ -1014,7 +1085,7 @@ const detail3d = [
   { num: '01 \u2014 Plug Clip', title: 'Ergonomic Plug Add-On',
     body: 'A rounded clip with a frosted face that snaps onto the side of a standard plug. It provides tactile orientation \u2014 your hand feels the clip and instantly knows which way the plug faces. Keeps fingers safely positioned below the prong line. Easily attaches to any existing plug.' },
   { num: '02 \u2014 Guide Clips', title: 'Outlet Guide Add-Ons',
-    body: 'Bow-tie shaped metallic clips that mount between and below the outlets. Your fingertip finds the curved surface and knows exactly where the outlets are \u2014 without ever touching the dangerous slots. The concave profile guides your finger to center, providing safe spatial orientation in total darkness.' }
+    body: 'Ceramic rectangle add-ons with a u-shaped curve that mount between and below the outlets. Your fingertip finds the curved surface and knows exactly where the outlets are \u2014 without ever touching the dangerous slots. The concave profile guides your finger to center, providing safe spatial orientation in total darkness.' }
 ];
 
 let activeD3 = -1;

@@ -876,7 +876,7 @@ body.visible { opacity: 1; }
    MOBILE
 ══════════════════════════════════ */
 @media (max-width: 860px) {
-  .hero { padding: 0 36px 64px; }
+  .hero { padding: 0 36px 64px; background-attachment: scroll; }
   .cs-section { padding: 72px 36px; }
   .reflection-wrap { padding: 80px 36px; }
   .hero-meta { gap: 28px; }
@@ -888,6 +888,8 @@ body.visible { opacity: 1; }
   .approach-grid { grid-template-columns: 1fr; }
   .narrative-cols { grid-template-columns: 1fr; gap: 32px; }
   .insight-grid { grid-template-columns: 1fr; }
+  .proto-embed iframe { height: 480px; }
+  .chip-detail-card.open { margin: 0 20px 20px; }
 }
 @media (max-width: 480px) {
   .hero { padding: 0 20px 48px; }
@@ -895,6 +897,17 @@ body.visible { opacity: 1; }
   .reflection-wrap { padding: 64px 20px; }
   .chip-panel { padding: 24px 20px; }
   .chip-detail-wrap { padding: 0 20px 20px; }
+  .chip-detail-card.open { margin: 0 12px 16px; }
+  .nav-back { top: 16px; left: 16px; }
+  .theme-switch { top: 16px; right: 16px; }
+  .proto-embed iframe { height: 360px; }
+  .carousel-slide { padding: 20px; }
+  .carousel-slide img { max-height: 280px; }
+  .carousel-arrow { width: 30px; height: 30px; font-size: 13px; }
+  .stat-cell { padding: 20px; }
+  .approach-card { padding: 28px 24px 24px; }
+  .insight-card { padding: 24px 20px 20px; }
+  .thesis-block { padding: 22px 24px; }
 }
 </style>
 </head>
