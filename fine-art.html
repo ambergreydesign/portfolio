@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Fine Art — Studio</title>
+<title>Fine Art — Amber Grey</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
@@ -13,10 +13,10 @@
 :root {
   --bg: #0b1c26;
   --text: rgba(228,218,200,0.88);
-  --text-dim: rgba(200,185,165,0.55);
+  --text-dim: rgba(200,185,165,0.72);
   --text-bright: rgba(235,225,208,0.95);
   --accent: rgba(190,155,90,0.80);
-  --accent-dim: rgba(190,155,90,0.35);
+  --accent-dim: rgba(190,155,90,0.55);
   --glass-bg: rgba(200,195,222,0.06);
   --glass-bg-hover: rgba(200,195,222,0.12);
   --glass-border: rgba(255,255,255,0.10);
@@ -170,7 +170,7 @@ body.visible .hero-title {
   font-size: clamp(13px, 1.4vw, 16px);
   font-weight: 300;
   font-style: normal;
-  color: rgba(228,218,200,0.62);
+  color: rgba(228,218,200,0.78);
   margin-top: 28px;
   text-align: center;
   max-width: 520px;
@@ -313,7 +313,7 @@ body.visible .scroll-hint { opacity: 1; }
 .filter-chip .chip-count {
   font-size: 8px;
   font-weight: 300;
-  opacity: 0.6;
+  opacity: 0.75;
 }
 
 /* ── GALLERY SCRIM — removed, handled by gallery-wrap ── */
@@ -777,35 +777,115 @@ body.visible .scroll-hint { opacity: 1; }
   .lightbox-nav { display: none; }
 }
 @media (max-width: 580px) {
+  body { background-attachment: scroll; }
   .gallery-wrap { padding: 28px 16px 48px; }
   .filter-bar { gap: 8px; padding: 14px 16px; }
   .filter-chip { padding: 6px 14px; font-size: 8px; }
   .lightbox-info { min-width: unset; padding: 16px 20px; }
   .lightbox-title { font-size: 22px; }
   .timeline-section { display: none; }
+  .filter-chip { font-size: 10px; min-height: 44px; }
+  .scroll-hint span { font-size: 10px; }
+}
+
+/* ── SKIP LINK ── */
+.skip-link {
+  position: fixed;
+  top: -100%;
+  left: 16px;
+  z-index: 10000;
+  background: var(--bg);
+  color: var(--accent);
+  border: 1px solid var(--accent);
+  border-radius: 8px;
+  padding: 12px 20px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 13px;
+  font-weight: 400;
+  letter-spacing: 0.1em;
+  text-decoration: none;
+  transition: top 0.2s ease;
+}
+.skip-link:focus {
+  top: 16px;
+}
+
+/* ── FOCUS VISIBLE ── */
+*:focus { outline: none; }
+*:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+  border-radius: 4px;
+}
+.lightbox-close:focus-visible,
+.lightbox-nav:focus-visible {
+  outline-offset: 2px;
+  border-radius: 50%;
+}
+.filter-chip:focus-visible {
+  outline-offset: 2px;
+  border-radius: 100px;
+}
+.gallery-card:focus-visible {
+  outline-offset: 0px;
+  border-radius: 8px;
+}
+
+/* ── MINIMUM FONT SIZES ── */
+.timeline-thumb-title { font-size: 8px; }
+.scroll-hint span { font-size: 10px; }
+.hover-detail { font-size: 10px; }
+
+/* ── TOUCH TARGETS ── */
+.timeline-year { min-width: 44px; min-height: 44px; justify-content: center; }
+.timeline-thumb { min-width: 44px; min-height: 44px; }
+
+/* ── REDUCED MOTION ── */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+  .hero-title, .hero-statement, .hero-count, .scroll-hint {
+    opacity: 1 !important;
+    transform: none !important;
+  }
+  .gallery-card {
+    opacity: 1 !important;
+    transform: none !important;
+  }
+  .mote { display: none; }
+  .glitter-dot { display: none; }
 }
 </style>
 </head>
 <body>
+
+<!-- Skip link -->
+<a class="skip-link" href="#gallery">Skip to gallery</a>
 
 <!-- Page transitions -->
 <div id="page-exit"></div>
 <div id="page-enter"></div>
 
 <!-- Back button -->
-<a class="back-link" onclick="navigateTo('level-2-perspective.html'); return false;" href="level-2-perspective.html">
-  <span class="back-arrow"></span>
+<a class="back-link" onclick="navigateTo('level-2-perspective.html'); return false;" href="level-2-perspective.html" aria-label="Back to Perspectives">
+  <span class="back-arrow" aria-hidden="true"></span>
   Perspectives
 </a>
 
 <!-- Wordmark -->
-<div class="wordmark">AMBER SMITH — STUDIO</div>
+<div class="wordmark" aria-hidden="true">AMBER GREY</div>
 
 <!-- Floating motes -->
-<div id="motes"></div>
+<div id="motes" aria-hidden="true"></div>
+
+<main>
 
 <!-- ════ HERO ════ -->
-<section class="hero">
+<section class="hero" aria-label="Introduction">
   <div class="hero-grid"></div>
   <h1 class="hero-title">fine Art</h1>
   <p class="hero-statement">Fine art taught me to sit with what doesn't make sense yet.<br>That ability now drives my work in design, where I uncover patterns in human behavior and shape them into systems that create clarity.</p>
@@ -817,17 +897,17 @@ body.visible .scroll-hint { opacity: 1; }
 </section>
 
 <!-- ════ FILTER BAR ════ -->
-<nav class="filter-bar" id="filterBar">
-  <button class="filter-chip active" data-filter="all">All <span class="chip-count" id="countAll"></span></button>
-  <button class="filter-chip" data-filter="oil">Oil <span class="chip-count" id="countOil"></span></button>
-  <button class="filter-chip" data-filter="ink">Ink & Oil <span class="chip-count" id="countInk"></span></button>
-  <button class="filter-chip" data-filter="gold">Gold Leaf <span class="chip-count" id="countGold"></span></button>
-  <button class="filter-chip" data-filter="pencil">Pencil <span class="chip-count" id="countPencil"></span></button>
+<nav class="filter-bar" id="filterBar" aria-label="Filter artworks by medium">
+  <button class="filter-chip active" data-filter="all" aria-pressed="true">All <span class="chip-count" id="countAll"></span></button>
+  <button class="filter-chip" data-filter="oil" aria-pressed="false">Oil <span class="chip-count" id="countOil"></span></button>
+  <button class="filter-chip" data-filter="ink" aria-pressed="false">Ink &amp; Oil <span class="chip-count" id="countInk"></span></button>
+  <button class="filter-chip" data-filter="gold" aria-pressed="false">Gold Leaf <span class="chip-count" id="countGold"></span></button>
+  <button class="filter-chip" data-filter="pencil" aria-pressed="false">Pencil <span class="chip-count" id="countPencil"></span></button>
 </nav>
 
 <!-- ════ GALLERY ════ -->
-<section class="gallery-wrap">
-  <div class="gallery" id="gallery"></div>
+<section class="gallery-wrap" aria-label="Artwork gallery">
+  <div class="gallery" id="gallery" role="list"></div>
 </section>
 
 <!-- ════ TIMELINE ════ -->
@@ -840,14 +920,16 @@ body.visible .scroll-hint { opacity: 1; }
 </section>
 
 <!-- ════ LIGHTBOX ════ -->
-<div class="lightbox" id="lightbox">
+<div class="lightbox" id="lightbox" role="dialog" aria-modal="true" aria-label="Artwork viewer">
   <div class="lightbox-backdrop" id="lightboxBackdrop"></div>
-  <button class="lightbox-close" id="lightboxClose"></button>
-  <button class="lightbox-nav lightbox-prev" id="lightboxPrev"></button>
-  <button class="lightbox-nav lightbox-next" id="lightboxNext"></button>
+  <button class="lightbox-close" id="lightboxClose" aria-label="Close lightbox"></button>
+  <button class="lightbox-nav lightbox-prev" id="lightboxPrev" aria-label="Previous artwork"></button>
+  <button class="lightbox-nav lightbox-next" id="lightboxNext" aria-label="Next artwork"></button>
   <div class="lightbox-content" id="lightboxContent"></div>
-  <div class="lightbox-counter" id="lightboxCounter"></div>
+  <div class="lightbox-counter" id="lightboxCounter" aria-live="polite"></div>
 </div>
+
+</main>
 
 <script>
 /* ═══════════════════════════════════════════
@@ -946,17 +1028,27 @@ artworks.forEach((art, i) => {
     ? `<img src="${encodeURI(art.img)}" alt="${art.title}" style="width:100%;display:block;">`
     : `<div class="card-placeholder" style="padding-bottom:${ratio * 100}%;background:${placeholderGradient(art)};"></div>`;
 
+  card.setAttribute('role', 'listitem');
+  card.setAttribute('tabindex', '0');
+  card.setAttribute('aria-label', `${art.title}, ${art.medium}, ${art.w} by ${art.h} inches, ${art.year}`);
+
   card.innerHTML = `
     <div class="card-image">
       ${imageHTML}
     </div>
-    <div class="card-hover-overlay">
+    <div class="card-hover-overlay" aria-hidden="true">
       <div class="hover-title">${art.title}</div>
       <div class="hover-detail">${art.w}&times;${art.h}&Prime; &middot; ${art.medium} &middot; ${art.year}</div>
     </div>
   `;
 
   card.addEventListener('click', () => openLightbox(i, card));
+  card.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault();
+      openLightbox(i, card);
+    }
+  });
 
   /* Place in shortest column (masonry distribution) */
   let shortest = 0;
@@ -1042,8 +1134,12 @@ chips.forEach(chip => {
     const filter = chip.dataset.filter;
     if (filter === activeFilter) return;
     activeFilter = filter;
-    chips.forEach(c => c.classList.remove('active'));
+    chips.forEach(c => {
+      c.classList.remove('active');
+      c.setAttribute('aria-pressed', 'false');
+    });
     chip.classList.add('active');
+    chip.setAttribute('aria-pressed', 'true');
     applyFilter();
   });
 });
@@ -1120,15 +1216,20 @@ function openLightbox(index, cardEl) {
   // Clear inline styles so CSS .open rules take over
   requestAnimationFrame(() => {
     lightboxContent.style.cssText = '';
+    document.getElementById('lightboxClose').focus();
   });
 }
 
 function closeLightbox() {
+  const returnIndex = currentIndex;
   lightbox.classList.add('closing');
   setTimeout(() => {
     lightbox.classList.remove('open', 'closing');
     document.body.style.overflow = '';
     currentIndex = -1;
+    // Restore focus to the card that opened the lightbox
+    const returnCard = document.querySelector(`.gallery-card[data-index="${returnIndex}"]`);
+    if (returnCard) returnCard.focus();
   }, 300);
 }
 
@@ -1183,6 +1284,17 @@ document.addEventListener('keydown', e => {
   if (e.key === 'Escape') closeLightbox();
   if (e.key === 'ArrowLeft') lightboxNav(-1);
   if (e.key === 'ArrowRight') lightboxNav(1);
+  // Focus trap within lightbox
+  if (e.key === 'Tab') {
+    const focusable = lightbox.querySelectorAll('button:not([style*="display:none"])');
+    const first = focusable[0];
+    const last = focusable[focusable.length - 1];
+    if (e.shiftKey) {
+      if (document.activeElement === first) { e.preventDefault(); last.focus(); }
+    } else {
+      if (document.activeElement === last) { e.preventDefault(); first.focus(); }
+    }
+  }
 });
 
 /* ═══════════════════════════════════════════
@@ -1201,13 +1313,17 @@ let activeYear = null;
 years.forEach(year => {
   const el = document.createElement('div');
   el.className = 'timeline-year';
+  el.setAttribute('tabindex', '0');
+  el.setAttribute('role', 'button');
+  el.setAttribute('aria-label', `${year}, ${yearMap[year].length} works`);
+  el.setAttribute('aria-expanded', 'false');
 
   // Build thumbnail popup
   const thumbs = yearMap[year].map(a => {
     const imgHTML = a.img
       ? `<img src="${encodeURI(a.img)}" alt="${a.title}" loading="lazy">`
       : `<div class="timeline-thumb-placeholder" style="background:${placeholderGradient(a)};"></div>`;
-    return `<div class="timeline-thumb" data-index="${a.index}">
+    return `<div class="timeline-thumb" data-index="${a.index}" tabindex="0" role="button" aria-label="View ${a.title}">
       ${imgHTML}
       <div class="timeline-thumb-title">${a.title}</div>
     </div>`;
@@ -1221,7 +1337,7 @@ years.forEach(year => {
     <div class="timeline-year-label">${year}</div>
   `;
 
-  el.addEventListener('click', (e) => {
+  function toggleYear(e) {
     // If clicking a thumb, open that artwork in lightbox
     const thumb = e.target.closest('.timeline-thumb');
     if (thumb) {
@@ -1232,11 +1348,23 @@ years.forEach(year => {
     // Toggle year popup
     if (activeYear === el) {
       el.classList.remove('active');
+      el.setAttribute('aria-expanded', 'false');
       activeYear = null;
     } else {
-      if (activeYear) activeYear.classList.remove('active');
+      if (activeYear) {
+        activeYear.classList.remove('active');
+        activeYear.setAttribute('aria-expanded', 'false');
+      }
       el.classList.add('active');
+      el.setAttribute('aria-expanded', 'true');
       activeYear = el;
+    }
+  }
+  el.addEventListener('click', toggleYear);
+  el.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault();
+      toggleYear(e);
     }
   });
 
@@ -1246,8 +1374,21 @@ years.forEach(year => {
 // Close popup when clicking outside
 document.addEventListener('click', (e) => {
   if (activeYear && !e.target.closest('.timeline-year')) {
+    activeYear.setAttribute('aria-expanded', 'false');
     activeYear.classList.remove('active');
     activeYear = null;
+  }
+});
+
+// Keyboard support for timeline thumbs
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Enter' || e.key === ' ') {
+    const thumb = e.target.closest('.timeline-thumb');
+    if (thumb) {
+      e.preventDefault();
+      const idx = parseInt(thumb.dataset.index);
+      openLightbox(idx, null);
+    }
   }
 });
 
