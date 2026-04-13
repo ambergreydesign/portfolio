@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Plug Redesign — Amber Grey</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,600;1,400;1,500&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html {
+  width: 100%; height: 100%;
+  overflow: hidden;
+  background-color: #0b1c26;
+  background-image:
+    linear-gradient(rgba(28, 18, 8, 0.55), rgba(28, 18, 8, 0.55)),
+    url('Studio_Edited.webp');
+  background-size: cover;
+  background-position: center top;
+  background-repeat: no-repeat;
+}
+
+body {
+  width: 100%; height: 100%;
+  overflow: hidden;
+  font-family: 'DM Sans', sans-serif;
+  opacity: 0;
+  transition: opacity 0.55s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+body.visible { opacity: 1; }
+
+#page-exit {
+  position: fixed; inset: 0;
+  background: #0b1c26;
+  opacity: 0; pointer-events: none;
+  transition: opacity 0.28s ease-in;
+  z-index: 9999;
+}
+#page-exit.active { opacity: 1; }
+
+#left-canvas {
+  position: absolute; left: 0; top: 0;
+  width: 1020px; height: 900px;
+  transform-origin: top left;
+}
+
+.left-area {
+  width: 100%; height: 100%;
+  position: relative;
+  display: flex; flex-direction: column;
+  justify-content: flex-start;
+  padding: 96px 99px 40px;
+}
+
+.nav-back {
+  position: fixed; top: 28px; left: 32px;
+  display: inline-flex; align-items: center; gap: 10px;
+  background: rgba(255,255,255,0.06);
+  backdrop-filter: blur(14px) saturate(1.2);
+  -webkit-backdrop-filter: blur(14px) saturate(1.2);
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 100px;
+  padding: 9px 18px 9px 14px;
+  cursor: pointer;
+  color: rgba(200,185,165,0.75);
+  font-family: 'DM Sans', sans-serif;
+  font-size: 10px; font-weight: 400;
+  letter-spacing: 0.22em; text-transform: uppercase;
+  transition: background 0.25s, color 0.25s, border-color 0.25s;
+  z-index: 100;
+}
+.nav-back:hover { background: rgba(255,255,255,0.11); color: rgba(200,185,165,1); border-color: rgba(255,255,255,0.18); }
+.nav-back-arrow { display: inline-block; width: 16px; height: 1px; background: currentColor; position: relative; flex-shrink: 0; }
+.nav-back-arrow::before {
+  content: ''; position: absolute; left: 0; top: -3px;
+  width: 6px; height: 6px;
+  border-left: 1px solid currentColor; border-bottom: 1px solid currentColor;
+  transform: rotate(45deg);
+}
+
+.card-section { display: flex; flex-direction: column; align-items: center; width: 100%; }
+
+.artifact-card {
+  width: 100%; max-width: 822px; height: 659px;
+  margin-bottom: 33px; border-radius: 14px;
+  border: 1px solid rgba(255,255,255,0.18);
+  overflow: hidden; position: relative;
+}
+.artifact-card iframe { width: 100%; height: 100%; border: none; display: block; border-radius: 13px; }
+
+.artifact-label {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 20px; font-weight: 500;
+  letter-spacing: 0.3em; text-transform: uppercase;
+  color: #f0d08c; white-space: nowrap;
+}
+
+.wordmark {
+  position: fixed; bottom: 24px; left: 21px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 13px; font-weight: 300; letter-spacing: 0.2em;
+  color: rgba(210,195,172,0.18); pointer-events: none; z-index: 10;
+}
+
+/* ── RIGHT PANEL ── */
+.info-panel {
+  position: fixed; right: 0; top: 0; bottom: 0;
+  width: 380px;
+  background: rgba(18, 14, 8, 0.85);
+  overflow: hidden; z-index: 10;
+  font-size: clamp(10px, 1.78vh, 16px);
+  display: flex; flex-direction: column;
+  justify-content: flex-start;
+  padding: 2em 1.5em 1.75em 2em;
+}
+
+.zone-badge {
+  font-size: 1em; font-weight: 500;
+  letter-spacing: 0.3em; text-transform: uppercase;
+  color: #c47a2e;
+  margin-bottom: 1.5em;
+}
+
+.project-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 3em; font-weight: 600;
+  line-height: 1.1; color: #f0d08c;
+  margin-bottom: 1.25em;
+}
+
+.project-desc {
+  font-size: 1.25em; font-weight: 500;
+  line-height: 1.95; letter-spacing: 0.05em;
+  color: #a08860;
+  margin-bottom: 1.75em;
+}
+
+.meta-table { display: flex; flex-direction: column; gap: 0.75em; margin-bottom: 2.5em; }
+.meta-row { display: flex; justify-content: space-between; align-items: baseline; }
+.meta-label { font-size: 1.25em; font-weight: 500; letter-spacing: 0.06em; text-transform: uppercase; color: #6b5530; }
+.meta-value { font-size: 1.25em; font-weight: 500; letter-spacing: 0.06em; color: #c4a060; text-align: right; }
+
+.mob-tool-link { display: none; }
+.details-label { display: none; }
+
+.meta-divider { width: 100%; height: 1px; background: rgba(196,122,46,0.18); margin-bottom: 0.625em; }
+
+.reflection-label {
+  font-size: 1.125em; font-weight: 500;
+  letter-spacing: 0.06em; text-transform: uppercase;
+  color: #6b5530;
+  margin-bottom: 0.875em;
+}
+.reflection-quote {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.5em; font-weight: 400; font-style: italic;
+  line-height: 1.5; color: #f0d08c;
+}
+
+.case-study-link {
+  margin-top: auto;
+  display: inline-flex; align-items: center; gap: 1.125em;
+  font-size: 1.5em; font-weight: 500;
+  letter-spacing: 0.3em; text-transform: uppercase;
+  color: rgba(196,122,46,0.5);
+  background: none; border: none; cursor: pointer; padding: 0;
+  transition: color 0.25s;
+}
+.case-study-link:hover { color: rgba(240,208,140,0.9); }
+.case-study-arrow {
+  width: 2.5em; height: 1px;
+  background: currentColor;
+  position: relative; flex-shrink: 0;
+}
+.case-study-arrow::after {
+  content: ''; position: absolute; right: 0; top: -3.5px;
+  width: 7px; height: 7px;
+  border-right: 1px solid currentColor; border-top: 1px solid currentColor;
+  transform: rotate(45deg);
+}
+
+/* ── MOBILE ≤ 1000px ── */
+@media (max-width: 1000px) {
+  html { overflow-y: auto; background-attachment: fixed; }
+  body { overflow: visible; height: auto; }
+  #left-canvas { position: static; width: 100%; height: auto; transform: none !important; }
+  .left-area { height: 100svh; min-height: unset; padding: 72px 24px 32px; justify-content: center; }
+  .nav-back { position: fixed; left: 20px; top: 20px; }
+  .artifact-card { width: 100%; max-width: min(822px, calc((100svh - 180px) * 822 / 659)); height: auto; aspect-ratio: 822 / 659; margin-bottom: 24px; }
+  .artifact-label { font-size: 13px; letter-spacing: 0.28em; }
+  .info-panel {
+    position: static; width: 100%; height: auto; overflow: visible;
+    font-size: 13px; padding: 48px 40px 56px;
+    display: grid; grid-template-columns: 1fr 1fr 1fr; grid-template-rows: auto auto 1fr;
+    column-gap: 32px; align-items: start;
+  }
+  .zone-badge { grid-column: 1; grid-row: 1; margin-bottom: 0.75em; }
+  .project-title { grid-column: 1; grid-row: 2; font-size: 2em; margin-bottom: 0.75em; }
+  .project-desc { grid-column: 1; grid-row: 3; font-size: 1em; line-height: 1.8; margin-bottom: 0; }
+  .meta-divider { display: none; }
+  .details-label {
+    display: block; grid-column: 2; grid-row: 1;
+    font-size: 1em; font-weight: 500; letter-spacing: 0.06em; text-transform: uppercase;
+    color: #6b5530; margin-bottom: 0.75em;
+  }
+  .meta-table { grid-column: 2; grid-row: 2 / 4; margin-bottom: 0; gap: 0.6em; }
+  .meta-label, .meta-value { font-size: 1em; }
+  .reflection-label { grid-column: 3; grid-row: 1; margin-bottom: 0.75em; font-size: 1em; }
+  .reflection-quote { grid-column: 3; grid-row: 2; font-size: 1.25em; }
+  .case-study-link { grid-column: 3; grid-row: 3; margin-top: auto; align-self: end; font-size: 1.1em; }
+}
+
+@media (max-width: 520px) {
+  .left-area { padding: 56px 20px 20px; height: auto; min-height: 100svh; }
+  .mob-tool-link {
+    display: block; margin-bottom: 10px;
+    font-size: 11px; font-weight: 400; font-style: italic;
+    letter-spacing: 0.03em; color: rgba(196,122,46,0.5);
+  }
+  .artifact-card { max-width: calc(100vw - 40px); width: 100%; aspect-ratio: unset; height: 68svh; }
+  .info-panel { display: flex; flex-direction: column; gap: 14px; padding: 32px 20px 44px; font-size: 12px; }
+  .zone-badge, .project-title, .project-desc, .meta-divider, .details-label, .meta-table,
+  .reflection-label, .reflection-quote, .case-study-link { grid-column: unset; grid-row: unset; margin: 0; }
+  .project-title { font-size: clamp(1em, 3.8vw, 1.4em); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; line-height: 1.15; }
+  .project-title br { display: none; }
+  .project-desc { font-size: 1em; line-height: 1.75; }
+  .meta-divider { display: none; }
+  .details-label { display: block; }
+  .meta-table { gap: 0.5em; width: 100%; }
+  .meta-row { display: flex; justify-content: space-between; align-items: baseline; width: 100%; gap: 0.75em; }
+  .meta-value { text-align: right; flex-shrink: 0; }
+  .reflection-quote { font-size: 1.1em; }
+  .case-study-link { margin-top: 8px; font-size: 1em; align-self: flex-start; }
+  .nav-back { top: 16px; left: 16px; }
+}
+
+/* ── STUDIO CRUMB ── */
+.studio-crumb {
+  position: absolute; bottom: 4px; left: 50%;
+  transform: translateX(-50%) translateY(8px);
+  display: flex; flex-direction: column; align-items: center; gap: 10px;
+  cursor: pointer; color: rgba(210,195,172,0.55);
+  transition: color 0.3s, opacity 0.6s cubic-bezier(0.25,0.46,0.45,0.94) 0.12s, transform 0.6s cubic-bezier(0.25,0.46,0.45,0.94) 0.12s;
+  user-select: none; opacity: 0; z-index: 5;
+}
+.studio-crumb:hover { color: rgba(210,195,172,0.9); }
+body.visible .studio-crumb { opacity: 1; transform: translateX(-50%) translateY(0); }
+@keyframes plugFloat {
+  0%, 100% { transform: translateY(0) rotate(0deg); }
+  50% { transform: translateY(-3px) rotate(-1deg); }
+}
+.crumb-plug { animation: plugFloat 4.5s ease-in-out infinite; }
+.crumb-text {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 7px; font-weight: 300;
+  letter-spacing: 0.3em; text-transform: uppercase;
+}
+</style>
+</head>
+<body>
+
+<div id="page-exit"></div>
+
+<div class="wordmark">Amber Grey</div>
+<button class="nav-back" onclick="navigateTo('level-2-experiments.html')">
+  <span class="nav-back-arrow"></span>
+  Experiments
+</button>
+
+<div id="left-canvas">
+  <div class="left-area">
+    <div class="card-section">
+      <p class="mob-tool-link">Open on desktop for full prototype functionality</p>
+      <div class="artifact-card">
+        <iframe src="prototype-plug.html" title="Plug Redesign — Interactive Prototype" loading="lazy"></iframe>
+      </div>
+      <div class="artifact-label">Prototype / Artifact</div>
+    </div>
+    <div class="studio-crumb" onclick="navigateTo('studio-portfolio.html')">
+      <svg class="crumb-plug" width="20" height="36" viewBox="0 0 20 36" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <rect x="4" y="14" width="12" height="16" rx="2" stroke="currentColor" stroke-width="0.75"/>
+        <line x1="7" y1="14" x2="7" y2="4" stroke="currentColor" stroke-width="0.75" stroke-linecap="round"/>
+        <line x1="13" y1="14" x2="13" y2="4" stroke="currentColor" stroke-width="0.75" stroke-linecap="round"/>
+        <line x1="10" y1="30" x2="10" y2="35" stroke="currentColor" stroke-width="0.75" stroke-linecap="round"/>
+        <rect x="6" y="26" width="8" height="4" rx="1" stroke="currentColor" stroke-width="0.5" opacity="0.4"/>
+      </svg>
+      <span class="crumb-text">Studio</span>
+    </div>
+  </div>
+</div>
+
+<div class="info-panel">
+  <div class="zone-badge">Experiments</div>
+  <h1 class="project-title">Plug<br>Redesign</h1>
+  <p class="project-desc">A tactile add-on system for plugging in without sight — designing orientation through touch so the hands know what the eyes can't see.</p>
+
+  <div class="meta-divider"></div>
+  <div class="details-label">Details</div>
+
+  <div class="meta-table">
+    <div class="meta-row">
+      <span class="meta-label">Type</span>
+      <span class="meta-value">Prototype</span>
+    </div>
+    <div class="meta-row">
+      <span class="meta-label">Year</span>
+      <span class="meta-value">2023</span>
+    </div>
+    <div class="meta-row">
+      <span class="meta-label">Methods</span>
+      <span class="meta-value">Industrial UX</span>
+    </div>
+    <div class="meta-row">
+      <span class="meta-label">Context</span>
+      <span class="meta-value">Inclusive Design</span>
+    </div>
+  </div>
+
+  <div class="reflection-label">What I Wanted to Show</div>
+  <p class="reflection-quote">The best design for disability is better design for everyone.</p>
+
+  <button class="case-study-link" onclick="navigateTo('case-study-plug.html')">
+    Case Study
+    <span class="case-study-arrow"></span>
+  </button>
+</div>
+
+<script>
+'use strict';
+
+const LEFT_W = 1020, DESIGN_H = 900, PANEL_W = 380, MOBILE_BP = 1000;
+
+function fitToViewport() {
+  if (window.innerWidth <= MOBILE_BP) return;
+  const availW = window.innerWidth - PANEL_W;
+  const scale = Math.min(availW / LEFT_W, window.innerHeight / DESIGN_H);
+  const offsetX = Math.max(0, (availW - LEFT_W * scale) / 2);
+  const offsetY = Math.max(0, (window.innerHeight - DESIGN_H * scale) / 2);
+  document.getElementById('left-canvas').style.transform =
+    `translate(${offsetX}px, ${offsetY}px) scale(${scale})`;
+}
+
+fitToViewport();
+window.addEventListener('resize', fitToViewport);
+
+function navigateTo(url) {
+  const canvas = document.getElementById('left-canvas');
+  if (canvas) { canvas.style.transition = 'opacity 0.28s ease-in'; canvas.style.opacity = '0'; }
+  const panel = document.querySelector('.info-panel');
+  if (panel) { panel.style.transition = 'opacity 0.28s ease-in'; panel.style.opacity = '0'; }
+  const crumb = document.querySelector('.studio-crumb');
+  if (crumb) { crumb.style.transition = 'opacity 0.2s ease-in, transform 0.2s ease-in'; crumb.style.opacity = '0'; crumb.style.transform = 'translateX(-50%) translateY(-6px)'; }
+  const exit = document.getElementById('page-exit');
+  setTimeout(() => { exit.classList.add('active'); }, 200);
+  setTimeout(() => { window.location.href = url; }, 430);
+}
+
+requestAnimationFrame(() => {
+  requestAnimationFrame(() => { document.body.classList.add('visible'); });
+});
+</script>
+
+</body>
+</html>

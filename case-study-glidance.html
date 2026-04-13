@@ -17,8 +17,8 @@
   --bg:             #0b1221;
   --bg-alt:         #0e1529;
   --text:           #e0d6c8;
-  --text-muted:     #7a6e7e;
-  --text-dim:       #42384d;
+  --text-muted:     #a89bab;
+  --text-dim:       #8a7e94;
   --pink:           #eac6ce;
   --amber:          #dca25b;
   --border:         rgba(255, 255, 255, 0.07);
@@ -62,7 +62,7 @@ body.visible { opacity: 1; }
   border-radius: 100px;
   padding: 9px 18px 9px 14px;
   cursor: pointer;
-  color: rgba(200, 185, 165, 0.75);
+  color: rgba(200, 185, 165, 0.88);
   font-family: 'DM Sans', sans-serif;
   font-size: 10px;
   font-weight: 400;
@@ -149,7 +149,7 @@ body.visible { opacity: 1; }
   font-weight: 400;
   line-height: 1.8;
   letter-spacing: 0.035em;
-  color: rgba(200, 185, 165, 0.62);
+  color: rgba(200, 185, 165, 0.78);
   max-width: 540px;
   margin-bottom: 64px;
 }
@@ -212,7 +212,7 @@ body.visible { opacity: 1; }
   font-weight: 400;
   line-height: 1.88;
   letter-spacing: 0.03em;
-  color: rgba(200, 185, 165, 0.6);
+  color: rgba(200, 185, 165, 0.78);
   max-width: 600px;
 }
 
@@ -230,7 +230,7 @@ body.visible { opacity: 1; }
   font-weight: 400;
   line-height: 1.9;
   letter-spacing: 0.03em;
-  color: rgba(220, 205, 185, 0.68);
+  color: rgba(220, 205, 185, 0.82);
 }
 .brief-text + .brief-text { margin-top: 20px; }
 
@@ -328,7 +328,7 @@ body.visible { opacity: 1; }
   font-weight: 400;
   line-height: 1.5;
   letter-spacing: 0.03em;
-  color: rgba(200, 185, 165, 0.62);
+  color: rgba(200, 185, 165, 0.78);
   padding-left: 18px;
   position: relative;
 }
@@ -427,7 +427,7 @@ body.visible { opacity: 1; }
   font-size: 14px;
   font-weight: 400;
   letter-spacing: 0.04em;
-  color: rgba(200, 185, 165, 0.45);
+  color: rgba(200, 185, 165, 0.72);
 }
 
 .arrow-col {
@@ -549,7 +549,7 @@ body.visible { opacity: 1; }
   font-size: 12px;
   font-weight: 400;
   line-height: 1.75;
-  color: rgba(200, 185, 165, 0.5);
+  color: rgba(200, 185, 165, 0.72);
   margin-bottom: 24px;
   border-bottom: 1px solid var(--border);
   padding-bottom: 24px;
@@ -566,7 +566,7 @@ body.visible { opacity: 1; }
   font-size: 12px;
   font-weight: 500;
   letter-spacing: 0.03em;
-  color: rgba(200, 185, 165, 0.65);
+  color: rgba(200, 185, 165, 0.78);
   padding: 9px 12px;
   background: rgba(255,255,255,0.02);
   border: 1px solid var(--border);
@@ -593,6 +593,10 @@ body.visible { opacity: 1; }
   border-top: 1px solid rgba(255,255,255,0.05);
 }
 
+blockquote.reflection-quote {
+  margin: 0;
+  padding: 0;
+}
 .reflection-quote {
   font-family: 'Cormorant Garamond', serif;
   font-size: clamp(28px, 3.6vw, 50px);
@@ -604,6 +608,10 @@ body.visible { opacity: 1; }
   margin-bottom: 36px;
 }
 
+cite.reflection-attr {
+  font-style: normal;
+  display: block;
+}
 .reflection-attr {
   font-size: 10px;
   font-weight: 400;
@@ -617,6 +625,259 @@ body.visible { opacity: 1; }
   height: 80px;
   background: var(--bg);
   border-top: 1px solid var(--border);
+}
+
+/* ── LIGHT SWITCH TOGGLE ── */
+.light-switch {
+  position: fixed;
+  top: 24px; right: 24px;
+  z-index: 1000;
+  cursor: pointer;
+  user-select: none;
+}
+
+.switch-plate {
+  width: 36px; height: 56px;
+  background: #1a0e2a;
+  border-radius: 6px;
+  border: 2px solid #de1c79;
+  display: flex; align-items: center; justify-content: center;
+  box-shadow: 0 2px 8px rgba(222, 28, 121, 0.35), 0 0 18px rgba(222, 28, 121, 0.15), inset 0 1px 0 rgba(255,255,255,0.05);
+  transition: all 0.3s;
+  position: relative;
+}
+
+[data-theme="light"] .switch-plate {
+  background: #f8f0f4;
+  border-color: #e8d0da;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08), inset 0 1px 0 rgba(255,255,255,0.8);
+}
+
+.switch-toggle {
+  width: 20px; height: 24px;
+  background: linear-gradient(180deg, #de1c79, #a8145c);
+  border-radius: 3px;
+  border: 1px solid #f040a0;
+  box-shadow: 0 2px 6px rgba(222, 28, 121, 0.5), 0 0 12px rgba(222, 28, 121, 0.2);
+  transition: all 0.15s ease;
+  transform: translateY(6px);
+}
+
+[data-theme="light"] .switch-toggle {
+  background: linear-gradient(180deg, #FFFFFF, #f5eaf0);
+  border-color: #d4a8bc;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.08);
+  transform: translateY(-6px);
+}
+
+.switch-label {
+  position: absolute;
+  bottom: -18px; left: 50%;
+  transform: translateX(-50%);
+  font-size: 7px; font-weight: 500;
+  letter-spacing: 0.15em; text-transform: uppercase;
+  color: rgba(222, 28, 121, 0.6);
+  white-space: nowrap;
+  transition: color 0.3s;
+}
+
+[data-theme="light"] .switch-label {
+  color: rgba(222, 28, 121, 0.3);
+}
+
+/* ── LIGHT MODE THEME ── */
+[data-theme="light"] {
+  --magenta:        #de1c79;
+  --magenta-dim:    rgba(222, 28, 121, 0.08);
+  --magenta-border: rgba(222, 28, 121, 0.25);
+  --bg:             #faf6f2;
+  --bg-alt:         #f2ece6;
+  --text:           #2c2233;
+  --text-muted:     #6a5d72;
+  --text-dim:       #9a8da4;
+  --pink:           #de1c79;
+  --amber:          #de1c79;
+  --border:         rgba(0, 0, 0, 0.08);
+}
+
+[data-theme="light"] body {
+  color: var(--text);
+}
+
+[data-theme="light"] .hero {
+  background-image:
+    linear-gradient(to bottom,
+      rgba(250, 246, 242, 0.45) 0%,
+      rgba(250, 246, 242, 0.88) 70%,
+      #faf6f2 100%),
+    url('Studio_Edited.webp');
+}
+
+[data-theme="light"] .hero-desc {
+  color: rgba(44, 34, 51, 0.68);
+}
+
+[data-theme="light"] .hero-meta {
+  border-top-color: rgba(0, 0, 0, 0.08);
+}
+
+[data-theme="light"] .nav-back {
+  background: rgba(0, 0, 0, 0.05);
+  border-color: rgba(0, 0, 0, 0.1);
+  color: rgba(80, 60, 50, 0.75);
+}
+[data-theme="light"] .nav-back:hover {
+  background: rgba(0, 0, 0, 0.09);
+  color: rgba(80, 60, 50, 1);
+  border-color: rgba(0, 0, 0, 0.16);
+}
+
+[data-theme="light"] .wordmark {
+  color: rgba(44, 34, 51, 0.14);
+}
+
+[data-theme="light"] #page-exit {
+  background: #faf6f2;
+}
+
+[data-theme="light"] .brief-text {
+  color: rgba(44, 34, 51, 0.72);
+}
+
+[data-theme="light"] .section-body {
+  color: rgba(44, 34, 51, 0.68);
+}
+
+[data-theme="light"] .persona-card {
+  background: rgba(222, 28, 121, 0.03);
+  border-color: rgba(222, 28, 121, 0.22);
+}
+
+[data-theme="light"] .persona-card::before {
+  background: linear-gradient(90deg, var(--magenta) 0%, transparent 70%);
+}
+
+[data-theme="light"] .persona-barriers li {
+  color: rgba(44, 34, 51, 0.68);
+}
+
+[data-theme="light"] .persona-barriers li::before {
+  background: var(--magenta);
+}
+
+[data-theme="light"] .phase-item {
+  background: rgba(222, 28, 121, 0.02);
+  border-color: rgba(222, 28, 121, 0.12);
+}
+
+[data-theme="light"] .strategy-row {
+  border-bottom-color: rgba(222, 28, 121, 0.08);
+}
+[data-theme="light"] .strategy-row.header-row {
+  border-top-color: rgba(222, 28, 121, 0.12);
+}
+
+[data-theme="light"] .barrier-name {
+  color: rgba(44, 34, 51, 0.6);
+}
+
+[data-theme="light"] .bridge-name {
+  color: #de1c79;
+}
+
+[data-theme="light"] .eco-area {
+  background: rgba(222, 28, 121, 0.02);
+  border-color: rgba(222, 28, 121, 0.12);
+}
+
+[data-theme="light"] .concept-column {
+  background: rgba(222, 28, 121, 0.02);
+  border-color: rgba(222, 28, 121, 0.12);
+}
+
+[data-theme="light"] .concept-desc {
+  color: rgba(44, 34, 51, 0.58);
+  border-bottom-color: rgba(222, 28, 121, 0.08);
+}
+
+[data-theme="light"] .concept-item {
+  color: rgba(44, 34, 51, 0.68);
+  background: rgba(222, 28, 121, 0.02);
+  border-color: rgba(222, 28, 121, 0.1);
+}
+
+[data-theme="light"] .reflection-section {
+  background: linear-gradient(135deg,
+    rgba(222, 28, 121, 0.04) 0%,
+    rgba(250, 246, 242, 1) 100%
+  );
+  border-top-color: rgba(222, 28, 121, 0.08);
+}
+
+[data-theme="light"] .reflection-quote {
+  color: #de1c79;
+}
+
+[data-theme="light"] .section-divider {
+  background: #de1c79;
+}
+
+[data-theme="light"] .persona-goal {
+  border-top-color: rgba(222, 28, 121, 0.18);
+  color: #de1c79;
+}
+
+[data-theme="light"] .artifact-wrapper {
+  border-color: rgba(0, 0, 0, 0.1);
+}
+
+[data-theme="light"] .cs-footer {
+  background: var(--bg);
+  border-top-color: rgba(0, 0, 0, 0.06);
+}
+
+[data-theme="light"] .mob-tool-link {
+  color: rgba(140, 90, 70, 0.7);
+}
+
+[data-theme="light"] .skip-link {
+  background: var(--magenta);
+}
+
+/* ── SKIP LINK ── */
+.skip-link {
+  position: absolute;
+  top: -100%;
+  left: 16px;
+  background: var(--magenta);
+  color: #fff;
+  padding: 10px 18px;
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 500;
+  z-index: 9999;
+  text-decoration: none;
+  transition: top 0.2s ease;
+}
+.skip-link:focus {
+  top: 16px;
+}
+
+/* ── FOCUS STYLES ── */
+:focus-visible {
+  outline: 2px solid var(--magenta);
+  outline-offset: 3px;
+}
+
+/* ── REDUCED MOTION ── */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+  html { scroll-behavior: auto; }
 }
 
 /* ── MOBILE ── */
@@ -656,7 +917,7 @@ body.visible { opacity: 1; }
     font-weight: 400;
     font-style: italic;
     letter-spacing: 0.03em;
-    color: rgba(204,161,144,0.6);
+    color: rgba(204,161,144,0.82);
   }
 
   /* Hero */
@@ -705,19 +966,32 @@ body.visible { opacity: 1; }
 </head>
 <body>
 
-<div id="page-exit"></div>
+<a href="#main-content" class="skip-link">Skip to content</a>
+<div id="page-exit" aria-hidden="true"></div>
 
-<div class="wordmark">Amber Grey</div>
+<div class="wordmark" aria-hidden="true">Amber Grey</div>
 
+<!-- Light switch -->
+<div class="light-switch" id="themeSwitch" role="switch" aria-checked="false" aria-label="Toggle light mode" tabindex="0" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();this.click()}">
+  <div class="switch-plate">
+    <div class="switch-toggle"></div>
+  </div>
+
+</div>
+
+<nav aria-label="Case study navigation">
 <button class="nav-back" onclick="navigateTo('level-3-blv.html')">
   <span class="nav-back-arrow"></span>
   BLV Ecosystem
 </button>
+</nav>
+
+<main id="main-content">
 
 <!-- ══════════════════════════════════════
      HERO
 ══════════════════════════════════════ -->
-<section class="hero">
+<section class="hero" aria-label="Project overview">
   <div class="hero-zone">Sense Making · Case Study</div>
   <h1 class="hero-title">Glidance, finding<br>the missing 98%</h1>
   <p class="hero-desc">A team consulting project for Glidance — revealing who the BLV mobility ecosystem was built around, and who it quietly leaves out. My focus: researching and building the BLV Ecosystem tool.</p>
@@ -744,7 +1018,7 @@ body.visible { opacity: 1; }
 <!-- ══════════════════════════════════════
      01 BRIEF
 ══════════════════════════════════════ -->
-<section class="cs-section">
+<section class="cs-section" aria-label="The brief">
   <div class="section-inner">
     <div class="two-col-wide">
       <div>
@@ -784,7 +1058,7 @@ body.visible { opacity: 1; }
 <!-- ══════════════════════════════════════
      02 PERSONAS
 ══════════════════════════════════════ -->
-<section class="cs-section alt">
+<section class="cs-section alt" aria-label="Personas">
   <div class="section-inner">
     <div class="section-label">02 — Actual Lived Experiences</div>
     <h2 class="section-heading">Four people the system wasn't built around.</h2>
@@ -847,7 +1121,7 @@ body.visible { opacity: 1; }
 <!-- ══════════════════════════════════════
      03 PHASES
 ══════════════════════════════════════ -->
-<section class="cs-section">
+<section class="cs-section" aria-label="Framework phases">
   <div class="section-inner">
     <div class="section-label">03 — The Framework</div>
     <h2 class="section-heading">Adjusting to vision loss follows seven phases.</h2>
@@ -868,7 +1142,7 @@ body.visible { opacity: 1; }
 <!-- ══════════════════════════════════════
      04 STRATEGIES
 ══════════════════════════════════════ -->
-<section class="cs-section alt">
+<section class="cs-section alt" aria-label="Strategies">
   <div class="section-inner">
     <div class="section-label">04 — Strategies</div>
     <h2 class="section-heading">Eight barriers become eight bridges.</h2>
@@ -882,49 +1156,49 @@ body.visible { opacity: 1; }
       </div>
       <div class="strategy-row">
         <div class="barrier-name">Boundaries</div>
-        <div class="arrow-col">→</div>
+        <div class="arrow-col" aria-hidden="true">→</div>
         <div class="bridge-name">Boundless</div>
         <div class="strategy-desc">Multimodal feedback</div>
       </div>
       <div class="strategy-row">
         <div class="barrier-name">Awareness</div>
-        <div class="arrow-col">→</div>
+        <div class="arrow-col" aria-hidden="true">→</div>
         <div class="bridge-name">Acceptance</div>
         <div class="strategy-desc">Multichannel outreach</div>
       </div>
       <div class="strategy-row">
         <div class="barrier-name">Resistance</div>
-        <div class="arrow-col">→</div>
+        <div class="arrow-col" aria-hidden="true">→</div>
         <div class="bridge-name">Resilience</div>
         <div class="strategy-desc">Reframe assistive tech</div>
       </div>
       <div class="strategy-row">
         <div class="barrier-name">Risk</div>
-        <div class="arrow-col">→</div>
+        <div class="arrow-col" aria-hidden="true">→</div>
         <div class="bridge-name">Reward</div>
         <div class="strategy-desc">Introduce assistive tech</div>
       </div>
       <div class="strategy-row">
         <div class="barrier-name">Instability</div>
-        <div class="arrow-col">→</div>
+        <div class="arrow-col" aria-hidden="true">→</div>
         <div class="bridge-name">Infrastructure</div>
         <div class="strategy-desc">Integrate assistive tech</div>
       </div>
       <div class="strategy-row">
         <div class="barrier-name">Emotions</div>
-        <div class="arrow-col">→</div>
+        <div class="arrow-col" aria-hidden="true">→</div>
         <div class="bridge-name">Empathy</div>
         <div class="strategy-desc">Share testimonials</div>
       </div>
       <div class="strategy-row">
         <div class="barrier-name">Relationship</div>
-        <div class="arrow-col">→</div>
+        <div class="arrow-col" aria-hidden="true">→</div>
         <div class="bridge-name">Reciprocity</div>
         <div class="strategy-desc">Educate caregivers</div>
       </div>
       <div class="strategy-row">
         <div class="barrier-name">Stigma</div>
-        <div class="arrow-col">→</div>
+        <div class="arrow-col" aria-hidden="true">→</div>
         <div class="bridge-name">Solidarity</div>
         <div class="strategy-desc">Challenge perceptions</div>
       </div>
@@ -935,7 +1209,7 @@ body.visible { opacity: 1; }
 <!-- ══════════════════════════════════════
      05 ECOSYSTEM
 ══════════════════════════════════════ -->
-<section class="cs-section">
+<section class="cs-section" aria-label="BLV Ecosystem tool">
   <div class="section-inner">
     <div class="section-label">05 — The BLV Ecosystem</div>
     <h2 class="section-heading">Seven areas surround every BLV individual.</h2>
@@ -961,7 +1235,7 @@ body.visible { opacity: 1; }
 <!-- ══════════════════════════════════════
      06 CONCEPTS
 ══════════════════════════════════════ -->
-<section class="cs-section alt">
+<section class="cs-section alt" aria-label="Concepts">
   <div class="section-inner">
     <div class="section-label">06 — Concepts</div>
     <h2 class="section-heading">Three horizons, eleven concepts.</h2>
@@ -1013,13 +1287,15 @@ body.visible { opacity: 1; }
 <!-- ══════════════════════════════════════
      07 REFLECTION
 ══════════════════════════════════════ -->
-<section class="cs-section reflection-section">
+<section class="cs-section reflection-section" aria-label="Reflection">
   <div class="section-inner">
     <div class="section-label">07 — What I Wanted to Show</div>
-    <p class="reflection-quote">"That the 'target user' is often just the most visible one — not the most representative."</p>
-    <div class="reflection-attr">Amber Grey · 2025</div>
+    <blockquote class="reflection-quote">"That the 'target user' is often just the most visible one — not the most representative."</blockquote>
+    <cite class="reflection-attr">Amber Grey · 2025</cite>
   </div>
 </section>
+
+</main>
 
 <div class="cs-footer"></div>
 
@@ -1033,6 +1309,31 @@ function navigateTo(url) {
   setTimeout(() => { exit.classList.add('active'); }, 200);
   setTimeout(() => { window.location.href = url; }, 430);
 }
+
+// Theme toggle
+(function() {
+  const html = document.documentElement;
+  const sw = document.getElementById('themeSwitch');
+  const STORAGE_KEY = 'glidance-theme';
+
+  function setTheme(theme) {
+    html.setAttribute('data-theme', theme);
+    var isLight = theme === 'light';
+    sw.setAttribute('aria-checked', isLight);
+    sw.setAttribute('aria-label', isLight ? 'Switch to dark mode' : 'Switch to light mode');
+    try { localStorage.setItem(STORAGE_KEY, theme); } catch(e) {}
+  }
+
+  // Load saved preference
+  var saved = null;
+  try { saved = localStorage.getItem(STORAGE_KEY); } catch(e) {}
+  setTheme(saved === 'light' ? 'light' : 'dark');
+
+  sw.addEventListener('click', function() {
+    var current = html.getAttribute('data-theme') || 'dark';
+    setTheme(current === 'dark' ? 'light' : 'dark');
+  });
+})();
 
 requestAnimationFrame(() => {
   requestAnimationFrame(() => { document.body.classList.add('visible'); });

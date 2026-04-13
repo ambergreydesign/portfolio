@@ -16,8 +16,8 @@
   --accent-border: rgba(155, 109, 255, 0.22);
   --bg:          #09070e;
   --bg-alt:      #0d0a15;
-  --text:        rgba(215, 208, 232, 0.90);
-  --text-muted:  rgba(140, 110, 180, 0.65);
+  --text:        rgba(220, 212, 238, 0.92);
+  --text-muted:  rgba(170, 145, 210, 0.80);
   --accent-bright: #c4a8ff;
   --warm:       #d4a054;
   --border:      rgba(255, 255, 255, 0.055);
@@ -31,6 +31,31 @@ body {
   font-weight: 300;
   -webkit-font-smoothing: antialiased;
   overflow-x: hidden;
+}
+
+/* ── SKIP LINK ── */
+.skip-link {
+  position: absolute;
+  top: -100%;
+  left: 16px;
+  background: var(--accent);
+  color: #fff;
+  padding: 10px 18px;
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 500;
+  z-index: 9999;
+  text-decoration: none;
+  transition: top 0.2s ease;
+}
+.skip-link:focus {
+  top: 16px;
+}
+
+/* ── FOCUS STYLES ── */
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
 }
 
 /* ── PAGE EXIT ── */
@@ -53,7 +78,7 @@ body {
   border-radius: 100px;
   padding: 9px 18px 9px 14px;
   cursor: pointer;
-  color: rgba(165,135,220,0.75);
+  color: rgba(185, 160, 235, 0.88);
   font-size: 10px; font-weight: 400; letter-spacing: 0.22em; text-transform: uppercase;
   transition: all 0.25s; z-index: 100;
 }
@@ -65,6 +90,307 @@ body {
   position: fixed; bottom: 24px; left: 21px;
   font-size: 13px; font-weight: 300; letter-spacing: 0.2em;
   color: rgba(155,109,255,0.13); pointer-events: none; z-index: 10;
+}
+
+/* ── LIGHT SWITCH TOGGLE ── */
+.light-switch {
+  position: fixed;
+  top: 24px; right: 24px;
+  z-index: 1000;
+  cursor: pointer;
+  user-select: none;
+}
+
+.switch-plate {
+  width: 36px; height: 56px;
+  background: #0d0a15;
+  border-radius: 6px;
+  border: 2px solid #9b6dff;
+  display: flex; align-items: center; justify-content: center;
+  box-shadow: 0 2px 8px rgba(155, 109, 255, 0.35), 0 0 18px rgba(155, 109, 255, 0.15), inset 0 1px 0 rgba(255,255,255,0.05);
+  transition: all 0.3s;
+  position: relative;
+}
+
+[data-theme="light"] .switch-plate {
+  background: #f4f0fa;
+  border-color: #d4c8e8;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08), inset 0 1px 0 rgba(255,255,255,0.8);
+}
+
+.switch-toggle {
+  width: 20px; height: 24px;
+  background: linear-gradient(180deg, #9b6dff, #7640e0);
+  border-radius: 3px;
+  border: 1px solid #b490ff;
+  box-shadow: 0 2px 6px rgba(155, 109, 255, 0.5), 0 0 12px rgba(155, 109, 255, 0.2);
+  transition: all 0.15s ease;
+  transform: translateY(6px);
+}
+
+[data-theme="light"] .switch-toggle {
+  background: linear-gradient(180deg, #FFFFFF, #ede4f8);
+  border-color: #bca8d8;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.08);
+  transform: translateY(-6px);
+}
+
+.switch-label {
+  position: absolute;
+  bottom: -18px; left: 50%;
+  transform: translateX(-50%);
+  font-size: 7px; font-weight: 500;
+  letter-spacing: 0.15em; text-transform: uppercase;
+  color: rgba(155, 109, 255, 0.6);
+  white-space: nowrap;
+  transition: color 0.3s;
+}
+
+[data-theme="light"] .switch-label {
+  color: rgba(155, 109, 255, 0.3);
+}
+
+/* ── LIGHT MODE THEME ── */
+[data-theme="light"] {
+  --accent:        #7640e0;
+  --accent-dim:    rgba(118, 64, 224, 0.07);
+  --accent-border: rgba(118, 64, 224, 0.22);
+  --bg:            #faf7ff;
+  --bg-alt:        #f2edfa;
+  --text:          #2a2035;
+  --text-muted:    #6a5d78;
+  --accent-bright: #5a30b5;
+  --warm:          #b8860b;
+  --border:        rgba(0, 0, 0, 0.08);
+}
+
+[data-theme="light"] body {
+  color: var(--text);
+}
+
+[data-theme="light"] .hero {
+  background-image:
+    linear-gradient(to bottom,
+      rgba(250, 247, 255, 0.45) 0%,
+      rgba(250, 247, 255, 0.88) 70%,
+      #faf7ff 100%),
+    url('Studio_Edited.webp');
+}
+
+[data-theme="light"] .hero::before {
+  background:
+    radial-gradient(ellipse 80% 60% at 15% 60%, rgba(118, 64, 224, 0.10) 0%, transparent 60%),
+    radial-gradient(ellipse 60% 50% at 75% 30%, rgba(100, 40, 180, 0.07) 0%, transparent 55%);
+}
+
+[data-theme="light"] .hero-eyebrow {
+  color: rgba(90, 48, 181, 0.78);
+}
+
+[data-theme="light"] .hero h1 {
+  color: #5a30b5;
+}
+
+[data-theme="light"] .hero-subtitle {
+  color: rgba(42, 32, 53, 0.68);
+}
+
+[data-theme="light"] .hero-meta {
+  border-top-color: rgba(0, 0, 0, 0.08);
+}
+
+[data-theme="light"] .hero-meta-label {
+  color: #6a5d78;
+}
+
+[data-theme="light"] .hero-meta-value {
+  color: rgba(42, 32, 53, 0.78);
+}
+
+[data-theme="light"] .nav-back {
+  background: rgba(0, 0, 0, 0.05);
+  border-color: rgba(0, 0, 0, 0.1);
+  color: rgba(80, 60, 100, 0.78);
+}
+[data-theme="light"] .nav-back:hover {
+  background: rgba(0, 0, 0, 0.09);
+  color: rgba(80, 60, 100, 1);
+  border-color: rgba(0, 0, 0, 0.16);
+}
+
+[data-theme="light"] .wordmark {
+  color: rgba(42, 32, 53, 0.12);
+}
+
+[data-theme="light"] #page-exit {
+  background: #faf7ff;
+}
+
+[data-theme="light"] .section-eyebrow {
+  color: rgba(90, 48, 181, 0.65);
+}
+
+[data-theme="light"] .section-heading {
+  color: #5a30b5;
+}
+
+[data-theme="light"] .overview-intro {
+  color: rgba(42, 32, 53, 0.72);
+}
+
+[data-theme="light"] .overview-intro em {
+  color: #5a30b5;
+}
+
+[data-theme="light"] .proj-meta-outer {
+  border-color: rgba(118, 64, 224, 0.22);
+  background: rgba(118, 64, 224, 0.04);
+}
+
+[data-theme="light"] .chip-group-label {
+  color: rgba(90, 48, 181, 0.60);
+}
+
+[data-theme="light"] .chip-group + .chip-group {
+  border-left-color: rgba(118, 64, 224, 0.18);
+}
+
+[data-theme="light"] .chip-btn {
+  color: rgba(42, 32, 53, 0.78);
+  background: rgba(118, 64, 224, 0.06);
+  border-color: rgba(118, 64, 224, 0.20);
+}
+
+[data-theme="light"] .chip-btn:hover {
+  background: rgba(118, 64, 224, 0.12);
+  border-color: rgba(118, 64, 224, 0.32);
+  color: #5a30b5;
+}
+
+[data-theme="light"] .chip-detail {
+  color: rgba(90, 48, 181, 0.65);
+}
+
+[data-theme="light"] .thesis-block {
+  border-left-color: rgba(118, 64, 224, 0.35);
+  background: rgba(118, 64, 224, 0.03);
+}
+
+[data-theme="light"] .thesis-quote {
+  color: #5a30b5;
+}
+
+[data-theme="light"] .thesis-attr {
+  color: #6a5d78;
+}
+
+[data-theme="light"] .body-text {
+  color: rgba(42, 32, 53, 0.72);
+}
+
+[data-theme="light"] .body-text strong {
+  color: #5a30b5;
+}
+
+[data-theme="light"] .body-text em {
+  color: rgba(42, 32, 53, 0.78);
+}
+
+[data-theme="light"] .stat-row {
+  background: rgba(118, 64, 224, 0.18);
+  border-color: rgba(118, 64, 224, 0.18);
+}
+
+[data-theme="light"] .stat-cell {
+  background: var(--bg);
+}
+
+[data-theme="light"] .stat-cell.alt {
+  background: var(--bg-alt);
+}
+
+[data-theme="light"] .stat-number {
+  color: #5a30b5;
+}
+
+[data-theme="light"] .stat-label {
+  color: rgba(90, 48, 181, 0.68);
+}
+
+[data-theme="light"] .stat-sub {
+  color: rgba(42, 32, 53, 0.62);
+}
+
+[data-theme="light"] .framework-card {
+  background: rgba(118, 64, 224, 0.03);
+  border-color: rgba(118, 64, 224, 0.12);
+}
+
+[data-theme="light"] .framework-arrow {
+  color: var(--warm);
+}
+
+[data-theme="light"] .framework-label {
+  color: #5a30b5;
+}
+
+[data-theme="light"] .framework-desc {
+  color: rgba(42, 32, 53, 0.62);
+}
+
+[data-theme="light"] .loop-steps {
+  border-color: rgba(118, 64, 224, 0.18);
+}
+
+[data-theme="light"] .loop-step {
+  border-right-color: rgba(118, 64, 224, 0.18);
+  background: var(--bg);
+}
+
+[data-theme="light"] .loop-step.highlight {
+  background: rgba(118, 64, 224, 0.04);
+}
+
+[data-theme="light"] .loop-num {
+  color: rgba(90, 48, 181, 0.55);
+}
+
+[data-theme="light"] .loop-name {
+  color: #5a30b5;
+}
+
+[data-theme="light"] .loop-desc {
+  color: rgba(42, 32, 53, 0.62);
+}
+
+[data-theme="light"] .wil-card {
+  background: rgba(118, 64, 224, 0.03);
+  border-color: rgba(118, 64, 224, 0.10);
+}
+
+[data-theme="light"] .wil-number {
+  color: rgba(118, 64, 224, 0.20);
+}
+
+[data-theme="light"] .wil-title {
+  color: rgba(90, 48, 181, 0.65);
+}
+
+[data-theme="light"] .wil-body {
+  color: rgba(42, 32, 53, 0.68);
+}
+
+[data-theme="light"] .reflection-quote {
+  color: #5a30b5;
+  border-left-color: rgba(118, 64, 224, 0.28);
+}
+
+[data-theme="light"] .reflection-attr {
+  color: #6a5d78;
+}
+
+[data-theme="light"] .skip-link {
+  background: var(--accent);
 }
 
 /* ── HERO ── */
@@ -96,7 +422,7 @@ body {
 }
 .hero-eyebrow {
   font-size: 9px; font-weight: 500; letter-spacing: 0.34em; text-transform: uppercase;
-  color: rgba(165,135,220,0.88); margin-bottom: 20px; position: relative; z-index: 1;
+  color: rgba(185, 160, 235, 0.92); margin-bottom: 20px; position: relative; z-index: 1;
 }
 .hero h1 {
   font-family: 'Cormorant Garamond', serif;
@@ -106,7 +432,7 @@ body {
 }
 .hero-subtitle {
   font-size: clamp(14px, 1.4vw, 18px); font-weight: 300; font-style: italic;
-  color: rgba(215,208,232,0.48); position: relative; z-index: 1; margin-bottom: 56px;
+  color: rgba(215,208,232,0.78); position: relative; z-index: 1; margin-bottom: 56px;
   max-width: 560px; line-height: 1.6;
 }
 .hero-meta {
@@ -116,7 +442,7 @@ body {
 }
 .hero-meta-item { display: flex; flex-direction: column; gap: 5px; }
 .hero-meta-label { font-size: 8px; font-weight: 500; letter-spacing: 0.28em; text-transform: uppercase; color: var(--text-muted); }
-.hero-meta-value { font-size: 13px; font-weight: 400; color: rgba(165,135,220,0.75); }
+.hero-meta-value { font-size: 13px; font-weight: 400; color: rgba(185,160,235,0.88); }
 
 /* ── SECTIONS ── */
 .cs-section { padding: 96px 64px; }
@@ -125,7 +451,7 @@ body {
 
 .section-eyebrow {
   font-size: 8.5px; font-weight: 500; letter-spacing: 0.34em; text-transform: uppercase;
-  color: rgba(165,135,220,0.68); margin-bottom: 16px;
+  color: rgba(185, 160, 235, 0.75); margin-bottom: 16px;
 }
 .section-heading {
   font-family: 'Cormorant Garamond', serif;
@@ -136,9 +462,9 @@ body {
 /* ── OVERVIEW ── */
 .overview-intro {
   font-size: clamp(15px, 1.5vw, 18px); font-weight: 300; line-height: 1.9;
-  color: rgba(215,208,232,0.68); max-width: 700px; margin-bottom: 52px;
+  color: rgba(215,208,232,0.82); max-width: 700px; margin-bottom: 52px;
 }
-.overview-intro em { color: rgba(200,175,255,0.9); font-style: italic; }
+.overview-intro em { color: rgba(200,175,255,0.92); font-style: italic; }
 
 /* ── CHIP PANEL ── */
 .proj-meta-outer {
@@ -161,19 +487,20 @@ body {
 .chip-group + .chip-group { border-left: 1px solid var(--accent-border); padding-left: 40px; }
 .chip-group-label {
   font-size: 9px; font-weight: 500; letter-spacing: 0.26em; text-transform: uppercase;
-  color: rgba(165,135,220,0.65); margin-bottom: 4px;
+  color: rgba(185, 160, 235, 0.72); margin-bottom: 4px;
 }
 .chip-row { display: flex; flex-wrap: wrap; gap: 8px; }
 .chip-btn {
   font-size: 11px; font-weight: 400; letter-spacing: 0.06em;
-  color: rgba(165,135,220,0.7);
+  color: rgba(185,160,235,0.88);
   background: rgba(155,109,255,0.07);
-  border: 1px solid rgba(155,109,255,0.18);
+  border: 1px solid rgba(155,109,255,0.22);
   border-radius: 100px; padding: 6px 14px;
   cursor: default; white-space: nowrap;
   transition: background 0.2s, border-color 0.2s, color 0.2s;
 }
-.chip-btn:hover {
+.chip-btn:hover,
+.chip-btn:focus-visible {
   background: rgba(155,109,255,0.15);
   border-color: rgba(155,109,255,0.38);
   color: rgba(200,175,255,0.95);
@@ -181,7 +508,7 @@ body {
 .chip-detail-wrap { padding: 0 40px 28px; min-height: 28px; }
 .chip-detail {
   font-size: 12px; font-weight: 300; letter-spacing: 0.04em;
-  color: rgba(165,135,220,0.75); font-style: italic;
+  color: rgba(185, 160, 235, 0.80); font-style: italic;
   transition: opacity 0.2s ease; opacity: 0;
 }
 .chip-detail.has-value { opacity: 1; }
@@ -197,20 +524,20 @@ body {
 .thesis-quote {
   font-family: 'Cormorant Garamond', serif;
   font-size: clamp(22px, 2.8vw, 34px); font-weight: 400; font-style: italic;
-  color: rgba(200,175,255,0.88); line-height: 1.45; margin-bottom: 12px;
+  color: rgba(200,175,255,0.90); line-height: 1.45; margin-bottom: 12px;
 }
 .thesis-attr {
   font-size: 10px; font-weight: 400; letter-spacing: 0.2em; text-transform: uppercase;
-  color: rgba(140,110,180,0.5);
+  color: rgba(185, 160, 235, 0.75);
 }
 
 /* ── BODY TEXT ── */
 .body-text {
   font-size: clamp(14px, 1.4vw, 16px); font-weight: 300; line-height: 1.9;
-  color: rgba(215,208,232,0.65); margin-bottom: 24px; max-width: 700px;
+  color: rgba(215,208,232,0.82); margin-bottom: 24px; max-width: 700px;
 }
-.body-text strong { color: rgba(200,175,255,0.88); font-weight: 500; }
-.body-text em { color: rgba(215,208,232,0.8); font-style: italic; }
+.body-text strong { color: rgba(200,175,255,0.92); font-weight: 500; }
+.body-text em { color: rgba(215,208,232,0.84); font-style: italic; }
 
 /* ── STAT ROW ── */
 .stat-row {
@@ -223,8 +550,18 @@ body {
 .stat-cell {
   background: var(--bg); padding: 28px 32px;
   display: flex; flex-direction: column; gap: 8px;
+  transition: background 0.3s ease, transform 0.3s ease;
 }
+.stat-cell:hover {
+  background: rgba(155,109,255,0.06);
+}
+.stat-cell:hover .stat-number { opacity: 1; }
+.stat-cell:hover .stat-label { color: rgba(200,175,255,0.90); }
 .stat-cell.alt { background: var(--bg-alt); }
+.stat-cell.alt:hover { background: rgba(155,109,255,0.08); }
+[data-theme="light"] .stat-cell:hover { background: rgba(118,64,224,0.06); }
+[data-theme="light"] .stat-cell.alt:hover { background: rgba(118,64,224,0.08); }
+[data-theme="light"] .stat-cell:hover .stat-label { color: #5a30b5; }
 .stat-number {
   font-family: 'Cormorant Garamond', serif;
   font-size: 42px; font-weight: 600; line-height: 1;
@@ -232,10 +569,10 @@ body {
 }
 .stat-label {
   font-size: 10px; font-weight: 400; letter-spacing: 0.14em; text-transform: uppercase;
-  color: rgba(165,135,220,0.5);
+  color: rgba(185, 160, 235, 0.78);
 }
 .stat-sub {
-  font-size: 11px; font-weight: 300; color: rgba(190,180,210,0.48); line-height: 1.5;
+  font-size: 11px; font-weight: 300; color: rgba(210,200,230,0.75); line-height: 1.5;
 }
 
 /* ── FRAMEWORK GRID ── */
@@ -247,19 +584,30 @@ body {
   background: rgba(155,109,255,0.04);
   border: 1px solid rgba(155,109,255,0.12);
   border-radius: 10px; padding: 24px 28px;
+  transition: background 0.3s ease, border-color 0.3s ease, transform 0.35s ease;
+}
+.framework-card:hover {
+  background: rgba(155,109,255,0.08);
+  border-color: rgba(155,109,255,0.25);
+  transform: translateY(-3px);
+}
+.framework-card:hover .framework-label { color: var(--accent-bright); }
+[data-theme="light"] .framework-card:hover {
+  background: rgba(118,64,224,0.07);
+  border-color: rgba(118,64,224,0.25);
 }
 .framework-arrow {
   font-size: 10px; font-weight: 500; letter-spacing: 0.16em; text-transform: uppercase;
-  color: rgba(212,160,84,0.7); margin-bottom: 10px;
+  color: rgba(212,160,84,0.78); margin-bottom: 10px;
 }
 .framework-label {
   font-family: 'Cormorant Garamond', serif;
-  font-size: 22px; font-weight: 600; color: rgba(200,175,255,0.85);
+  font-size: 22px; font-weight: 600; color: rgba(200,175,255,0.88);
   margin-bottom: 8px; line-height: 1.1;
 }
 .framework-desc {
   font-size: 12px; font-weight: 300; line-height: 1.7;
-  color: rgba(190,180,210,0.55);
+  color: rgba(210,200,230,0.75);
 }
 
 /* ── PROCESS STEPS ── */
@@ -273,21 +621,30 @@ body {
   background: var(--bg);
   display: flex; flex-direction: column; gap: 8px;
   position: relative;
+  transition: background 0.3s ease, box-shadow 0.3s ease;
 }
+.loop-step:hover {
+  background: rgba(155,109,255,0.06);
+  box-shadow: inset 0 -2px 0 rgba(155,109,255,0.25);
+}
+.loop-step:hover .loop-name { color: var(--accent-bright); }
 .loop-step:last-child { border-right: none; }
 .loop-step.highlight { background: rgba(155,109,255,0.05); }
+.loop-step.highlight:hover { background: rgba(155,109,255,0.10); }
+[data-theme="light"] .loop-step:hover { background: rgba(118,64,224,0.06); box-shadow: inset 0 -2px 0 rgba(118,64,224,0.25); }
+[data-theme="light"] .loop-step.highlight:hover { background: rgba(118,64,224,0.10); }
 .loop-num {
   font-size: 9px; font-weight: 500; letter-spacing: 0.2em;
-  color: rgba(165,135,220,0.4);
+  color: rgba(185, 160, 235, 0.72);
 }
 .loop-name {
   font-family: 'Cormorant Garamond', serif;
   font-size: 19px; font-weight: 600;
-  color: rgba(200,175,255,0.82); line-height: 1.1;
+  color: rgba(200,175,255,0.90); line-height: 1.1;
 }
 .loop-desc {
   font-size: 11px; font-weight: 300; line-height: 1.65;
-  color: rgba(190,180,210,0.48);
+  color: rgba(210,200,230,0.75);
 }
 
 /* ── WIL ── */
@@ -298,26 +655,40 @@ body {
 .wil-card {
   padding: 28px; background: rgba(155,109,255,0.04);
   border: 1px solid rgba(155,109,255,0.10); border-radius: 10px;
+  transition: background 0.3s ease, border-color 0.3s ease, transform 0.35s ease;
 }
+.wil-card:hover {
+  background: rgba(155,109,255,0.08);
+  border-color: rgba(155,109,255,0.22);
+  transform: translateY(-3px);
+}
+.wil-card:hover .wil-number { color: rgba(155,109,255,0.38); }
+.wil-card:hover .wil-title { color: rgba(155,109,255,0.88); }
+[data-theme="light"] .wil-card:hover {
+  background: rgba(118,64,224,0.07);
+  border-color: rgba(118,64,224,0.20);
+}
+[data-theme="light"] .wil-card:hover .wil-number { color: rgba(118,64,224,0.35); }
+[data-theme="light"] .wil-card:hover .wil-title { color: #5a30b5; }
 .wil-number {
   font-family: 'Cormorant Garamond', serif;
   font-size: 32px; font-weight: 600; color: rgba(155,109,255,0.22);
   margin-bottom: 12px;
 }
-.wil-title { font-size: 11px; font-weight: 500; letter-spacing: 0.12em; text-transform: uppercase; color: rgba(155,109,255,0.65); margin-bottom: 10px; }
-.wil-body { font-size: 13px; font-weight: 300; line-height: 1.75; color: rgba(215,208,232,0.52); }
+.wil-title { font-size: 11px; font-weight: 500; letter-spacing: 0.12em; text-transform: uppercase; color: rgba(155,109,255,0.70); margin-bottom: 10px; }
+.wil-body { font-size: 13px; font-weight: 300; line-height: 1.75; color: rgba(215,208,232,0.76); }
 
 /* ── REFLECTION ── */
 .reflection-quote {
   font-family: 'Cormorant Garamond', serif;
   font-size: clamp(26px, 3.5vw, 46px); font-weight: 400; font-style: italic;
-  line-height: 1.35; color: rgba(200,175,255,0.78);
+  line-height: 1.35; color: rgba(200,175,255,0.82);
   border-left: 2px solid rgba(155,109,255,0.28);
   padding-left: 36px; margin-bottom: 20px;
 }
 .reflection-attr {
   font-size: 10px; font-weight: 400; letter-spacing: 0.22em;
-  text-transform: uppercase; color: rgba(140,110,180,0.45);
+  text-transform: uppercase; color: rgba(185, 160, 235, 0.72);
   padding-left: 36px;
 }
 
@@ -327,6 +698,18 @@ body {
   transition: opacity 0.7s ease, transform 0.7s ease;
 }
 .reveal.is-visible { opacity: 1; transform: translateY(0); }
+
+/* ── REDUCED MOTION ── */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+  .reveal { opacity: 1; transform: none; }
+  html { scroll-behavior: auto; }
+}
 
 /* ── MOBILE ── */
 @media (max-width: 860px) {
@@ -338,6 +721,7 @@ body {
   .loop-step:last-child { border-bottom: none; }
   .chip-panel { grid-template-columns: 1fr; gap: 28px; }
   .chip-group + .chip-group { border-left: none; padding-left: 0; border-top: 1px solid var(--accent-border); padding-top: 24px; }
+  .hero { background-attachment: scroll; }
 }
 @media (max-width: 660px) {
   .hero { padding: 0 24px 52px; }
@@ -346,45 +730,65 @@ body {
   .chip-panel { padding: 24px 20px; }
   .chip-detail-wrap { padding: 0 20px 20px; }
 }
+@media (max-width: 480px) {
+  .chip-group + .chip-group { border-top-color: var(--accent-border); }
+  .loop-step { border-bottom-color: var(--accent-border); }
+}
 </style>
 </head>
 <body>
 
-<div id="page-exit"></div>
-<div class="wordmark">Amber Grey</div>
+<a class="skip-link" href="#main-content">Skip to main content</a>
+<div id="page-exit" aria-hidden="true"></div>
+<div class="wordmark" aria-hidden="true">Amber Grey</div>
 
-<button class="nav-back" onclick="navigateTo('level-3-psilocybin.html')">
-  <span class="nav-back-arrow"></span>
+<!-- Light switch -->
+<div class="light-switch" id="themeSwitch" role="switch" aria-checked="false" aria-label="Toggle light mode" tabindex="0" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();this.click()}">
+  <div class="switch-plate">
+    <div class="switch-toggle"></div>
+  </div>
+</div>
+
+<nav aria-label="Back navigation">
+<button class="nav-back" aria-label="Back to Modeling Transformation" onclick="navigateTo('level-3-psilocybin.html')">
+  <span class="nav-back-arrow" aria-hidden="true"></span>
   Modeling Transformation
 </button>
+</nav>
+
+<main id="main-content">
 
 <!-- ── HERO ── -->
-<section class="hero">
+<section class="hero" aria-label="Hero">
   <div class="hero-eyebrow">Psilocybin as System · Case Study</div>
   <h1>Psilocybin<br>as System</h1>
   <p class="hero-subtitle">What if altered states of consciousness could reveal the hidden architecture of creativity?</p>
-  <div class="hero-meta">
-    <div class="hero-meta-item">
+  <div class="hero-meta" role="list">
+    <div class="hero-meta-item" role="listitem">
       <span class="hero-meta-label">Role</span>
       <span class="hero-meta-value">UX Researcher · Observational Lead</span>
     </div>
-    <div class="hero-meta-item">
+    <div class="hero-meta-item" role="listitem">
       <span class="hero-meta-label">Team</span>
       <span class="hero-meta-value">Solo</span>
     </div>
-    <div class="hero-meta-item">
+    <div class="hero-meta-item" role="listitem">
       <span class="hero-meta-label">Context</span>
       <span class="hero-meta-value">Academic · Professor Approved</span>
     </div>
-    <div class="hero-meta-item">
+    <div class="hero-meta-item" role="listitem">
       <span class="hero-meta-label">Focus</span>
       <span class="hero-meta-value">Creativity · Altered States · Systems</span>
+    </div>
+    <div class="hero-meta-item" role="listitem">
+      <span class="hero-meta-label">Year</span>
+      <span class="hero-meta-value">2022</span>
     </div>
   </div>
 </section>
 
 <!-- ── OVERVIEW ── -->
-<section class="cs-section">
+<section class="cs-section" aria-label="Overview">
   <div class="section-inner">
     <p class="section-eyebrow reveal">Overview</p>
     <h2 class="section-heading reveal">Creativity as a system. Psilocybin as a lens.</h2>
@@ -392,35 +796,35 @@ body {
     <p class="overview-intro reveal">This study, conducted with special permission from the assigning professor, explores psilocybin as a unique system for creative flow. The investigation dives into the intricate dynamics of creativity — pondering whether it's an <em>innate gift or a skill to be learned.</em> Through observational research, psilocybin becomes a potential catalyst for understanding the hidden mechanics of the creative process.</p>
 
     <div class="thesis-block reveal">
-      <div class="thesis-quote">"What if the creative process isn't a talent to possess, but a system to enter?"</div>
-      <div class="thesis-attr">Psilocybin as System · Core Inquiry</div>
+      <blockquote class="thesis-quote">"What if the creative process isn't a talent to possess, but a system to enter?"</blockquote>
+      <p class="thesis-attr">Psilocybin as System · Core Inquiry</p>
     </div>
 
     <!-- skills / tools chip panel -->
     <div class="proj-meta-outer reveal" id="chipOuter">
       <div class="chip-panel">
         <div class="chip-group">
-          <div class="chip-group-label">Skills</div>
-          <div class="chip-row">
-            <button class="chip-btn" data-detail="Observational study design · Ethnographic observation · Qualitative analysis · Behavioral documentation">Observational Research</button>
-            <button class="chip-btn" data-detail="Ritual space analysis · Creative flow mapping · Altered state dynamics · Feedback loop identification">Systems Thinking</button>
-            <button class="chip-btn" data-detail="Image synthesis · Compositional merging · Intuitive interpretation · Visual narrative construction">Visual Synthesis</button>
-            <button class="chip-btn" data-detail="Non-directive facilitation · Environmental design · Creative material selection · Participant safety">Facilitation Design</button>
-            <button class="chip-btn" data-detail="Psychedelic research context · Creative cognition · Altered states literature · Ethical research framing">Academic Research</button>
+          <div class="chip-group-label" id="skills-label">Skills</div>
+          <div class="chip-row" role="group" aria-labelledby="skills-label">
+            <span class="chip-btn" tabindex="0" data-detail="Observational study design · Ethnographic observation · Qualitative analysis · Behavioral documentation">Observational Research</span>
+            <span class="chip-btn" tabindex="0" data-detail="Ritual space analysis · Creative flow mapping · Altered state dynamics · Feedback loop identification">Systems Thinking</span>
+            <span class="chip-btn" tabindex="0" data-detail="Image synthesis · Compositional merging · Intuitive interpretation · Visual narrative construction">Visual Synthesis</span>
+            <span class="chip-btn" tabindex="0" data-detail="Non-directive facilitation · Environmental design · Creative material selection · Participant safety">Facilitation Design</span>
+            <span class="chip-btn" tabindex="0" data-detail="Psychedelic research context · Creative cognition · Altered states literature · Ethical research framing">Academic Research</span>
           </div>
         </div>
         <div class="chip-group">
-          <div class="chip-group-label">Tools</div>
-          <div class="chip-row">
-            <button class="chip-btn" data-detail="Field journals · Audio documentation · Photographic documentation · Observational protocols">Research & Documentation</button>
-            <button class="chip-btn" data-detail="Markers · Paper · Paint · Mixed media — provided for spontaneous artistic expression">Creative Materials</button>
-            <button class="chip-btn" data-detail="Photoshop · Illustrator · Mixed media painting · Image compositing">Design & Synthesis</button>
-            <button class="chip-btn" data-detail="Academic databases · Peer-reviewed psychedelic research · Creative cognition literature">Literature & Context</button>
+          <div class="chip-group-label" id="tools-label">Tools</div>
+          <div class="chip-row" role="group" aria-labelledby="tools-label">
+            <span class="chip-btn" tabindex="0" data-detail="Field journals · Audio documentation · Photographic documentation · Observational protocols">Research & Documentation</span>
+            <span class="chip-btn" tabindex="0" data-detail="Markers · Paper · Paint · Mixed media — provided for spontaneous artistic expression">Creative Materials</span>
+            <span class="chip-btn" tabindex="0" data-detail="Photoshop · Illustrator · Mixed media painting · Image compositing">Design & Synthesis</span>
+            <span class="chip-btn" tabindex="0" data-detail="Academic databases · Peer-reviewed psychedelic research · Creative cognition literature">Literature & Context</span>
           </div>
         </div>
       </div>
       <div class="chip-detail-wrap">
-        <div class="chip-detail" id="chipDetail">Hover a chip to see what it means in this project.</div>
+        <div class="chip-detail" id="chipDetail" aria-live="polite">Hover a chip to see what it means in this project.</div>
       </div>
     </div>
 
@@ -428,7 +832,7 @@ body {
 </section>
 
 <!-- ── THE METHODOLOGY ── -->
-<section class="cs-section alt-bg">
+<section class="cs-section alt-bg" aria-label="Methodology">
   <div class="section-inner">
     <p class="section-eyebrow reveal">The Methodology</p>
     <h2 class="section-heading reveal">Observing creativity through ritual and spontaneous expression.</h2>
@@ -437,18 +841,18 @@ body {
 
     <p class="body-text reveal">The research was deliberately observational. Attendees were not forced or guided to create in any specific way. The environment was designed to hold space — to lower barriers between impulse and mark-making, between inner experience and outer expression. What emerged was entirely participant-driven.</p>
 
-    <div class="stat-row reveal">
-      <div class="stat-cell">
+    <div class="stat-row reveal" role="list">
+      <div class="stat-cell" role="listitem">
         <div class="stat-number">Ritual</div>
         <div class="stat-label">Research Setting</div>
         <div class="stat-sub">Carefully crafted ceremonial environment with supportive facilitators and controlled conditions</div>
       </div>
-      <div class="stat-cell alt">
+      <div class="stat-cell alt" role="listitem">
         <div class="stat-number">Open</div>
         <div class="stat-label">Creative Framework</div>
         <div class="stat-sub">Non-directive approach — creative supplies provided, no instruction given, no outcomes prescribed</div>
       </div>
-      <div class="stat-cell">
+      <div class="stat-cell" role="listitem">
         <div class="stat-number">Flow</div>
         <div class="stat-label">Primary Signal</div>
         <div class="stat-sub">Observing the emergence of creative flow states during altered consciousness as a systems-level phenomenon</div>
@@ -461,35 +865,35 @@ body {
 </section>
 
 <!-- ── THE PROCESS ── -->
-<section class="cs-section">
+<section class="cs-section" aria-label="Process">
   <div class="section-inner">
     <p class="section-eyebrow reveal">The Process</p>
-    <h2 class="section-heading reveal">From individual expression to collective synthesis.</h2>
+    <h2 class="section-heading reveal">From individual expression to collective&nbsp;synthesis.</h2>
 
     <p class="body-text reveal">The creative process unfolded in three distinct phases — each building on the last, moving from individual altered-state expression through careful analysis to a synthesized visual artifact that captures the collective creative energy of the ceremony.</p>
 
-    <div class="loop-steps reveal">
-      <div class="loop-step">
+    <div class="loop-steps reveal" role="list">
+      <div class="loop-step" role="listitem">
         <div class="loop-num">01</div>
         <div class="loop-name">Ceremony</div>
         <div class="loop-desc">Participants engage with psilocybin in a held, ritualized space. Creative materials are present but unprescribed. Expression emerges on its own terms.</div>
       </div>
-      <div class="loop-step highlight">
+      <div class="loop-step highlight" role="listitem">
         <div class="loop-num">02</div>
         <div class="loop-name">Expression</div>
         <div class="loop-desc">Spontaneous art-making unfolds. Marks, colors, and forms emerge from the intersection of altered perception and embodied impulse. Each piece is unique to its maker.</div>
       </div>
-      <div class="loop-step">
+      <div class="loop-step" role="listitem">
         <div class="loop-num">03</div>
         <div class="loop-name">Collection</div>
         <div class="loop-desc">Individual artworks are gathered and carefully documented. Observation of each participant's expressive journey guides the interpretive process.</div>
       </div>
-      <div class="loop-step highlight">
+      <div class="loop-step highlight" role="listitem">
         <div class="loop-num">04</div>
         <div class="loop-name">Analysis</div>
         <div class="loop-desc">Themes, emotions, and visual patterns are identified across the collected works. The researcher reads the collective signal embedded in individual expression.</div>
       </div>
-      <div class="loop-step">
+      <div class="loop-step" role="listitem">
         <div class="loop-num">05</div>
         <div class="loop-name">Synthesis</div>
         <div class="loop-desc">The researcher synthesizes the various elements into a single cohesive painting — a visual representation of the collective creative journey.</div>
@@ -500,7 +904,7 @@ body {
 </section>
 
 <!-- ── CREATION COMPILATION ── -->
-<section class="cs-section alt-bg">
+<section class="cs-section alt-bg" aria-label="Creation Compilation">
   <div class="section-inner">
     <p class="section-eyebrow reveal">Creation Compilation</p>
     <h2 class="section-heading reveal">Many voices, one image.</h2>
@@ -510,27 +914,27 @@ body {
     <p class="body-text reveal">Using the compiled creations, the researcher took on the task of <strong>synthesizing the various elements into one image painting.</strong> This process involved intuitive artistic choices guided by the themes and emotions expressed in the individual artworks. The resulting painting serves as a visual representation of the collective creative journey undertaken during the psilocybin ritual.</p>
 
     <div class="thesis-block reveal" style="border-left-color: rgba(212,160,84,0.4); background: rgba(212,160,84,0.03);">
-      <div class="thesis-quote" style="color: rgba(240,210,140,0.82);">The synthesis isn't interpretation imposed — it's collective signal made visible.</div>
-      <div class="thesis-attr">The compiled image becomes an artifact of shared creative consciousness.</div>
+      <blockquote class="thesis-quote" style="color: #c4a24a;">The synthesis isn't interpretation imposed — it's collective signal made&nbsp;visible.</blockquote>
+      <p class="thesis-attr">The compiled image becomes an artifact of shared creative consciousness.</p>
     </div>
 
-    <div class="framework-grid reveal">
-      <div class="framework-card">
+    <div class="framework-grid reveal" role="list">
+      <div class="framework-card" role="listitem">
         <div class="framework-arrow">Individual → Collective</div>
         <div class="framework-label">From personal marks to shared meaning</div>
         <div class="framework-desc">Each participant's artwork carried traces of their unique experience. The compilation process honored individual expression while revealing patterns that only emerge at the collective level.</div>
       </div>
-      <div class="framework-card">
+      <div class="framework-card" role="listitem">
         <div class="framework-arrow">Spontaneous → Intentional</div>
         <div class="framework-label">Channeling emergence into form</div>
         <div class="framework-desc">The shift from unguided creation to deliberate synthesis mirrors the creative process itself — from raw impulse to structured meaning, from altered perception to integrated understanding.</div>
       </div>
-      <div class="framework-card">
+      <div class="framework-card" role="listitem">
         <div class="framework-arrow">Observation → Interpretation</div>
         <div class="framework-label">The researcher as creative instrument</div>
         <div class="framework-desc">Synthesis required the researcher to become part of the creative system — not merely documenting what happened, but translating collective experience into a new visual language.</div>
       </div>
-      <div class="framework-card">
+      <div class="framework-card" role="listitem">
         <div class="framework-arrow">Altered → Integrated</div>
         <div class="framework-label">Bridging states of consciousness</div>
         <div class="framework-desc">The final painting exists between two worlds — born from altered states but composed with waking intention. It captures what happens when the boundary between the two becomes permeable.</div>
@@ -541,24 +945,24 @@ body {
 </section>
 
 <!-- ── WHAT I LEARNED ── -->
-<section class="cs-section">
+<section class="cs-section" aria-label="What I Learned">
   <div class="section-inner">
     <p class="section-eyebrow reveal">What I Learned</p>
-    <h2 class="section-heading reveal">What this study taught me about creativity and systems.</h2>
+    <h2 class="section-heading reveal">What this study taught me about creativity and&nbsp;systems.</h2>
 
-    <div class="wil-grid reveal">
-      <div class="wil-card">
-        <div class="wil-number">01</div>
+    <div class="wil-grid reveal" role="list">
+      <div class="wil-card" role="listitem">
+        <div class="wil-number" aria-hidden="true">01</div>
         <p class="wil-title">Creativity is a system, not a trait</p>
         <p class="wil-body">This study reinforced that creativity operates as a dynamic system — influenced by environment, internal state, social context, and the tools available. It isn't something you either have or don't. It's something that emerges when the conditions are right.</p>
       </div>
-      <div class="wil-card">
-        <div class="wil-number">02</div>
+      <div class="wil-card" role="listitem">
+        <div class="wil-number" aria-hidden="true">02</div>
         <p class="wil-title">The observer shapes the system</p>
         <p class="wil-body">Observational research is never truly passive. The decision to provide materials, the choice of space, the presence of the researcher — all of these shape what emerges. Acknowledging that influence, rather than pretending neutrality, produces more honest research.</p>
       </div>
-      <div class="wil-card">
-        <div class="wil-number">03</div>
+      <div class="wil-card" role="listitem">
+        <div class="wil-number" aria-hidden="true">03</div>
         <p class="wil-title">Altered states reveal default patterns</p>
         <p class="wil-body">Psilocybin didn't create creativity in participants — it disrupted the patterns that typically constrain it. The most interesting signal wasn't what people made, but what they stopped doing: self-editing, second-guessing, performing. The altered state removed the filters.</p>
       </div>
@@ -568,19 +972,21 @@ body {
 </section>
 
 <!-- ── REFLECTION ── -->
-<section class="cs-section alt-bg" style="padding-bottom: 140px;">
+<section class="cs-section alt-bg" style="padding-bottom: 140px;" aria-label="Reflection">
   <div class="section-inner">
     <p class="section-eyebrow reveal">Reflection</p>
 
-    <div class="reflection-quote reveal">
-      Perhaps the creative process was never about adding something new — but about dissolving what was in the way.
-    </div>
-    <div class="reflection-attr reveal">Psilocybin as System · 2024</div>
+    <blockquote class="reflection-quote reveal">
+      Perhaps the creative process was never about adding something new — but about dissolving what was in the&nbsp;way.
+    </blockquote>
+    <p class="reflection-attr reveal">Psilocybin as System · 2022</p>
 
     <p class="body-text reveal" style="margin-top: 48px;">This case study offers a unique perspective on the intersection of psychedelics and creativity. By blending scientific observation with artistic interpretation, the aim was to contribute to the growing understanding of psilocybin's impact on the human creative experience. Through this exploration, perhaps room can be made for new avenues of discussion around the potential benefits and risks associated with the ritualized use of psychedelics in a creative context. The research didn't prescribe answers. It opened a space where the question could be held — and where what emerged was more honest than anything a hypothesis could have predicted.</p>
 
   </div>
 </section>
+
+</main>
 
 <script>
 'use strict';
@@ -588,36 +994,59 @@ body {
 // ── PAGE TRANSITION ──────────────────────────────────────────
 function navigateTo(url) {
   document.getElementById('page-exit').classList.add('active');
-  setTimeout(() => { window.location.href = url; }, 320);
+  setTimeout(function() { window.location.href = url; }, 320);
 }
 
+// ── THEME TOGGLE ─────────────────────────────────────────────
+(function() {
+  var html = document.documentElement;
+  var sw = document.getElementById('themeSwitch');
+  var STORAGE_KEY = 'psilocybin-theme';
+
+  function setTheme(theme) {
+    html.setAttribute('data-theme', theme);
+    var isLight = theme === 'light';
+    sw.setAttribute('aria-checked', String(isLight));
+    sw.setAttribute('aria-label', isLight ? 'Switch to dark mode' : 'Switch to light mode');
+    try { localStorage.setItem(STORAGE_KEY, theme); } catch(e) {}
+  }
+
+  var saved = null;
+  try { saved = localStorage.getItem(STORAGE_KEY); } catch(e) {}
+  setTheme(saved === 'light' ? 'light' : 'dark');
+
+  sw.addEventListener('click', function() {
+    var current = html.getAttribute('data-theme') || 'dark';
+    setTheme(current === 'dark' ? 'light' : 'dark');
+  });
+})();
+
 // ── SCROLL REVEAL ────────────────────────────────────────────
-const revealObs = new IntersectionObserver((entries) => {
-  entries.forEach(e => {
+var revealObs = new IntersectionObserver(function(entries) {
+  entries.forEach(function(e) {
     if (e.isIntersecting) { e.target.classList.add('is-visible'); revealObs.unobserve(e.target); }
   });
 }, { threshold: 0.08 });
-document.querySelectorAll('.reveal').forEach(el => revealObs.observe(el));
+document.querySelectorAll('.reveal').forEach(function(el) { revealObs.observe(el); });
 
 // ── CHIP HOVER ───────────────────────────────────────────────
-const chipDetail = document.getElementById('chipDetail');
-document.querySelectorAll('.chip-btn').forEach(btn => {
-  btn.addEventListener('mouseenter', () => {
-    chipDetail.textContent = btn.dataset.detail || '';
-    chipDetail.classList.add('has-value');
-  });
-  btn.addEventListener('mouseleave', () => {
-    chipDetail.classList.remove('has-value');
-  });
+var chipDetail = document.getElementById('chipDetail');
+document.querySelectorAll('.chip-btn').forEach(function(btn) {
+  var show = function() { chipDetail.textContent = btn.dataset.detail || ''; chipDetail.classList.add('has-value'); };
+  var hide = function() { chipDetail.classList.remove('has-value'); };
+  btn.addEventListener('mouseenter', show);
+  btn.addEventListener('mouseleave', hide);
+  btn.addEventListener('focus', show);
+  btn.addEventListener('blur', hide);
 });
 
 // ── CHIP PANEL MOUSE GLOW ────────────────────────────────────
-const chipOuter = document.getElementById('chipOuter');
+var chipOuter = document.getElementById('chipOuter');
 if (chipOuter) {
-  chipOuter.addEventListener('mousemove', e => {
-    const r = chipOuter.getBoundingClientRect();
-    const x = ((e.clientX - r.left) / r.width * 100).toFixed(1);
-    const y = ((e.clientY - r.top)  / r.height * 100).toFixed(1);
+  chipOuter.addEventListener('mousemove', function(e) {
+    var r = chipOuter.getBoundingClientRect();
+    var x = ((e.clientX - r.left) / r.width * 100).toFixed(1);
+    var y = ((e.clientY - r.top)  / r.height * 100).toFixed(1);
     chipOuter.style.setProperty('--mx', x + '%');
     chipOuter.style.setProperty('--my', y + '%');
   });

@@ -20,337 +20,41 @@
       transform-origin: 0 0;
     }
 
-    /* ── Map layers (left:49 top:-2 w:1810 h:1082) ── */
-    .map-layer {
+    /* ── Full-slide state images ── */
+    .state-img {
       position: absolute;
-      left: 49px; top: -2px;
-      width: 1810px; height: 1082px;
-      object-fit: cover;
-      display: none;
-      pointer-events: none;
-    }
-    .map-layer.s-default { display: block; }
-
-    .slide[data-state="info"]       .map-layer.s-default  { display: none; }
-    .slide[data-state="info"]       .map-layer.s-info     { display: block; }
-    .slide[data-state="area"]       .map-layer.s-default  { display: none; }
-    .slide[data-state="area"]       .map-layer.s-area     { display: block; }
-    .slide[data-state="color"]      .map-layer.s-default  { display: none; }
-    .slide[data-state="color"]      .map-layer.s-color    { display: block; }
-    .slide[data-state="green"]      .map-layer.s-default  { display: none; }
-    .slide[data-state="green"]      .map-layer.s-green    { display: block; }
-    .slide[data-state="nodot-dg"]   .map-layer.s-default  { display: none; }
-    .slide[data-state="nodot-dg"]   .map-layer.s-nodot-dg { display: block; }
-    .slide[data-state="nodot-ng"]   .map-layer.s-default  { display: none; }
-    .slide[data-state="nodot-ng"]   .map-layer.s-nodot-ng { display: block; }
-    .slide[data-state="halo"]       .map-layer.s-default  { display: none; }
-    .slide[data-state="halo"]       .map-layer.s-halo     { display: block; }
-
-    /* ── Legend image ── */
-    .legend-wrap {
-      position: absolute;
-      left: 786px; top: -2px;
-      width: 1134px; height: 280px;
-      pointer-events: none;
-    }
-    .legend-wrap img {
-      position: absolute; inset: 0;
-      width: 100%; height: 100%;
-      object-fit: cover;
-      display: none;
-    }
-    .legend-wrap img.s-default { display: block; }
-    .slide[data-state="info"]     .legend-wrap img.s-default { display:none; } .slide[data-state="info"]     .legend-wrap img.s-info     { display:block; }
-    .slide[data-state="area"]     .legend-wrap img.s-default { display:none; } .slide[data-state="area"]     .legend-wrap img.s-area     { display:block; }
-    .slide[data-state="color"]    .legend-wrap img.s-default { display:none; } .slide[data-state="color"]    .legend-wrap img.s-color    { display:block; }
-    .slide[data-state="green"]    .legend-wrap img.s-default { display:none; } .slide[data-state="green"]    .legend-wrap img.s-green    { display:block; }
-    .slide[data-state="nodot-dg"] .legend-wrap img.s-default { display:none; } .slide[data-state="nodot-dg"] .legend-wrap img.s-nodot-dg { display:block; }
-    .slide[data-state="nodot-ng"] .legend-wrap img.s-default { display:none; } .slide[data-state="nodot-ng"] .legend-wrap img.s-nodot-ng { display:block; }
-    .slide[data-state="halo"]     .legend-wrap img.s-default { display:none; } .slide[data-state="halo"]     .legend-wrap img.s-halo     { display:block; }
-
-    /* ── Always-on title ── */
-    .title-bg {
-      position: absolute; left: 127px; top: 33px;
-      width: 726px; height: 134px; background: #c6e9f8;
-    }
-    .title {
-      position: absolute; left: 144px; top: 53px; width: 808px;
-      font-family: 'ITC Avant Garde Gothic','Century Gothic','Futura',sans-serif;
-      font-size: 70px; font-weight: 700; color: #484a49;
-      line-height: normal; white-space: nowrap; letter-spacing: -1px;
-    }
-    .subtitle {
-      position: absolute; left: 155px; top: 128px;
-      font-family: 'ITC Avant Garde Gothic','Century Gothic','Futura',sans-serif;
-      font-size: 24px; color: #4c4e4e; white-space: nowrap;
-    }
-
-    /* ── State panels ── */
-    .panel {
-      position: absolute; inset: 0;
+      inset: 0;
       width: 1920px; height: 1080px;
-      display: none; pointer-events: none;
+      object-fit: cover;
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity 0.25s ease;
     }
-    .panel.s-default { display: block; }
+    .state-img.active { opacity: 1; }
 
-    .slide[data-state="info"]     .panel.s-default { display:none; } .slide[data-state="info"]     .panel.s-info     { display:block; }
-    .slide[data-state="area"]     .panel.s-default { display:none; } .slide[data-state="area"]     .panel.s-area     { display:block; }
-    .slide[data-state="color"]    .panel.s-default { display:none; } .slide[data-state="color"]    .panel.s-color    { display:block; }
-    .slide[data-state="green"]    .panel.s-default { display:none; } .slide[data-state="green"]    .panel.s-green    { display:block; }
-    .slide[data-state="nodot-dg"] .panel.s-default { display:none; } .slide[data-state="nodot-dg"] .panel.s-nodot-dg { display:block; }
-    .slide[data-state="nodot-ng"] .panel.s-default { display:none; } .slide[data-state="nodot-ng"] .panel.s-nodot-ng { display:block; }
-    .slide[data-state="halo"]     .panel.s-default { display:none; } .slide[data-state="halo"]     .panel.s-halo     { display:block; }
-
-    /* ── Hover zones ── */
+    /* ── Hover zones (invisible, positioned over the legend bar) ── */
     .hz {
       position: absolute;
       cursor: pointer;
-      z-index: 200;
+      z-index: 10;
     }
   </style>
 </head>
 <body>
+
 <div class="slide" id="slide">
 
-  <!-- ════════ MAP LAYERS ════════ -->
+  <!-- Pre-rendered full-slide images for each state -->
+  <img class="state-img active" data-state="default"  src="zoo-assets/default.png"  alt="Zoo Economy Map – Default view">
+  <img class="state-img"        data-state="info"     src="zoo-assets/info.png"     alt="Zoo Economy Map – Info overlay">
+  <img class="state-img"        data-state="area"     src="zoo-assets/area.png"     alt="Zoo Economy Map – Area of Circle legend">
+  <img class="state-img"        data-state="color"    src="zoo-assets/color.png"    alt="Zoo Economy Map – Color of Circle legend">
+  <img class="state-img"        data-state="green"    src="zoo-assets/green.png"    alt="Zoo Economy Map – Dark Green Center Circle">
+  <img class="state-img"        data-state="nodot-dg" src="zoo-assets/nodot-dg.png" alt="Zoo Economy Map – No Dot Dark Green">
+  <img class="state-img"        data-state="nodot-ng" src="zoo-assets/nodot-ng.png" alt="Zoo Economy Map – No Dot Non-Green">
+  <img class="state-img"        data-state="halo"     src="zoo-assets/halo.png"     alt="Zoo Economy Map – Outer Halo">
 
-  <!-- default -->
-  <img class="map-layer s-default" src="https://www.figma.com/api/mcp/asset/0fb08d3d-7c53-4f00-b0d6-e0107c4530e2" alt="">
-  <img class="map-layer s-default" src="https://www.figma.com/api/mcp/asset/1263e663-916c-4834-b821-ca02e1af7640" alt="">
-
-  <!-- info -->
-  <img class="map-layer s-info" src="https://www.figma.com/api/mcp/asset/169fc2d9-f657-416b-8905-6290ef5b4712" alt="">
-
-  <!-- area -->
-  <img class="map-layer s-area" src="https://www.figma.com/api/mcp/asset/e7cce6db-9a33-4a47-9ef6-a585be2bdb83" alt="">
-  <img class="map-layer s-area" src="https://www.figma.com/api/mcp/asset/f177a514-9b49-4ae8-bdda-2aacb3d5e622" alt="">
-
-  <!-- color -->
-  <img class="map-layer s-color" src="https://www.figma.com/api/mcp/asset/bc147cc9-4568-4782-a2a3-16dd5af3fe32" alt="">
-  <img class="map-layer s-color" src="https://www.figma.com/api/mcp/asset/5fac920f-7672-4e90-9b7f-3e7c8e8eca2e" alt="">
-
-  <!-- green center -->
-  <img class="map-layer s-green" src="https://www.figma.com/api/mcp/asset/8a2f9175-55b0-44f0-8ead-ba7222c560db" alt="">
-  <img class="map-layer s-green" src="https://www.figma.com/api/mcp/asset/c3c1edff-8bc3-4b3e-a9d4-275edcfa5d8d" alt="">
-
-  <!-- no dot dark green -->
-  <img class="map-layer s-nodot-dg" src="https://www.figma.com/api/mcp/asset/c3957153-c599-4002-ab11-4bf2a35a6b01" alt="">
-  <img class="map-layer s-nodot-dg" src="https://www.figma.com/api/mcp/asset/21231d39-7605-4d53-bbb2-ba9b53a39ea3" alt="">
-
-  <!-- no dot non-green -->
-  <img class="map-layer s-nodot-ng" src="https://www.figma.com/api/mcp/asset/88ad9a59-58eb-4038-851b-b397c44c4eb9" alt="">
-  <img class="map-layer s-nodot-ng" src="https://www.figma.com/api/mcp/asset/2b21bc10-eb90-46ae-8986-78f3ba553acb" alt="">
-
-  <!-- halo -->
-  <img class="map-layer s-halo" src="https://www.figma.com/api/mcp/asset/00c01cc8-85bf-45c6-8525-b581813be886" alt="">
-  <img class="map-layer s-halo" src="https://www.figma.com/api/mcp/asset/77f9bfdd-580c-412b-b115-35424f416b76" alt="">
-
-  <!-- ════════ LEGEND (per-state, same position) ════════ -->
-  <div class="legend-wrap">
-    <img class="s-default"  src="https://www.figma.com/api/mcp/asset/fc591b82-1749-49bb-bc85-2836eb434861" alt="Legend">
-    <img class="s-info"     src="https://www.figma.com/api/mcp/asset/ab05286c-46a4-46e3-bd73-b8559b29c266" alt="Legend">
-    <img class="s-area"     src="https://www.figma.com/api/mcp/asset/fd9ef4c4-ddea-4b36-9017-2290e9a8cb67" alt="Legend">
-    <img class="s-color"    src="https://www.figma.com/api/mcp/asset/bd57b744-958b-4aab-ae78-617cccef2aaf" alt="Legend">
-    <img class="s-green"    src="https://www.figma.com/api/mcp/asset/79a18923-4c2c-4b9b-b059-6f3abba7e499" alt="Legend">
-    <img class="s-nodot-dg" src="https://www.figma.com/api/mcp/asset/259d3570-9962-42ed-9a13-afe79203a1aa" alt="Legend">
-    <img class="s-nodot-ng" src="https://www.figma.com/api/mcp/asset/3475ab71-240a-4e74-8009-c29baad0e660" alt="Legend">
-    <img class="s-halo"     src="https://www.figma.com/api/mcp/asset/239129da-476a-421a-94fe-354780282c53" alt="Legend">
-  </div>
-
-  <!-- ════════ TITLE (always visible) ════════ -->
-  <div class="title-bg"></div>
-  <p class="title">The Zoo Economy</p>
-  <p class="subtitle">Money In - Money Out</p>
-
-  <!-- ════════════════════════════════════════════
-       PANELS
-  ════════════════════════════════════════════ -->
-
-  <!-- ── DEFAULT: dark info box ── -->
-  <div class="panel s-default">
-    <!-- outer rounded box clips all children -->
-    <div style="position:absolute;left:1375px;top:503px;width:445px;height:490px;background:#4c4e4e;border-radius:22px;overflow:hidden;">
-      <!-- inner flat rect (depth layer) -->
-      <div style="position:absolute;left:19px;top:18px;width:392px;height:453px;background:#4c4e4e;"></div>
-      <!-- text: coordinates relative to outer box (1412-1375=37, 540-503=37) -->
-      <div style="position:absolute;left:37px;top:37px;width:389px;font-family:'Corbel','Calibri',sans-serif;font-size:12px;color:#fff;white-space:pre-wrap;line-height:0;">
-        <p style="line-height:normal;margin:0;">This map visualizes the financial relationship between U.S. zoos and the conservation missions they promote. It's built from IRS Form 990 data for AZA-accredited, non-profit, non–city-owned zoos in North America, averaged across 2019, 2021, and 2023 to smooth out COVID-era fluctuations. Each zoo's data was drawn from publicly available filings on ProPublica's Nonprofit Explorer, cross-referenced with Schedule F (foreign giving) and Schedule I (domestic giving) disclosures. The result is a composite picture of how much zoos earn, how much they give, and how closely those actions align with their stated conservation values.</p>
-        <p style="line-height:normal;margin:0;">&nbsp;</p>
-        <p style="line-height:normal;margin:0;">Rather than ranking institutions, the map reveals patterns, highlighting the relationship between message and action. Together, the colors, sizes, and halos invite viewers to explore how capacity, commitment, and integrity interact across the zoo landscape.</p>
-        <p style="line-height:normal;margin:0;">&nbsp;</p>
-        <p style="line-height:normal;margin:0;">Through the Greenwashing Index (GWI) , this map establishes a baseline for understanding what zoos are truly communicating through their actions, not just their words. By visualizing financial and conservation data, it reveals how each institution's choices shape what the public learns, what values stick, and where gaps may unintentionally undermine conservation goals.</p>
-        <p style="line-height:normal;margin:0;">Paired with upcoming tools for emotional and educational literacy, the Index invites reflection and collaboration, helping zoos align mission, message, and impact through transparent, adaptive design.</p>
-        <p style="line-height:normal;margin:0;">&nbsp;</p>
-        <p style="line-height:normal;margin:0;">Data source: AZA-accredited, non-profit, non-city-owned zoos in North America. All financial data were drawn from IRS Form 990s available on ProPublica.org. Figures represent three-year averages (2019, 2022,<br>and 2023) to mitigate COVID-era fluctuations. Conservation giving<br>totals were derived from Schedule I and Schedule F disclosures within</p>
-        <p style="line-height:normal;margin:0;">each 990.</p>
-      </div>
-    </div>
-  </div>
-
-  <!-- ── INFO HOVER: full-screen overlay ── -->
-  <div class="panel s-info">
-    <!-- dim overlay -->
-    <div style="position:absolute;left:0;top:-33px;width:1920px;height:1146px;background:rgba(76,78,78,0.68);border-radius:22px;"></div>
-    <!-- Rectangle4: fresh URL -->
-    <img src="https://www.figma.com/api/mcp/asset/1ee2d013-b1bd-4036-957a-b151ad6db46b"
-         style="position:absolute;left:295px;top:-93px;width:1116px;height:1266px;display:block;" alt="">
-    <!-- Text: left:407 top:46 w:892 h:1008, Corbel 28px white -->
-    <div style="position:absolute;left:407px;top:46px;width:892px;font-family:'Corbel','Calibri',sans-serif;font-size:28px;color:#fff;white-space:pre-wrap;line-height:0;">
-      <p style="line-height:normal;margin:0;">This map visualizes the financial relationship between U.S. zoos and the conservation missions they promote. It's built from IRS Form 990 data for AZA-accredited, non-profit, non–city-owned zoos in North America, averaged across 2019, 2021, and 2023 to smooth out COVID-era fluctuations. Each zoo's data was drawn from publicly available filings on ProPublica's Nonprofit Explorer, cross-referenced with Schedule F (foreign giving) and Schedule I (domestic giving) disclosures. The result is a composite picture of how much zoos earn, how much they give, and how closely those actions align with their stated conservation values.</p>
-      <p style="line-height:normal;margin:0;">&nbsp;</p>
-      <p style="line-height:normal;margin:0;">Rather than ranking institutions, the Greenwashing Index reveals patterns, highlighting the relationship between message and action. Together, the colors, sizes, and halos invite viewers to explore how capacity, commitment, and integrity interact across the zoo landscape.</p>
-      <p style="line-height:normal;margin:0;">&nbsp;</p>
-      <p style="line-height:normal;margin:0;">Through The Greenwashing Index , this map establishes a baseline for understanding what zoos are truly communicating through their actions, not just their words. By visualizing financial and conservation data, it reveals how each institution's choices shape what the public learns, what values stick, and where gaps may unintentionally undermine conservation goals.</p>
-      <p style="line-height:normal;margin:0;">Paired with upcoming tools for emotional and educational literacy, the Index invites reflection and collaboration, helping zoos align mission, message, and impact through transparent, adaptive design.</p>
-      <p style="line-height:normal;margin:0;">&nbsp;</p>
-      <p style="line-height:normal;margin:0;">Data source: AZA-accredited, non-profit, non-city-owned zoos in North America. All financial data were drawn from IRS Form 990s available on ProPublica.org. Figures represent three-year averages (2019, 2022,<br>and 2023) to mitigate COVID-era fluctuations. Conservation giving<br>totals were derived from Schedule I and Schedule F disclosures within</p>
-      <p style="line-height:normal;margin:0;">each 990.</p>
-    </div>
-  </div>
-
-  <!-- ── AREA OF CIRCLE ── -->
-  <div class="panel s-area">
-    <div style="position:absolute;left:1375px;top:503px;width:426px;height:490px;background:#4c4e4e;border-radius:22px;"></div>
-    <div style="position:absolute;left:1375px;top:503px;width:445px;height:490px;background:#4c4e4e;border-radius:22px;"></div>
-    <div style="position:absolute;left:1391px;top:520px;width:413px;height:456px;background:#fff;border-radius:22px;"></div>
-    <!-- title -->
-    <div style="position:absolute;left:1414px;top:575px;font-family:'ITC Avant Garde Gothic','Century Gothic','Futura',sans-serif;font-weight:700;font-size:24px;color:#000;line-height:1.2;">
-      Area of Circle:<br>Revenue +<br>Surplus Capacity
-    </div>
-    <!-- 5 concentric grey circles — all sharing bottom-center at (1483.5, 837) -->
-    <!-- Container anchored at top-left of the largest circle -->
-    <div style="position:absolute;left:1414px;top:700px;width:139px;height:137px;">
-      <!-- C1 largest (behind) -->
-      <div style="position:absolute;left:0;top:0;width:139px;height:137px;border-radius:50%;background:#d4d4d4;"></div>
-      <!-- C2 -->
-      <div style="position:absolute;left:14px;top:27px;width:111px;height:110px;border-radius:50%;background:#c4c4c4;"></div>
-      <!-- C3 -->
-      <div style="position:absolute;left:28px;top:54px;width:83px;height:83px;border-radius:50%;background:#b4b4b4;"></div>
-      <!-- C4 -->
-      <div style="position:absolute;left:42px;top:81px;width:56px;height:56px;border-radius:50%;background:#a4a4a4;"></div>
-      <!-- C5 smallest (front) -->
-      <div style="position:absolute;left:56px;top:110px;width:27px;height:27px;border-radius:50%;background:#949494;"></div>
-    </div>
-    <!-- 5 arrows -->
-    <img src="https://www.figma.com/api/mcp/asset/6f5dbea3-25e2-4156-a6ce-2389cfb1816f" style="position:absolute;left:1484px;top:692px;width:172px;height:15px;display:block;" alt="">
-    <img src="https://www.figma.com/api/mcp/asset/6f5dbea3-25e2-4156-a6ce-2389cfb1816f" style="position:absolute;left:1484px;top:720px;width:172px;height:15px;display:block;" alt="">
-    <img src="https://www.figma.com/api/mcp/asset/6f5dbea3-25e2-4156-a6ce-2389cfb1816f" style="position:absolute;left:1484px;top:746px;width:172px;height:15px;display:block;" alt="">
-    <img src="https://www.figma.com/api/mcp/asset/6f5dbea3-25e2-4156-a6ce-2389cfb1816f" style="position:absolute;left:1484px;top:774px;width:172px;height:15px;display:block;" alt="">
-    <img src="https://www.figma.com/api/mcp/asset/6f5dbea3-25e2-4156-a6ce-2389cfb1816f" style="position:absolute;left:1484px;top:802px;width:172px;height:15px;display:block;" alt="">
-    <!-- labels -->
-    <div style="position:absolute;left:1661px;top:688px;font-family:'ITC Avant Garde Gothic','Century Gothic','Futura',sans-serif;font-size:19px;color:#000;line-height:1.245;">
-      <p>&gt;$200M</p>
-      <p>$100&#8209;$200M</p>
-      <p>$50&#8209;$100M</p>
-      <p>$10M&#8209;$50M</p>
-      <p>&lt;$10M</p>
-    </div>
-  </div>
-
-  <!-- ── COLOR OF CIRCLE ── -->
-  <div class="panel s-color">
-    <div style="position:absolute;left:1375px;top:503px;width:426px;height:490px;background:#4c4e4e;border-radius:22px;"></div>
-    <div style="position:absolute;left:1390px;top:520px;width:396px;height:456px;background:#fff;border-radius:22px;"></div>
-    <div style="position:absolute;left:1375px;top:503px;width:445px;height:490px;background:#4c4e4e;border-radius:22px;"></div>
-    <div style="position:absolute;left:1391px;top:520px;width:413px;height:456px;background:#fff;border-radius:22px;"></div>
-    <!-- GWI chart image: left:1338 top:561 w:551 h:383 (intentionally overflows left edge of panel) -->
-    <img src="https://www.figma.com/api/mcp/asset/6ecffb88-d3b6-4770-8f6c-c9a03ce5f34e"
-         style="position:absolute;left:1338px;top:561px;width:551px;height:383px;display:block;object-fit:cover;" alt="">
-    <!-- small sample circle overlaid on chart -->
-    <img src="https://www.figma.com/api/mcp/asset/f03433fb-73c8-4638-a0ad-ccc33838a9b9"
-         style="position:absolute;left:1418px;top:674px;width:39px;height:39px;display:block;" alt="">
-  </div>
-
-  <!-- ── DARK GREEN CENTER CIRCLE ── -->
-  <div class="panel s-green">
-    <div style="position:absolute;left:1375px;top:503px;width:445px;height:490px;background:#4c4e4e;border-radius:22px;"></div>
-    <div style="position:absolute;left:1391px;top:520px;width:413px;height:456px;background:#fff;border-radius:22px;"></div>
-    <!-- GIVNG 1 top strip (title + giving %) -->
-    <div style="position:absolute;left:1376px;top:536px;width:548px;height:164px;overflow:hidden;">
-      <img src="https://www.figma.com/api/mcp/asset/beca3ca6-2ec7-44ca-b712-01e544c6f23c"
-           style="width:100%;display:block;" alt="">
-    </div>
-    <!-- 5 concentric dark-green ellipses -->
-    <img src="https://www.figma.com/api/mcp/asset/f1d7b16f-4028-4c77-9ce0-257533920a2d" style="position:absolute;left:1413px;top:700px;width:170px;height:170px;display:block;" alt="">
-    <img src="https://www.figma.com/api/mcp/asset/e75f0c2d-a59a-493b-950f-ccccb0c601cc" style="position:absolute;left:1430px;top:718px;width:136px;height:136px;display:block;" alt="">
-    <img src="https://www.figma.com/api/mcp/asset/0bcbdc19-bda2-4fd2-a1ad-f22612532911" style="position:absolute;left:1445px;top:734px;width:106px;height:106px;display:block;" alt="">
-    <img src="https://www.figma.com/api/mcp/asset/92fe22ee-c060-40fa-b159-dbee66effe55" style="position:absolute;left:1463px;top:753px;width:70px;height:70px;display:block;" alt="">
-    <img src="https://www.figma.com/api/mcp/asset/2c0d26c7-8d80-4c27-84a5-e4d94921994f" style="position:absolute;left:1480px;top:770px;width:36px;height:36px;display:block;" alt="">
-    <!-- arrows pointing to labels -->
-    <img src="https://www.figma.com/api/mcp/asset/a004490e-fd48-4dd6-978f-09e897871322" style="position:absolute;left:1544px;top:709px;width:106px;height:15px;display:block;" alt="">
-    <img src="https://www.figma.com/api/mcp/asset/0871c1e1-5467-4a4c-b6cd-59c771b2d8fc" style="position:absolute;left:1561px;top:752px;width:89px;height:15px;display:block;" alt="">
-    <img src="https://www.figma.com/api/mcp/asset/c09513e7-e59f-4404-9d89-b14bdceaedbd" style="position:absolute;left:1529px;top:797px;width:121px;height:15px;display:block;" alt="">
-    <img src="https://www.figma.com/api/mcp/asset/a004490e-fd48-4dd6-978f-09e897871322" style="position:absolute;left:1506px;top:837px;width:144px;height:15px;display:block;" alt="">
-    <img src="https://www.figma.com/api/mcp/asset/d255d890-9959-474a-a8f6-d59cc2c35121" style="position:absolute;left:1497px;top:879px;width:153px;height:15px;display:block;" alt="">
-    <!-- GIVNG 2: side percentage labels (cropped) -->
-    <div style="position:absolute;left:1661px;top:672px;width:143px;height:233px;overflow:hidden;">
-      <img src="https://www.figma.com/api/mcp/asset/beca3ca6-2ec7-44ca-b712-01e544c6f23c"
-           style="position:absolute;width:671px;height:467px;left:-292px;top:-187px;display:block;" alt="">
-    </div>
-    <!-- NO DOT label -->
-    <p style="position:absolute;left:1420px;top:933px;font-family:'ITC Avant Garde Gothic','Century Gothic','Futura',sans-serif;font-weight:700;font-size:24px;color:#810505;white-space:nowrap;">NO DOT = NO GIVING</p>
-  </div>
-
-  <!-- ── NO DOT: ANY SIZE DARK GREEN ── -->
-  <div class="panel s-nodot-dg">
-    <div style="position:absolute;left:1375px;top:503px;width:445px;height:490px;background:#4c4e4e;border-radius:22px;"></div>
-    <div style="position:absolute;left:1391px;top:520px;width:413px;height:456px;background:#fff;border-radius:22px;"></div>
-    <!-- legend-27-1 image: shows top 211px -->
-    <div style="position:absolute;left:1391px;top:543px;width:449px;height:211px;overflow:hidden;">
-      <img src="https://www.figma.com/api/mcp/asset/8785ac8a-1df8-4933-aff3-cf8c4b0f6d90"
-           style="width:449px;display:block;" alt="">
-    </div>
-  </div>
-
-  <!-- ── NO DOT: ANY SIZE / NON-GREEN ── -->
-  <div class="panel s-nodot-ng">
-    <div style="position:absolute;left:1375px;top:503px;width:445px;height:490px;background:#4c4e4e;border-radius:22px;"></div>
-    <div style="position:absolute;left:1391px;top:520px;width:413px;height:456px;background:#fff;border-radius:22px;"></div>
-    <!-- top section: first 83px of the image -->
-    <div style="position:absolute;left:1391px;top:543px;width:449px;height:83px;overflow:hidden;">
-      <img src="https://www.figma.com/api/mcp/asset/33e09221-076e-4c41-a2c0-263428d40f5d"
-           style="width:449px;display:block;" alt="">
-    </div>
-    <!-- bottom section: crops into the lower portion of the same image -->
-    <div style="position:absolute;left:1363px;top:645px;width:449px;height:103px;overflow:hidden;">
-      <img src="https://www.figma.com/api/mcp/asset/33e09221-076e-4c41-a2c0-263428d40f5d"
-           style="position:absolute;width:449px;top:-208px;display:block;" alt="">
-    </div>
-  </div>
-
-  <!-- ── OUTER HALO ── -->
-  <div class="panel s-halo">
-    <div style="position:absolute;left:1375px;top:503px;width:445px;height:490px;background:#4c4e4e;border-radius:22px;"></div>
-    <div style="position:absolute;left:1391px;top:520px;width:413px;height:456px;background:#fff;border-radius:22px;"></div>
-    <!-- Halo 1 (title + two halo rows) -->
-    <img src="https://www.figma.com/api/mcp/asset/25e3ec34-fde6-43a7-95d8-5ec9c45518c0"
-         style="position:absolute;left:1365px;top:535px;width:513px;height:116px;display:block;" alt="">
-    <!-- Halo 2 (detailed examples, cropped) -->
-    <div style="position:absolute;left:1350px;top:666px;width:608px;height:201px;overflow:hidden;">
-      <img src="https://www.figma.com/api/mcp/asset/57cc16bc-14f2-46bf-be27-10838254c782"
-           style="position:absolute;width:608px;top:-122px;display:block;" alt="">
-    </div>
-    <!-- halo circles on the map -->
-    <img src="https://www.figma.com/api/mcp/asset/0a1794bb-64c0-4e69-9c96-76df33e488e1" style="position:absolute;left:713px;top:872px;width:46px;height:46px;display:block;" alt="">
-    <img src="https://www.figma.com/api/mcp/asset/0a1794bb-64c0-4e69-9c96-76df33e488e1" style="position:absolute;left:512px;top:579px;width:46px;height:46px;display:block;" alt="">
-    <img src="https://www.figma.com/api/mcp/asset/0a1794bb-64c0-4e69-9c96-76df33e488e1" style="position:absolute;left:950px;top:466px;width:46px;height:46px;display:block;" alt="">
-    <img src="https://www.figma.com/api/mcp/asset/68c5cb71-30b6-4ade-981b-51fba1254482" style="position:absolute;left:753px;top:609px;width:40px;height:40px;display:block;" alt="">
-    <img src="https://www.figma.com/api/mcp/asset/68c5cb71-30b6-4ade-981b-51fba1254482" style="position:absolute;left:1297px;top:539px;width:40px;height:40px;display:block;" alt="">
-    <img src="https://www.figma.com/api/mcp/asset/1ec5ffe7-67ee-46b7-8615-5fd12c072a11" style="position:absolute;left:556px;top:563px;width:37px;height:37px;display:block;" alt="">
-    <img src="https://www.figma.com/api/mcp/asset/896971ff-75e1-4f3e-b490-b84d88c37d36" style="position:absolute;left:679px;top:788px;width:34px;height:34px;display:block;" alt="">
-    <img src="https://www.figma.com/api/mcp/asset/d8cec09f-cf65-4ffc-855c-da8e44c1e64b" style="position:absolute;left:719px;top:791px;width:27px;height:27px;display:block;" alt="">
-    <img src="https://www.figma.com/api/mcp/asset/d8cec09f-cf65-4ffc-855c-da8e44c1e64b" style="position:absolute;left:1009px;top:485px;width:27px;height:27px;display:block;" alt="">
-    <img src="https://www.figma.com/api/mcp/asset/d8cec09f-cf65-4ffc-855c-da8e44c1e64b" style="position:absolute;left:1061px;top:578px;width:27px;height:27px;display:block;" alt="">
-    <img src="https://www.figma.com/api/mcp/asset/d8cec09f-cf65-4ffc-855c-da8e44c1e64b" style="position:absolute;left:951px;top:699px;width:27px;height:27px;display:block;" alt="">
-    <img src="https://www.figma.com/api/mcp/asset/d8cec09f-cf65-4ffc-855c-da8e44c1e64b" style="position:absolute;left:966px;top:423px;width:27px;height:27px;display:block;" alt="">
-    <img src="https://www.figma.com/api/mcp/asset/4a0886d9-67c4-4755-bb4d-78a5eb6c55f9" style="position:absolute;left:769px;top:569px;width:14px;height:14px;display:block;" alt="">
-    <p style="position:absolute;left:1509px;top:871px;font-family:'ITC Avant Garde Gothic','Century Gothic','Futura',sans-serif;font-size:16px;color:#000;white-space:nowrap;">(No allocated location)</p>
-  </div>
-
-  <!-- ════════════════════════════════════════════
-       HOVER ZONES  (match the opacity-0 rects from Figma)
-  ════════════════════════════════════════════ -->
-
+  <!-- Hover zones matching the legend bar positions -->
   <!-- Area of Circle -->
   <div class="hz" data-state="area"     style="left:853px; top:44px;  width:216px; height:173px;"></div>
   <!-- Color of Circle -->
@@ -363,28 +67,39 @@
   <div class="hz" data-state="nodot-ng" style="left:1489px;top:137px; width:168px; height:80px;"></div>
   <!-- Outer Halo -->
   <div class="hz" data-state="halo"     style="left:1657px;top:44px;  width:227px; height:173px;"></div>
-  <!-- Info panel -->
+  <!-- Info panel (bottom-right dark box) -->
   <div class="hz" data-state="info"     style="left:1375px;top:505px; width:432px; height:487px;"></div>
 
-</div><!-- /slide -->
+</div>
 
 <script>
-  // ── Scale to fit viewport ──
+  // Scale slide to fit viewport
   function scaleSlide() {
     const slide = document.getElementById('slide');
     const scale = Math.min(window.innerWidth / 1920, window.innerHeight / 1080);
     const ox = (window.innerWidth  - 1920 * scale) / 2;
     const oy = (window.innerHeight - 1080 * scale) / 2;
-    slide.style.transform = `translate(${ox}px,${oy}px) scale(${scale})`;
+    slide.style.transform = 'translate(' + ox + 'px,' + oy + 'px) scale(' + scale + ')';
   }
   scaleSlide();
   window.addEventListener('resize', scaleSlide);
 
-  // ── Hover state switching ──
-  const slide = document.getElementById('slide');
-  document.querySelectorAll('.hz').forEach(zone => {
-    zone.addEventListener('mouseenter', () => { slide.dataset.state = zone.dataset.state; });
-    zone.addEventListener('mouseleave', () => { delete slide.dataset.state; });
+  // State image switching
+  var defaultImg = document.querySelector('.state-img[data-state="default"]');
+  var allImgs = document.querySelectorAll('.state-img');
+
+  document.querySelectorAll('.hz').forEach(function(zone) {
+    zone.addEventListener('mouseenter', function() {
+      var state = zone.dataset.state;
+      allImgs.forEach(function(img) {
+        img.classList.toggle('active', img.dataset.state === state);
+      });
+    });
+    zone.addEventListener('mouseleave', function() {
+      allImgs.forEach(function(img) {
+        img.classList.toggle('active', img.dataset.state === 'default');
+      });
+    });
   });
 </script>
 </body>

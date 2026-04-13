@@ -1,0 +1,530 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dayli AI — Socratic Agent</title>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..900;1,9..144,300..900&family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&display=swap" rel="stylesheet" />
+  <style>
+    * { margin:0; padding:0; box-sizing:border-box; }
+    body {
+      font-family:'DM Sans',sans-serif;
+      background:#0f0a1a;
+      color:#e2d9f0;
+      height:100vh;
+      display:flex; flex-direction:column;
+      overflow:hidden;
+    }
+    h1,h2,h3 { font-family:'Fraunces',serif; }
+
+    /* ── Overlay (choose path) ── */
+    .overlay {
+      position:fixed; inset:0; z-index:50;
+      display:flex; flex-direction:column; align-items:center; justify-content:center;
+      background:#0f0a1a;
+      transition:opacity 0.5s;
+    }
+    .overlay.hidden { opacity:0; pointer-events:none; }
+
+    .overlay-icon { font-size:3rem; margin-bottom:20px; animation:float 4s ease-in-out infinite; }
+    @keyframes float { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-8px)} }
+
+    .overlay-title {
+      font-family:'Fraunces',serif; font-size:2.2rem; font-weight:700;
+      text-align:center; margin-bottom:10px;
+      background:linear-gradient(135deg,#DBB0FF,#9230E3);
+      -webkit-background-clip:text; -webkit-text-fill-color:transparent;
+    }
+    .overlay-sub {
+      font-size:0.9rem; color:rgba(219,176,255,0.4);
+      text-align:center; max-width:500px; margin-bottom:36px; line-height:1.5;
+    }
+
+    .path-cards { display:flex; gap:20px; }
+    .path-card {
+      width:260px; padding:32px 24px; border-radius:16px;
+      background:rgba(146,48,227,0.06); border:1px solid rgba(146,48,227,0.15);
+      cursor:pointer; transition:all 0.3s; text-align:center;
+      text-decoration:none; color:inherit;
+    }
+    .path-card:hover {
+      border-color:#9230E3; transform:translateY(-4px);
+      box-shadow:0 0 12px rgba(146,48,227,0.25), 0 0 0 1px #9230E3;
+    }
+    .path-card-icon { font-size:2rem; margin-bottom:12px; }
+    .path-card-title {
+      font-family:'Fraunces',serif; font-size:1.15rem; font-weight:700;
+      color:#DBB0FF; margin-bottom:8px;
+    }
+    .path-card-desc { font-size:0.78rem; color:rgba(219,176,255,0.45); line-height:1.5; }
+
+    /* ── Chat UI ── */
+    .chat-wrap {
+      flex:1; display:flex; flex-direction:column;
+      max-width:600px; width:100%; margin:0 auto;
+      min-height:0; overflow:hidden;
+    }
+
+    .chat-header {
+      padding:16px 24px; display:flex; align-items:center; gap:12px;
+      border-bottom:1px solid rgba(146,48,227,0.1); flex-shrink:0;
+    }
+    .chat-header-icon { font-size:1.2rem; }
+    .chat-header-title { font-size:0.85rem; font-weight:600; color:#DBB0FF; }
+    .chat-header-mode {
+      margin-left:auto; font-size:0.65rem; font-weight:500;
+      letter-spacing:0.15em; text-transform:uppercase;
+      padding:4px 10px; border-radius:100px;
+    }
+    .chat-header-mode.submission { color:rgba(31,238,234,0.85); border:1px solid rgba(31,238,234,0.25); background:rgba(31,238,234,0.06); }
+    .chat-header-mode.request { color:rgba(146,48,227,0.85); border:1px solid rgba(146,48,227,0.25); background:rgba(146,48,227,0.08); }
+
+    .chat-back {
+      background:none; border:none; color:rgba(219,176,255,0.4);
+      cursor:pointer; font-size:0.8rem; font-family:'DM Sans',sans-serif;
+      transition:color 0.2s; padding:4px 8px; margin-left:-8px;
+    }
+    .chat-back:hover { color:rgba(219,176,255,0.8); }
+
+    .chat-messages {
+      flex:1; min-height:0; overflow-y:auto; padding:20px 24px;
+      display:flex; flex-direction:column; gap:12px;
+      -webkit-overflow-scrolling:touch;
+    }
+
+    .chat-msg {
+      max-width:85%; padding:12px 16px; border-radius:16px;
+      font-size:0.85rem; line-height:1.5;
+      opacity:0; transform:translateY(8px);
+      transition:opacity 0.4s, transform 0.4s;
+    }
+    .chat-msg.show { opacity:1; transform:translateY(0); }
+
+    .chat-msg.agent {
+      align-self:flex-start; border-bottom-left-radius:4px;
+      background:rgba(146,48,227,0.08); color:rgba(219,176,255,0.8);
+      border:1px solid rgba(146,48,227,0.1);
+    }
+    .chat-msg.user {
+      align-self:flex-end; border-bottom-right-radius:4px;
+      background:#9230E3; color:white;
+    }
+
+    .typing { display:flex; gap:4px; padding:12px 16px; align-self:flex-start; }
+    .typing-dot {
+      width:7px; height:7px; border-radius:50%; background:#9230E3; opacity:0.3;
+      animation:pulse 1.2s ease-in-out infinite;
+    }
+    .typing-dot:nth-child(2) { animation-delay:0.15s; }
+    .typing-dot:nth-child(3) { animation-delay:0.3s; }
+    @keyframes pulse { 0%,100%{opacity:0.3;transform:translateY(0)} 50%{opacity:1;transform:translateY(-3px)} }
+
+    /* ── Prompt pills ── */
+    .prompt-area {
+      padding:16px 24px; border-top:1px solid rgba(146,48,227,0.1); flex-shrink:0;
+    }
+    .prompt-label {
+      font-size:0.6rem; color:rgba(219,176,255,0.25);
+      text-transform:uppercase; letter-spacing:0.12em; margin-bottom:8px;
+    }
+    .prompt-pills { display:flex; flex-direction:column; gap:8px; }
+    .prompt-pill {
+      padding:10px 16px; border-radius:12px;
+      background:rgba(146,48,227,0.06); border:1px solid rgba(146,48,227,0.18);
+      color:#DBB0FF; font-size:0.8rem; cursor:pointer;
+      transition:all 0.2s; font-family:'DM Sans',sans-serif;
+      text-align:left; line-height:1.4;
+    }
+    .prompt-pill:hover {
+      background:rgba(146,48,227,0.15); border-color:#9230E3;
+      transform:translateY(-1px);
+    }
+
+    /* ── Progress dots ── */
+    .progress-dots {
+      display:flex; gap:6px; padding:12px 24px; justify-content:center;
+      border-top:1px solid rgba(146,48,227,0.06); flex-shrink:0;
+    }
+    .progress-dot-item {
+      width:8px; height:8px; border-radius:50%;
+      background:rgba(146,48,227,0.15); transition:all 0.3s;
+    }
+    .progress-dot-item.filled { background:#9230E3; }
+    .progress-dot-item.current { background:#9230E3; box-shadow:0 0 8px rgba(146,48,227,0.4); transform:scale(1.2); }
+
+    /* ── Success screen ── */
+    .success-screen {
+      flex:1; display:flex; flex-direction:column;
+      align-items:center; justify-content:center; gap:16px;
+      padding:40px;
+    }
+    .success-check {
+      width:64px; height:64px; border-radius:50%;
+      background:rgba(40,200,64,0.1); border:2px solid #28c840;
+      display:flex; align-items:center; justify-content:center;
+      font-size:1.8rem; animation:successPop 0.5s ease;
+    }
+    @keyframes successPop {
+      0% { transform:scale(0); } 50% { transform:scale(1.15); } 100% { transform:scale(1); }
+    }
+    .success-title { font-family:'Fraunces',serif; font-size:1.4rem; color:#28c840; }
+    .success-sub { font-size:0.85rem; color:rgba(219,176,255,0.45); text-align:center; max-width:360px; line-height:1.5; }
+    .success-btn {
+      margin-top:12px; padding:10px 28px; border-radius:10px;
+      background:#9230E3; border:none; color:white;
+      font-family:'DM Sans',sans-serif; font-size:0.85rem; font-weight:600;
+      cursor:pointer; transition:all 0.2s;
+    }
+    .success-btn:hover { background:#7a24c4; }
+
+    /* ── Data preview ── */
+    .data-preview {
+      margin-top:12px; padding:14px 16px; border-radius:12px;
+      background:rgba(0,0,0,0.3); border:1px solid rgba(146,48,227,0.1);
+      font-family:'SF Mono','Fira Code',monospace; font-size:0.7rem;
+      color:rgba(219,176,255,0.5); line-height:1.6;
+      max-width:400px; width:100%;
+    }
+    .data-key { color:#9230E3; }
+    .data-val { color:#1FEEEA; }
+  </style>
+</head>
+<body>
+
+<!-- ════ PATH CHOOSER ════ -->
+<div class="overlay" id="pathChooser">
+  <div class="overlay-icon">🦋</div>
+  <h1 class="overlay-title">The Socratic Agent</h1>
+  <p class="overlay-sub">Two paths, one agent. Warm, conversational dialogue that gathers what's needed — no forms, no checkboxes.</p>
+  <div class="path-cards">
+    <div class="path-card" onclick="startPath('submission')">
+      <div class="path-card-icon">💡</div>
+      <div class="path-card-title">Share a Solution</div>
+      <div class="path-card-desc">You've found something that works for a daily living challenge. Tell us about it so others can benefit.</div>
+    </div>
+    <div class="path-card" onclick="startPath('request')">
+      <div class="path-card-icon">🤔</div>
+      <div class="path-card-title">Describe a Problem</div>
+      <div class="path-card-desc">You're facing a challenge that doesn't seem to have a solution. Describe it so the community can help.</div>
+    </div>
+  </div>
+</div>
+
+<!-- ════ CHAT INTERFACE ════ -->
+<div class="chat-wrap" id="chatWrap" style="display:none;">
+  <div class="chat-header">
+    <button class="chat-back" onclick="resetToChooser()">← Back</button>
+    <span class="chat-header-icon">🦋</span>
+    <span class="chat-header-title">Dayli</span>
+    <span class="chat-header-mode" id="modeLabel"></span>
+  </div>
+
+  <div class="chat-messages" id="chatMessages"></div>
+
+  <div class="prompt-area" id="promptArea">
+    <div class="prompt-label">Choose a response</div>
+    <div class="prompt-pills" id="promptPills"></div>
+  </div>
+
+  <div class="progress-dots" id="progressDots"></div>
+</div>
+
+<script>
+  const chatMessages = document.getElementById('chatMessages');
+  const promptPills = document.getElementById('promptPills');
+  const promptArea = document.getElementById('promptArea');
+  const progressDots = document.getElementById('progressDots');
+  const modeLabel = document.getElementById('modeLabel');
+  const chatWrap = document.getElementById('chatWrap');
+
+  function wait(ms) { return new Promise(r => setTimeout(r, ms)); }
+
+  function scrollToBottom() {
+    setTimeout(() => {
+      chatMessages.scrollTop = chatMessages.scrollHeight;
+    }, 50);
+    setTimeout(() => {
+      chatMessages.scrollTop = chatMessages.scrollHeight;
+    }, 400);
+  }
+
+  function addMsg(type, text) {
+    const el = document.createElement('div');
+    el.className = `chat-msg ${type}`;
+    el.innerHTML = text;
+    chatMessages.appendChild(el);
+    scrollToBottom();
+    requestAnimationFrame(() => {
+      el.classList.add('show');
+      scrollToBottom();
+    });
+    return el;
+  }
+
+  async function showTyping(ms) {
+    const el = document.createElement('div');
+    el.className = 'typing';
+    el.innerHTML = '<div class="typing-dot"></div><div class="typing-dot"></div><div class="typing-dot"></div>';
+    chatMessages.appendChild(el);
+    scrollToBottom();
+    await wait(ms);
+    el.remove();
+  }
+
+  function setPrompts(options, callback) {
+    promptPills.innerHTML = '';
+    promptArea.style.display = '';
+    options.forEach(opt => {
+      const btn = document.createElement('button');
+      btn.className = 'prompt-pill';
+      btn.textContent = opt.label;
+      btn.onclick = () => {
+        promptArea.style.display = 'none';
+        callback(opt);
+      };
+      promptPills.appendChild(btn);
+    });
+    scrollToBottom();
+  }
+
+  function updateProgress(current, total) {
+    progressDots.innerHTML = '';
+    for (let i = 0; i < total; i++) {
+      const d = document.createElement('div');
+      d.className = 'progress-dot-item';
+      if (i < current) d.classList.add('filled');
+      if (i === current) d.classList.add('current');
+      progressDots.appendChild(d);
+    }
+  }
+
+  function showSuccess(mode, data) {
+    chatMessages.innerHTML = '';
+    promptArea.style.display = 'none';
+    progressDots.innerHTML = '';
+
+    const screen = document.createElement('div');
+    screen.className = 'success-screen';
+
+    const isSubmission = mode === 'submission';
+    const dataHtml = isSubmission
+      ? `<span class="data-key">category:</span> <span class="data-val">${data.category}</span><br>
+         <span class="data-key">title:</span> <span class="data-val">${data.title}</span><br>
+         <span class="data-key">person:</span> <span class="data-val">${data.name}</span><br>
+         <span class="data-key">notify:</span> <span class="data-val">${data.notify ? 'yes (' + data.email + ')' : 'no'}</span>`
+      : `<span class="data-key">category:</span> <span class="data-val">${data.category}</span><br>
+         <span class="data-key">challenge:</span> <span class="data-val">${data.challenge}</span><br>
+         <span class="data-key">person:</span> <span class="data-val">${data.name}</span><br>
+         <span class="data-key">notify:</span> <span class="data-val">${data.notify ? 'yes (' + data.email + ')' : 'no'}</span>`;
+
+    screen.innerHTML = `
+      <div class="success-check">✓</div>
+      <div class="success-title">${isSubmission ? "Solution Received" : "Request Received"}</div>
+      <div class="success-sub">${isSubmission
+        ? "Thank you for sharing your solution! It'll be reviewed and published so others facing similar challenges can find it."
+        : "Thank you for describing your challenge. The community will be notified, and we'll reach out when a solution is found."}</div>
+      <div class="data-preview">${dataHtml}</div>
+      <button class="success-btn" onclick="resetToChooser()">Try the other path</button>
+    `;
+    chatMessages.appendChild(screen);
+  }
+
+  function resetToChooser() {
+    chatWrap.style.display = 'none';
+    chatMessages.innerHTML = '';
+    promptArea.style.display = '';
+    progressDots.innerHTML = '';
+    document.getElementById('pathChooser').classList.remove('hidden');
+  }
+
+  // ════════════════════════════════════
+  //  SUBMISSION PATH
+  // ════════════════════════════════════
+  async function runSubmission() {
+    const totalSteps = 6;
+    updateProgress(0, totalSteps);
+
+    // Step 1: Greeting
+    await showTyping(800);
+    addMsg('agent', "Hi there! I'd love to hear about a solution you've found for a daily living challenge. What area does it relate to?");
+
+    // Step 1: ADL category
+    setPrompts([
+      { label: "It's about bathing — I found something that helps with showering", id: 'bathing' },
+      { label: "Mobility — a way to get around more easily", id: 'mobility' },
+      { label: "Dressing — making it easier to get dressed independently", id: 'dressing' },
+    ], async (opt) => {
+      addMsg('user', opt.label);
+      updateProgress(1, totalSteps);
+      await showTyping(1000);
+      addMsg('agent', `That's great — ${opt.id} solutions are some of the most requested. What would you call your solution? Just a short name that describes it.`);
+
+      // Step 2: Title
+      setPrompts([
+        { label: "A wall-mounted suction grab bar for the shower", id: 'grab' },
+        { label: "Using a long-handle bath sponge", id: 'sponge' },
+        { label: "A portable shower bench that folds flat", id: 'bench' },
+      ], async (opt2) => {
+        addMsg('user', opt2.label);
+        updateProgress(2, totalSteps);
+        await showTyping(1200);
+        addMsg('agent', "Nice! Can you tell me a bit more about how it works and what makes it helpful? Like, what was the problem before, and how does this solve it?");
+
+        // Step 3: Description
+        setPrompts([
+          { label: "After my shoulder surgery I couldn't reach my back or hold a showerhead. This lets me sit down and wash without needing to balance or reach.", id: 'desc1' },
+          { label: "My mom has trouble standing for long periods. The bench gives her a place to sit safely, and it folds up so it doesn't take over the bathroom.", id: 'desc2' },
+        ], async (opt3) => {
+          addMsg('user', opt3.label);
+          updateProgress(3, totalSteps);
+          await showTyping(1000);
+          addMsg('agent', "That's really helpful context. What specifically made this solution work — was it the price, the ease of setup, something about the design?");
+
+          // Step 4: What made it work
+          setPrompts([
+            { label: "It was under $30 and I installed it myself in 5 minutes. No tools needed, just suction cups.", id: 'work1' },
+            { label: "The non-slip feet and the fact that it holds up to 300 lbs. My mom felt safe immediately.", id: 'work2' },
+          ], async (opt4) => {
+            addMsg('user', opt4.label);
+            updateProgress(4, totalSteps);
+            await showTyping(900);
+            addMsg('agent', "That's exactly the kind of detail that helps others decide. What's your first name and last initial? We'll use it for attribution when we publish.");
+
+            // Step 5: Name
+            setPrompts([
+              { label: "Rachel T.", id: 'rachel' },
+              { label: "David M.", id: 'david' },
+            ], async (opt5) => {
+              addMsg('user', opt5.label);
+              updateProgress(5, totalSteps);
+              await showTyping(900);
+              addMsg('agent', `Thanks, ${opt5.label.split(' ')[0]}! Last thing — would you like us to notify you when your solution gets published? If so, what's a good email?`);
+
+              // Step 6: Notification
+              setPrompts([
+                { label: "Yes! You can reach me at " + opt5.label.split(' ')[0].toLowerCase() + "@email.com", id: 'yes' },
+                { label: "No thanks, just publish it when it's ready", id: 'no' },
+              ], async (opt6) => {
+                addMsg('user', opt6.label);
+                updateProgress(6, totalSteps);
+                await showTyping(1200);
+                const notify = opt6.id === 'yes';
+                addMsg('agent', `${notify ? "Perfect, we'll let you know!" : "No problem!"} Thank you so much for sharing this with the community. Your solution is going to help people who are dealing with the exact same challenge. 🦋`);
+
+                await wait(1500);
+                showSuccess('submission', {
+                  category: opt.id.charAt(0).toUpperCase() + opt.id.slice(1),
+                  title: opt2.label,
+                  name: opt5.label,
+                  notify: notify,
+                  email: notify ? opt5.label.split(' ')[0].toLowerCase() + '@email.com' : null
+                });
+              });
+            });
+          });
+        });
+      });
+    });
+  }
+
+  // ════════════════════════════════════
+  //  REQUEST PATH
+  // ════════════════════════════════════
+  async function runRequest() {
+    const totalSteps = 5;
+    updateProgress(0, totalSteps);
+
+    await showTyping(800);
+    addMsg('agent', "Hi! I'm here to help you describe a daily living challenge you're facing. We'll share it with the community so people who've solved similar problems can help. What area is your challenge in?");
+
+    // Step 1: ADL category
+    setPrompts([
+      { label: "Bathing — I'm struggling with shower safety after a fall", id: 'bathing' },
+      { label: "Eating — my hand tremors make it hard to use utensils", id: 'eating' },
+      { label: "Transferring — getting in and out of bed is painful", id: 'transferring' },
+    ], async (opt) => {
+      addMsg('user', opt.label);
+      updateProgress(1, totalSteps);
+      await showTyping(1100);
+      addMsg('agent', "I'm sorry you're dealing with that. Can you describe what specifically is most difficult? The more detail you share, the better the community can help.");
+
+      // Step 2: Challenge description
+      setPrompts([
+        { label: "I'm afraid of slipping. The tub is old and smooth, and I don't have anything to hold onto. I fell last month and it shook my confidence.", id: 'desc1' },
+        { label: "My hands shake too much to hold a fork steady. Food falls off before it reaches my mouth. It's embarrassing when eating with others.", id: 'desc2' },
+        { label: "My hip makes it really hard to swing my legs over the side of the bed. It takes me 10 minutes every morning just to sit up.", id: 'desc3' },
+      ], async (opt2) => {
+        addMsg('user', opt2.label);
+        updateProgress(2, totalSteps);
+        await showTyping(1000);
+        addMsg('agent', "That sounds really frustrating. Have you tried anything so far to help with this? Even things that didn't work — it helps us understand what to suggest.");
+
+        // Step 3: What they've tried
+        setPrompts([
+          { label: "I put a rubber mat in the tub but it keeps sliding. I also tried a stick-on handle but it fell off the tile.", id: 'tried1' },
+          { label: "I've tried weighted utensils from Amazon but they were too heavy. I mostly just eat with my hands now which I hate.", id: 'tried2' },
+          { label: "I haven't tried anything yet honestly. I just deal with it every morning.", id: 'tried3' },
+        ], async (opt3) => {
+          addMsg('user', opt3.label);
+          updateProgress(3, totalSteps);
+          await showTyping(900);
+          addMsg('agent', "Thank you for sharing that — it really helps narrow down what might work. What's your first name and last initial?");
+
+          // Step 4: Name
+          setPrompts([
+            { label: "Margaret K.", id: 'margaret' },
+            { label: "James R.", id: 'james' },
+          ], async (opt4) => {
+            addMsg('user', opt4.label);
+            updateProgress(4, totalSteps);
+            await showTyping(900);
+            addMsg('agent', `Thanks, ${opt4.label.split(' ')[0]}. Would you like us to notify you when someone in the community shares a solution for this? If so, what's your email?`);
+
+            // Step 5: Notification
+            setPrompts([
+              { label: "Yes please — " + opt4.label.split(' ')[0].toLowerCase() + "@email.com", id: 'yes' },
+              { label: "No, I'll check back on the site", id: 'no' },
+            ], async (opt5) => {
+              addMsg('user', opt5.label);
+              updateProgress(5, totalSteps);
+              await showTyping(1200);
+              const notify = opt5.id === 'yes';
+              addMsg('agent', `${notify ? "We'll reach out as soon as we find something." : "Sounds good!"} Your challenge has been shared with the community. You're not alone in this — people find creative solutions all the time, and we'll make sure you're connected to them. 🦋`);
+
+              await wait(1500);
+              showSuccess('request', {
+                category: opt.id.charAt(0).toUpperCase() + opt.id.slice(1),
+                challenge: opt2.label.substring(0, 60) + '...',
+                name: opt4.label,
+                notify: notify,
+                email: notify ? opt4.label.split(' ')[0].toLowerCase() + '@email.com' : null
+              });
+            });
+          });
+        });
+      });
+    });
+  }
+
+  // ════════════════════════════════════
+  //  START
+  // ════════════════════════════════════
+  function startPath(mode) {
+    document.getElementById('pathChooser').classList.add('hidden');
+    chatWrap.style.display = 'flex';
+    chatMessages.innerHTML = '';
+
+    if (mode === 'submission') {
+      modeLabel.textContent = 'Sharing a Solution';
+      modeLabel.className = 'chat-header-mode submission';
+      runSubmission();
+    } else {
+      modeLabel.textContent = 'Describing a Problem';
+      modeLabel.className = 'chat-header-mode request';
+      runRequest();
+    }
+  }
+</script>
+
+</body>
+</html>

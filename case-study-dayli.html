@@ -32,6 +32,240 @@
   --text-dim:      #1a0f2e;
   --lavender:      #DBB0FF;
   --border:        rgba(255, 255, 255, 0.06);
+  --label-soft:    rgba(196,181,253,0.72);
+  --label-mid:     rgba(196,181,253,0.65);
+  --glass-bg:      rgba(255,255,255,0.05);
+  --glass-border:  rgba(255,255,255,0.08);
+  --nav-text:      rgba(200,185,165,0.75);
+  --card-shadow:   rgba(0,0,0,0.5);
+}
+
+/* ── LIGHT MODE ── */
+body.light-mode {
+  --dayli-purple:  #7B1FC7;
+  --dayli-dim:     rgba(123, 31, 199, 0.06);
+  --dayli-border:  rgba(123, 31, 199, 0.18);
+  --dayli-deep:    #461F65;
+  --dayli-cyan:    #0C8C89;
+  --bg:            #FAF8FD;
+  --bg-alt:        #F3EEF8;
+  --bg-card:       #FFFFFF;
+  --bg-card-deep:  #F8F5FC;
+  --text:          #1a0f2e;
+  --text-muted:    #7B6A94;
+  --text-dim:      #D4C8E4;
+  --lavender:      #461F65;
+  --border:        rgba(0, 0, 0, 0.07);
+}
+
+/* Hero */
+body.light-mode .hero {
+  background-image:
+    linear-gradient(to bottom,
+      rgba(250,248,253,0.5) 0%,
+      rgba(250,248,253,0.9) 65%,
+      #FAF8FD 100%),
+    url('Studio_Edited.webp');
+  background-size: cover;
+  background-position: center top;
+}
+body.light-mode .hero-bg {
+  background:
+    radial-gradient(ellipse 80% 60% at 20% 30%, rgba(146,48,227,0.06) 0%, transparent 60%),
+    radial-gradient(ellipse 60% 50% at 80% 70%, rgba(70,31,101,0.04) 0%, transparent 55%);
+}
+body.light-mode .hero-grid {
+  background-image:
+    linear-gradient(rgba(146,48,227,0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(146,48,227,0.04) 1px, transparent 1px);
+}
+body.light-mode .hero-fade { background: linear-gradient(to bottom, transparent, #FAF8FD); }
+body.light-mode .hero-title { color: #1a0f2e; }
+body.light-mode .hero-subtitle { color: rgba(26,15,46,0.55); }
+body.light-mode .hero-meta { border-top-color: rgba(146,48,227,0.15); }
+body.light-mode .hero-meta-label { color: rgba(26,15,46,0.45); }
+body.light-mode .hero-meta-value { color: rgba(26,15,46,0.7); }
+
+/* Page exit + nav */
+body.light-mode #page-exit { background: #FAF8FD; }
+body.light-mode .nav-back {
+  background: rgba(0,0,0,0.03); border-color: rgba(0,0,0,0.08);
+  color: rgba(123,31,199,0.7);
+}
+body.light-mode .nav-back:hover {
+  background: rgba(0,0,0,0.06); color: #7B1FC7; border-color: rgba(0,0,0,0.15);
+}
+body.light-mode .wordmark { color: rgba(146,48,227,0.12); }
+
+/* WIP */
+body.light-mode .wip-banner { background: rgba(123,31,199,0.05); border-color: rgba(123,31,199,0.15); }
+body.light-mode .wip-text { color: #7B1FC7; }
+body.light-mode .wip-dot { background: #7B1FC7; }
+
+/* Sections */
+body.light-mode .streams-intro { color: #3D2A5C; }
+body.light-mode .section-label { color: #7B1FC7; }
+body.light-mode .section-heading { color: #1a0f2e; }
+body.light-mode .section-body { color: #3D2A5C; }
+body.light-mode .section-body em { color: #1a0f2e; }
+
+/* Overview / narrative */
+body.light-mode .narrative-body p { color: #3D2A5C; }
+body.light-mode .narrative-body em { color: #461F65; }
+body.light-mode .pull-quote { color: #461F65; }
+body.light-mode .pull-quote-attr { color: #7B6A94; }
+body.light-mode .narrative-callout { background: rgba(123,31,199,0.03); border-color: rgba(123,31,199,0.12); }
+body.light-mode .narrative-callout-label { color: #7B1FC7; }
+body.light-mode .narrative-callout-body { color: #4A3668; }
+body.light-mode .narrative-callout-body em { color: #1a0f2e; }
+body.light-mode .narrative-callout-body strong { color: #1a0f2e; }
+
+/* Mission cards */
+body.light-mode .mission-card {
+  background: linear-gradient(160deg, #FFFFFF, #F8F5FC);
+  border-color: rgba(123,31,199,0.12);
+}
+body.light-mode .mission-card:hover { border-color: rgba(123,31,199,0.3); }
+body.light-mode .mission-card-eyebrow { color: #7B1FC7; }
+body.light-mode .mission-card-title { color: #1a0f2e; }
+body.light-mode .mission-card-body { color: #3D2A5C; }
+body.light-mode .mission-card-link { color: #7B1FC7; }
+
+/* Stream cards (What I Built) */
+body.light-mode .stream-card {
+  background: linear-gradient(160deg, #FFFFFF, #F8F5FC);
+  border-color: rgba(123,31,199,0.1);
+}
+body.light-mode .stream-card:hover { border-color: #7B1FC7; box-shadow: 0 0 12px rgba(123,31,199,0.12); }
+body.light-mode .stream-card::before { background: radial-gradient(ellipse 70% 50% at 50% 0%, rgba(123,31,199,0.03) 0%, transparent 70%); }
+body.light-mode .stream-num { color: #7B1FC7; }
+body.light-mode .stream-title { color: #1a0f2e; }
+body.light-mode .stream-desc { color: #3D2A5C; }
+body.light-mode .stream-footer { border-top-color: rgba(123,31,199,0.1); }
+body.light-mode .stream-link { color: #7B1FC7; }
+body.light-mode .stream-status { color: #5B2D8E; border-color: rgba(123,31,199,0.25); background: rgba(123,31,199,0.06); }
+body.light-mode .stream-status.active { color: #0C8C89; border-color: rgba(12,140,137,0.3); background: rgba(12,140,137,0.06); }
+
+/* Tools */
+/* Tool sections: keep dark in light mode, only chat demos go light */
+body.light-mode .dark-persist {
+  background: #09060f !important;
+  color: #ede0ff;
+}
+body.light-mode .dark-persist.alt-bg { background: #0e0818 !important; }
+body.light-mode .dark-persist .tool-label { color: #b9a0e0; }
+body.light-mode .dark-persist .tool-heading { color: #DBB0FF; }
+body.light-mode .dark-persist .tool-body { color: #c8b8e0; }
+body.light-mode .dark-persist .tool-body em { color: #dcc8f5; }
+body.light-mode .dark-persist .tool-body strong { color: #e8daf5; }
+body.light-mode .dark-persist .try-this { background: rgba(146,48,227,0.05); border-color: rgba(146,48,227,0.2); }
+body.light-mode .dark-persist .try-this-label { color: #b9a0e0; }
+body.light-mode .dark-persist .try-this-text { color: #bfaed8; }
+body.light-mode .dark-persist .tool-embed-label { color: rgba(196,181,253,0.65); }
+
+/* Chat demos inside dark-persist sections go light */
+body.light-mode .dark-persist .chat-demo {
+  background: #FFFFFF; border-color: rgba(123,31,199,0.12);
+}
+body.light-mode .dark-persist .chat-demo-header {
+  background: rgba(123,31,199,0.04); border-color: rgba(123,31,199,0.08);
+}
+body.light-mode .dark-persist .chat-demo-title { color: #4A3668; }
+body.light-mode .dark-persist .chat-msg-label { color: #5B4478; }
+body.light-mode .dark-persist .chat-msg-bubble { color: #2D1A45; }
+body.light-mode .dark-persist .chat-msg.user .chat-msg-bubble {
+  background: rgba(123,31,199,0.07); border-color: rgba(123,31,199,0.14); color: #2D1A45;
+}
+body.light-mode .dark-persist .chat-msg.assistant .chat-msg-bubble {
+  background: rgba(123,31,199,0.03); border: 1px solid rgba(123,31,199,0.08); color: #2D1A45;
+}
+body.light-mode .dark-persist .chat-demo-note { color: #5B4478; }
+body.light-mode .dark-persist .chat-demo-dot { background: #b9a0e0; }
+
+body.light-mode .tool-embed-card { background: var(--bg-card); border-color: rgba(123,31,199,0.12); box-shadow: 0 4px 20px rgba(123,31,199,0.06); }
+
+/* Chat demos */
+body.light-mode .chat-demo { background: #FFFFFF; border-color: rgba(123,31,199,0.12); }
+body.light-mode .chat-demo-header { background: rgba(123,31,199,0.04); border-color: rgba(123,31,199,0.08); }
+body.light-mode .chat-demo-title { color: rgba(26,15,46,0.55); }
+body.light-mode .chat-msg-label { color: rgba(26,15,46,0.5); }
+body.light-mode .chat-msg-bubble { color: #1a0f2e; }
+body.light-mode .chat-msg.user .chat-msg-bubble { background: rgba(123,31,199,0.07); border-color: rgba(123,31,199,0.14); color: #2a1845; }
+body.light-mode .chat-msg.assistant .chat-msg-bubble { background: rgba(123,31,199,0.03); border: 1px solid rgba(123,31,199,0.08); color: #2a1845; }
+body.light-mode .chat-demo-note { color: rgba(26,15,46,0.45); }
+body.light-mode .chat-msg-bubble code { background: rgba(123,31,199,0.08); color: #7B1FC7; }
+
+/* Dev system section */
+body.light-mode .section-eyebrow { color: #7B1FC7; }
+body.light-mode .section-title { color: #1a0f2e; }
+body.light-mode .section-intro { color: #3D2A5C; }
+body.light-mode .dev-system-intro { color: #4A3668 !important; }
+
+/* Reflection */
+body.light-mode .reflection-wrap { background: linear-gradient(180deg, var(--bg-alt), var(--bg)); }
+body.light-mode .reflection-wrap::before { background: radial-gradient(ellipse 60% 50% at 50% 60%, rgba(123,31,199,0.04) 0%, transparent 65%); }
+body.light-mode .reflection-label { color: #7B1FC7; }
+body.light-mode .reflection-quote { color: #1a0f2e; }
+
+/* Light mode focus override */
+body.light-mode :focus-visible { outline-color: #7B1FC7; }
+
+/* ── LIGHT SWITCH TOGGLE ── */
+.light-switch {
+  position: fixed;
+  top: 24px; right: 24px;
+  z-index: 1000;
+  cursor: pointer;
+  user-select: none;
+}
+
+.switch-plate {
+  width: 36px; height: 56px;
+  background: #2a2035;
+  border-radius: 6px;
+  border: 2px solid #3a3045;
+  display: flex; align-items: center; justify-content: center;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.05);
+  transition: all 0.3s;
+  position: relative;
+}
+
+body.light-mode .switch-plate {
+  background: #F3EEF8;
+  border-color: #DDD4E8;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08), inset 0 1px 0 rgba(255,255,255,0.8);
+}
+
+.switch-toggle {
+  width: 20px; height: 24px;
+  background: linear-gradient(180deg, #4a3860, #3a2848);
+  border-radius: 3px;
+  border: 1px solid #5a4870;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+  transition: all 0.15s ease;
+  transform: translateY(6px);
+}
+
+body.light-mode .switch-toggle {
+  background: linear-gradient(180deg, #FFFFFF, #F0EAF5);
+  border-color: #C8BBD8;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.08);
+  transform: translateY(-6px);
+}
+
+.switch-label {
+  position: absolute;
+  bottom: -18px; left: 50%;
+  transform: translateX(-50%);
+  font-size: 7px; font-weight: 500;
+  letter-spacing: 0.15em; text-transform: uppercase;
+  color: rgba(219,176,255,0.3);
+  white-space: nowrap;
+  transition: color 0.3s;
+}
+
+body.light-mode .switch-label {
+  color: rgba(123,31,199,0.3);
 }
 
 html { background: var(--bg); scroll-behavior: smooth; }
@@ -156,7 +390,7 @@ body.visible { opacity: 1; }
 
 .hero-subtitle {
   font-size: clamp(16px, 2vw, 22px); font-weight: 300; line-height: 1.5;
-  color: rgba(219,176,255,0.48); max-width: 580px; margin-bottom: 56px;
+  color: rgba(219,176,255,0.68); max-width: 580px; margin-bottom: 56px;
   font-style: italic; font-family: 'Cormorant Garamond', serif;
 }
 
@@ -168,7 +402,7 @@ body.visible { opacity: 1; }
 .hero-meta-item { display: flex; flex-direction: column; gap: 5px; }
 .hero-meta-label {
   font-size: 8px; font-weight: 500; letter-spacing: 0.28em; text-transform: uppercase;
-  color: rgba(219,176,255,0.42);
+  color: rgba(219,176,255,0.65);
 }
 .hero-meta-value {
   font-size: 13px; font-weight: 400; letter-spacing: 0.06em;
@@ -246,7 +480,7 @@ body.visible { opacity: 1; }
 }
 .chip-btn.active, .chip-btn:hover {
   background: rgba(146,48,227,0.16);
-  border-color: rgba(146,48,227,0.4);
+  border-color: rgba(196,181,253,0.65);
   color: rgba(220,205,255,0.95);
 }
 
@@ -305,7 +539,7 @@ body.visible { opacity: 1; }
 }
 .stat-label {
   font-size: 9px; font-weight: 500; letter-spacing: 0.22em; text-transform: uppercase;
-  color: rgba(146,48,227,0.5);
+  color: rgba(196,181,253,0.72);
 }
 .reveal.is-visible .stat-cell:nth-child(1) .stat-number { animation: ciPop .55s cubic-bezier(0.22,1,0.36,1) .35s both; }
 .reveal.is-visible .stat-cell:nth-child(2) .stat-number { animation: ciPop .55s cubic-bezier(0.22,1,0.36,1) .48s both; }
@@ -322,7 +556,7 @@ body.visible { opacity: 1; }
 ══════════════════════════════════ */
 .streams-intro {
   font-size: 15px; font-weight: 300; line-height: 1.85;
-  color: rgba(219,176,255,0.62); max-width: 620px; margin-bottom: 52px;
+  color: rgba(219,176,255,0.75); max-width: 620px; margin-bottom: 52px;
 }
 
 .stream-grid {
@@ -364,7 +598,7 @@ body.visible { opacity: 1; }
 
 .stream-desc {
   font-size: 13px; font-weight: 300; line-height: 1.75;
-  color: rgba(200,155,240,0.58); flex: 1; margin-bottom: 28px;
+  color: rgba(200,155,240,0.78); flex: 1; margin-bottom: 28px;
 }
 
 .stream-footer {
@@ -435,7 +669,7 @@ body.visible { opacity: 1; }
 .gpt-text { display: flex; flex-direction: column; gap: 20px; }
 .gpt-label {
   font-size: 9px; font-weight: 500; letter-spacing: 0.32em; text-transform: uppercase;
-  color: rgba(146,48,227,0.55);
+  color: rgba(196,181,253,0.75);
 }
 .gpt-heading {
   font-family: 'Cormorant Garamond', serif;
@@ -482,7 +716,7 @@ body.visible { opacity: 1; }
 }
 .tool-embed-label {
   font-size: 8.5px; font-weight: 500; letter-spacing: 0.28em; text-transform: uppercase;
-  color: rgba(146,48,227,0.4); margin-top: 12px; text-align: center;
+  color: rgba(196,181,253,0.65); margin-top: 12px; text-align: center;
 }
 
 /* ══════════════════════════════════
@@ -499,7 +733,7 @@ body.visible { opacity: 1; }
 .reflection-inner { max-width: 1040px; margin: 0 auto; position: relative; z-index: 1; }
 .reflection-label {
   font-size: 9px; font-weight: 500; letter-spacing: 0.34em; text-transform: uppercase;
-  color: rgba(146,48,227,0.5); margin-bottom: 24px;
+  color: rgba(196,181,253,0.72); margin-bottom: 24px;
 }
 .reflection-quote {
   font-family: 'Cormorant Garamond', serif;
@@ -526,7 +760,7 @@ body.visible { opacity: 1; }
 }
 .mission-card-eyebrow {
   font-size: 8px; font-weight: 500; letter-spacing: 0.3em; text-transform: uppercase;
-  color: rgba(146,48,227,0.45); margin-bottom: 14px;
+  color: rgba(196,181,253,0.65); margin-bottom: 14px;
 }
 .mission-card-title {
   font-family: 'Cormorant Garamond', serif;
@@ -540,12 +774,12 @@ body.visible { opacity: 1; }
 }
 .mission-card-body {
   font-size: 13px; font-weight: 300; line-height: 1.8;
-  color: rgba(200,155,240,0.58);
+  color: rgba(200,155,240,0.78);
 }
 .mission-card-link {
   display: inline-flex; align-items: center; gap: 6px; margin-top: 20px;
   font-size: 9.5px; font-weight: 400; letter-spacing: 0.18em; text-transform: uppercase;
-  color: rgba(146,48,227,0.55); text-decoration: none;
+  color: rgba(196,181,253,0.75); text-decoration: none;
   transition: color 0.2s;
 }
 .mission-card-link:hover { color: rgba(219,176,255,0.92); }
@@ -567,7 +801,7 @@ body.visible { opacity: 1; }
 .pull-quote-attr {
   margin-top: 14px;
   font-size: 11px; font-weight: 300; letter-spacing: 0.12em;
-  color: rgba(146,48,227,0.45); font-style: normal;
+  color: rgba(196,181,253,0.65); font-style: normal;
 }
 
 .narrative-cols {
@@ -588,11 +822,11 @@ body.visible { opacity: 1; }
 }
 .narrative-callout-label {
   font-size: 8.5px; font-weight: 500; letter-spacing: 0.28em; text-transform: uppercase;
-  color: rgba(146,48,227,0.45); margin-bottom: 16px;
+  color: rgba(196,181,253,0.65); margin-bottom: 16px;
 }
 .narrative-callout-body {
   font-size: 14px; font-weight: 300; line-height: 1.85;
-  color: rgba(200,155,240,0.62);
+  color: rgba(219,190,255,0.82);
 }
 .narrative-callout-body em { color: var(--lavender); font-style: italic; }
 .narrative-callout-body p + p { margin-top: 16px; }
@@ -605,7 +839,7 @@ body.visible { opacity: 1; }
 }
 .tool-label {
   font-size: 9px; font-weight: 500; letter-spacing: 0.32em; text-transform: uppercase;
-  color: rgba(146,48,227,0.55); margin-bottom: 16px;
+  color: #b9a0e0; margin-bottom: 16px;
 }
 .tool-heading {
   font-family: 'Cormorant Garamond', serif;
@@ -614,10 +848,10 @@ body.visible { opacity: 1; }
 }
 .tool-body {
   font-size: 14px; font-weight: 300; line-height: 1.85;
-  color: rgba(200,155,240,0.62); margin-bottom: 20px;
+  color: #c8b8e0; margin-bottom: 20px;
 }
-.tool-body em { color: rgba(219,176,255,0.88); font-style: italic; }
-.tool-body strong { color: rgba(219,176,255,0.92); font-weight: 500; }
+.tool-body em { color: #dcc8f5; font-style: italic; }
+.tool-body strong { color: #e8daf5; font-weight: 500; }
 
 /* Try This box */
 .try-this {
@@ -626,11 +860,11 @@ body.visible { opacity: 1; }
 }
 .try-this-label {
   font-size: 8.5px; font-weight: 500; letter-spacing: 0.28em; text-transform: uppercase;
-  color: rgba(146,48,227,0.55); margin-bottom: 10px;
+  color: #b9a0e0; margin-bottom: 10px;
 }
 .try-this-text {
   font-size: 13px; font-weight: 300; line-height: 1.75;
-  color: rgba(185,170,225,0.7); font-style: italic;
+  color: #bfaed8; font-style: italic;
 }
 
 /* Chat demo */
@@ -649,7 +883,7 @@ body.visible { opacity: 1; }
 }
 .chat-demo-title {
   font-size: 9px; font-weight: 500; letter-spacing: 0.22em; text-transform: uppercase;
-  color: rgba(146,48,227,0.45);
+  color: rgba(196,181,253,0.65);
 }
 .chat-demo-body { padding: 24px 20px; display: flex; flex-direction: column; gap: 16px; }
 
@@ -659,7 +893,7 @@ body.visible { opacity: 1; }
 
 .chat-msg-label {
   font-size: 8px; font-weight: 400; letter-spacing: 0.18em; text-transform: uppercase;
-  color: rgba(146,48,227,0.35);
+  color: rgba(196,181,253,0.6);
 }
 .chat-msg-bubble {
   border-radius: 10px; padding: 12px 16px;
@@ -682,7 +916,7 @@ body.visible { opacity: 1; }
 .chat-demo-note {
   padding: 10px 20px 16px;
   font-size: 9.5px; font-weight: 300; letter-spacing: 0.06em; font-style: italic;
-  color: rgba(146,48,227,0.3); text-align: center;
+  color: rgba(196,181,253,0.55); text-align: center;
 }
 
 /* ══════════════════════════════════
@@ -744,12 +978,57 @@ body.visible { opacity: 1; }
   .section-heading { font-size: clamp(22px, 5.5vw, 32px); }
   .nav-back { padding: 8px 14px 8px 10px; font-size: 9px; }
 }
+
+/* ══════════════════════════════════
+   ACCESSIBILITY
+══════════════════════════════════ */
+
+/* Focus visible */
+:focus-visible {
+  outline: 2px solid var(--dayli-cyan);
+  outline-offset: 3px;
+  border-radius: 4px;
+}
+a:focus-visible, button:focus-visible {
+  outline: 2px solid var(--dayli-cyan);
+  outline-offset: 3px;
+}
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+  html { scroll-behavior: auto; }
+  .reveal { opacity: 1 !important; transform: none !important; }
+  body { opacity: 1 !important; }
+}
+
+/* Noscript fallback */
+noscript .reveal { opacity: 1; transform: none; }
 </style>
+
+<noscript><style>
+  body { opacity: 1 !important; }
+  .reveal { opacity: 1 !important; transform: none !important; }
+</style></noscript>
 </head>
 <body>
 
-<div id="page-exit"></div>
-<div class="wordmark">Amber Grey</div>
+<!-- Light switch -->
+<div class="light-switch" onclick="document.body.classList.toggle('light-mode')" role="switch" aria-checked="false" aria-label="Toggle light mode" tabindex="0" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();this.click();this.setAttribute('aria-checked',document.body.classList.contains('light-mode'))}">
+  <div class="switch-plate">
+    <div class="switch-toggle"></div>
+  </div>
+  <div class="switch-label">Light</div>
+</div>
+
+<div id="page-exit" aria-hidden="true"></div>
+<div class="wordmark" aria-hidden="true">Amber Grey</div>
+<nav aria-label="Page navigation">
 <button class="nav-back" id="back-btn">
   <span class="nav-back-arrow"></span>
   <span id="back-label">Daily Living Labs</span>
@@ -761,28 +1040,33 @@ body.visible { opacity: 1; }
   var btn = document.getElementById('back-btn');
   var label = document.getElementById('back-label');
   if (from === 'ci') {
-    btn.onclick = function(){ navigateTo('level-3-ci.html'); };
+    btn.onclick = function(){ navigateTo('level-3-dayli-research-analyst.html'); };
     label.textContent = 'Contextual Intelligence';
   } else if (from === 'dev') {
     btn.onclick = function(){ navigateTo('level-3-dev-system.html'); };
     label.textContent = 'Lowering the Barrier to Build';
+  } else if (from === 'socratic') {
+    btn.onclick = function(){ navigateTo('level-3-socratic.html'); };
+    label.textContent = 'The Socratic Agent';
   } else {
     btn.onclick = function(){ navigateTo('level-3-dll.html'); };
     label.textContent = 'Daily Living Labs';
   }
 })();
 </script>
+</nav>
 
+<main>
 <!-- ══════════════════════════════════
      HERO
 ══════════════════════════════════ -->
-<section class="hero">
-  <div class="hero-bg"></div>
-  <div class="hero-grid"></div>
-  <div class="hero-fade"></div>
+<section class="hero" aria-label="Hero">
+  <div class="hero-bg" aria-hidden="true"></div>
+  <div class="hero-grid" aria-hidden="true"></div>
+  <div class="hero-fade" aria-hidden="true"></div>
   <div class="hero-content">
     <div class="wip-banner" style="margin-bottom:20px;">
-      <div class="wip-dot"></div>
+      <div class="wip-dot" aria-hidden="true"></div>
       <span class="wip-text">Case Study in Progress</span>
     </div>
     <h1 class="hero-title">Dayli AI |<br>Daily Living Labs</h1>
@@ -808,16 +1092,6 @@ body.visible { opacity: 1; }
   </div>
 </section>
 
-<!-- ══════════════════════════════════
-     OVERVIEW
-══════════════════════════════════ -->
-<section class="cs-section">
-  <div class="section-inner">
-
-
-
-  </div>
-</section>
 
 <!-- ══════════════════════════════════
      THE PLATFORM
@@ -857,7 +1131,7 @@ body.visible { opacity: 1; }
 <!-- ══════════════════════════════════
      THE HEART OF IT — RACHEL'S STORY
 ══════════════════════════════════ -->
-<section class="cs-section heart-section">
+<section class="cs-section heart-section" aria-label="The Heart of It">
   <div class="section-inner">
 
     <div class="reveal">
@@ -911,46 +1185,46 @@ body.visible { opacity: 1; }
     <div class="stream-grid reveal" style="grid-template-columns:1fr 1fr; gap:16px;">
 
       <!-- Dev System -->
-      <a class="stream-card" href="prototype-dayli-dev-system.html" target="_blank" rel="noopener" style="text-decoration:none; cursor:pointer;">
+      <a class="stream-card" href="prototype-dayli-dev-system.html" target="_blank" rel="noopener" aria-label="Development System - Explore prototype" style="text-decoration:none; cursor:pointer;">
         <div class="stream-num">Dev System Architecture</div>
         <h3 class="stream-title">Development System</h3>
         <p class="stream-desc">Designed and built a conversational dev system using Claude Code + GitHub + Vercel + Figma + Supabase. Idea to live in under 2 minutes.</p>
         <div class="stream-footer">
           <span class="stream-status active">Active</span>
-          <span class="stream-link">Explore <span class="stream-link-arrow">→</span></span>
+          <span class="stream-link">Explore <span class="stream-link-arrow" aria-hidden="true">→</span></span>
         </div>
       </a>
 
       <!-- Daily Living Labs Landing -->
-      <a class="stream-card" href="https://dailylivinglabs.com" target="_blank" rel="noopener" style="text-decoration:none; cursor:pointer;">
+      <a class="stream-card" href="https://dailylivinglabs.com" target="_blank" rel="noopener" aria-label="Daily Living Labs Landing - Visit site" style="text-decoration:none; cursor:pointer;">
         <div class="stream-num">Product</div>
         <h3 class="stream-title">Daily Living Labs Landing</h3>
         <p class="stream-desc">Community-facing landing page with ADL carousel, onboarding flow, and solution discovery — built on Vite + Tailwind.</p>
         <div class="stream-footer">
           <span class="stream-status active">Live</span>
-          <span class="stream-link">dailylivinglabs.com <span class="stream-link-arrow">→</span></span>
+          <span class="stream-link">dailylivinglabs.com <span class="stream-link-arrow" aria-hidden="true">→</span></span>
         </div>
       </a>
 
       <!-- Socratic Agent -->
-      <a class="stream-card" href="https://dailylivinglabs.com/contribute" target="_blank" rel="noopener" style="text-decoration:none; cursor:pointer;">
+      <a class="stream-card" href="https://dailylivinglabs.com/contribute" target="_blank" rel="noopener" aria-label="Socratic Dialogue Agent - Try it live" style="text-decoration:none; cursor:pointer;">
         <div class="stream-num">AI Agent</div>
         <h3 class="stream-title">Socratic Dialogue Agent</h3>
         <p class="stream-desc">Conversational AI that gathers user needs through empathetic follow-up questions — replacing forms with understanding.</p>
         <div class="stream-footer">
           <span class="stream-status active">Active</span>
-          <span class="stream-link">Try it <span class="stream-link-arrow">→</span></span>
+          <span class="stream-link">Try it <span class="stream-link-arrow" aria-hidden="true">→</span></span>
         </div>
       </a>
 
       <!-- Research Analyst -->
-      <a class="stream-card" href="https://chatgpt.com/g/g-69adfac177608191b031e67343d2004a-dayli-research-analyst" target="_blank" rel="noopener" style="text-decoration:none; cursor:pointer;">
+      <a class="stream-card" href="https://chatgpt.com/g/g-69adfac177608191b031e67343d2004a-dayli-research-analyst" target="_blank" rel="noopener" aria-label="Research Analyst GPT - Open tool" style="text-decoration:none; cursor:pointer;">
         <div class="stream-num">AI Tool</div>
         <h3 class="stream-title">Research Analyst GPT</h3>
         <p class="stream-desc">AI system that surfaces relevant research insights based on user situation — contextual intelligence for the team.</p>
         <div class="stream-footer">
           <span class="stream-status active">Public</span>
-          <span class="stream-link">Open GPT <span class="stream-link-arrow">→</span></span>
+          <span class="stream-link">Open GPT <span class="stream-link-arrow" aria-hidden="true">→</span></span>
         </div>
       </a>
 
@@ -965,13 +1239,13 @@ body.visible { opacity: 1; }
       </div>
 
       <!-- Avatar -->
-      <a class="stream-card" href="prototype-dayli-avatar.html" target="_blank" rel="noopener" style="text-decoration:none; cursor:pointer;">
+      <a class="stream-card" href="prototype-dayli-avatar.html" target="_blank" rel="noopener" aria-label="Dayli Avatar - View prototype" style="text-decoration:none; cursor:pointer;">
         <div class="stream-num">Brand</div>
         <h3 class="stream-title">Dayli Avatar</h3>
         <p class="stream-desc">Animated brand character with smile eyes, blinking, mouse tracking, and personality states — the friendly face of Dayli AI.</p>
         <div class="stream-footer">
           <span class="stream-status active">Prototype</span>
-          <span class="stream-link">View <span class="stream-link-arrow">→</span></span>
+          <span class="stream-link">View <span class="stream-link-arrow" aria-hidden="true">→</span></span>
         </div>
       </a>
 
@@ -986,9 +1260,9 @@ body.visible { opacity: 1; }
   <div class="section-inner">
 
     <div class="reveal">
-      <div class="section-eyebrow" style="font-size:9px; font-weight:500; letter-spacing:0.34em; text-transform:uppercase; color:rgba(146,48,227,0.5); margin-bottom:16px;">My Biggest Contribution</div>
+      <div class="section-eyebrow" style="font-size:9px; font-weight:500; letter-spacing:0.34em; text-transform:uppercase; color:rgba(196,181,253,0.72); margin-bottom:16px;">My Biggest Contribution</div>
       <h2 class="section-title" style="font-family:'Cormorant Garamond',serif; font-size:clamp(26px,3.5vw,42px); font-weight:600; color:var(--lavender); margin-bottom:20px;">The Development System</h2>
-      <p style="font-size:15px; font-weight:300; line-height:1.8; color:rgba(200,155,240,0.7); max-width:720px; margin-bottom:40px;">
+      <p class="dev-system-intro" style="font-size:15px; font-weight:300; line-height:1.8; color:rgba(200,155,240,0.78); max-width:720px; margin-bottom:40px;">
         I designed and built a conversational development system that lets anyone on the team ship changes by describing them in plain language. No React. No terminal commands. No waiting for a developer. Claude Code orchestrates GitHub, Vercel, Figma, and Supabase — turning a description into a live deployment in under two minutes.
       </p>
     </div>
@@ -996,7 +1270,7 @@ body.visible { opacity: 1; }
     <!-- Embedded Dev System Prototype -->
     <div class="reveal">
       <div style="max-width:900px; margin:0 auto; border-radius:16px; overflow:hidden; border:1px solid rgba(146,48,227,0.25); box-shadow:0 8px 40px rgba(0,0,0,0.5), 0 0 0 1px rgba(146,48,227,0.1); aspect-ratio:16/10;">
-        <iframe src="prototype-dayli-dev-system.html" style="width:100%; height:100%; border:none;" loading="lazy"></iframe>
+        <iframe src="prototype-dayli-dev-system.html" title="Dayli Development System interactive prototype" style="width:100%; height:100%; border:none;" loading="lazy"></iframe>
       </div>
       <p style="font-size:8.5px; font-weight:500; letter-spacing:0.28em; text-transform:uppercase; color:rgba(219,176,255,0.4); margin-top:12px; text-align:center;">Interactive · Video · Walkthrough · Speed Run · Setup Guide</p>
     </div>
@@ -1007,7 +1281,7 @@ body.visible { opacity: 1; }
 <!-- ══════════════════════════════════
      DAYLI RESEARCH ANALYST
 ══════════════════════════════════ -->
-<section class="cs-section">
+<section class="cs-section dark-persist">
   <div class="section-inner">
     <div class="tool-section reveal">
 
@@ -1025,7 +1299,7 @@ body.visible { opacity: 1; }
         </p>
         <div class="try-this">
           <div class="try-this-label">Try This →</div>
-          <p class="try-this-text">Grab a transcript from any recent meeting — a standup, a planning call, even a messy brainstorm. Paste it in and ask:<br><br><em>"What were the key decisions, open questions, and next steps from this conversation?"</em><br><br>It'll hand you back a clean, organized brief in seconds. That's the whole idea.</p>
+          <p class="try-this-text">Grab a transcript from any recent meeting — a standup, a planning call, even a messy brainstorm. Paste it in and ask:<br><br><em>"What were the key decisions, open questions, and next steps from this conversation?"</em><br><br>It'll hand you back a clean, organized brief in seconds. That's the whole idea behind it.</p>
         </div>
       </div>
 
@@ -1047,13 +1321,13 @@ body.visible { opacity: 1; }
 <!-- ══════════════════════════════════
      DAYLI DEV
 ══════════════════════════════════ -->
-<section class="cs-section alt-bg">
+<section class="cs-section alt-bg dark-persist">
   <div class="section-inner">
     <div class="tool-section reveal">
 
       <div class="chat-demo">
         <div class="chat-demo-header">
-          <div class="chat-demo-dot"></div>
+          <div class="chat-demo-dot" aria-hidden="true"></div>
           <div class="chat-demo-title">Dayli Dev — Scenario Demo</div>
         </div>
         <div class="chat-demo-body">
@@ -1098,7 +1372,7 @@ body.visible { opacity: 1; }
 <!-- ══════════════════════════════════
      SOCRATIC AGENT
 ══════════════════════════════════ -->
-<section class="cs-section">
+<section class="cs-section dark-persist">
   <div class="section-inner">
     <div class="tool-section reveal">
 
@@ -1122,7 +1396,7 @@ body.visible { opacity: 1; }
 
       <div class="chat-demo">
         <div class="chat-demo-header">
-          <div class="chat-demo-dot"></div>
+          <div class="chat-demo-dot" aria-hidden="true"></div>
           <div class="chat-demo-title">Dayli AI — Socratic Dialogue</div>
         </div>
         <div class="chat-demo-body">
@@ -1166,6 +1440,7 @@ body.visible { opacity: 1; }
     </p>
   </div>
 </div>
+</main>
 
 <script>
 'use strict';

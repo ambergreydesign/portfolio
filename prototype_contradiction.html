@@ -20,10 +20,7 @@ html, body {
 }
 
 /* ── AMBIENT ── */
-.orb {
-  position: fixed; border-radius: 50%;
-  filter: blur(130px); pointer-events: none; opacity: 0.1;
-}
+.orb { position: fixed; border-radius: 50%; filter: blur(130px); pointer-events: none; opacity: 0.1; }
 .orb-1 { width: 500px; height: 500px; background: #cc6cf0; top: -150px; left: -80px; }
 .orb-2 { width: 400px; height: 400px; background: #e2aa62; bottom: -100px; right: -40px; }
 
@@ -42,233 +39,98 @@ html, body {
   display: flex; justify-content: space-between; align-items: center;
   padding: 28px 36px; z-index: 50;
 }
-.header-title {
-  font-size: 9px; font-weight: 500;
-  letter-spacing: 0.32em; text-transform: uppercase;
-  color: rgba(204,108,240,0.5);
-}
-.header-counter {
-  font-size: 10px; font-weight: 400;
-  letter-spacing: 0.18em; color: rgba(200,185,165,0.25);
-}
+.header-title { font-size: 9px; font-weight: 500; letter-spacing: 0.32em; text-transform: uppercase; color: rgba(204,108,240,0.5); }
+.header-counter { font-size: 10px; font-weight: 400; letter-spacing: 0.18em; color: rgba(200,185,165,0.25); }
 
-/* ── PROGRESS DOTS ── */
-.progress {
-  position: fixed; bottom: 24px; left: 50%;
-  transform: translateX(-50%);
-  display: flex; gap: 12px; z-index: 50;
-}
-.pdot {
-  width: 5px; height: 5px; border-radius: 50%;
-  background: rgba(200,185,165,0.15);
-  transition: background 0.5s ease, transform 0.3s ease;
-}
+/* ── PROGRESS ── */
+.progress { position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%); display: flex; gap: 12px; z-index: 50; }
+.pdot { width: 5px; height: 5px; border-radius: 50%; background: rgba(200,185,165,0.15); transition: background 0.5s ease, transform 0.3s ease; }
 .pdot.active { background: rgba(204,108,240,0.55); transform: scale(1.4); }
 .pdot.done-good { background: rgba(104,176,120,0.6); }
 .pdot.done-bad { background: rgba(226,170,98,0.5); }
 
-/* ══════════════════════════════════════
-   INTRO
-══════════════════════════════════════ */
+/* ══ INTRO ══ */
 .intro { text-align: center; max-width: 560px; padding: 0 40px; }
-.intro-label {
-  font-size: 9px; font-weight: 500;
-  letter-spacing: 0.35em; text-transform: uppercase;
-  color: rgba(204,108,240,0.6); margin-bottom: 28px;
-}
-.intro-title {
-  font-family: 'Cormorant Garamond', serif;
-  font-size: clamp(36px,5vw,60px); font-weight: 600;
-  line-height: 1.1; color: #eac6ce; margin-bottom: 20px;
-}
-.intro-sub {
-  font-family: 'Cormorant Garamond', serif;
-  font-size: clamp(16px,2vw,22px); font-weight: 400;
-  font-style: italic; line-height: 1.5;
-  color: rgba(200,185,165,0.5); margin-bottom: 48px;
-}
+.intro-label { font-size: 9px; font-weight: 500; letter-spacing: 0.35em; text-transform: uppercase; color: rgba(204,108,240,0.6); margin-bottom: 28px; }
+.intro-title { font-family: 'Cormorant Garamond', serif; font-size: clamp(36px,5vw,60px); font-weight: 600; line-height: 1.1; color: #eac6ce; margin-bottom: 20px; }
+.intro-sub { font-family: 'Cormorant Garamond', serif; font-size: clamp(16px,2vw,22px); font-weight: 400; font-style: italic; line-height: 1.5; color: rgba(200,185,165,0.5); margin-bottom: 48px; }
 .intro-cta {
   display: inline-flex; align-items: center; gap: 12px;
-  background: none; border: 1px solid rgba(204,108,240,0.25);
-  border-radius: 100px; padding: 12px 28px;
-  color: rgba(204,108,240,0.7); font-family: 'DM Sans', sans-serif;
-  font-size: 10px; font-weight: 500;
-  letter-spacing: 0.25em; text-transform: uppercase;
-  cursor: pointer;
+  background: none; border: 1px solid rgba(204,108,240,0.25); border-radius: 100px;
+  padding: 12px 28px; color: rgba(204,108,240,0.7);
+  font-family: 'DM Sans', sans-serif; font-size: 10px; font-weight: 500;
+  letter-spacing: 0.25em; text-transform: uppercase; cursor: pointer;
   transition: background 0.3s, color 0.3s, border-color 0.3s;
 }
-.intro-cta:hover {
-  background: rgba(204,108,240,0.08);
-  color: rgba(204,108,240,0.95);
-  border-color: rgba(204,108,240,0.45);
-}
+.intro-cta:hover { background: rgba(204,108,240,0.08); color: rgba(204,108,240,0.95); border-color: rgba(204,108,240,0.45); }
 
-/* ══════════════════════════════════════
-   ARENA (SCALE + CARDS)
-══════════════════════════════════════ */
+/* ══ ARENA ══ */
 .arena { width: 100%; height: 100%; position: relative; }
 
-/* ── SCALE ── */
-.scale-wrap {
+/* ── STATUS ── */
+.status-msg {
+  position: absolute; top: 18%; left: 50%; transform: translateX(-50%);
+  font-family: 'DM Sans', sans-serif; font-size: 12px; font-weight: 400;
+  letter-spacing: 0.06em; color: rgba(200,185,165,0.3);
+  transition: color 0.5s ease; pointer-events: none; white-space: nowrap;
+}
+.status-msg.balanced {
+  font-family: 'Cormorant Garamond', serif; font-size: 22px;
+  font-style: italic; font-weight: 400; letter-spacing: 0;
+  color: rgba(104,176,120,0.7);
+}
+
+/* ── SCALE (SVG-based) ── */
+.scale-svg {
   position: absolute;
   top: 50%; left: 50%;
-  transform: translate(-50%, -55%);
-  width: 480px; height: 320px;
+  transform: translate(-50%, -50%);
+  width: 500px; height: 300px;
+  overflow: visible;
 }
 
-/* Fulcrum */
-.fulcrum {
+/* ── DROP ZONES (visible targets) ── */
+.drop-target {
   position: absolute;
-  bottom: 0; left: 50%;
-  transform: translateX(-50%);
-  width: 0; height: 0;
-  border-left: 18px solid transparent;
-  border-right: 18px solid transparent;
-  border-bottom: 28px solid rgba(200,185,165,0.15);
-}
-
-/* Beam */
-.beam {
-  position: absolute;
-  bottom: 26px; left: 50%;
-  width: 400px; height: 3px;
-  margin-left: -200px;
-  background: rgba(200,185,165,0.3);
-  border-radius: 2px;
-  transform-origin: center center;
-  transition: transform 0.6s cubic-bezier(0.25,0.46,0.45,0.94);
-}
-.beam.cracked {
-  animation: beamCrack 0.5s ease forwards;
-}
-@keyframes beamCrack {
-  0% { opacity: 1; }
-  30% { transform: rotate(var(--beam-angle)) scaleX(1); }
-  50% { opacity: 0.6; }
-  100% { opacity: 0.2; transform: rotate(var(--beam-angle)) scaleX(0.3); }
-}
-
-/* Chains */
-.chain {
-  position: absolute;
-  bottom: 28px;
-  width: 1px;
-  height: 80px;
-  background: rgba(200,185,165,0.15);
-  transform-origin: top center;
-  transition: transform 0.6s cubic-bezier(0.25,0.46,0.45,0.94);
-}
-.chain-left  { left: calc(50% - 190px); }
-.chain-right { left: calc(50% + 190px); }
-
-/* Pans */
-.pan {
-  position: absolute;
-  width: 140px; height: 8px;
-  background: rgba(200,185,165,0.12);
-  border-radius: 4px;
-  transform-origin: top center;
-  transition: transform 0.6s cubic-bezier(0.25,0.46,0.45,0.94),
-              box-shadow 0.5s ease;
-}
-.pan-left {
-  bottom: calc(28px - 80px - 4px);
-  left: calc(50% - 190px - 70px);
-}
-.pan-right {
-  bottom: calc(28px - 80px - 4px);
-  left: calc(50% + 190px - 70px);
-}
-
-/* Drop zone highlight */
-.drop-zone {
-  position: absolute;
-  width: 160px; height: 120px;
-  border: 2px dashed transparent;
-  border-radius: 10px;
+  top: 50%; transform: translateY(-20%);
+  width: 180px; height: 160px;
+  border: 2px dashed rgba(200,185,165,0.08);
+  border-radius: 12px;
+  display: flex; align-items: center; justify-content: center;
   transition: border-color 0.25s ease, background 0.25s ease;
-  pointer-events: none;
 }
-.drop-zone-left {
-  left: calc(50% - 190px - 80px);
-  bottom: calc(28px - 80px - 30px);
-}
-.drop-zone-right {
-  left: calc(50% + 190px - 80px);
-  bottom: calc(28px - 80px - 30px);
-}
-.drop-zone.hover {
+.drop-target-left  { left: calc(50% - 260px); }
+.drop-target-right { right: calc(50% - 260px); }
+.drop-target.hover {
   border-color: rgba(204,108,240,0.35);
   background: rgba(204,108,240,0.04);
 }
-
-/* Placed card labels on pans */
-.pan-label {
-  position: absolute;
-  width: 140px;
-  text-align: center;
+.drop-target.filled {
+  border-color: rgba(200,185,165,0.12);
+  background: rgba(255,255,255,0.02);
+}
+.drop-target-label {
   font-family: 'Cormorant Garamond', serif;
-  font-size: 13px; font-weight: 400; font-style: italic;
-  line-height: 1.35;
-  color: rgba(234,198,206,0.8);
-  opacity: 0;
-  transition: opacity 0.4s ease;
-  pointer-events: none;
+  font-size: 15px; font-weight: 400; font-style: italic;
+  line-height: 1.4; color: rgba(234,198,206,0.8);
+  text-align: center; padding: 16px;
+  opacity: 0; transition: opacity 0.4s ease;
 }
-.pan-label.visible { opacity: 1; }
-.pan-label-left {
-  left: calc(50% - 190px - 70px);
-  bottom: calc(28px - 80px + 16px);
-}
-.pan-label-right {
-  left: calc(50% + 190px - 70px);
-  bottom: calc(28px - 80px + 16px);
-}
-
-/* Balance glow */
-.scale-wrap.balanced .pan {
-  box-shadow: 0 0 28px rgba(104,176,120,0.25);
-}
-.scale-wrap.balanced .beam {
-  background: rgba(104,176,120,0.5);
-}
-
-/* ── STATUS MESSAGE ── */
-.status-msg {
-  position: absolute;
-  top: 26%;
-  left: 50%; transform: translateX(-50%);
-  font-family: 'Cormorant Garamond', serif;
-  font-size: 20px; font-weight: 400; font-style: italic;
-  color: rgba(104,176,120,0);
-  transition: color 0.6s ease;
-  pointer-events: none;
-  white-space: nowrap;
-}
-.status-msg.show-balance { color: rgba(104,176,120,0.7); }
-.status-msg.show-instruct { color: rgba(200,185,165,0.35); font-style: normal; font-size: 13px; letter-spacing: 0.05em; }
+.drop-target.filled .drop-target-label { opacity: 1; }
 
 /* ── CARD DOCK ── */
 .dock {
   position: absolute;
-  bottom: 64px; left: 50%;
-  transform: translateX(-50%);
-  display: flex; gap: 20px;
-  z-index: 30;
+  bottom: 72px; left: 50%; transform: translateX(-50%);
+  display: flex; gap: 20px; z-index: 30;
 }
-
-/* ── DRAGGABLE CARDS ── */
 .card {
-  width: 220px;
-  padding: 22px 20px;
+  width: 220px; padding: 22px 20px;
   background: rgba(255,255,255,0.03);
   border: 1px solid rgba(255,255,255,0.1);
   border-radius: 10px;
-  cursor: grab;
-  touch-action: none;
-  transition: transform 0.3s ease, box-shadow 0.3s ease, opacity 0.3s ease;
-  position: relative;
-  z-index: 31;
+  cursor: grab; touch-action: none;
+  transition: transform 0.3s ease, box-shadow 0.3s ease, opacity 0.4s ease;
 }
 .card:hover {
   border-color: rgba(204,108,240,0.25);
@@ -278,119 +140,64 @@ html, body {
 .card.dragging {
   cursor: grabbing;
   box-shadow: 0 8px 40px rgba(204,108,240,0.2);
-  z-index: 100;
-  opacity: 0.9;
-  transition: none;
+  z-index: 100; opacity: 0.9;
+  transition: box-shadow 0.1s ease;
 }
-.card.placed {
-  opacity: 0;
-  pointer-events: none;
-  transform: scale(0.8);
-}
+.card.placed { opacity: 0; pointer-events: none; transform: scale(0.8); }
 .card-text {
   font-family: 'Cormorant Garamond', serif;
   font-size: 16px; font-weight: 400; font-style: italic;
-  line-height: 1.4; color: #f2ead8;
-  text-align: center;
+  line-height: 1.4; color: #f2ead8; text-align: center;
 }
 .card-hint {
   display: block; margin-top: 10px;
-  font-family: 'DM Sans', sans-serif;
-  font-size: 8px; font-weight: 400;
+  font-family: 'DM Sans', sans-serif; font-size: 8px; font-weight: 400;
   letter-spacing: 0.2em; text-transform: uppercase;
-  color: rgba(200,185,165,0.25);
-  text-align: center;
+  color: rgba(200,185,165,0.25); text-align: center;
 }
 
-/* ══════════════════════════════════════
-   REVEAL SCREEN (on break)
-══════════════════════════════════════ */
+/* ══ REVEAL ══ */
 .reveal-overlay {
   position: fixed; inset: 0;
   background: rgba(14,26,18,0.95);
   display: flex; align-items: center; justify-content: center;
-  text-align: center;
-  opacity: 0; pointer-events: none;
-  transition: opacity 0.8s ease;
-  z-index: 200;
-  padding: 40px;
+  text-align: center; opacity: 0; pointer-events: none;
+  transition: opacity 0.8s ease; z-index: 200; padding: 40px;
 }
 .reveal-overlay.active { opacity: 1; pointer-events: auto; }
 .reveal-inner { max-width: 520px; }
-.reveal-label {
-  font-size: 9px; font-weight: 500;
-  letter-spacing: 0.3em; text-transform: uppercase;
-  color: rgba(226,170,98,0.6); margin-bottom: 28px;
-}
-.reveal-text {
-  font-family: 'Cormorant Garamond', serif;
-  font-size: clamp(24px,3.5vw,40px);
-  font-weight: 400; font-style: italic;
-  line-height: 1.4; color: #eac6ce;
-  margin-bottom: 36px;
-}
-.reveal-sub {
-  font-size: 12px; line-height: 1.7;
-  color: rgba(200,185,165,0.35);
-  margin-bottom: 32px;
-}
-.reveal-continue {
-  display: inline-block;
-  font-size: 9px; font-weight: 400;
-  letter-spacing: 0.2em; text-transform: uppercase;
-  color: rgba(200,185,165,0.3);
-  cursor: pointer;
-  transition: color 0.25s ease;
-}
+.reveal-label { font-size: 9px; font-weight: 500; letter-spacing: 0.3em; text-transform: uppercase; color: rgba(226,170,98,0.6); margin-bottom: 28px; }
+.reveal-text { font-family: 'Cormorant Garamond', serif; font-size: clamp(24px,3.5vw,40px); font-weight: 400; font-style: italic; line-height: 1.4; color: #eac6ce; margin-bottom: 36px; }
+.reveal-sub { font-size: 12px; line-height: 1.7; color: rgba(200,185,165,0.35); margin-bottom: 32px; }
+.reveal-continue { display: inline-block; font-size: 9px; font-weight: 400; letter-spacing: 0.2em; text-transform: uppercase; color: rgba(200,185,165,0.3); cursor: pointer; transition: color 0.25s ease; }
 .reveal-continue:hover { color: rgba(200,185,165,0.6); }
 
-/* ══════════════════════════════════════
-   CLOSING
-══════════════════════════════════════ */
+/* ══ CLOSING ══ */
 .closing { text-align: center; max-width: 560px; padding: 0 40px; }
-.closing-text {
-  font-family: 'Cormorant Garamond', serif;
-  font-size: clamp(26px,3.5vw,42px);
-  font-weight: 600; line-height: 1.25;
-  color: #eac6ce; margin-bottom: 40px;
-}
-.closing-stats {
-  display: flex; justify-content: center;
-  gap: 56px; margin-bottom: 48px;
-}
+.closing-text { font-family: 'Cormorant Garamond', serif; font-size: clamp(26px,3.5vw,42px); font-weight: 600; line-height: 1.25; color: #eac6ce; margin-bottom: 40px; }
+.closing-stats { display: flex; justify-content: center; gap: 56px; margin-bottom: 48px; }
 .cstat { text-align: center; }
-.cstat-num {
-  font-family: 'Cormorant Garamond', serif;
-  font-size: 38px; font-weight: 300;
-  margin-bottom: 6px;
-}
+.cstat-num { font-family: 'Cormorant Garamond', serif; font-size: 38px; font-weight: 300; margin-bottom: 6px; }
 .cstat-num.good { color: rgba(104,176,120,0.7); }
 .cstat-num.broke { color: rgba(226,170,98,0.7); }
-.cstat-label {
-  font-size: 9px; font-weight: 400;
-  letter-spacing: 0.2em; text-transform: uppercase;
-  color: rgba(200,185,165,0.3);
-}
+.cstat-label { font-size: 9px; font-weight: 400; letter-spacing: 0.2em; text-transform: uppercase; color: rgba(200,185,165,0.3); }
 .closing-restart {
   display: inline-flex; align-items: center; gap: 10px;
-  background: none; border: 1px solid rgba(200,185,165,0.12);
-  border-radius: 100px; padding: 10px 24px;
-  color: rgba(200,185,165,0.35);
-  font-family: 'DM Sans', sans-serif;
-  font-size: 9px; font-weight: 400;
-  letter-spacing: 0.22em; text-transform: uppercase;
-  cursor: pointer;
+  background: none; border: 1px solid rgba(200,185,165,0.12); border-radius: 100px;
+  padding: 10px 24px; color: rgba(200,185,165,0.35);
+  font-family: 'DM Sans', sans-serif; font-size: 9px; font-weight: 400;
+  letter-spacing: 0.22em; text-transform: uppercase; cursor: pointer;
   transition: color 0.25s ease, border-color 0.25s ease;
 }
-.closing-restart:hover {
-  color: rgba(200,185,165,0.65);
-  border-color: rgba(200,185,165,0.25);
-}
+.closing-restart:hover { color: rgba(200,185,165,0.65); border-color: rgba(200,185,165,0.25); }
 
 /* ── MOBILE ── */
 @media (max-width: 680px) {
-  .scale-wrap { width: 340px; transform: translate(-50%, -55%) scale(0.8); }
-  .dock { gap: 12px; bottom: 48px; }
+  .scale-svg { width: 360px; height: 220px; }
+  .drop-target { width: 150px; height: 130px; }
+  .drop-target-left  { left: calc(50% - 200px); }
+  .drop-target-right { right: calc(50% - 200px); }
+  .dock { gap: 12px; bottom: 52px; }
   .card { width: 170px; padding: 16px 14px; }
   .card-text { font-size: 14px; }
   .header { padding: 20px 20px; }
@@ -398,7 +205,9 @@ html, body {
 @media (max-width: 420px) {
   .dock { flex-direction: column; align-items: center; bottom: 36px; }
   .card { width: 200px; }
-  .scale-wrap { transform: translate(-50%, -60%) scale(0.65); }
+  .scale-svg { width: 280px; height: 180px; }
+  .drop-target-left  { left: calc(50% - 165px); }
+  .drop-target-right { right: calc(50% - 165px); }
 }
 </style>
 </head>
@@ -427,24 +236,30 @@ html, body {
 <div class="stage" id="stage-arena">
   <div class="arena" id="arena">
 
-    <div class="status-msg" id="status-msg">Both held.</div>
+    <div class="status-msg" id="status-msg">Drag each card onto a side</div>
 
-    <div class="scale-wrap" id="scale-wrap">
-      <!-- Drop zones (invisible hit targets) -->
-      <div class="drop-zone drop-zone-left" id="dz-left"></div>
-      <div class="drop-zone drop-zone-right" id="dz-right"></div>
+    <!-- SVG Scale -->
+    <svg class="scale-svg" id="scale-svg" viewBox="0 0 500 300" overflow="visible">
+      <!-- Fulcrum -->
+      <polygon id="fulcrum" points="250,220 235,250 265,250" fill="rgba(200,185,165,0.15)"/>
+      <!-- Beam -->
+      <line id="svg-beam" x1="50" y1="220" x2="450" y2="220" stroke="rgba(200,185,165,0.3)" stroke-width="3" stroke-linecap="round"/>
+      <!-- Left chain -->
+      <line id="svg-chain-l" x1="80" y1="220" x2="80" y2="160" stroke="rgba(200,185,165,0.12)" stroke-width="1"/>
+      <!-- Right chain -->
+      <line id="svg-chain-r" x1="420" y1="220" x2="420" y2="160" stroke="rgba(200,185,165,0.12)" stroke-width="1"/>
+      <!-- Left pan -->
+      <rect id="svg-pan-l" x="30" y="155" width="100" height="6" rx="3" fill="rgba(200,185,165,0.12)"/>
+      <!-- Right pan -->
+      <rect id="svg-pan-r" x="370" y="155" width="100" height="6" rx="3" fill="rgba(200,185,165,0.12)"/>
+    </svg>
 
-      <!-- Pan labels (placed card text) -->
-      <div class="pan-label pan-label-left" id="pan-label-left"></div>
-      <div class="pan-label pan-label-right" id="pan-label-right"></div>
-
-      <!-- Visual scale -->
-      <div class="beam" id="beam"></div>
-      <div class="chain chain-left" id="chain-left"></div>
-      <div class="chain chain-right" id="chain-right"></div>
-      <div class="pan pan-left" id="pan-left"></div>
-      <div class="pan pan-right" id="pan-right"></div>
-      <div class="fulcrum"></div>
+    <!-- Drop targets (positioned over pans) -->
+    <div class="drop-target drop-target-left" id="dt-left">
+      <span class="drop-target-label" id="dt-left-label"></span>
+    </div>
+    <div class="drop-target drop-target-right" id="dt-right">
+      <span class="drop-target-label" id="dt-right-label"></span>
     </div>
 
     <!-- Card dock -->
@@ -461,12 +276,12 @@ html, body {
   </div>
 </div>
 
-<!-- ══ REVEAL OVERLAY ══ -->
+<!-- ══ REVEAL ══ -->
 <div class="reveal-overlay" id="reveal-overlay">
   <div class="reveal-inner">
-    <div class="reveal-label">What you left behind</div>
+    <div class="reveal-label">What you collapsed</div>
     <p class="reveal-text" id="reveal-text"></p>
-    <p class="reveal-sub">This truth didn't disappear. It just went unheard.</p>
+    <p class="reveal-sub">These truths needed space between them.</p>
     <span class="reveal-continue" id="reveal-continue">Continue &rarr;</span>
   </div>
 </div>
@@ -482,7 +297,7 @@ html, body {
       </div>
       <div class="cstat">
         <div class="cstat-num broke" id="stat-broke">0</div>
-        <div class="cstat-label">Broke the scale</div>
+        <div class="cstat-label">Collapsed together</div>
       </div>
     </div>
     <button class="closing-restart" id="btn-restart">Begin again</button>
@@ -492,7 +307,6 @@ html, body {
 <script>
 'use strict';
 
-/* ── DATA ── */
 const PAIRS = [
   { a: 'Zoos protect endangered species',        b: 'Zoos profit from captivity' },
   { a: 'Children learn empathy here',             b: 'The animal didn\u2019t choose to teach' },
@@ -502,51 +316,31 @@ const PAIRS = [
 ];
 
 /* ── STATE ── */
-let currentRound = 0;
-let heldCount    = 0;
-let brokeCount   = 0;
-let placements   = { left: null, right: null }; // which card text is on each side
-let cardsPlaced  = 0;
-let locked       = false;
+let currentRound = 0, heldCount = 0, brokeCount = 0;
+let placed = []; // { side: 'left'|'right', text }
+let locked = false;
 
 /* ── ELEMENTS ── */
-const stageIntro   = document.getElementById('stage-intro');
-const stageArena   = document.getElementById('stage-arena');
-const stageClosing = document.getElementById('stage-closing');
-const arena        = document.getElementById('arena');
-const beam         = document.getElementById('beam');
-const chainL       = document.getElementById('chain-left');
-const chainR       = document.getElementById('chain-right');
-const panL         = document.getElementById('pan-left');
-const panR         = document.getElementById('pan-right');
-const panLabelL    = document.getElementById('pan-label-left');
-const panLabelR    = document.getElementById('pan-label-right');
-const dzLeft       = document.getElementById('dz-left');
-const dzRight      = document.getElementById('dz-right');
-const scaleWrap    = document.getElementById('scale-wrap');
-const statusMsg    = document.getElementById('status-msg');
-const cardA        = document.getElementById('card-a');
-const cardB        = document.getElementById('card-b');
-const cardAText    = document.getElementById('card-a-text');
-const cardBText    = document.getElementById('card-b-text');
-const dock         = document.getElementById('dock');
-const counter      = document.getElementById('counter');
-const progressBar  = document.getElementById('progress');
-const revealOvl    = document.getElementById('reveal-overlay');
-const revealText   = document.getElementById('reveal-text');
-const revealCont   = document.getElementById('reveal-continue');
-const closingText  = document.getElementById('closing-text');
-const statHeld     = document.getElementById('stat-held');
-const statBroke    = document.getElementById('stat-broke');
-const btnBegin     = document.getElementById('btn-begin');
-const btnRestart   = document.getElementById('btn-restart');
+const $ = id => document.getElementById(id);
+const stageIntro = $('stage-intro'), stageArena = $('stage-arena'), stageClosing = $('stage-closing');
+const statusMsg = $('status-msg');
+const cardA = $('card-a'), cardB = $('card-b');
+const cardAText = $('card-a-text'), cardBText = $('card-b-text');
+const dtLeft = $('dt-left'), dtRight = $('dt-right');
+const dtLeftLabel = $('dt-left-label'), dtRightLabel = $('dt-right-label');
+const revealOvl = $('reveal-overlay'), revealText = $('reveal-text'), revealCont = $('reveal-continue');
+const closingText = $('closing-text'), statHeld = $('stat-held'), statBroke = $('stat-broke');
+const counter = $('counter'), progressBar = $('progress');
+
+// SVG elements
+const svgBeam   = $('svg-beam');
+const svgChainL = $('svg-chain-l');
+const svgChainR = $('svg-chain-r');
+const svgPanL   = $('svg-pan-l');
+const svgPanR   = $('svg-pan-r');
 
 /* ── BUILD DOTS ── */
-PAIRS.forEach(() => {
-  const d = document.createElement('div');
-  d.className = 'pdot';
-  progressBar.appendChild(d);
-});
+PAIRS.forEach(() => { const d = document.createElement('div'); d.className = 'pdot'; progressBar.appendChild(d); });
 const dots = progressBar.querySelectorAll('.pdot');
 
 /* ── STAGE NAV ── */
@@ -554,19 +348,12 @@ function showStage(s) {
   [stageIntro, stageArena, stageClosing].forEach(x => x.classList.remove('active'));
   s.classList.add('active');
 }
-
-btnBegin.addEventListener('click', () => {
-  showStage(stageArena);
-  loadRound(0);
-});
-
-btnRestart.addEventListener('click', () => {
-  currentRound = 0; heldCount = 0; brokeCount = 0;
+$('btn-begin').addEventListener('click', () => { showStage(stageArena); loadRound(0); });
+$('btn-restart').addEventListener('click', () => {
+  currentRound = 0; heldCount = 0; brokeCount = 0; placed = [];
   dots.forEach(d => d.className = 'pdot');
-  showStage(stageArena);
-  loadRound(0);
+  showStage(stageArena); loadRound(0);
 });
-
 revealCont.addEventListener('click', () => {
   revealOvl.classList.remove('active');
   setTimeout(() => advanceRound(), 400);
@@ -576,369 +363,228 @@ revealCont.addEventListener('click', () => {
 function loadRound(idx) {
   locked = false;
   currentRound = idx;
-  cardsPlaced = 0;
-  placements = { left: null, right: null };
+  placed = [];
 
   const pair = PAIRS[idx];
   cardAText.textContent = pair.a;
   cardBText.textContent = pair.b;
 
   // reset cards
-  cardA.classList.remove('placed');
-  cardB.classList.remove('placed');
-  cardA.style.position = '';
-  cardA.style.left = '';
-  cardA.style.top = '';
-  cardB.style.position = '';
-  cardB.style.left = '';
-  cardB.style.top = '';
+  [cardA, cardB].forEach(c => {
+    c.classList.remove('placed', 'dragging');
+    c.style.cssText = '';
+  });
+
+  // reset drop targets
+  dtLeft.classList.remove('filled', 'hover');
+  dtRight.classList.remove('filled', 'hover');
+  dtLeftLabel.textContent = '';
+  dtRightLabel.textContent = '';
 
   // reset scale
-  beam.classList.remove('cracked');
-  beam.style.opacity = '';
-  beam.style.transform = '';
-  scaleWrap.classList.remove('balanced');
-  setBeamAngle(0);
-  panLabelL.textContent = '';
-  panLabelR.textContent = '';
-  panLabelL.classList.remove('visible');
-  panLabelR.classList.remove('visible');
+  tiltScale(0);
+  svgBeam.style.opacity = '';
+  svgBeam.style.transition = 'all 0.6s cubic-bezier(0.25,0.46,0.45,0.94)';
 
   // status
-  statusMsg.className = 'status-msg show-instruct';
-  statusMsg.textContent = 'Place each truth on a side of the scale';
+  statusMsg.className = 'status-msg';
+  statusMsg.textContent = 'Drag each card onto a side';
 
   // counter + dots
   counter.textContent = (idx + 1) + ' / ' + PAIRS.length;
   dots.forEach((d, i) => {
     if (i === idx) d.className = 'pdot active';
-    else if (i < idx) {} // keep existing done class
-    else d.className = 'pdot';
   });
 }
 
-/* ── BEAM PHYSICS ── */
-function setBeamAngle(deg) {
-  beam.style.setProperty('--beam-angle', deg + 'deg');
-  beam.style.transform = 'rotate(' + deg + 'deg)';
+/* ── SCALE TILT (SVG) ── */
+function tiltScale(angle) {
+  // angle in degrees, positive = right side heavy
+  const rad = angle * Math.PI / 180;
+  const cx = 250, cy = 220;
+  const armLen = 200;
 
-  // chains counter-rotate to stay vertical-ish
-  const chainAngle = -deg * 0.3;
-  chainL.style.transform = 'rotate(' + chainAngle + 'deg)';
-  chainR.style.transform = 'rotate(' + chainAngle + 'deg)';
+  // beam endpoints after rotation
+  const lx = cx - armLen * Math.cos(rad);
+  const ly = cy - armLen * Math.sin(rad);
+  const rx = cx + armLen * Math.cos(rad);
+  const ry = cy + armLen * Math.sin(rad);
 
-  // pans shift vertically based on angle
-  const shift = Math.sin(deg * Math.PI / 180) * 100;
-  panL.style.transform = 'translateY(' + (-shift) + 'px)';
-  panR.style.transform = 'translateY(' + shift + 'px)';
-  panLabelL.style.transform = 'translateY(' + (-shift) + 'px)';
-  panLabelR.style.transform = 'translateY(' + shift + 'px)';
+  svgBeam.setAttribute('x1', lx);
+  svgBeam.setAttribute('y1', ly);
+  svgBeam.setAttribute('x2', rx);
+  svgBeam.setAttribute('y2', ry);
+
+  // chains hang down from beam ends
+  const chainLen = 60;
+  svgChainL.setAttribute('x1', lx); svgChainL.setAttribute('y1', ly);
+  svgChainL.setAttribute('x2', lx); svgChainL.setAttribute('y2', ly - chainLen);
+  svgChainR.setAttribute('x1', rx); svgChainR.setAttribute('y1', ry);
+  svgChainR.setAttribute('x2', rx); svgChainR.setAttribute('y2', ry - chainLen);
+
+  // pans at top of chains
+  svgPanL.setAttribute('x', lx - 50); svgPanL.setAttribute('y', ly - chainLen - 6);
+  svgPanR.setAttribute('x', rx - 50); svgPanR.setAttribute('y', ry - chainLen - 6);
 }
 
 /* ── DRAG SYSTEM ── */
-let dragCard  = null;
-let dragOffX  = 0;
-let dragOffY  = 0;
-let origRect  = null;
+let dragEl = null, dragOffX = 0, dragOffY = 0;
 
-function onPointerDown(e) {
+function onDown(e) {
   if (locked) return;
   const card = e.target.closest('.card');
   if (!card || card.classList.contains('placed')) return;
 
-  dragCard = card;
-  dragCard.classList.add('dragging');
-  dragCard.setPointerCapture(e.pointerId);
+  dragEl = card;
+  dragEl.classList.add('dragging');
+  dragEl.setPointerCapture(e.pointerId);
 
   const rect = card.getBoundingClientRect();
-  origRect = { left: rect.left, top: rect.top };
   dragOffX = e.clientX - rect.left;
   dragOffY = e.clientY - rect.top;
 
-  // switch to fixed positioning for free drag
   card.style.position = 'fixed';
   card.style.left = rect.left + 'px';
   card.style.top = rect.top + 'px';
   card.style.zIndex = '100';
   card.style.margin = '0';
+  card.style.width = rect.width + 'px';
 }
 
-function onPointerMove(e) {
-  if (!dragCard) return;
-  const x = e.clientX - dragOffX;
-  const y = e.clientY - dragOffY;
-  dragCard.style.left = x + 'px';
-  dragCard.style.top = y + 'px';
+function onMove(e) {
+  if (!dragEl) return;
+  dragEl.style.left = (e.clientX - dragOffX) + 'px';
+  dragEl.style.top  = (e.clientY - dragOffY) + 'px';
 
-  // highlight drop zones
-  const cardRect = dragCard.getBoundingClientRect();
-  const cardCX = cardRect.left + cardRect.width / 2;
-  const cardCY = cardRect.top + cardRect.height / 2;
-
-  const lRect = dzLeft.getBoundingClientRect();
-  const rRect = dzRight.getBoundingClientRect();
-
-  dzLeft.classList.toggle('hover', hitTest(cardCX, cardCY, lRect));
-  dzRight.classList.toggle('hover', hitTest(cardCX, cardCY, rRect));
+  const cx = e.clientX, cy = e.clientY;
+  dtLeft.classList.toggle('hover', isOver(cx, cy, dtLeft));
+  dtRight.classList.toggle('hover', isOver(cx, cy, dtRight));
 }
 
-function onPointerUp(e) {
-  if (!dragCard) return;
-  dragCard.classList.remove('dragging');
-  dzLeft.classList.remove('hover');
-  dzRight.classList.remove('hover');
+function onUp(e) {
+  if (!dragEl) return;
+  dragEl.classList.remove('dragging');
+  dtLeft.classList.remove('hover');
+  dtRight.classList.remove('hover');
 
-  const cardRect = dragCard.getBoundingClientRect();
-  const cx = cardRect.left + cardRect.width / 2;
-  const cy = cardRect.top + cardRect.height / 2;
+  const cx = e.clientX, cy = e.clientY;
+  const text = dragEl.querySelector('.card-text').textContent;
 
-  const lRect = dzLeft.getBoundingClientRect();
-  const rRect = dzRight.getBoundingClientRect();
-
-  const text = dragCard.querySelector('.card-text').textContent;
-
-  if (hitTest(cx, cy, lRect) && !placements.left) {
-    placeCard(dragCard, 'left', text);
-  } else if (hitTest(cx, cy, rRect) && !placements.right) {
-    placeCard(dragCard, 'right', text);
+  if (isOver(cx, cy, dtLeft)) {
+    dropCard(dragEl, 'left', text);
+  } else if (isOver(cx, cy, dtRight)) {
+    dropCard(dragEl, 'right', text);
   } else {
     // snap back
-    dragCard.style.position = '';
-    dragCard.style.left = '';
-    dragCard.style.top = '';
-    dragCard.style.zIndex = '';
+    dragEl.style.cssText = '';
   }
-
-  dragCard = null;
+  dragEl = null;
 }
 
-function hitTest(px, py, rect) {
-  // generous hit area
-  const pad = 40;
-  return px >= rect.left - pad && px <= rect.right + pad &&
-         py >= rect.top - pad && py <= rect.bottom + pad;
+function isOver(px, py, target) {
+  const r = target.getBoundingClientRect();
+  const pad = 20;
+  return px >= r.left - pad && px <= r.right + pad &&
+         py >= r.top - pad && py <= r.bottom + pad;
 }
 
-function placeCard(card, side, text) {
+document.addEventListener('pointerdown', onDown);
+document.addEventListener('pointermove', onMove);
+document.addEventListener('pointerup', onUp);
+
+/* ── DROP CARD ── */
+function dropCard(card, side, text) {
   card.classList.add('placed');
-  card.style.position = '';
-  card.style.left = '';
-  card.style.top = '';
-  card.style.zIndex = '';
+  card.style.cssText = '';
 
-  placements[side] = text;
-  cardsPlaced++;
+  placed.push({ side, text });
 
-  // show label on pan
+  // show text on drop target
   if (side === 'left') {
-    panLabelL.textContent = text;
-    panLabelL.classList.add('visible');
+    dtLeftLabel.textContent = dtLeftLabel.textContent ? dtLeftLabel.textContent + ' & ' + text : text;
+    dtLeft.classList.add('filled');
   } else {
-    panLabelR.textContent = text;
-    panLabelR.classList.add('visible');
+    dtRightLabel.textContent = dtRightLabel.textContent ? dtRightLabel.textContent + ' & ' + text : text;
+    dtRight.classList.add('filled');
   }
 
-  // tilt beam based on placement
-  if (cardsPlaced === 1) {
-    setBeamAngle(side === 'left' ? -8 : 8);
-  }
+  // tilt
+  const leftW  = placed.filter(p => p.side === 'left').length;
+  const rightW = placed.filter(p => p.side === 'right').length;
+  tiltScale((rightW - leftW) * 10);
 
-  if (cardsPlaced === 2) {
-    judge();
+  // check if both placed
+  if (placed.length === 2) {
+    locked = true;
+    setTimeout(() => judge(), 500);
   }
 }
-
-document.addEventListener('pointerdown', onPointerDown);
-document.addEventListener('pointermove', onPointerMove);
-document.addEventListener('pointerup', onPointerUp);
 
 /* ── JUDGMENT ── */
 function judge() {
-  locked = true;
-  const bothLeft  = placements.left && !placements.right;
-  const bothRight = !placements.left && placements.right;
+  const leftW  = placed.filter(p => p.side === 'left').length;
+  const rightW = placed.filter(p => p.side === 'right').length;
 
-  // Actually: if cardsPlaced is 2, check if both are on same side
-  // With our system, each side can only hold one card.
-  // So if both cards placed, one is left and one is right = BALANCED
-  // But wait — what if user places both on the same side?
-  // Our placeCard prevents placing on an already-occupied side.
-  // So we need a different approach: allow stacking.
-
-  // Let me reconsider: allow placing two cards on same side
-  // This means placements should be arrays
-  // For simplicity in this version: balanced means both sides have a card
-
-  if (placements.left && placements.right) {
+  if (leftW === 1 && rightW === 1) {
     // BALANCED
-    setBeamAngle(0);
-    scaleWrap.classList.add('balanced');
-    statusMsg.className = 'status-msg show-balance';
+    tiltScale(0);
+    svgBeam.style.stroke = 'rgba(104,176,120,0.5)';
+    svgPanL.style.fill = 'rgba(104,176,120,0.2)';
+    svgPanR.style.fill = 'rgba(104,176,120,0.2)';
+    statusMsg.className = 'status-msg balanced';
     statusMsg.textContent = 'Both held.';
     heldCount++;
     dots[currentRound].className = 'pdot done-good';
-    setTimeout(() => advanceRound(), 2200);
-  }
-}
-
-// Override placeCard to allow same-side stacking
-// We need to track cards differently
-let placedCards = []; // array of { side, text }
-
-// Rewrite placeCard
-function placeCardV2(card, side, text) {
-  card.classList.add('placed');
-  card.style.position = '';
-  card.style.left = '';
-  card.style.top = '';
-  card.style.zIndex = '';
-
-  placedCards.push({ side, text });
-  cardsPlaced++;
-
-  // show label
-  if (side === 'left') {
-    panLabelL.textContent = (panLabelL.textContent ? panLabelL.textContent + '\n& ' : '') + text;
-    panLabelL.classList.add('visible');
-  } else {
-    panLabelR.textContent = (panLabelR.textContent ? panLabelR.textContent + '\n& ' : '') + text;
-    panLabelR.classList.add('visible');
-  }
-
-  // count per side
-  const leftCount  = placedCards.filter(c => c.side === 'left').length;
-  const rightCount = placedCards.filter(c => c.side === 'right').length;
-  const diff = leftCount - rightCount;
-
-  setBeamAngle(diff * 12);
-
-  if (cardsPlaced === 2) {
-    judgeV2();
-  }
-}
-
-function judgeV2() {
-  locked = true;
-  const leftCount  = placedCards.filter(c => c.side === 'left').length;
-  const rightCount = placedCards.filter(c => c.side === 'right').length;
-
-  if (leftCount === 1 && rightCount === 1) {
-    // BALANCED
-    setBeamAngle(0);
-    scaleWrap.classList.add('balanced');
-    statusMsg.className = 'status-msg show-balance';
-    statusMsg.textContent = 'Both held.';
-    heldCount++;
-    dots[currentRound].className = 'pdot done-good';
-    setTimeout(() => advanceRound(), 2200);
+    setTimeout(() => {
+      svgBeam.style.stroke = '';
+      svgPanL.style.fill = '';
+      svgPanR.style.fill = '';
+      advanceRound();
+    }, 2200);
   } else {
     // BROKE — both on same side
-    const heavySide = leftCount === 2 ? 'left' : 'right';
-    const angle = heavySide === 'left' ? -28 : 28;
-    setBeamAngle(angle);
+    const angle = leftW === 2 ? -30 : 30;
+    tiltScale(angle);
 
     setTimeout(() => {
-      beam.classList.add('cracked');
+      // crack effect: fade beam
+      svgBeam.style.opacity = '0.15';
+      svgBeam.style.stroke = 'rgba(226,170,98,0.5)';
       brokeCount++;
       dots[currentRound].className = 'pdot done-bad';
-
-      // find the ignored text (the pair member not placed on the heavy side...
-      // actually both were placed on the same side.
-      // The "lost" truth is conceptual — show the one that ended up crowded
-      // Better: show both, framed as "you stacked these together"
-      // Actually per plan: show what they ignored — but they didn't ignore either, they stacked both same side.
-      // Show the truth that needed its own space:
-      const pair = PAIRS[currentRound];
-      const stackedTexts = placedCards.map(c => c.text);
-      // The "reveal" is that both truths existed but were collapsed into one side
-      // Let's show the less comfortable one as "what got flattened"
-      const revealT = heavySide === 'left'
-        ? 'You placed both truths on the same side. But they needed space between them.'
-        : 'You placed both truths on the same side. But they needed space between them.';
 
       statusMsg.className = 'status-msg';
       statusMsg.textContent = '';
 
       setTimeout(() => {
-        revealText.textContent = stackedTexts.join(' — and — ');
+        const texts = placed.map(p => p.text);
+        revealText.textContent = texts.join(' \u2014 and \u2014 ');
         revealOvl.classList.add('active');
       }, 600);
-
-    }, 700);
+    }, 600);
   }
 }
-
-// Patch: override the old placeCard in the pointer handler
-// We need to update the pointer handler to use V2 and allow same-side
-// Remove the old "occupied side" check:
-function placeCardPatched(card, side, text) {
-  placeCardV2(card, side, text);
-}
-
-// Override onPointerUp to remove the occupied-side guard
-document.removeEventListener('pointerup', onPointerUp);
-document.addEventListener('pointerup', function(e) {
-  if (!dragCard) return;
-  dragCard.classList.remove('dragging');
-  dzLeft.classList.remove('hover');
-  dzRight.classList.remove('hover');
-
-  const cardRect = dragCard.getBoundingClientRect();
-  const ccx = cardRect.left + cardRect.width / 2;
-  const ccy = cardRect.top + cardRect.height / 2;
-
-  const lRect = dzLeft.getBoundingClientRect();
-  const rRect = dzRight.getBoundingClientRect();
-
-  const txt = dragCard.querySelector('.card-text').textContent;
-
-  if (hitTest(ccx, ccy, lRect)) {
-    placeCardPatched(dragCard, 'left', txt);
-  } else if (hitTest(ccx, ccy, rRect)) {
-    placeCardPatched(dragCard, 'right', txt);
-  } else {
-    dragCard.style.position = '';
-    dragCard.style.left = '';
-    dragCard.style.top = '';
-    dragCard.style.zIndex = '';
-  }
-
-  dragCard = null;
-});
 
 /* ── ADVANCE ── */
 function advanceRound() {
   if (currentRound < PAIRS.length - 1) {
-    placedCards = [];
     loadRound(currentRound + 1);
   } else {
-    showClosing();
+    showClosingScreen();
   }
 }
 
-/* ── CLOSING ── */
-function showClosing() {
+function showClosingScreen() {
   statHeld.textContent = heldCount;
   statBroke.textContent = brokeCount;
 
-  if (brokeCount === 0) {
-    closingText.textContent = 'You already knew how to hold both.';
-  } else if (heldCount > brokeCount) {
-    closingText.textContent = 'Some truths are harder to hold than others.';
-  } else if (heldCount === brokeCount) {
-    closingText.textContent = 'Half held, half broken. That\u2019s honest.';
-  } else {
-    closingText.textContent = 'The instinct to choose is strong. The practice is holding.';
-  }
+  if (brokeCount === 0) closingText.textContent = 'You already knew how to hold both.';
+  else if (heldCount > brokeCount) closingText.textContent = 'Some truths are harder to hold than others.';
+  else if (heldCount === brokeCount) closingText.textContent = 'Half held, half collapsed. That\u2019s honest.';
+  else closingText.textContent = 'The instinct to choose is strong. The practice is holding.';
 
   showStage(stageClosing);
 }
-
-/* ── RESET for restart ── */
-const origRestart = btnRestart.onclick;
-btnRestart.addEventListener('click', () => {
-  placedCards = [];
-});
 </script>
 
 </body>

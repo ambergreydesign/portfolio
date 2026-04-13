@@ -17,8 +17,8 @@
   --bg:             #0e0d12;
   --bg-alt:         #12111a;
   --text:           #e0d6c8;
-  --text-muted:     #7a6e7e;
-  --text-dim:       #3a2e42;
+  --text-muted:     #9a8e9e;
+  --text-dim:       #6a5e72;
   --pink:           #eac6ce;
   --amber:          #dca25b;
   --border:         rgba(255, 255, 255, 0.06);
@@ -111,22 +111,15 @@ body.visible { opacity: 1; }
   padding: 0 88px 80px;
   position: relative;
   overflow: hidden;
-  background: var(--bg);
-}
-.hero-bg {
-  position: absolute; inset: 0; z-index: 0;
-  background-image: url('https://amber.design/wp-content/uploads/2024/12/Matergenesis_Cover.png');
+  background-image:
+    linear-gradient(to bottom,
+      rgba(14, 13, 18, 0.55) 0%,
+      rgba(14, 13, 18, 0.88) 70%,
+      #0e0d12 100%),
+    url('Studio_Edited.webp');
   background-size: cover;
-  background-position: center top;
-  opacity: 0.35;
-}
-.hero-bg::after {
-  content: '';
-  position: absolute; inset: 0;
-  background: linear-gradient(to bottom,
-    transparent 0%,
-    rgba(14, 13, 18, 0.6) 55%,
-    var(--bg) 100%);
+  background-position: center;
+  background-attachment: fixed;
 }
 .hero-content { position: relative; z-index: 1; }
 
@@ -144,7 +137,7 @@ body.visible { opacity: 1; }
 .hero-desc {
   font-size: 15px; font-weight: 400;
   line-height: 1.8; letter-spacing: 0.035em;
-  color: rgba(200, 185, 165, 0.62);
+  color: rgba(200, 185, 165, 0.72);
   max-width: 540px; margin-bottom: 64px;
 }
 .hero-meta {
@@ -180,7 +173,7 @@ body.visible { opacity: 1; }
 .section-body {
   font-size: 15px; font-weight: 400;
   line-height: 1.88; letter-spacing: 0.03em;
-  color: rgba(200, 185, 165, 0.6); max-width: 620px;
+  color: rgba(200, 185, 165, 0.72); max-width: 620px;
 }
 .section-body + .section-body { margin-top: 18px; }
 
@@ -245,7 +238,7 @@ body.visible { opacity: 1; }
 }
 .theme-body {
   font-size: 13px; font-weight: 400; line-height: 1.75;
-  color: rgba(200, 185, 165, 0.55); letter-spacing: 0.025em;
+  color: rgba(200, 185, 165, 0.68); letter-spacing: 0.025em;
 }
 
 /* -- PROCESS STEPS -- */
@@ -274,7 +267,7 @@ body.visible { opacity: 1; }
 }
 .process-body {
   font-size: 13px; font-weight: 400; line-height: 1.75;
-  color: rgba(200, 185, 165, 0.55); letter-spacing: 0.025em;
+  color: rgba(200, 185, 165, 0.68); letter-spacing: 0.025em;
 }
 
 /* -- GALLERY -- */
@@ -362,7 +355,7 @@ body.visible { opacity: 1; }
 .insight-body {
   padding: 16px 24px 24px;
   font-size: 13px; font-weight: 400; line-height: 1.78;
-  color: rgba(200,185,165,0.7); letter-spacing: 0.02em;
+  color: rgba(200,185,165,0.75); letter-spacing: 0.02em;
   border-top: 1px solid rgba(196,122,46,0.1);
   margin: 0 24px;
 }
@@ -399,13 +392,227 @@ body.visible { opacity: 1; }
 }
 .horizon-body {
   font-size: 13px; font-weight: 400; line-height: 1.75;
-  color: rgba(200, 185, 165, 0.55); letter-spacing: 0.025em;
+  color: rgba(200, 185, 165, 0.68); letter-spacing: 0.025em;
 }
 
 /* -- SCROLL REVEAL -- */
 .reveal { opacity: 0; transform: translateY(20px); transition: opacity 0.7s ease, transform 0.7s ease; will-change: opacity, transform; }
 .reveal.is-visible { opacity: 1; transform: translateY(0); }
 @media (prefers-reduced-motion: reduce) { .reveal { opacity: 1; transform: none; transition: none; } }
+
+/* -- FOCUS STYLES -- */
+:focus-visible {
+  outline: 2px solid var(--amber);
+  outline-offset: 3px;
+}
+.nav-back:focus-visible {
+  outline: 2px solid var(--amber);
+  outline-offset: 3px;
+}
+.insight-item summary:focus-visible {
+  outline: 2px solid var(--amber);
+  outline-offset: -2px;
+  border-radius: 12px;
+}
+
+/* -- SKIP NAV -- */
+.skip-link {
+  position: absolute;
+  top: -100px; left: 16px;
+  background: var(--amber);
+  color: var(--bg);
+  padding: 10px 18px;
+  font-size: 13px; font-weight: 500;
+  letter-spacing: 0.04em;
+  border-radius: 0 0 8px 8px;
+  z-index: 10000;
+  transition: top 0.2s ease;
+}
+.skip-link:focus {
+  top: 0;
+}
+
+/* -- LIGHT SWITCH TOGGLE -- */
+.light-switch {
+  position: fixed;
+  top: 24px; right: 24px;
+  z-index: 1000;
+  cursor: pointer;
+  user-select: none;
+}
+
+.switch-plate {
+  width: 36px; height: 56px;
+  background: #1a1410;
+  border-radius: 6px;
+  border: 2px solid var(--amber);
+  display: flex; align-items: center; justify-content: center;
+  box-shadow: 0 2px 8px rgba(220, 162, 91, 0.35), 0 0 18px rgba(220, 162, 91, 0.15), inset 0 1px 0 rgba(255,255,255,0.05);
+  transition: all 0.3s;
+  position: relative;
+}
+
+[data-theme="light"] .switch-plate {
+  background: #faf5ee;
+  border-color: #d4c0a8;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08), inset 0 1px 0 rgba(255,255,255,0.8);
+}
+
+.switch-toggle {
+  width: 20px; height: 24px;
+  background: linear-gradient(180deg, #dca25b, #a87830);
+  border-radius: 3px;
+  border: 1px solid #e8b46a;
+  box-shadow: 0 2px 6px rgba(220, 162, 91, 0.5), 0 0 12px rgba(220, 162, 91, 0.2);
+  transition: all 0.15s ease;
+  transform: translateY(6px);
+}
+
+[data-theme="light"] .switch-toggle {
+  background: linear-gradient(180deg, #FFFFFF, #f5ede2);
+  border-color: #d4c0a8;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.08);
+  transform: translateY(-6px);
+}
+
+.switch-label {
+  position: absolute;
+  bottom: -18px; left: 50%;
+  transform: translateX(-50%);
+  font-size: 7px; font-weight: 500;
+  letter-spacing: 0.15em; text-transform: uppercase;
+  color: rgba(220, 162, 91, 0.6);
+  white-space: nowrap;
+  transition: color 0.3s;
+}
+
+[data-theme="light"] .switch-label {
+  color: rgba(196, 122, 46, 0.3);
+}
+
+/* -- LIGHT MODE THEME -- */
+[data-theme="light"] {
+  --magenta:        #c47a2e;
+  --magenta-dim:    rgba(196, 122, 46, 0.08);
+  --magenta-border: rgba(196, 122, 46, 0.25);
+  --bg:             #faf6f0;
+  --bg-alt:         #f2ece4;
+  --text:           #2c2520;
+  --text-muted:     #6a5d52;
+  --text-dim:       #9a8d82;
+  --pink:           #8a5a20;
+  --amber:          #b07820;
+  --border:         rgba(0, 0, 0, 0.08);
+}
+
+[data-theme="light"] body {
+  color: var(--text);
+}
+
+[data-theme="light"] html {
+  background: var(--bg);
+}
+
+[data-theme="light"] .hero {
+  background-image:
+    linear-gradient(to bottom,
+      rgba(250, 246, 240, 0.45) 0%,
+      rgba(250, 246, 240, 0.88) 70%,
+      #faf6f0 100%),
+    url('Studio_Edited.webp');
+}
+
+[data-theme="light"] .hero-desc {
+  color: rgba(44, 37, 32, 0.72);
+}
+
+[data-theme="light"] .hero-meta {
+  border-top-color: rgba(0, 0, 0, 0.08);
+}
+
+[data-theme="light"] .nav-back {
+  background: rgba(0, 0, 0, 0.05);
+  border-color: rgba(0, 0, 0, 0.1);
+  color: rgba(80, 60, 40, 0.75);
+}
+[data-theme="light"] .nav-back:hover {
+  background: rgba(0, 0, 0, 0.09);
+  color: rgba(80, 60, 40, 1);
+  border-color: rgba(0, 0, 0, 0.16);
+}
+
+[data-theme="light"] .wordmark {
+  color: rgba(44, 37, 32, 0.14);
+}
+
+[data-theme="light"] #page-exit {
+  background: #faf6f0;
+}
+
+[data-theme="light"] .section-body {
+  color: rgba(44, 37, 32, 0.72);
+}
+
+[data-theme="light"] .theme-card {
+  background: rgba(196, 122, 46, 0.03);
+  border-color: rgba(196, 122, 46, 0.22);
+}
+
+[data-theme="light"] .theme-card::before {
+  background: linear-gradient(90deg, var(--amber) 0%, transparent 70%);
+}
+
+[data-theme="light"] .theme-body {
+  color: rgba(44, 37, 32, 0.65);
+}
+
+[data-theme="light"] .process-body {
+  color: rgba(44, 37, 32, 0.65);
+}
+
+[data-theme="light"] .horizon-body {
+  color: rgba(44, 37, 32, 0.65);
+}
+
+[data-theme="light"] .gallery-caption {
+  background: linear-gradient(to top, rgba(250, 246, 240, 0.88) 0%, transparent 100%);
+}
+
+[data-theme="light"] .insight-item {
+  background:
+    radial-gradient(140% 120% at 15% 0%, rgba(196,122,46,0.06) 0%, rgba(196,122,46,0.00) 58%),
+    linear-gradient(160deg, #f8f2ea, #faf6f0);
+  border-color: rgba(196,122,46,0.18);
+}
+
+[data-theme="light"] .insight-body {
+  color: rgba(44, 37, 32, 0.72);
+  border-top-color: rgba(196,122,46,0.1);
+}
+
+[data-theme="light"] .reflection-section {
+  background: linear-gradient(135deg,
+    rgba(196, 122, 46, 0.04) 0%,
+    rgba(250, 246, 240, 1) 100%
+  );
+  border-top-color: rgba(196, 122, 46, 0.08);
+}
+
+[data-theme="light"] .reflection-quote {
+  color: #8a5a20;
+}
+
+[data-theme="light"] .section-divider {
+  background: #b07820;
+}
+
+[data-theme="light"] .artifact-wrapper {
+  border-color: rgba(0, 0, 0, 0.1);
+}
+
+[data-theme="light"] .skip-link {
+  color: #fff;
+}
 
 /* -- REFLECTION -- */
 .reflection-section {
@@ -505,9 +712,18 @@ body.visible { opacity: 1; }
 </head>
 <body>
 
+<a href="#main-content" class="skip-link">Skip to content</a>
+
 <div id="page-exit"></div>
 
-<div class="wordmark">Amber Grey</div>
+<div class="wordmark" aria-hidden="true">Amber Grey</div>
+
+<!-- Light switch -->
+<div class="light-switch" id="themeSwitch" role="switch" aria-checked="false" aria-label="Toggle light mode" tabindex="0" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();this.click()}">
+  <div class="switch-plate">
+    <div class="switch-toggle"></div>
+  </div>
+</div>
 
 <button class="nav-back" onclick="navigateTo('level-3-matergenesis.html')">
   <span class="nav-back-arrow"></span>
@@ -517,8 +733,8 @@ body.visible { opacity: 1; }
 <!-- ══════════════════════════════════════
      HERO
 ══════════════════════════════════════ -->
+<main id="main-content">
 <section class="hero">
-  <div class="hero-bg"></div>
   <div class="hero-content">
   <div class="hero-zone">Speculative Design &middot; Case Study</div>
   <h1 class="hero-title">MaterGenesis</h1>
@@ -713,11 +929,6 @@ body.visible { opacity: 1; }
 
     </div>
 
-    <p class="mob-tool-link">Open on desktop for full tool functionality</p>
-    <div class="artifact-wrapper" style="height: 680px;">
-      <iframe src="prototype-matergenesis-map.html" title="MaterGenesis Concept Map Explorer" loading="lazy"></iframe>
-    </div>
-    <div class="artifact-caption">Concept Map Explorer &mdash; Three Domains &middot; Interactive Prototype</div>
   </div>
 </section>
 
@@ -750,11 +961,6 @@ body.visible { opacity: 1; }
       </div>
     </div>
 
-    <p class="mob-tool-link">Open on desktop for full experience</p>
-    <div class="artifact-wrapper" style="height: 600px;">
-      <iframe src="prototype-matergenesis-story.html" title="MaterGenesis Creation Story Experience" loading="lazy"></iframe>
-    </div>
-    <div class="artifact-caption">Creation Story Experience &mdash; Interactive Walkthrough &middot; Prototype</div>
   </div>
 </section>
 
@@ -792,7 +998,7 @@ body.visible { opacity: 1; }
             <div class="insight-kicker">Structural Signal</div>
             <p class="insight-title">Power Shapes Everything</p>
           </div>
-          <span class="insight-chev"></span>
+          <span class="insight-chev" aria-hidden="true"></span>
         </summary>
         <div class="insight-body">
           <p>Every system in the MaterGenesis world — from agriculture to architecture to governance — reflected the foundational distribution of power. When power was shared, every downstream system was different.</p>
@@ -806,7 +1012,7 @@ body.visible { opacity: 1; }
             <div class="insight-kicker">Ecological Signal</div>
             <p class="insight-title">Sustainability Is a Default, Not a Feature</p>
           </div>
-          <span class="insight-chev"></span>
+          <span class="insight-chev" aria-hidden="true"></span>
         </summary>
         <div class="insight-body">
           <p>In this timeline, ecological sustainability was never framed as an aspiration. It was the baseline. When nature isn't treated as an externality, the entire economic and architectural logic shifts.</p>
@@ -820,7 +1026,7 @@ body.visible { opacity: 1; }
             <div class="insight-kicker">Cultural Signal</div>
             <p class="insight-title">Preservation as Governance</p>
           </div>
-          <span class="insight-chev"></span>
+          <span class="insight-chev" aria-hidden="true"></span>
         </summary>
         <div class="insight-body">
           <p>Cultural preservation wasn't a program or a policy — it was woven into governance itself. Language, tradition, and knowledge were treated as infrastructure, not heritage.</p>
@@ -834,7 +1040,7 @@ body.visible { opacity: 1; }
             <div class="insight-kicker">Narrative Signal</div>
             <p class="insight-title">Imagination Is a Research Method</p>
           </div>
-          <span class="insight-chev"></span>
+          <span class="insight-chev" aria-hidden="true"></span>
         </summary>
         <div class="insight-body">
           <p>The act of building an alternate world wasn't just creative expression — it generated real design insights. Speculative worldbuilding forced decisions that revealed assumptions invisible in our timeline.</p>
@@ -907,6 +1113,7 @@ body.visible { opacity: 1; }
 </section>
 
 <div class="cs-footer"></div>
+</main>
 
 <script>
 'use strict';
@@ -929,6 +1136,31 @@ const observer = new IntersectionObserver((entries) => {
   });
 }, { threshold: 0.1 });
 document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+// Theme toggle
+(function() {
+  var html = document.documentElement;
+  var sw = document.getElementById('themeSwitch');
+  var STORAGE_KEY = 'matergenesis-theme';
+
+  function setTheme(theme) {
+    html.setAttribute('data-theme', theme);
+    var isLight = theme === 'light';
+    sw.setAttribute('aria-checked', isLight);
+    sw.setAttribute('aria-label', isLight ? 'Switch to dark mode' : 'Switch to light mode');
+    try { localStorage.setItem(STORAGE_KEY, theme); } catch(e) {}
+  }
+
+  // Load saved preference
+  var saved = null;
+  try { saved = localStorage.getItem(STORAGE_KEY); } catch(e) {}
+  setTheme(saved === 'light' ? 'light' : 'dark');
+
+  sw.addEventListener('click', function() {
+    var current = html.getAttribute('data-theme') || 'dark';
+    setTheme(current === 'dark' ? 'light' : 'dark');
+  });
+})();
 
 requestAnimationFrame(() => {
   requestAnimationFrame(() => { document.body.classList.add('visible'); });

@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>The Future Zoo — Amber Grey</title>
+<title>Contextual Intelligence — Amber Grey</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,600;1,400;1,500&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
@@ -131,6 +131,22 @@ body.visible { opacity: 1; }
   border: none;
   display: block;
   border-radius: 13px;
+}
+
+/* Placeholder shown when no iframe src is set */
+.artifact-placeholder {
+  width: 100%; height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  background: linear-gradient(160deg, rgba(31,15,56,0.6), rgba(11,28,38,0.8));
+  color: rgba(200,185,165,0.35);
+  font-family: 'DM Sans', sans-serif;
+  font-size: 11px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
 }
 
 /* ── ARTIFACT LABEL ── */
@@ -415,7 +431,6 @@ body.visible { opacity: 1; }
   }
 
   .project-desc  { font-size: 1em; line-height: 1.75; }
-
   .meta-divider  { display: none; }
   .details-label { display: block; }
 
@@ -428,9 +443,7 @@ body.visible { opacity: 1; }
     gap: 0.75em;
   }
   .meta-value { text-align: right; flex-shrink: 0; }
-
   .reflection-quote { font-size: 1.1em; }
-
   .nav-back { top: 16px; left: 16px; }
 }
 
@@ -458,12 +471,14 @@ body.visible .studio-crumb {
   opacity: 1;
   transform: translateX(-50%) translateY(0);
 }
-@keyframes bookFloat {
-  0%, 100% { transform: translateY(0) rotate(0deg); }
-  50%       { transform: translateY(-3px) rotate(0.5deg); }
+@keyframes plantSway {
+  0%, 100% { transform: rotate(-3deg); }
+  50%       { transform: rotate(3deg); }
 }
-.crumb-book {
-  animation: bookFloat 4s ease-in-out infinite;
+.crumb-plant {
+  transform-box: fill-box;
+  transform-origin: 50% 100%;
+  animation: plantSway 6s ease-in-out infinite;
 }
 .crumb-text {
   font-family: 'DM Sans', sans-serif;
@@ -479,32 +494,29 @@ body.visible .studio-crumb {
 <div id="page-exit"></div>
 
 <div class="wordmark">Amber Grey</div>
-<button class="nav-back" onclick="navigateTo('level-2-experiments.html')">
+<button class="nav-back" onclick="navigateTo('level-2-systems.html')">
   <span class="nav-back-arrow"></span>
-  Experiments
+  Systems
 </button>
 
 <!-- Left canvas -->
 <div id="left-canvas">
   <div class="left-area">
     <div class="card-section">
-      <p class="mob-tool-link">Open on desktop for full interaction</p>
+      <p class="mob-tool-link">Open on desktop for full tool functionality</p>
       <div class="artifact-card">
-        <iframe src="A Tools Folder/future-zoo.html" title="The Future Zoo — Interactive Ideation" loading="lazy"></iframe>
+        <iframe src="A Tools Folder/dayli-research-analyst.html" title="Dayli Research Analyst" loading="lazy"></iframe>
       </div>
-      <div class="artifact-label">Prototype / Ideation</div>
+      <div class="artifact-label">Prototype / AI System</div>
     </div>
     <div class="studio-crumb" onclick="navigateTo('studio-portfolio.html')">
-  <svg class="crumb-book" width="34" height="26" viewBox="0 0 34 26" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <path d="M17 4 C13 3 7 2 2 4 L2 24 C7 22 13 23 17 24Z" stroke="currentColor" stroke-width="0.75"/>
-    <path d="M17 4 C21 3 27 2 32 4 L32 24 C27 22 21 23 17 24Z" stroke="currentColor" stroke-width="0.75"/>
-    <path d="M17 4 L17 24" stroke="currentColor" stroke-width="0.5" opacity="0.45"/>
-    <path d="M5 9 L13 9" stroke="currentColor" stroke-width="0.4" stroke-linecap="round" opacity="0.45"/>
-    <path d="M5 13 L13 13" stroke="currentColor" stroke-width="0.4" stroke-linecap="round" opacity="0.38"/>
-    <path d="M5 17 L11 17" stroke="currentColor" stroke-width="0.4" stroke-linecap="round" opacity="0.3"/>
-    <path d="M21 9 L29 9" stroke="currentColor" stroke-width="0.4" stroke-linecap="round" opacity="0.45"/>
-    <path d="M21 13 L29 13" stroke="currentColor" stroke-width="0.4" stroke-linecap="round" opacity="0.38"/>
-    <path d="M21 17 L27 17" stroke="currentColor" stroke-width="0.4" stroke-linecap="round" opacity="0.3"/>
+  <svg class="crumb-plant" width="30" height="48" viewBox="0 0 30 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M8 47 L22 47 L24 37 L6 37Z" stroke="currentColor" stroke-width="0.75" stroke-linejoin="round"/>
+    <path d="M5 37 L25 37" stroke="currentColor" stroke-width="0.75" stroke-linecap="round"/>
+    <path d="M15 37 L15 28" stroke="currentColor" stroke-width="0.7" stroke-linecap="round"/>
+    <path d="M15 31 C9 28 5 22 7 16 C8 12 12 11 14 14 C15 16 15 24 15 31" stroke="currentColor" stroke-width="0.65" stroke-linecap="round"/>
+    <path d="M15 28 C21 25 25 19 23 13 C22 9 18 8 16 11 C15 13 15 21 15 28" stroke="currentColor" stroke-width="0.65" stroke-linecap="round"/>
+    <path d="M15 28 C12 23 12 17 15 14 C18 17 18 23 15 28" stroke="currentColor" stroke-width="0.6" stroke-linecap="round"/>
   </svg>
   <span class="crumb-text">Studio</span>
 </div>
@@ -513,9 +525,9 @@ body.visible .studio-crumb {
 
 <!-- Right panel -->
 <div class="info-panel">
-  <div class="zone-badge">Experiments</div>
-  <h1 class="project-title">The Future <br>Zoo</h1>
-  <p class="project-desc">A cinematic ideation exploring what reverence-centered zoo design could look like in 50 or 100 years.</p>
+  <div class="zone-badge">Systems</div>
+  <h1 class="project-title">A research analyst<br>that responds<br>to context</h1>
+  <p class="project-desc">An AI-assisted system that surfaces relevant insights based on user situation and need.</p>
 
   <div class="meta-divider"></div>
   <div class="details-label">Details</div>
@@ -523,26 +535,26 @@ body.visible .studio-crumb {
   <div class="meta-table">
     <div class="meta-row">
       <span class="meta-label">Type</span>
-      <span class="meta-value">Ideation / Narrative</span>
+      <span class="meta-value">AI System</span>
     </div>
     <div class="meta-row">
       <span class="meta-label">Year</span>
-      <span class="meta-value">2025</span>
+      <span class="meta-value">2026</span>
     </div>
     <div class="meta-row">
       <span class="meta-label">Methods</span>
-      <span class="meta-value">Speculative Design</span>
+      <span class="meta-value">Research</span>
     </div>
     <div class="meta-row">
       <span class="meta-label">Context</span>
-      <span class="meta-value">Future Zoo Design</span>
+      <span class="meta-value">Dayli · Daily Living Labs</span>
     </div>
   </div>
 
   <div class="reflection-label">What I Wanted to Show</div>
-  <p class="reflection-quote">A zoo worth visiting is one worth slowing&nbsp;down&nbsp;for.</p>
+  <p class="reflection-quote">Research compounds when it adapts. Static insight ages.</p>
 
-  <button class="case-study-link" onclick="navigateTo('case-study-rewilded.html?from=future-zoo')">
+  <button class="case-study-link" onclick="navigateTo('case-study-dayli.html?from=ci')">
     Case Study
     <span class="case-study-arrow"></span>
   </button>

@@ -89,6 +89,8 @@ html, body {
 #zoo-list {
   flex: 1;
   overflow-y: auto;
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
   padding: 6px 0;
 }
 #zoo-list::-webkit-scrollbar { width: 3px; }
@@ -151,6 +153,8 @@ html, body {
   height: 100%;
   overflow-y: auto;
   overflow-x: hidden;
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
   padding: 28px 32px 28px;
   display: flex;
   flex-direction: column;

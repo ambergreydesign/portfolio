@@ -10,6 +10,37 @@
 <style>
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
+/* ── SKIP LINK ── */
+.skip-link {
+  position: absolute; top: -100px; left: 16px;
+  background: var(--warm, #f0d08c); color: #0c0a07;
+  padding: 10px 20px; border-radius: 0 0 8px 8px;
+  font-size: 13px; font-weight: 500; letter-spacing: 0.06em;
+  z-index: 10000; text-decoration: none;
+  transition: top 0.2s ease;
+}
+.skip-link:focus { top: 0; }
+
+/* ── FOCUS STYLES ── */
+*:focus-visible {
+  outline: 2px solid #f0d08c;
+  outline-offset: 3px;
+}
+button:focus-visible {
+  outline: 2px solid #f0d08c;
+  outline-offset: 3px;
+}
+
+/* ── REDUCED MOTION ── */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+  html { scroll-behavior: auto; }
+}
+
 :root {
   --copper:        #c47a2e;
   --copper-dim:    rgba(196, 122, 46, 0.10);
@@ -24,6 +55,242 @@
   --text-muted:    #6b5d48;
   --text-dim:      #1e180f;
   --border:        rgba(255, 255, 255, 0.06);
+  /* shared transition for theme switch */
+  --theme-speed:   0.45s;
+}
+
+/* ══════════════════════════════════
+   LIGHT THEME
+══════════════════════════════════ */
+[data-theme="light"] {
+  --copper:        #8a5518;
+  --copper-dim:    rgba(138, 85, 24, 0.08);
+  --copper-border: rgba(138, 85, 24, 0.22);
+  --copper-deep:   #6a4010;
+  --warm:          #3a2e1e;
+  --bg:            #f6f3ee;
+  --bg-alt:        #edeae4;
+  --bg-card:       #ffffff;
+  --bg-card-deep:  #f8f6f2;
+  --text:          #1a1714;
+  --text-muted:    #6b6050;
+  --text-dim:      #c4bdb2;
+  --border:        rgba(0, 0, 0, 0.07);
+}
+[data-theme="light"] *:focus-visible { outline-color: #6a4010; }
+[data-theme="light"] .skip-link { background: #6a4010; color: #fff; }
+
+/* Hero */
+[data-theme="light"] .hero {
+  background-image:
+    linear-gradient(to bottom,
+      rgba(246,243,238,0.5) 0%,
+      rgba(246,243,238,0.9) 65%,
+      #f6f3ee 100%),
+    url('Studio_Edited.webp');
+}
+[data-theme="light"] .hero-bg {
+  background:
+    radial-gradient(ellipse 80% 60% at 20% 30%, rgba(138,85,24,0.1) 0%, transparent 60%),
+    radial-gradient(ellipse 60% 50% at 80% 70%, rgba(106,64,16,0.08) 0%, transparent 55%);
+}
+[data-theme="light"] .hero-grid {
+  background-image:
+    linear-gradient(rgba(138,85,24,0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(138,85,24,0.04) 1px, transparent 1px);
+}
+[data-theme="light"] .hero-fade {
+  background: linear-gradient(to bottom, transparent, #f6f3ee);
+}
+[data-theme="light"] .hero-eyebrow { color: #7a4a18; }
+[data-theme="light"] .hero-title { color: var(--warm); }
+[data-theme="light"] .hero-subtitle { color: rgba(42,34,22,0.7); }
+[data-theme="light"] .hero-meta { border-top-color: rgba(138,85,24,0.2); }
+[data-theme="light"] .hero-meta-label { color: #6b6050; }
+[data-theme="light"] .hero-meta-value { color: rgba(42,34,22,0.75); }
+
+/* Page exit */
+[data-theme="light"] #page-exit { background: #f6f3ee; }
+
+/* Nav */
+[data-theme="light"] .nav-back {
+  background: rgba(0,0,0,0.04); border-color: rgba(0,0,0,0.12);
+  color: #7a4a18;
+}
+[data-theme="light"] .nav-back:hover {
+  background: rgba(0,0,0,0.08); color: #5a3810; border-color: rgba(0,0,0,0.2);
+}
+[data-theme="light"] .wordmark { color: rgba(138,85,24,0.12); }
+
+/* Section text */
+[data-theme="light"] .section-label { color: #7a4a18; }
+[data-theme="light"] .section-heading { color: var(--warm); }
+[data-theme="light"] .section-body { color: rgba(26,23,20,0.72); }
+[data-theme="light"] .section-body em { color: rgba(26,23,20,0.9); }
+[data-theme="light"] .section-body strong { color: rgba(26,23,20,0.9); }
+
+/* Overview */
+[data-theme="light"] .overview-intro { color: rgba(26,23,20,0.65); }
+[data-theme="light"] .overview-intro em { color: var(--warm); }
+
+/* Chip panel */
+[data-theme="light"] .proj-meta-outer {
+  border-color: rgba(138,85,24,0.18);
+  background: linear-gradient(160deg, #ffffff, #f8f6f2);
+}
+[data-theme="light"] .proj-meta-outer::before {
+  background: radial-gradient(ellipse 80% 60% at var(--mx,50%) var(--my,40%),
+    rgba(138,85,24,0.05) 0%, transparent 70%);
+}
+[data-theme="light"] .chip-group + .chip-group { border-left-color: rgba(138,85,24,0.1); }
+[data-theme="light"] .chip-group-label { color: #7a4a18; }
+[data-theme="light"] .chip-btn {
+  color: rgba(26,23,20,0.7); background: rgba(138,85,24,0.04);
+  border-color: rgba(138,85,24,0.15);
+}
+[data-theme="light"] .chip-btn::before {
+  background: rgba(138,85,24,0.06); border-color: rgba(138,85,24,0.2);
+  color: #8a5518;
+}
+[data-theme="light"] .chip-btn:hover {
+  background: rgba(138,85,24,0.08); border-color: rgba(138,85,24,0.25);
+  color: rgba(26,23,20,0.85);
+}
+[data-theme="light"] .chip-btn.active {
+  background: rgba(138,85,24,0.1); border-color: rgba(138,85,24,0.35);
+  color: #1a1714;
+}
+[data-theme="light"] .chip-btn.active::before {
+  background: rgba(138,85,24,0.18); border-color: #7a4a18; color: #6a4010;
+}
+[data-theme="light"] .chip-detail-inner {
+  background: rgba(138,85,24,0.03); border-left-color: rgba(138,85,24,0.3);
+}
+[data-theme="light"] .chip-detail-icon {
+  background: rgba(138,85,24,0.08); border-color: rgba(138,85,24,0.18);
+  color: #7a4a18;
+}
+[data-theme="light"] .chip-detail-text { color: rgba(26,23,20,0.72); }
+[data-theme="light"] .chip-detail-text strong { color: #1a1714; }
+
+/* Thesis */
+[data-theme="light"] .thesis-block {
+  border-left-color: rgba(138,85,24,0.35); background: rgba(138,85,24,0.03);
+}
+[data-theme="light"] .thesis-quote { color: rgba(42,34,22,0.85); }
+[data-theme="light"] .thesis-attr { color: #7a4a18; }
+
+/* Stats */
+[data-theme="light"] .stats-bar {
+  border-color: rgba(138,85,24,0.15);
+  background: linear-gradient(160deg, #ffffff, #f8f6f2);
+}
+[data-theme="light"] .stat-cell { border-right-color: rgba(138,85,24,0.1); }
+[data-theme="light"] .stat-number { color: var(--warm); }
+[data-theme="light"] .stat-label { color: #7a4a18; }
+
+/* Approach cards */
+[data-theme="light"] .approach-card {
+  border-color: rgba(138,85,24,0.12);
+  background: linear-gradient(160deg, #ffffff, #faf8f4);
+}
+[data-theme="light"] .approach-card:hover { border-color: rgba(138,85,24,0.28); }
+[data-theme="light"] .approach-card::before {
+  background: radial-gradient(ellipse 70% 50% at 50% 0%, rgba(138,85,24,0.04) 0%, transparent 70%);
+}
+[data-theme="light"] .approach-card-num { color: #8a5518; }
+[data-theme="light"] .approach-card-title { color: var(--warm); }
+[data-theme="light"] .approach-card-body { color: rgba(26,23,20,0.68); }
+
+/* Narrative */
+[data-theme="light"] .narrative-body p { color: rgba(26,23,20,0.68); }
+[data-theme="light"] .narrative-body p em { color: rgba(26,23,20,0.88); }
+[data-theme="light"] .narrative-body p strong { color: #1a1714; }
+[data-theme="light"] .narrative-callout { border-left-color: rgba(138,85,24,0.25); }
+[data-theme="light"] .narrative-callout-label { color: #7a4a18; }
+[data-theme="light"] .narrative-callout-body p { color: rgba(26,23,20,0.65); }
+[data-theme="light"] .narrative-callout-body p em { color: rgba(26,23,20,0.85); }
+
+/* Insight cards */
+[data-theme="light"] .insight-card {
+  border-color: rgba(138,85,24,0.12);
+  background: linear-gradient(160deg, #ffffff, #faf8f4);
+}
+[data-theme="light"] .insight-card:hover { border-color: rgba(138,85,24,0.28); }
+[data-theme="light"] .insight-num { color: #8a5518; }
+[data-theme="light"] .insight-title { color: var(--warm); }
+[data-theme="light"] .insight-body { color: rgba(26,23,20,0.68); }
+
+/* Carousel */
+[data-theme="light"] .carousel-wrap {
+  border-color: rgba(138,85,24,0.15); background: #fff;
+}
+[data-theme="light"] .carousel-slide { background: #fff; }
+[data-theme="light"] .carousel-slide img { filter: drop-shadow(0 4px 12px rgba(0,0,0,0.1)); }
+[data-theme="light"] .carousel-caption { color: rgba(26,23,20,0.65); }
+[data-theme="light"] .carousel-arrow {
+  background: rgba(138,85,24,0.08); border-color: rgba(138,85,24,0.25);
+  color: #7a4a18;
+}
+[data-theme="light"] .carousel-arrow:hover {
+  background: rgba(138,85,24,0.14); color: #5a3810;
+}
+[data-theme="light"] .carousel-dot { background: rgba(138,85,24,0.18); }
+[data-theme="light"] .carousel-dot.active { background: #7a4a18; }
+[data-theme="light"] .carousel-label { color: rgba(26,23,20,0.58); }
+
+/* Proto embed */
+[data-theme="light"] .proto-embed { border-color: rgba(138,85,24,0.15); background: #fff; }
+[data-theme="light"] .proto-embed-label { color: rgba(26,23,20,0.58); }
+
+/* Reflection */
+[data-theme="light"] .reflection-label { color: #7a4a18; }
+[data-theme="light"] .reflection-quote { color: rgba(42,34,22,0.75); }
+
+/* Alt bg sections */
+[data-theme="light"] .cs-section.alt-bg { background: var(--bg-alt); }
+
+/* Body transition */
+html, html * {
+  transition: background-color var(--theme-speed, 0.45s) ease, color var(--theme-speed, 0.45s) ease, border-color var(--theme-speed, 0.45s) ease;
+}
+
+/* ── LIGHT SWITCH TOGGLE ── */
+.theme-switch {
+  position: fixed; top: 28px; right: 32px; z-index: 200;
+  background: none; border: none; cursor: pointer; padding: 0;
+  -webkit-tap-highlight-color: transparent;
+}
+.switch-plate {
+  width: 30px; height: 48px;
+  background: linear-gradient(160deg, #3a3832, #2a2824);
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 5px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.06);
+  display: flex; align-items: center; justify-content: center;
+  position: relative;
+  transition: background 0.35s ease, border-color 0.35s ease, box-shadow 0.35s ease;
+}
+.switch-lever {
+  width: 16px; height: 22px;
+  background: linear-gradient(180deg, #c0bcb4, #a8a49c, #908c84);
+  border-radius: 3px;
+  border: 1px solid rgba(255,255,255,0.15);
+  box-shadow: 0 2px 6px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.3);
+  transform: translateY(6px);
+  transition: transform 0.3s cubic-bezier(0.22,1,0.36,1), background 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* Light mode switch — darker plate for visibility */
+[data-theme="light"] .switch-plate {
+  background: linear-gradient(160deg, #c8c4bc, #b8b4ac);
+  border-color: rgba(0,0,0,0.2);
+  box-shadow: 0 2px 10px rgba(0,0,0,0.15), inset 0 1px 0 rgba(255,255,255,0.4);
+}
+[data-theme="light"] .switch-lever {
+  transform: translateY(-6px);
+  background: linear-gradient(180deg, #e8e4dc, #d8d4cc, #ccc8c0);
+  box-shadow: 0 -2px 6px rgba(0,0,0,0.12), inset 0 1px 0 rgba(255,255,255,0.5);
 }
 
 html { background: var(--bg); scroll-behavior: smooth; }
@@ -145,7 +412,7 @@ body.visible { opacity: 1; }
 
 .hero-subtitle {
   font-size: clamp(16px, 2vw, 22px); font-weight: 300; line-height: 1.5;
-  color: rgba(240,208,140,0.48); max-width: 580px; margin-bottom: 56px;
+  color: rgba(240,208,140,0.68); max-width: 580px; margin-bottom: 56px;
   font-style: italic; font-family: 'Cormorant Garamond', serif;
 }
 
@@ -157,7 +424,7 @@ body.visible { opacity: 1; }
 .hero-meta-item { display: flex; flex-direction: column; gap: 5px; }
 .hero-meta-label {
   font-size: 8px; font-weight: 500; letter-spacing: 0.28em; text-transform: uppercase;
-  color: rgba(240,208,140,0.42);
+  color: rgba(240,208,140,0.62);
 }
 .hero-meta-value {
   font-size: 13px; font-weight: 400; letter-spacing: 0.06em;
@@ -185,7 +452,7 @@ body.visible { opacity: 1; }
 }
 .section-body {
   font-size: 15px; font-weight: 300; line-height: 1.85;
-  color: rgba(240,208,140,0.62); max-width: 640px;
+  color: rgba(240,208,140,0.75); max-width: 640px;
 }
 .section-body em { font-style: italic; color: rgba(240,218,160,0.92); }
 .section-body strong { color: rgba(240,208,140,0.92); font-weight: 500; }
@@ -225,29 +492,87 @@ body.visible { opacity: 1; }
   color: rgba(240,208,140,0.72); margin-bottom: 4px;
 }
 .chip-row { display: flex; flex-wrap: wrap; gap: 8px; }
+
+/* ── Interactive chips ── */
 .chip-btn {
   font-size: 11.5px; font-weight: 400; letter-spacing: 0.06em;
-  color: rgba(240,208,140,0.7);
-  background: rgba(196,122,46,0.08);
-  border: 1px solid rgba(196,122,46,0.18);
-  border-radius: 100px; padding: 7px 16px;
-  cursor: default; transition: background 0.2s, border-color 0.2s, color 0.2s;
-  position: relative;
+  color: rgba(240,208,140,0.72);
+  background: rgba(196,122,46,0.05);
+  border: 1px solid rgba(196,122,46,0.12);
+  border-radius: 100px; padding: 7px 14px 7px 12px;
+  cursor: pointer; position: relative;
+  display: inline-flex; align-items: center; gap: 7px;
+  transition: all 0.3s cubic-bezier(0.22,1,0.36,1);
 }
-.chip-btn.active, .chip-btn:hover {
-  background: rgba(196,122,46,0.16);
+.chip-btn::before {
+  content: '+';
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 16px; height: 16px; border-radius: 50%;
+  background: rgba(196,122,46,0.1);
+  border: 1px solid rgba(196,122,46,0.2);
+  font-size: 11px; font-weight: 600; line-height: 1;
+  color: rgba(196,122,46,0.5);
+  transition: all 0.3s ease;
+  flex-shrink: 0;
+}
+.chip-btn:hover {
+  background: rgba(196,122,46,0.1);
+  border-color: rgba(196,122,46,0.28);
+  color: rgba(240,208,140,0.8);
+  transform: translateY(-1px);
+}
+.chip-btn:hover::before {
+  background: rgba(196,122,46,0.18);
+  border-color: rgba(196,122,46,0.35);
+  color: var(--copper);
+}
+.chip-btn.active {
+  background: rgba(196,122,46,0.14);
   border-color: rgba(196,122,46,0.4);
   color: rgba(240,218,170,0.95);
+  box-shadow: 0 0 16px rgba(196,122,46,0.08);
+}
+.chip-btn.active::before {
+  content: '\2212';
+  background: rgba(196,122,46,0.25);
+  border-color: var(--copper);
+  color: var(--warm);
+  transform: rotate(0deg);
 }
 
-.chip-detail-wrap { padding: 0 44px 32px; min-height: 28px; }
-.chip-detail {
-  font-size: 12px; font-weight: 300; letter-spacing: 0.04em;
-  color: rgba(240,208,140,0.82); font-style: italic;
-  transition: opacity 0.2s ease;
-  opacity: 0;
+/* ── Expanded detail card ── */
+.chip-detail-card {
+  max-height: 0; overflow: hidden;
+  transition: max-height 0.45s cubic-bezier(0.22,1,0.36,1), opacity 0.35s ease, margin 0.35s ease;
+  opacity: 0; margin: 0 44px;
 }
-.chip-detail.has-value { opacity: 1; }
+.chip-detail-card.open {
+  max-height: 120px; opacity: 1;
+  margin: 0 44px 24px;
+}
+.chip-detail-inner {
+  display: flex; gap: 16px; align-items: flex-start;
+  padding: 18px 22px;
+  background: rgba(196,122,46,0.04);
+  border-left: 2px solid rgba(196,122,46,0.3);
+  border-radius: 0 10px 10px 0;
+}
+.chip-detail-icon {
+  width: 28px; height: 28px; flex-shrink: 0;
+  border-radius: 8px;
+  background: rgba(196,122,46,0.1);
+  border: 1px solid rgba(196,122,46,0.2);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 13px; color: var(--copper);
+  margin-top: 1px;
+}
+.chip-detail-text {
+  font-size: 12.5px; font-weight: 300; line-height: 1.7;
+  color: rgba(240,208,140,0.72);
+}
+.chip-detail-text strong {
+  color: rgba(240,218,170,0.92); font-weight: 500;
+}
 
 /* ══════════════════════════════════
    THESIS BLOCK
@@ -308,7 +633,7 @@ body.visible { opacity: 1; }
 }
 .stat-label {
   font-size: 9px; font-weight: 500; letter-spacing: 0.22em; text-transform: uppercase;
-  color: rgba(196,122,46,0.5);
+  color: rgba(196,122,46,0.7);
 }
 .reveal.is-visible .stat-cell:nth-child(1) .stat-number { animation: statPop .55s cubic-bezier(0.22,1,0.36,1) .35s both; }
 .reveal.is-visible .stat-cell:nth-child(2) .stat-number { animation: statPop .55s cubic-bezier(0.22,1,0.36,1) .48s both; }
@@ -356,7 +681,7 @@ body.visible { opacity: 1; }
 }
 .approach-card-body {
   font-size: 14px; font-weight: 300; line-height: 1.75;
-  color: rgba(240,208,140,0.58); flex-grow: 1;
+  color: rgba(240,208,140,0.75); flex-grow: 1;
 }
 
 /* ══════════════════════════════════
@@ -384,7 +709,7 @@ body.visible { opacity: 1; }
 }
 .narrative-callout-body p {
   font-size: 14px; font-weight: 300; line-height: 1.8;
-  color: rgba(240,208,140,0.55); margin-bottom: 16px;
+  color: rgba(240,208,140,0.75); margin-bottom: 16px;
 }
 .narrative-callout-body p em { color: rgba(240,218,160,0.85); font-style: italic; }
 
@@ -425,7 +750,87 @@ body.visible { opacity: 1; }
 }
 .insight-body {
   font-size: 13.5px; font-weight: 300; line-height: 1.75;
-  color: rgba(240,208,140,0.55); flex-grow: 1;
+  color: rgba(240,208,140,0.75); flex-grow: 1;
+}
+
+/* ══════════════════════════════════
+   IMAGE CAROUSEL
+══════════════════════════════════ */
+.carousel-wrap {
+  position: relative;
+  border-radius: 16px;
+  overflow: hidden;
+  border: 1px solid rgba(196,122,46,0.18);
+  background: var(--bg-card);
+  margin-top: 40px;
+}
+.carousel-track {
+  display: flex;
+  transition: transform 0.5s cubic-bezier(0.22,1,0.36,1);
+}
+.carousel-slide {
+  min-width: 100%;
+  display: flex; align-items: center; justify-content: center;
+  padding: 32px;
+  background: var(--bg-card);
+}
+.carousel-slide img {
+  max-width: 100%;
+  max-height: 420px;
+  object-fit: contain;
+  border-radius: 8px;
+  filter: drop-shadow(0 4px 16px rgba(0,0,0,0.3));
+}
+.carousel-caption {
+  font-size: 11px; font-weight: 300; color: rgba(240,208,140,0.68);
+  text-align: center; padding: 0 24px 18px; font-style: italic;
+}
+
+/* Arrows */
+.carousel-arrow {
+  position: absolute; top: 50%; transform: translateY(-50%);
+  width: 36px; height: 36px;
+  background: rgba(196,122,46,0.1);
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(196,122,46,0.2);
+  border-radius: 50%;
+  cursor: pointer; z-index: 5;
+  display: flex; align-items: center; justify-content: center;
+  color: rgba(240,208,140,0.6);
+  font-size: 16px; line-height: 1;
+  transition: all 0.25s;
+}
+.carousel-arrow:hover {
+  background: rgba(196,122,46,0.2);
+  color: var(--warm);
+  border-color: rgba(196,122,46,0.4);
+}
+.carousel-arrow.prev { left: 12px; }
+.carousel-arrow.next { right: 12px; }
+
+/* Dots */
+.carousel-dots {
+  display: flex; gap: 8px; justify-content: center;
+  padding: 0 0 16px;
+}
+.carousel-dot {
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: rgba(196,122,46,0.2);
+  border: none; cursor: pointer;
+  transition: all 0.25s;
+  padding: 0;
+}
+.carousel-dot.active {
+  background: var(--copper);
+  box-shadow: 0 0 8px rgba(196,122,46,0.3);
+  transform: scale(1.3);
+}
+
+.carousel-label {
+  font-size: 10px; font-weight: 400; letter-spacing: 0.14em;
+  color: rgba(240,208,140,0.62); text-align: center;
+  margin-top: 12px;
 }
 
 /* ══════════════════════════════════
@@ -495,21 +900,32 @@ body.visible { opacity: 1; }
 </head>
 <body>
 
-<div id="page-exit"></div>
-<div class="wordmark">Amber Grey</div>
+<noscript><style>body{opacity:1!important}</style></noscript>
+<a href="#main-content" class="skip-link">Skip to content</a>
+<div id="page-exit" aria-hidden="true"></div>
+<div class="wordmark" aria-hidden="true">Amber Grey</div>
 
-<button class="nav-back" onclick="navigateTo('studio-portfolio.html')">
-  <span class="nav-back-arrow"></span>
-  Portfolio
+<nav aria-label="Site navigation">
+  <button class="nav-back" onclick="navigateTo('level-3-plug.html')">
+    <span class="nav-back-arrow" aria-hidden="true"></span>
+    Plug Redesign
+  </button>
+</nav>
+
+<button class="theme-switch" id="themeSwitch" aria-label="Toggle light mode">
+  <div class="switch-plate">
+    <div class="switch-lever"></div>
+  </div>
 </button>
 
 <!-- ══════════════════════════════════
      HERO
 ══════════════════════════════════ -->
+<main id="main-content">
 <section class="hero">
-  <div class="hero-bg"></div>
-  <div class="hero-grid"></div>
-  <div class="hero-fade"></div>
+  <div class="hero-bg" aria-hidden="true"></div>
+  <div class="hero-grid" aria-hidden="true"></div>
+  <div class="hero-fade" aria-hidden="true"></div>
   <div class="hero-content">
     <div class="hero-eyebrow">Plug Redesign · Case Study</div>
     <h1 class="hero-title">Plug Redesign</h1>
@@ -526,6 +942,10 @@ body.visible { opacity: 1; }
       <div class="hero-meta-item">
         <div class="hero-meta-label">Methods</div>
         <div class="hero-meta-value">Field Research · Prototyping · User Testing</div>
+      </div>
+      <div class="hero-meta-item">
+        <div class="hero-meta-label">Year</div>
+        <div class="hero-meta-value">2023</div>
       </div>
       <div class="hero-meta-item">
         <div class="hero-meta-label">Type</div>
@@ -561,26 +981,29 @@ body.visible { opacity: 1; }
           <div class="chip-group">
             <div class="chip-group-label">Skills</div>
             <div class="chip-row">
-              <button class="chip-btn" data-detail="Observing how users interact with plugs and outlets across varying conditions of visibility.">UX Research</button>
-              <button class="chip-btn" data-detail="Designing physical form factors that guide users through touch rather than sight.">Industrial Design</button>
-              <button class="chip-btn" data-detail="Developing tactile and auditory feedback mechanisms for visual-free orientation.">Interaction Design</button>
-              <button class="chip-btn" data-detail="Creating solutions that work universally — for sighted, low-vision, and visually impaired users.">Inclusive Design</button>
-              <button class="chip-btn" data-detail="Iterating from field insight through physical prototyping to validated design.">Rapid Prototyping</button>
+              <button class="chip-btn" aria-expanded="false" aria-controls="chipDetailCard" data-icon="&#x1F50D;" data-detail="Observing how users interact with plugs and outlets across <strong>varying conditions of visibility</strong> — first with sight, then without.">UX Research</button>
+              <button class="chip-btn" aria-expanded="false" aria-controls="chipDetailCard" data-icon="&#x2B21;" data-detail="Designing <strong>physical form factors</strong> that guide users through touch rather than sight — the plug clip and outlet guide system.">Industrial Design</button>
+              <button class="chip-btn" aria-expanded="false" aria-controls="chipDetailCard" data-icon="&#x21C4;" data-detail="Developing <strong>tactile and spatial feedback</strong> mechanisms that communicate orientation without visual cues.">Interaction Design</button>
+              <button class="chip-btn" aria-expanded="false" aria-controls="chipDetailCard" data-icon="&#x2605;" data-detail="Creating solutions that work universally — for <strong>sighted, low-vision, and visually impaired users</strong> — without feeling like an accessibility product.">Inclusive Design</button>
+              <button class="chip-btn" aria-expanded="false" aria-controls="chipDetailCard" data-icon="&#x25CE;" data-detail="Iterating from <strong>field insight through physical prototyping</strong> to validated design across multiple test rounds.">Rapid Prototyping</button>
             </div>
           </div>
           <div class="chip-group">
             <div class="chip-group-label">Methods</div>
             <div class="chip-row">
-              <button class="chip-btn" data-detail="Real-time observation and interviewing during plug-in tasks with and without visual cues.">Field Research</button>
-              <button class="chip-btn" data-detail="Structured testing with eyes open, then eyes closed — comparing task performance and comfort.">Comparative Testing</button>
-              <button class="chip-btn" data-detail="Physical model building to test tactile guidance, alignment, and ergonomic grip.">Physical Prototyping</button>
-              <button class="chip-btn" data-detail="Recording participant behavior and collecting real-time feedback during task completion.">Behavioral Observation</button>
-              <button class="chip-btn" data-detail="Post-task interviews exploring user confidence, frustration points, and perceived safety.">User Interviews</button>
+              <button class="chip-btn" aria-expanded="false" aria-controls="chipDetailCard" data-icon="&#x25C9;" data-detail="Real-time observation and interviewing during plug-in tasks — <strong>first with visual cues, then without</strong> — to surface orientation gaps.">Field Research</button>
+              <button class="chip-btn" aria-expanded="false" aria-controls="chipDetailCard" data-icon="&#x21CC;" data-detail="Structured A/B testing: <strong>eyes open vs. eyes closed</strong>, standard vs. redesigned — comparing task time, confidence, and error rate.">Comparative Testing</button>
+              <button class="chip-btn" aria-expanded="false" aria-controls="chipDetailCard" data-icon="&#x2692;" data-detail="Physical model building to test <strong>tactile guidance, alignment accuracy, and ergonomic grip</strong> position across hand sizes.">Physical Prototyping</button>
+              <button class="chip-btn" aria-expanded="false" aria-controls="chipDetailCard" data-icon="&#x25B6;" data-detail="Recording participant behavior and collecting <strong>real-time verbal feedback</strong> during task completion — capturing hesitation, grip patterns, and safety concerns.">Behavioral Observation</button>
+              <button class="chip-btn" aria-expanded="false" aria-controls="chipDetailCard" data-icon="&#x2709;" data-detail="Post-task interviews exploring <strong>user confidence, frustration points, and perceived safety</strong> — the emotional layer of the interaction.">User Interviews</button>
             </div>
           </div>
         </div>
-        <div class="chip-detail-wrap">
-          <p class="chip-detail" id="chipDetail">Hover a chip to learn more.</p>
+        <div class="chip-detail-card" id="chipDetailCard">
+          <div class="chip-detail-inner">
+            <div class="chip-detail-icon" id="chipDetailIcon"></div>
+            <div class="chip-detail-text" id="chipDetailText"></div>
+          </div>
         </div>
       </div>
     </div>
@@ -738,7 +1161,7 @@ body.visible { opacity: 1; }
     </div>
 
     <p class="section-body reveal" style="margin-bottom: 48px;">
-      Participants interacted with a prototype that initially adhered to a generic design. With closed eyes, they attempted to plug in — mimicking real-world scenarios identified in previous field research. Subsequently, the prototype was reversed, revealing the visually impaired-friendly design. <strong>Participants, without explicit instructions, attempted the task again.</strong>
+      Participants interacted with a prototype that initially adhered to a generic design. With closed eyes, they attempted to plug in — mimicking real-world scenarios identified in previous field research. Subsequently, the prototype was reversed, revealing the visually impaired-friendly design. <strong>Participants, without explicit instructions, attempted the task&nbsp;again.</strong>
     </p>
 
     <div class="thesis-block reveal">
@@ -749,17 +1172,17 @@ body.visible { opacity: 1; }
     <div class="insight-grid reveal">
       <div class="insight-card">
         <div class="insight-num">01</div>
-        <p class="insight-title">Immediate Recognition</p>
+        <h3 class="insight-title">Immediate Recognition</h3>
         <p class="insight-body">Users felt the curved attachment and instinctively oriented the plug correctly — without being told what the curve meant or how to use it. The form communicated the function.</p>
       </div>
       <div class="insight-card">
         <div class="insight-num">02</div>
-        <p class="insight-title">Confidence Restored</p>
+        <h3 class="insight-title">Confidence Restored</h3>
         <p class="insight-body">The combination of plug curve and outlet notch eliminated the hesitation seen in the first round. Users reported feeling confident in their alignment before insertion — a complete inversion from the control test.</p>
       </div>
       <div class="insight-card">
         <div class="insight-num">03</div>
-        <p class="insight-title">Safety Perceived</p>
+        <h3 class="insight-title">Safety Perceived</h3>
         <p class="insight-body">Several participants noted they felt safer — not just more capable. The redesigned grip zone kept fingers naturally away from the prongs, and users recognized the safety improvement without prompting.</p>
       </div>
     </div>
@@ -768,9 +1191,55 @@ body.visible { opacity: 1; }
 </section>
 
 <!-- ══════════════════════════════════
-     INTERACTIVE PROTOTYPE
+     DESIGN ILLUSTRATIONS
 ══════════════════════════════════ -->
 <section class="cs-section alt-bg">
+  <div class="section-inner">
+
+    <div class="reveal">
+      <div class="section-label">Design Illustrations</div>
+      <h2 class="section-heading">The system, visualized.</h2>
+      <p class="section-body" style="margin-bottom: 8px;">
+        Product illustrations showing the tactile add-on system and the Phase II magnetic concept.
+      </p>
+    </div>
+
+    <div class="reveal">
+      <div class="carousel-wrap" id="illust-carousel" role="region" aria-roledescription="carousel" aria-label="Design illustrations" tabindex="0">
+        <div class="carousel-track" id="carousel-track" aria-live="polite">
+          <div class="carousel-slide" role="group" aria-roledescription="slide" aria-label="Slide 1 of 6">
+            <img src="A Images/Plug Redesign/Illustrations for plug design.webp" alt="Plug with clip-on add-on — intact view">
+          </div>
+          <div class="carousel-slide" role="group" aria-roledescription="slide" aria-label="Slide 2 of 6">
+            <img src="A Images/Plug Redesign/Illustrations for plug design_reflect.webp" alt="Plug with clip-on add-on — exploded view showing detached clip">
+          </div>
+          <div class="carousel-slide" role="group" aria-roledescription="slide" aria-label="Slide 3 of 6">
+            <img src="A Images/Plug Redesign/Illustrations for plug design-11.webp" alt="Outlet with guide clips — intact and exploded view">
+          </div>
+          <div class="carousel-slide" role="group" aria-roledescription="slide" aria-label="Slide 4 of 6">
+            <img src="A Images/Plug Redesign/Untitled_Artwork 2.webp" alt="In-use illustration — plug being inserted with add-ons">
+          </div>
+          <div class="carousel-slide" role="group" aria-roledescription="slide" aria-label="Slide 5 of 6">
+            <img src="A Images/Plug Redesign/Illustrations for plug design_magnetic.webp" alt="Phase II — magnetic plug concept">
+          </div>
+          <div class="carousel-slide" role="group" aria-roledescription="slide" aria-label="Slide 6 of 6">
+            <img src="A Images/Plug Redesign/Illustrations for plug design_phaseII-18.webp" alt="Phase II — magnetic grid outlet system">
+          </div>
+        </div>
+        <button class="carousel-arrow prev" onclick="carouselNav(-1)" aria-label="Previous slide">&#x2039;</button>
+        <button class="carousel-arrow next" onclick="carouselNav(1)" aria-label="Next slide">&#x203A;</button>
+        <div class="carousel-dots" id="carousel-dots"></div>
+      </div>
+      <p class="carousel-label">Product Illustrations · Phase I Tactile Add-Ons · Phase II Magnetic System</p>
+    </div>
+
+  </div>
+</section>
+
+<!-- ══════════════════════════════════
+     INTERACTIVE PROTOTYPE
+══════════════════════════════════ -->
+<section class="cs-section">
   <div class="section-inner">
 
     <div class="reveal">
@@ -833,7 +1302,7 @@ body.visible { opacity: 1; }
 <!-- ══════════════════════════════════
      REFLECTION
 ══════════════════════════════════ -->
-<div class="reflection-wrap">
+<section class="reflection-wrap">
   <div class="reflection-inner reveal">
     <div class="reflection-label">Reflection</div>
     <p class="reflection-quote">
@@ -841,10 +1310,37 @@ body.visible { opacity: 1; }
       is better design for everyone.
     </p>
   </div>
-</div>
+</section>
+</main>
 
 <script>
 'use strict';
+
+/* ── THEME TOGGLE ── */
+(function() {
+  // Always start dark — only restore light if user explicitly chose it
+  var saved = localStorage.getItem('plug-theme');
+  var sw = document.getElementById('themeSwitch');
+  if (saved === 'light') {
+    document.documentElement.setAttribute('data-theme', 'light');
+    sw.setAttribute('aria-label', 'Toggle dark mode');
+  } else {
+    document.documentElement.removeAttribute('data-theme');
+    localStorage.removeItem('plug-theme');
+  }
+  sw.addEventListener('click', function() {
+    var isLight = document.documentElement.getAttribute('data-theme') === 'light';
+    if (isLight) {
+      document.documentElement.removeAttribute('data-theme');
+      localStorage.setItem('plug-theme', 'dark');
+      sw.setAttribute('aria-label', 'Toggle light mode');
+    } else {
+      document.documentElement.setAttribute('data-theme', 'light');
+      localStorage.setItem('plug-theme', 'light');
+      sw.setAttribute('aria-label', 'Toggle dark mode');
+    }
+  });
+})();
 
 /* ── PAGE TRANSITIONS ── */
 function navigateTo(url) {
@@ -880,21 +1376,114 @@ if (outer) {
   });
 }
 
-/* ── CHIP HOVER DETAILS ── */
-const detail = document.getElementById('chipDetail');
+/* ── CHIP CLICK-TO-EXPAND ── */
+const chipCard = document.getElementById('chipDetailCard');
+const chipIcon = document.getElementById('chipDetailIcon');
+const chipText = document.getElementById('chipDetailText');
+let activeChip = null;
+
 document.querySelectorAll('.chip-btn').forEach(btn => {
-  btn.addEventListener('mouseenter', () => {
-    btn.classList.add('active');
-    if (detail && btn.dataset.detail) {
-      detail.textContent = btn.dataset.detail;
-      detail.classList.add('has-value');
+  btn.addEventListener('click', () => {
+    if (activeChip === btn) {
+      btn.classList.remove('active');
+      btn.setAttribute('aria-expanded', 'false');
+      chipCard.classList.remove('open');
+      activeChip = null;
+      return;
     }
-  });
-  btn.addEventListener('mouseleave', () => {
-    btn.classList.remove('active');
-    if (detail) detail.classList.remove('has-value');
+    if (activeChip) {
+      activeChip.classList.remove('active');
+      activeChip.setAttribute('aria-expanded', 'false');
+    }
+    btn.classList.add('active');
+    btn.setAttribute('aria-expanded', 'true');
+    chipIcon.innerHTML = btn.dataset.icon || '+';
+    chipText.innerHTML = btn.dataset.detail || '';
+    chipCard.classList.add('open');
+    activeChip = btn;
   });
 });
+
+/* ── IMAGE CAROUSEL (infinite loop) ── */
+(function() {
+  const track = document.getElementById('carousel-track');
+  const dotsWrap = document.getElementById('carousel-dots');
+  if (!track || !dotsWrap) return;
+  const origSlides = Array.from(track.querySelectorAll('.carousel-slide'));
+  const total = origSlides.length;
+  let pos = 1; // starts at 1 because of prepended clone
+  let transitioning = false;
+
+  // Clone first and last slides for seamless wrapping
+  const firstClone = origSlides[0].cloneNode(true);
+  const lastClone = origSlides[total - 1].cloneNode(true);
+  firstClone.classList.add('clone');
+  lastClone.classList.add('clone');
+  track.appendChild(firstClone);
+  track.insertBefore(lastClone, origSlides[0]);
+
+  // Position to show first real slide (index 1 in new order)
+  track.style.transition = 'none';
+  track.style.transform = 'translateX(-100%)';
+
+  // Build dots
+  for (let i = 0; i < total; i++) {
+    const dot = document.createElement('button');
+    dot.className = 'carousel-dot' + (i === 0 ? ' active' : '');
+    dot.setAttribute('aria-label', 'Go to slide ' + (i + 1) + ' of ' + total);
+    dot.addEventListener('click', () => slideTo(i + 1));
+    dotsWrap.appendChild(dot);
+  }
+  const dots = dotsWrap.querySelectorAll('.carousel-dot');
+
+  // Keyboard navigation
+  var carouselEl = document.getElementById('illust-carousel');
+  carouselEl.addEventListener('keydown', function(e) {
+    if (e.key === 'ArrowRight') { e.preventDefault(); slideTo(pos + 1); }
+    else if (e.key === 'ArrowLeft') { e.preventDefault(); slideTo(pos - 1); }
+  });
+
+  function updateDots() {
+    let real = ((pos - 1) % total + total) % total;
+    dots.forEach((d, i) => d.classList.toggle('active', i === real));
+  }
+
+  function slideTo(idx) {
+    if (transitioning) return;
+    transitioning = true;
+    pos = idx;
+    track.style.transition = 'transform 0.5s cubic-bezier(0.22,1,0.36,1)';
+    track.style.transform = 'translateX(-' + (pos * 100) + '%)';
+    updateDots();
+  }
+
+  // After transition ends, silently jump if we're on a clone
+  track.addEventListener('transitionend', () => {
+    transitioning = false;
+    if (pos === 0) {
+      // On last-clone (before first real) — jump to real last
+      track.style.transition = 'none';
+      pos = total;
+      track.style.transform = 'translateX(-' + (pos * 100) + '%)';
+    } else if (pos === total + 1) {
+      // On first-clone (after last real) — jump to real first
+      track.style.transition = 'none';
+      pos = 1;
+      track.style.transform = 'translateX(-' + (pos * 100) + '%)';
+    }
+    updateDots();
+  });
+
+  window.carouselNav = function(dir) { slideTo(pos + dir); };
+
+  // Touch swipe
+  let touchStartX = 0;
+  track.addEventListener('touchstart', e => { touchStartX = e.touches[0].clientX; }, { passive: true });
+  track.addEventListener('touchend', e => {
+    const diff = touchStartX - e.changedTouches[0].clientX;
+    if (Math.abs(diff) > 40) slideTo(pos + (diff > 0 ? 1 : -1));
+  });
+})();
 </script>
 
 </body>

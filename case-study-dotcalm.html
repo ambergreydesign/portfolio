@@ -331,21 +331,385 @@ body.visible { opacity: 1; }
   .stat-number     { font-size: 36px; }
   .screens-row     { grid-template-columns: 1fr; }
 }
+
+/* ── SKIP LINK ── */
+.skip-link {
+  position: absolute;
+  top: -100%; left: 16px;
+  background: var(--blue);
+  color: #fff;
+  padding: 10px 18px;
+  border-radius: 6px;
+  font-size: 13px; font-weight: 500;
+  z-index: 9999;
+  text-decoration: none;
+  transition: top 0.2s ease;
+}
+.skip-link:focus { top: 16px; }
+
+/* ── FOCUS STYLES ── */
+:focus-visible {
+  outline: 2px solid var(--blue);
+  outline-offset: 3px;
+}
+
+/* ── REDUCED MOTION ── */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+  html { scroll-behavior: auto; }
+}
+
+/* ── LIGHT SWITCH TOGGLE ── */
+.light-switch {
+  position: fixed;
+  top: 24px; right: 24px;
+  z-index: 1000;
+  cursor: pointer;
+  user-select: none;
+}
+
+.switch-plate {
+  width: 36px; height: 56px;
+  background: #0a1228;
+  border-radius: 6px;
+  border: 2px solid var(--blue);
+  display: flex; align-items: center; justify-content: center;
+  box-shadow: 0 2px 8px rgba(122, 171, 222, 0.35), 0 0 18px rgba(122, 171, 222, 0.15), inset 0 1px 0 rgba(255,255,255,0.05);
+  transition: all 0.3s;
+  position: relative;
+}
+
+[data-theme="light"] .switch-plate {
+  background: #f0f4fa;
+  border-color: #b8cce0;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08), inset 0 1px 0 rgba(255,255,255,0.8);
+}
+
+.switch-toggle {
+  width: 20px; height: 24px;
+  background: linear-gradient(180deg, #7aabde, #5a8bc0);
+  border-radius: 3px;
+  border: 1px solid #8cc0f0;
+  box-shadow: 0 2px 6px rgba(122, 171, 222, 0.5), 0 0 12px rgba(122, 171, 222, 0.2);
+  transition: all 0.15s ease;
+  transform: translateY(6px);
+}
+
+[data-theme="light"] .switch-toggle {
+  background: linear-gradient(180deg, #FFFFFF, #e8f0fa);
+  border-color: #a8c4dc;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.08);
+  transform: translateY(-6px);
+}
+
+.switch-label {
+  position: absolute;
+  bottom: -18px; left: 50%;
+  transform: translateX(-50%);
+  font-size: 7px; font-weight: 500;
+  letter-spacing: 0.15em; text-transform: uppercase;
+  color: rgba(122, 171, 222, 0.6);
+  white-space: nowrap;
+  transition: color 0.3s;
+}
+
+[data-theme="light"] .switch-label {
+  color: rgba(122, 171, 222, 0.3);
+}
+
+/* ── LIGHT MODE THEME ── */
+[data-theme="light"] {
+  --blue:        #4a8cc8;
+  --blue-dim:    rgba(74, 140, 200, 0.08);
+  --blue-border: rgba(74, 140, 200, 0.25);
+  --bg:          #f5f7fc;
+  --bg-alt:      #edf0f8;
+  --text:        #1e2a3e;
+  --text-muted:  #5a6d88;
+  --text-dim:    #8a9ab4;
+  --ice:         #2a3e5c;
+  --amber:       #b07a3e;
+  --lavender:    #6a66a8;
+  --border:      rgba(0, 0, 0, 0.08);
+}
+
+[data-theme="light"] body {
+  color: var(--text);
+}
+
+[data-theme="light"] .hero {
+  background:
+    linear-gradient(to bottom, rgba(245,247,252,0.35) 0%, rgba(245,247,252,0.92) 65%, #f5f7fc 100%),
+    radial-gradient(ellipse 75% 60% at 18% 45%, rgba(74,140,200,0.12) 0%, transparent 68%),
+    radial-gradient(ellipse 55% 65% at 76% 28%, rgba(60,110,180,0.08) 0%, transparent 62%),
+    url('Studio_Edited.webp');
+  background-size: cover;
+  background-position: center top;
+  background-attachment: fixed;
+}
+[data-theme="light"] .hero::before {
+  background: radial-gradient(ellipse 95% 55% at 50% 100%, rgba(200,220,245,0.45) 0%, transparent 55%);
+}
+
+[data-theme="light"] .hero-subtitle {
+  color: rgba(42, 62, 92, 0.5);
+}
+
+[data-theme="light"] .hero-meta {
+  border-top-color: rgba(0, 0, 0, 0.08);
+}
+
+[data-theme="light"] .nav-back {
+  background: rgba(0, 0, 0, 0.05);
+  border-color: rgba(0, 0, 0, 0.1);
+  color: rgba(42, 62, 92, 0.75);
+}
+[data-theme="light"] .nav-back:hover {
+  background: rgba(0, 0, 0, 0.09);
+  color: rgba(42, 62, 92, 1);
+  border-color: rgba(0, 0, 0, 0.16);
+}
+
+[data-theme="light"] .wordmark {
+  color: rgba(42, 62, 92, 0.14);
+}
+
+[data-theme="light"] #page-exit {
+  background: #f5f7fc;
+}
+
+[data-theme="light"] .section-body {
+  color: rgba(30, 42, 62, 0.68);
+}
+
+[data-theme="light"] .overview-intro {
+  color: rgba(30, 42, 62, 0.58);
+}
+[data-theme="light"] .overview-intro em {
+  color: rgba(30, 42, 62, 0.82);
+}
+
+[data-theme="light"] .proj-meta-outer {
+  border-color: rgba(74, 140, 200, 0.22);
+}
+[data-theme="light"] .chip-panel {
+  background: linear-gradient(160deg, #f0f4fa, #e8ecf6);
+}
+[data-theme="light"] .chip-group-label {
+  color: rgba(42, 62, 92, 0.35);
+}
+[data-theme="light"] .chip-btn {
+  background: rgba(74, 140, 200, 0.08);
+  border-color: rgba(74, 140, 200, 0.2);
+  color: rgba(42, 62, 92, 0.6);
+}
+[data-theme="light"] .chip-btn:hover,
+[data-theme="light"] .chip-btn:focus {
+  background: rgba(74, 140, 200, 0.18);
+  border-color: rgba(74, 140, 200, 0.55);
+  color: rgba(30, 42, 62, 1);
+  box-shadow: 0 0 14px rgba(74, 140, 200, 0.15);
+}
+[data-theme="light"] .chip-btn.active {
+  background: rgba(74, 140, 200, 0.22);
+  border-color: rgba(74, 140, 200, 0.65);
+  color: var(--text);
+}
+[data-theme="light"] .chip-detail {
+  color: rgba(42, 62, 92, 0.4);
+}
+[data-theme="light"] .chip-detail.has-value {
+  color: rgba(30, 42, 62, 0.78);
+}
+
+[data-theme="light"] .stat-bar {
+  background: linear-gradient(135deg, #edf0f8, #f5f7fc);
+  border-color: rgba(0, 0, 0, 0.08);
+}
+[data-theme="light"] .stat-cell {
+  border-right-color: rgba(0, 0, 0, 0.06);
+}
+[data-theme="light"] .stat-cell:hover {
+  background: rgba(74, 140, 200, 0.04);
+}
+[data-theme="light"] .stat-number {
+  color: var(--text);
+}
+[data-theme="light"] .stat-label {
+  color: rgba(42, 62, 92, 0.45);
+}
+
+[data-theme="light"] .persona-card {
+  background: linear-gradient(160deg, #f0f4fa, #e8ecf6);
+  border-color: rgba(74, 140, 200, 0.18);
+}
+[data-theme="light"] .persona-card:hover {
+  border-color: rgba(74, 140, 200, 0.35);
+}
+[data-theme="light"] .persona-card.anti {
+  border-color: rgba(176, 122, 62, 0.22);
+}
+[data-theme="light"] .persona-card.anti:hover {
+  border-color: rgba(176, 122, 62, 0.42);
+}
+[data-theme="light"] .persona-quote {
+  color: rgba(42, 62, 92, 0.5);
+  border-bottom-color: rgba(74, 140, 200, 0.1);
+}
+[data-theme="light"] .persona-card.anti .persona-quote {
+  color: rgba(176, 122, 62, 0.6);
+  border-color: rgba(176, 122, 62, 0.12);
+}
+[data-theme="light"] .persona-demo {
+  border-bottom-color: rgba(74, 140, 200, 0.1);
+}
+[data-theme="light"] .persona-list-item {
+  color: rgba(30, 42, 62, 0.6);
+}
+
+[data-theme="light"] .insight-item {
+  background: radial-gradient(140% 120% at 15% 0%, rgba(74, 140, 200, 0.06) 0%, rgba(74, 140, 200, 0.00) 58%), linear-gradient(160deg, #f0f4fa, #e8ecf6);
+  border-color: rgba(74, 140, 200, 0.18);
+}
+[data-theme="light"] .insight-item[open],
+[data-theme="light"] .insight-item:hover {
+  border-color: rgba(74, 140, 200, 0.38);
+}
+[data-theme="light"] .insight-body {
+  color: rgba(30, 42, 62, 0.7);
+  border-top-color: rgba(74, 140, 200, 0.12);
+}
+[data-theme="light"] .insight-chev {
+  border-color: rgba(42, 62, 92, 0.45);
+}
+[data-theme="light"] .insight-item[open] .insight-chev {
+  border-color: var(--blue);
+}
+
+[data-theme="light"] .system-side {
+  border-color: rgba(74, 140, 200, 0.2);
+  background: linear-gradient(160deg, #f0f4fa, #e8ecf6);
+}
+[data-theme="light"] .system-side.app {
+  border-color: rgba(106, 102, 168, 0.22);
+  background: linear-gradient(160deg, #f0eef8, #e8e6f4);
+}
+[data-theme="light"] .system-item {
+  color: rgba(30, 42, 62, 0.62);
+}
+
+[data-theme="light"] .flow-grid {
+  border-color: rgba(74, 140, 200, 0.18);
+}
+[data-theme="light"] .flow-step {
+  border-right-color: rgba(74, 140, 200, 0.12);
+  background: linear-gradient(160deg, #f0f4fa, #e8ecf6);
+}
+[data-theme="light"] .flow-step:hover {
+  background: linear-gradient(160deg, #e8ecf6, #dde4f2);
+}
+[data-theme="light"] .flow-desc {
+  color: rgba(30, 42, 62, 0.55);
+}
+[data-theme="light"] .flow-tag {
+  background: rgba(74, 140, 200, 0.1);
+  color: rgba(74, 140, 200, 0.7);
+}
+[data-theme="light"] .flow-step:nth-child(3) .flow-tag,
+[data-theme="light"] .flow-step:nth-child(4) .flow-tag {
+  background: rgba(106, 102, 168, 0.1);
+  color: rgba(106, 102, 168, 0.75);
+}
+
+[data-theme="light"] .phone-frame {
+  border-color: rgba(106, 102, 168, 0.5);
+  box-shadow: 0 0 0 5px rgba(220, 215, 235, 0.6), 0 16px 48px rgba(0,0,0,0.12);
+}
+
+[data-theme="light"] .horizon-card {
+  border-left-color: rgba(74, 140, 200, 0.3);
+}
+[data-theme="light"] .horizon-card:hover {
+  border-left-color: var(--blue);
+}
+[data-theme="light"] .horizon-body {
+  color: rgba(30, 42, 62, 0.58);
+}
+
+[data-theme="light"] .nudge-callout {
+  background: linear-gradient(140deg, rgba(74, 140, 200, 0.06) 0%, rgba(74, 140, 200, 0.02) 100%);
+  border-color: rgba(74, 140, 200, 0.22);
+}
+[data-theme="light"] .nudge-body {
+  color: rgba(30, 42, 62, 0.6);
+}
+[data-theme="light"] .nudge-body em {
+  color: rgba(30, 42, 62, 0.82);
+}
+
+[data-theme="light"] .phase-card {
+  background: linear-gradient(160deg, #f0f4fa, #e8ecf6);
+  border-color: rgba(74, 140, 200, 0.18);
+}
+[data-theme="light"] .phase-card:hover {
+  border-color: rgba(74, 140, 200, 0.38);
+}
+[data-theme="light"] .phase-body {
+  color: rgba(30, 42, 62, 0.58);
+}
+
+[data-theme="light"] .reflection-wrap {
+  background: linear-gradient(135deg, rgba(74, 140, 200, 0.04) 0%, #f5f7fc 100%);
+  border-top-color: rgba(74, 140, 200, 0.08);
+}
+[data-theme="light"] .reflection-quote {
+  color: var(--blue);
+}
+
+[data-theme="light"] .section-divider {
+  background: var(--blue);
+}
+
+[data-theme="light"] .meta-item-value {
+  color: var(--text-muted);
+}
+
+[data-theme="light"] .brief-meta .meta-item-label {
+  color: var(--text-dim);
+}
 </style>
 </head>
 <body>
 
-<div id="page-exit"></div>
-<div class="wordmark">Amber Grey</div>
+<a href="#main-content" class="skip-link">Skip to content</a>
+<div id="page-exit" aria-hidden="true"></div>
+<div class="wordmark" aria-hidden="true">Amber Grey</div>
+
+<!-- Light switch -->
+<div class="light-switch" id="themeSwitch" role="switch" aria-checked="false" aria-label="Toggle light mode" tabindex="0" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();this.click()}">
+  <div class="switch-plate">
+    <div class="switch-toggle"></div>
+  </div>
+</div>
+
+<nav aria-label="Case study navigation">
 <button class="nav-back" onclick="navigateTo('level-2-interactions.html')">
-  <span class="nav-back-arrow"></span>
+  <span class="nav-back-arrow" aria-hidden="true"></span>
   Interactions
 </button>
+</nav>
+
+<main id="main-content">
 
 <!-- ══════════════════════════════════════
      HERO
 ══════════════════════════════════════ -->
-<section class="hero">
+<section class="hero" aria-label="Project overview">
   <div class="hero-content">
     <div class="hero-zone">Interactions · Case Study</div>
     <h1 class="hero-title">dotCALM</h1>
@@ -374,7 +738,7 @@ body.visible { opacity: 1; }
 <!-- ══════════════════════════════════════
      00 PROJECT OVERVIEW
 ══════════════════════════════════════ -->
-<section class="cs-section reveal">
+<section class="cs-section reveal" aria-label="Project overview details">
   <div class="section-inner">
     <div class="section-label">Project Overview</div>
     <p class="overview-intro">A research-backed speculative design investigation into what it would take to give children — and the caregivers who support them — <em>a moment before the moment</em>. dotCALM is a two-sided system: a wearable sensory band on the child and a companion app for caregivers. The band detects early signs of overstimulation and initiates a breathing sequence. The app alerts the caregiver and lets them reach across the room — or across the building — with a gentle haptic nudge. Together, they make calm something you can <em>send</em>.</p>
@@ -411,7 +775,7 @@ body.visible { opacity: 1; }
 <!-- ══════════════════════════════════════
      01 THE CHALLENGE
 ══════════════════════════════════════ -->
-<section class="cs-section alt reveal">
+<section class="cs-section alt reveal" aria-label="The challenge">
   <div class="section-inner">
     <div class="two-col">
       <div>
@@ -464,7 +828,7 @@ body.visible { opacity: 1; }
 <!-- ══════════════════════════════════════
      02 WHO THIS WAS DESIGNED FOR
 ══════════════════════════════════════ -->
-<section class="cs-section reveal">
+<section class="cs-section reveal" aria-label="Personas">
   <div class="section-inner">
     <div class="section-label">Personas</div>
     <h2 class="section-heading">Who this was designed for — and who it wasn't</h2>
@@ -597,7 +961,7 @@ body.visible { opacity: 1; }
 <!-- ══════════════════════════════════════
      03 RESEARCH SIGNALS
 ══════════════════════════════════════ -->
-<section class="cs-section alt reveal">
+<section class="cs-section alt reveal" aria-label="Research signals">
   <div class="section-inner">
     <div class="section-label">Research Signals</div>
     <h2 class="section-heading">What the research kept saying</h2>
@@ -672,7 +1036,7 @@ body.visible { opacity: 1; }
 <!-- ══════════════════════════════════════
      04 THE SYSTEM
 ══════════════════════════════════════ -->
-<section class="cs-section reveal">
+<section class="cs-section reveal" aria-label="The ecosystem">
   <div class="section-inner">
     <div class="section-label">The Ecosystem</div>
     <h2 class="section-heading">Two surfaces. One system.</h2>
@@ -748,7 +1112,7 @@ body.visible { opacity: 1; }
 <!-- ══════════════════════════════════════
      05 WHAT WAS BUILT
 ══════════════════════════════════════ -->
-<section class="cs-section alt reveal">
+<section class="cs-section alt reveal" aria-label="The prototype">
   <div class="section-inner">
     <div class="section-label">The Prototype</div>
     <h2 class="section-heading">The caregiver companion app</h2>
@@ -881,7 +1245,7 @@ body.visible { opacity: 1; }
 <!-- ══════════════════════════════════════
      06 DESIGN INTENTS
 ══════════════════════════════════════ -->
-<section class="cs-section reveal">
+<section class="cs-section reveal" aria-label="Design intents">
   <div class="section-inner">
     <div class="section-label">Design Intents</div>
     <h2 class="section-heading">Three things this had to do</h2>
@@ -920,7 +1284,7 @@ body.visible { opacity: 1; }
 <!-- ══════════════════════════════════════
      07 VALIDATION
 ══════════════════════════════════════ -->
-<section class="cs-section alt reveal">
+<section class="cs-section alt reveal" aria-label="Validation phases">
   <div class="section-inner">
     <div class="section-label">What Comes Next</div>
     <h2 class="section-heading">Three phases to test the argument</h2>
@@ -968,12 +1332,14 @@ body.visible { opacity: 1; }
 <!-- ══════════════════════════════════════
      REFLECTION
 ══════════════════════════════════════ -->
-<section class="reflection-wrap reveal">
+<section class="reflection-wrap reveal" aria-label="Design reflection">
   <div class="reflection-label">Design Reflection</div>
   <blockquote class="reflection-quote">
     "Regulation must be felt before it can be taught. That feeling becomes the body's blueprint for self-control and autonomy."
   </blockquote>
 </section>
+
+</main>
 
 <script>
 'use strict';
@@ -1022,6 +1388,31 @@ if (outer) {
     outer.style.setProperty('--my', `${((e.clientY - r.top) / r.height * 100).toFixed(1)}%`);
   });
 }
+
+// Theme toggle
+(function() {
+  var html = document.documentElement;
+  var sw = document.getElementById('themeSwitch');
+  var STORAGE_KEY = 'dotcalm-theme';
+
+  function setTheme(theme) {
+    html.setAttribute('data-theme', theme);
+    var isLight = theme === 'light';
+    sw.setAttribute('aria-checked', isLight);
+    sw.setAttribute('aria-label', isLight ? 'Switch to dark mode' : 'Switch to light mode');
+    try { localStorage.setItem(STORAGE_KEY, theme); } catch(e) {}
+  }
+
+  // Load saved preference
+  var saved = null;
+  try { saved = localStorage.getItem(STORAGE_KEY); } catch(e) {}
+  setTheme(saved === 'light' ? 'light' : 'dark');
+
+  sw.addEventListener('click', function() {
+    var current = html.getAttribute('data-theme') || 'dark';
+    setTheme(current === 'dark' ? 'light' : 'dark');
+  });
+})();
 </script>
 </body>
 </html>
