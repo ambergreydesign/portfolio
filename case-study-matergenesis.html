@@ -29,7 +29,7 @@ html { background: var(--bg); scroll-behavior: smooth; }
 body {
   font-family: 'DM Sans', sans-serif;
   color: var(--text);
-  overflow-x: hidden;
+  overflow-x: clip;
   opacity: 0;
   transition: opacity 0.55s cubic-bezier(0.25, 0.46, 0.45, 0.94);
 }
@@ -666,6 +666,10 @@ body.visible { opacity: 1; }
   .nav-back { top: 16px; left: 16px; }
   .wordmark { display: none; }
   .section-body { font-size: 14px; }
+
+  /* Touch targets — minimum 44px */
+  .chip-btn { min-height: 44px; display: inline-flex; align-items: center; padding: 10px 16px; }
+  .nav-back { min-height: 44px; padding: 10px 18px 10px 14px; }
 }
 
 @media (max-width: 480px) {
@@ -675,7 +679,7 @@ body.visible { opacity: 1; }
   .hero-meta { flex-direction: column; gap: 14px; }
   .cs-section { padding: 52px 20px; }
   .section-heading { font-size: clamp(22px, 5.5vw, 32px); }
-  .nav-back { padding: 8px 14px 8px 10px; font-size: 9px; }
+  .nav-back { padding: 10px 14px 10px 10px; font-size: 9px; min-height: 44px; }
   .reflection-quote { font-size: clamp(22px, 5vw, 36px); }
   .theme-card { padding: 24px 18px; }
 }
@@ -734,7 +738,7 @@ body.visible { opacity: 1; }
      HERO
 ══════════════════════════════════════ -->
 <main id="main-content">
-<section class="hero">
+<section class="hero" aria-label="Project introduction">
   <div class="hero-content">
   <div class="hero-zone">Speculative Design &middot; Case Study</div>
   <h1 class="hero-title">MaterGenesis</h1>
@@ -767,7 +771,7 @@ body.visible { opacity: 1; }
 <!-- ══════════════════════════════════════
      01 THE BRIEF
 ══════════════════════════════════════ -->
-<section class="cs-section reveal">
+<section class="cs-section reveal" aria-label="The Brief">
   <div class="section-inner">
     <div class="two-col">
       <div>
@@ -802,7 +806,7 @@ body.visible { opacity: 1; }
 <!-- ══════════════════════════════════════
      02 THE PROBLEM
 ══════════════════════════════════════ -->
-<section class="cs-section alt reveal">
+<section class="cs-section alt reveal" aria-label="The Problem">
   <div class="section-inner">
     <div class="section-label">02 &mdash; The Problem</div>
     <h2 class="section-heading">Systems shaped by what was never questioned</h2>
@@ -815,7 +819,7 @@ body.visible { opacity: 1; }
 <!-- ══════════════════════════════════════
      03 CORE THEMES
 ══════════════════════════════════════ -->
-<section class="cs-section reveal">
+<section class="cs-section reveal" aria-label="Core Themes">
   <div class="section-inner">
     <div class="section-label">03 &mdash; Core Themes</div>
     <h2 class="section-heading">Three pillars of an alternate foundation</h2>
@@ -848,7 +852,7 @@ body.visible { opacity: 1; }
 <!-- ══════════════════════════════════════
      04 RESEARCH METHODOLOGY
 ══════════════════════════════════════ -->
-<section class="cs-section alt reveal">
+<section class="cs-section alt reveal" aria-label="Research Methodology">
   <div class="section-inner">
     <div class="section-label">04 &mdash; Research Methodology</div>
     <h2 class="section-heading">From brainstorming to a visual world</h2>
@@ -884,7 +888,7 @@ body.visible { opacity: 1; }
 <!-- ══════════════════════════════════════
      04b IMAGE GALLERY
 ══════════════════════════════════════ -->
-<section class="cs-section reveal">
+<section class="cs-section reveal" aria-label="The Visual Output">
   <div class="section-inner">
     <div class="section-label">The Visual Output</div>
     <h2 class="section-heading">Visions of MaterGenesis</h2>
@@ -901,7 +905,7 @@ body.visible { opacity: 1; }
 <!-- ══════════════════════════════════════
      05 THREE DOMAINS
 ══════════════════════════════════════ -->
-<section class="cs-section reveal">
+<section class="cs-section reveal" aria-label="Three Research Domains">
   <div class="section-inner">
     <div class="section-label">05 &mdash; Three Research Domains</div>
     <h2 class="section-heading">Ecology, Religion, and Art — reimagined</h2>
@@ -935,7 +939,7 @@ body.visible { opacity: 1; }
 <!-- ══════════════════════════════════════
      06 THE CREATION STORY & AI PROMPTS
 ══════════════════════════════════════ -->
-<section class="cs-section alt reveal">
+<section class="cs-section alt reveal" aria-label="The Creation Story">
   <div class="section-inner">
     <div class="section-label">06 &mdash; The Creation Story</div>
     <h2 class="section-heading">An origin narrative for a world that never broke</h2>
@@ -967,7 +971,7 @@ body.visible { opacity: 1; }
 <!-- ══════════════════════════════════════
      06b EXTINCTION TIMELINE
 ══════════════════════════════════════ -->
-<section class="cs-section reveal">
+<section class="cs-section reveal" aria-label="Ecology">
   <div class="section-inner">
     <div class="section-label">Ecology &mdash; Would Life Thrive?</div>
     <h2 class="section-heading">The species that might have survived</h2>
@@ -984,7 +988,7 @@ body.visible { opacity: 1; }
 <!-- ══════════════════════════════════════
      07 RESEARCH SIGNALS
 ══════════════════════════════════════ -->
-<section class="cs-section alt reveal">
+<section class="cs-section alt reveal" aria-label="Research Signals">
   <div class="section-inner">
     <div class="section-label">07 &mdash; Research Signals</div>
     <h2 class="section-heading">What the worldbuilding revealed</h2>
@@ -1055,7 +1059,7 @@ body.visible { opacity: 1; }
 <!-- ══════════════════════════════════════
      07 STORYTELLING
 ══════════════════════════════════════ -->
-<section class="cs-section reveal">
+<section class="cs-section reveal" aria-label="The Group Project">
   <div class="section-inner">
     <div class="section-label">08 &mdash; The Group Project</div>
     <h2 class="section-heading">Four lenses on a world without patriarchy</h2>
@@ -1091,7 +1095,7 @@ body.visible { opacity: 1; }
 <!-- ══════════════════════════════════════
      08 CONCLUSION
 ══════════════════════════════════════ -->
-<section class="cs-section alt reveal">
+<section class="cs-section alt reveal" aria-label="What It Became">
   <div class="section-inner">
     <div class="section-label">09 &mdash; What It Became</div>
     <h2 class="section-heading">A mirror built from imagination</h2>
@@ -1104,7 +1108,7 @@ body.visible { opacity: 1; }
 <!-- ══════════════════════════════════════
      REFLECTION
 ══════════════════════════════════════ -->
-<section class="cs-section reflection-section reveal">
+<section class="cs-section reflection-section reveal" aria-label="Reflection">
   <div class="section-inner">
     <div class="section-label">What I Wanted to Show</div>
     <p class="reflection-quote">"The world we live in isn't the only one that was possible — and imagining the alternative is the first act of changing it."</p>

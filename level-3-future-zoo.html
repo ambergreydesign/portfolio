@@ -504,6 +504,15 @@ body.visible .studio-crumb {
   letter-spacing: 0.3em;
   text-transform: uppercase;
 }
+
+/* ── HIGH CONTRAST ── */
+@media (prefers-contrast: more) {
+  .nav-back { border-color: rgba(255, 255, 255, 0.5); color: rgba(200, 185, 165, 1); }
+  .case-study-link { filter: brightness(1.5); }
+  .meta-label { filter: brightness(1.3); }
+  .artifact-card { border-color: rgba(255, 255, 255, 0.4); }
+  .studio-crumb { color: rgba(210, 195, 172, 0.85); }
+}
 </style>
 </head>
 <body>
@@ -512,10 +521,12 @@ body.visible .studio-crumb {
 <div id="page-exit" aria-hidden="true"></div>
 
 <div class="wordmark" aria-hidden="true">Amber Grey</div>
-<button class="nav-back" onclick="navigateTo('level-2-experiments.html')">
+<nav aria-label="Page navigation">
+<button class="nav-back" aria-label="Back to Experiments" onclick="navigateTo('level-2-experiments.html')">
   <span class="nav-back-arrow" aria-hidden="true"></span>
   Experiments
 </button>
+</nav>
 
 <!-- Left canvas -->
 <main id="main-content">
@@ -575,7 +586,7 @@ body.visible .studio-crumb {
   <div class="reflection-label">What I Wanted to Show</div>
   <p class="reflection-quote">A zoo worth visiting is one worth slowing&nbsp;down&nbsp;for.</p>
 
-  <button class="case-study-link" onclick="navigateTo('case-study-rewilded.html?from=future-zoo')">
+  <button class="case-study-link" aria-label="View case study" onclick="navigateTo('case-study-rewilded.html?from=future-zoo')">
     Case Study
     <span class="case-study-arrow" aria-hidden="true"></span>
   </button>

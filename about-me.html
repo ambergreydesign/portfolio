@@ -479,31 +479,98 @@ body.visible { opacity: 1; }
   .traits-container { flex-direction: column; }
   .story-grid { grid-template-columns: 1fr; gap: 36px; }
   .nav-back { top: 16px; left: 16px; }
+  .trait-orb { min-height: 44px; }
+  .resume-btn { min-height: 44px; }
+  .hero-eyebrow { font-size: 10px; }
+  .focus-card-desc { font-size: 13px; }
+  .trait-desc { font-size: 13px; }
+  .scroll-hint { font-size: 10px; }
+}
+
+/* ── SKIP LINK ── */
+.skip-link {
+  position: fixed;
+  top: -100%;
+  left: 16px;
+  z-index: 10000;
+  background: var(--bg);
+  color: var(--blue);
+  border: 1px solid var(--blue);
+  border-radius: 8px;
+  padding: 12px 20px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 13px;
+  font-weight: 400;
+  letter-spacing: 0.1em;
+  text-decoration: none;
+  transition: top 0.2s ease;
+}
+.skip-link:focus {
+  top: 16px;
+}
+
+/* ── FOCUS VISIBLE ── */
+*:focus { outline: none; }
+*:focus-visible {
+  outline: 2px solid var(--blue);
+  outline-offset: 3px;
+  border-radius: 4px;
+}
+.nav-back:focus-visible {
+  outline-offset: 2px;
+  border-radius: 100px;
+}
+.trait-orb:focus-visible {
+  outline-offset: 2px;
+  border-radius: 18px;
+}
+.resume-btn:focus-visible {
+  outline-offset: 2px;
+  border-radius: 100px;
 }
 
 /* ── REDUCED MOTION ── */
 @media (prefers-reduced-motion: reduce) {
-  *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+  .hero-portrait, .hero-eyebrow, .hero-greeting, .hero-name,
+  .hero-line, .hero-intro, .scroll-hint {
+    opacity: 1 !important;
+    transform: none !important;
+  }
+  .reveal {
+    opacity: 1 !important;
+    transform: none !important;
+  }
   .motes-canvas { display: none; }
 }
 </style>
 </head>
 <body>
 
+<!-- Skip link -->
+<a class="skip-link" href="#approach">Skip to content</a>
+
 <div id="page-exit"></div>
 
 <!-- Floating motes -->
-<div class="motes-canvas" id="motes"></div>
+<div class="motes-canvas" id="motes" aria-hidden="true"></div>
 
 <!-- Navigation -->
-<a class="nav-back" href="level-2-perspective.html" id="backBtn">
-  <span class="nav-back-arrow"></span> Perspectives
+<a class="nav-back" href="level-2-perspective.html" id="backBtn" aria-label="Back to Perspectives">
+  <span class="nav-back-arrow" aria-hidden="true"></span> Perspectives
 </a>
-<div class="wordmark">AG</div>
+<div class="wordmark" aria-hidden="true">AG</div>
 
 <!-- ══════════════════════════════════════ HERO ══════════════════════════════════════ -->
-<section class="hero">
-  <canvas id="fireflies" class="fireflies-canvas"></canvas>
+<main>
+
+<section class="hero" aria-label="Introduction">
+  <canvas id="fireflies" class="fireflies-canvas" aria-hidden="true"></canvas>
   <div class="hero-content">
     <div class="hero-portrait"><img src="A Images/Amber Grey 3.webp" alt="Amber Grey"></div>
     <div class="hero-eyebrow">About Me</div>
@@ -514,13 +581,13 @@ body.visible { opacity: 1; }
       I'm a UX researcher and interaction designer interested in what <em>moments of tension</em> reveal about how systems actually work. My work focuses on identifying behavioral patterns within complex experiences and translating those insights into <em>meaningful design interventions</em>. I learn by building.
     </p>
   </div>
-  <div class="scroll-hint">
+  <div class="scroll-hint" aria-hidden="true">
     <span class="scroll-firefly"></span>
   </div>
 </section>
 
 <!-- ══════════════════════════════════════ APPROACH ══════════════════════════════════════ -->
-<section class="section alt">
+<section class="section alt" id="approach" aria-label="Design approach">
   <div class="section-inner">
     <div class="section-label reveal">Approach</div>
     <h2 class="section-heading reveal reveal-delay-1">Research-driven,<br>design-led</h2>
@@ -529,28 +596,28 @@ body.visible { opacity: 1; }
     </p>
     <div class="focus-cards">
       <div class="focus-card reveal reveal-delay-1">
-        <div class="focus-card-icon">
+        <div class="focus-card-icon" aria-hidden="true">
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
         </div>
         <div class="focus-card-title">Behavioral Patterns</div>
         <div class="focus-card-desc">Identifying what moments of tension reveal about how systems actually work beneath the surface.</div>
       </div>
       <div class="focus-card reveal reveal-delay-2">
-        <div class="focus-card-icon">
+        <div class="focus-card-icon" aria-hidden="true">
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
         </div>
         <div class="focus-card-title">Complex Systems</div>
         <div class="focus-card-desc">Translating systemic insights into meaningful interventions that address root causes, not symptoms.</div>
       </div>
       <div class="focus-card reveal reveal-delay-3">
-        <div class="focus-card-icon">
+        <div class="focus-card-icon" aria-hidden="true">
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 3c.132 0 .263 0 .393 0a7.5 7.5 0 0 0 7.92 12.446A9 9 0 1 1 12 3z"/></svg>
         </div>
         <div class="focus-card-title">AI + Research</div>
         <div class="focus-card-desc">Extending the research process with AI to uncover patterns and deepen understanding at scale.</div>
       </div>
       <div class="focus-card reveal reveal-delay-4">
-        <div class="focus-card-icon">
+        <div class="focus-card-icon" aria-hidden="true">
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
         </div>
         <div class="focus-card-title">Human Outcomes</div>
@@ -561,23 +628,23 @@ body.visible { opacity: 1; }
 </section>
 
 <!-- ══════════════════════════════════════ VALUES ══════════════════════════════════════ -->
-<section class="section" style="position:relative;overflow:hidden;">
-  <canvas id="traitsFireflies" class="closing-fireflies"></canvas>
+<section class="section" style="position:relative;overflow:hidden;" aria-label="Core values">
+  <canvas id="traitsFireflies" class="closing-fireflies" aria-hidden="true"></canvas>
   <div class="section-inner" style="position:relative;z-index:1;">
     <div class="section-label reveal">What Drives Me</div>
     <h2 class="section-heading reveal reveal-delay-1">Core qualities</h2>
     <p class="section-body reveal reveal-delay-2">The values that shape how I approach every project, every conversation, and every design decision.</p>
 
     <div class="traits-container reveal reveal-delay-3">
-      <div class="trait-orb" data-trait="curious">
+      <div class="trait-orb" data-trait="curious" tabindex="0" role="button" aria-expanded="false" aria-label="Curious — tap to read more">
         <div class="trait-word">Curious</div>
         <div class="trait-desc">Driven by questions more than answers. I look for the surprising connections between seemingly unrelated systems and ideas.</div>
       </div>
-      <div class="trait-orb" data-trait="creative">
+      <div class="trait-orb" data-trait="creative" tabindex="0" role="button" aria-expanded="false" aria-label="Creative — tap to read more">
         <div class="trait-word">Creative</div>
         <div class="trait-desc">Finding elegant solutions within constraints. Creativity isn't about limitless freedom — it thrives in the space between tension and possibility.</div>
       </div>
-      <div class="trait-orb" data-trait="empathy">
+      <div class="trait-orb" data-trait="empathy" tabindex="0" role="button" aria-expanded="false" aria-label="Empathy — tap to read more">
         <div class="trait-word">Empathy</div>
         <div class="trait-desc">Understanding isn't enough. True empathy means translating insight into action that genuinely improves someone's experience.</div>
       </div>
@@ -586,12 +653,12 @@ body.visible { opacity: 1; }
 </section>
 
 <!-- ══════════════════════════════════════ PERSONAL ══════════════════════════════════════ -->
-<section class="section alt">
+<section class="section alt" aria-label="Personal interests">
   <div class="section-inner">
     <div class="story-grid">
       <div class="story-visual reveal">
-        <video autoplay loop muted playsinline src="A Images/Video/Juba-the-Gorilla.mp4"></video>
-        <div class="story-visual-caption">"A sort of peaceful discomfort."</div>
+        <video autoplay loop muted playsinline src="A Images/Video/Juba-the-Gorilla.mp4" aria-label="Video of Juba the gorilla"></video>
+        <div class="story-visual-caption" aria-hidden="true">"A sort of peaceful discomfort."</div>
       </div>
       <div class="story-text">
         <div class="section-label reveal">In My Free Time</div>
@@ -612,17 +679,19 @@ body.visible { opacity: 1; }
 </section>
 
 <!-- ══════════════════════════════════════ CLOSING ══════════════════════════════════════ -->
-<section class="closing">
-  <canvas id="closingFireflies" class="closing-fireflies"></canvas>
+<section class="closing" aria-label="Closing and resume download">
+  <canvas id="closingFireflies" class="closing-fireflies" aria-hidden="true"></canvas>
   <div class="closing-inner reveal">
-    <div class="juba-portrait"><img src="A Images/ Juba.webp" alt="Juba time"></div>
+    <div class="juba-portrait"><img src="A Images/ Juba.webp" alt="Illustration of Juba the gorilla"></div>
     <h2 class="closing-heading">Let's create something meaningful</h2>
-    <a class="resume-btn" href="A Resume/AMBER GREY_UX Research | Interaction Design.pdf" target="_blank" download>
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+    <a class="resume-btn" href="A Resume/AMBER GREY_UX Research | Interaction Design.pdf" target="_blank" download aria-label="Download resume as PDF">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
       Resume
     </a>
   </div>
 </section>
+
+</main>
 
 <script>
 /* ── BODY VISIBLE ── */
@@ -789,11 +858,15 @@ document.getElementById('backBtn').addEventListener('click', function(e) {
 /* ── TRAIT ORB INTERACTION ── */
 (function() {
   const orbs = document.querySelectorAll('.trait-orb');
+  function toggleOrb(orb) {
+    const wasActive = orb.classList.contains('active');
+    orbs.forEach(o => { o.classList.remove('active'); o.setAttribute('aria-expanded', 'false'); });
+    if (!wasActive) { orb.classList.add('active'); orb.setAttribute('aria-expanded', 'true'); }
+  }
   orbs.forEach(orb => {
-    orb.addEventListener('click', () => {
-      const wasActive = orb.classList.contains('active');
-      orbs.forEach(o => o.classList.remove('active'));
-      if (!wasActive) orb.classList.add('active');
+    orb.addEventListener('click', () => toggleOrb(orb));
+    orb.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); toggleOrb(orb); }
     });
   });
 })();

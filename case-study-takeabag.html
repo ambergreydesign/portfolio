@@ -53,7 +53,7 @@ body {
   font-family: 'DM Sans', sans-serif;
   font-weight: 300;
   -webkit-font-smoothing: antialiased;
-  overflow-x: hidden;
+  overflow-x: clip;
   opacity: 0;
   transition: opacity 0.55s cubic-bezier(0.25, 0.46, 0.45, 0.94);
 }
@@ -1035,7 +1035,7 @@ body.visible { opacity: 1; }
 <main id="main-content">
 
 <!-- ── OVERVIEW ── -->
-<section class="cs-section" id="s-overview">
+<section class="cs-section" id="s-overview" aria-label="Overview">
   <div class="section-inner">
     <p class="section-eyebrow reveal">Overview</p>
     <h2 class="section-heading reveal">A communal system for what we already throw&nbsp;away.</h2>
@@ -1079,7 +1079,7 @@ body.visible { opacity: 1; }
 </section>
 
 <!-- ── THE PROBLEM ── -->
-<section class="cs-section alt-bg" id="s-problem">
+<section class="cs-section alt-bg" id="s-problem" aria-label="The Problem">
   <div class="section-inner">
     <p class="section-eyebrow reveal">The Problem</p>
     <h2 class="section-heading reveal">Awareness without access doesn't change&nbsp;behavior.</h2>
@@ -1121,7 +1121,7 @@ body.visible { opacity: 1; }
 </section>
 
 <!-- ── THE RESEARCH ── -->
-<section class="cs-section" id="s-research">
+<section class="cs-section" id="s-research" aria-label="The Research">
   <div class="section-inner">
     <p class="section-eyebrow reveal">The Research</p>
     <h2 class="section-heading reveal">Four lenses on why sustainable behavior breaks&nbsp;down.</h2>
@@ -1176,7 +1176,7 @@ body.visible { opacity: 1; }
 </section>
 
 <!-- ── THE SOLUTION ── -->
-<section class="cs-section alt-bg" id="s-solution">
+<section class="cs-section alt-bg" id="s-solution" aria-label="The Solution">
   <div class="section-inner">
     <p class="section-eyebrow reveal">The Solution</p>
     <h2 class="section-heading reveal">GreenSwap — communal exchange as everyday&nbsp;infrastructure.</h2>
@@ -1228,7 +1228,7 @@ body.visible { opacity: 1; }
 </section>
 
 <!-- ── USER EXPERIENCE ── -->
-<section class="cs-section">
+<section class="cs-section" aria-label="User Experience">
   <div class="section-inner">
     <p class="section-eyebrow reveal">User Experience</p>
     <h2 class="section-heading reveal">Three flows. One shared system.</h2>
@@ -1257,7 +1257,7 @@ body.visible { opacity: 1; }
 </section>
 
 <!-- ── PROTOTYPE ── -->
-<section class="cs-section alt-bg" id="s-proto">
+<section class="cs-section alt-bg" id="s-proto" aria-label="Try It">
   <div class="section-inner">
     <p class="section-eyebrow reveal">Try It</p>
     <h2 class="section-heading reveal">Measure the impact yourself.</h2>
@@ -1269,7 +1269,7 @@ body.visible { opacity: 1; }
 </section>
 
 <!-- ── WHAT I LEARNED ── -->
-<section class="cs-section alt-bg">
+<section class="cs-section alt-bg" aria-label="What I Learned">
   <div class="section-inner">
     <p class="section-eyebrow reveal">What I Learned</p>
     <h2 class="section-heading reveal">What this project taught me about designing for&nbsp;behavior.</h2>
@@ -1296,7 +1296,7 @@ body.visible { opacity: 1; }
 </section>
 
 <!-- ── REFLECTION ── -->
-<section class="cs-section" style="padding-bottom: 140px;" id="s-reflect">
+<section class="cs-section" style="padding-bottom: 140px;" id="s-reflect" aria-label="Reflection">
   <div class="section-inner">
     <p class="section-eyebrow reveal">Reflection</p>
 

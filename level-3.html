@@ -386,15 +386,56 @@ body.visible { opacity: 1; }
   .reflection-quote  { grid-column: 3; grid-row: 2; font-size: 1.25em; }
   .case-study-link   { grid-column: 3; grid-row: 3; margin-top: auto; align-self: end; font-size: 1.1em; }
 }
+
+/* ── SKIP LINK ── */
+.skip-link {
+  position: absolute;
+  left: -9999px;
+  top: auto;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 12px;
+  color: #eac6ce;
+  background: rgba(11, 28, 38, 0.95);
+  padding: 10px 18px;
+  border-radius: 6px;
+  z-index: 200;
+  text-decoration: none;
+}
+.skip-link:focus {
+  position: fixed;
+  left: 16px;
+  top: 16px;
+  width: auto;
+  height: auto;
+}
+
+/* ── FOCUS STYLES ── */
+:focus-visible {
+  outline: 2px solid #eac6ce;
+  outline-offset: 3px;
+}
+
+/* ── REDUCED MOTION ── */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
 </style>
 </head>
 <body>
+<a href="#main-content" class="skip-link">Skip to content</a>
 
-<div id="page-exit"></div>
+<div id="page-exit" aria-hidden="true"></div>
 
-<div class="wordmark">Amber Grey</div>
+<div class="wordmark" aria-hidden="true">Amber Grey</div>
 <button class="nav-back" onclick="navigateTo('level-2-perspective.html')">
-  <span class="nav-back-arrow"></span>
+  <span class="nav-back-arrow" aria-hidden="true"></span>
   Perspectives
 </button>
 
@@ -413,7 +454,8 @@ body.visible { opacity: 1; }
   </div>
 </div>
 
-<!-- Right panel: fixed to viewport right, full height always -->
+<!-- Right panel -->
+<main id="main-content">
 <div class="info-panel">
   <div class="zone-badge">Perspectives</div>
   <h1 class="project-title">What gets shown,<br>what gets hidden</h1>
@@ -442,9 +484,10 @@ body.visible { opacity: 1; }
 
   <div class="case-study-link">
     Case Study
-    <span class="case-study-arrow"></span>
+    <span class="case-study-arrow" aria-hidden="true"></span>
   </div>
 </div>
+</main>
 
 <script>
 'use strict';

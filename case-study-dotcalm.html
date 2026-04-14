@@ -30,7 +30,7 @@ html { background: var(--bg); scroll-behavior: smooth; }
 body {
   font-family: 'DM Sans', sans-serif;
   color: var(--text);
-  overflow-x: hidden;
+  overflow-x: clip;
   opacity: 0;
   transition: opacity 0.55s cubic-bezier(0.25, 0.46, 0.45, 0.94);
 }
@@ -322,6 +322,10 @@ body.visible { opacity: 1; }
   .wordmark        { display: none; }
   .stat-bar        { grid-template-columns: 1fr 1fr; }
   .screens-row     { grid-template-columns: 1fr 1fr; }
+
+  /* Touch targets — minimum 44px */
+  .chip-btn        { min-height: 44px; display: inline-flex; align-items: center; padding: 10px 16px; }
+  .nav-back        { min-height: 44px; padding: 10px 18px 10px 14px; }
 }
 @media (max-width: 480px) {
   .hero-title      { font-size: 38px; }
@@ -330,6 +334,7 @@ body.visible { opacity: 1; }
   .stat-cell       { padding: 20px 18px; }
   .stat-number     { font-size: 36px; }
   .screens-row     { grid-template-columns: 1fr; }
+  .nav-back        { padding: 10px 14px 10px 10px; font-size: 9px; min-height: 44px; }
 }
 
 /* ── SKIP LINK ── */
@@ -726,6 +731,10 @@ body.visible { opacity: 1; }
       <div>
         <div class="hero-meta-label">Focus</div>
         <div class="hero-meta-value">Research Framing · Interaction Architecture · Prototyping</div>
+      </div>
+      <div>
+        <div class="hero-meta-label">Year</div>
+        <div class="hero-meta-value">2024</div>
       </div>
       <div>
         <div class="hero-meta-label">Type</div>

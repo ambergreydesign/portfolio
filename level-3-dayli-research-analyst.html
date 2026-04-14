@@ -487,17 +487,70 @@ body.visible .studio-crumb {
   letter-spacing: 0.3em;
   text-transform: uppercase;
 }
+
+/* ── SKIP LINK ── */
+.skip-link {
+  position: absolute;
+  left: -9999px;
+  top: auto;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 12px;
+  color: #eac6ce;
+  background: rgba(11, 28, 38, 0.95);
+  padding: 10px 18px;
+  border-radius: 6px;
+  z-index: 200;
+  text-decoration: none;
+}
+.skip-link:focus {
+  position: fixed;
+  left: 16px;
+  top: 16px;
+  width: auto;
+  height: auto;
+}
+
+/* ── FOCUS STYLES ── */
+:focus-visible {
+  outline: 2px solid #eac6ce;
+  outline-offset: 3px;
+}
+
+/* ── REDUCED MOTION ── */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* ── HIGH CONTRAST ── */
+@media (prefers-contrast: more) {
+  .nav-back { border-color: rgba(255, 255, 255, 0.5); color: rgba(200, 185, 165, 1); }
+  .case-study-link { filter: brightness(1.5); }
+  .meta-label { filter: brightness(1.3); }
+  .artifact-card { border-color: rgba(255, 255, 255, 0.4); }
+  .studio-crumb { color: rgba(210, 195, 172, 0.85); }
+}
 </style>
 </head>
 <body>
 
-<div id="page-exit"></div>
+<a href="#main-content" class="skip-link">Skip to content</a>
 
-<div class="wordmark">Amber Grey</div>
-<button class="nav-back" onclick="navigateTo('level-2-systems.html')">
-  <span class="nav-back-arrow"></span>
+<div id="page-exit" aria-hidden="true"></div>
+
+<div class="wordmark" aria-hidden="true">Amber Grey</div>
+<nav aria-label="Page navigation">
+<button class="nav-back" aria-label="Back to Systems" onclick="navigateTo('level-2-systems.html')">
+  <span class="nav-back-arrow" aria-hidden="true"></span>
   Systems
 </button>
+</nav>
 
 <!-- Left canvas -->
 <div id="left-canvas">
@@ -509,8 +562,8 @@ body.visible .studio-crumb {
       </div>
       <div class="artifact-label">Prototype / AI System</div>
     </div>
-    <div class="studio-crumb" onclick="navigateTo('studio-portfolio.html')">
-  <svg class="crumb-plant" width="30" height="48" viewBox="0 0 30 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <div class="studio-crumb" role="button" tabindex="0" aria-label="Go to Studio portfolio" onclick="navigateTo('studio-portfolio.html')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();navigateTo('studio-portfolio.html')}">
+  <svg class="crumb-plant" aria-hidden="true" width="30" height="48" viewBox="0 0 30 48" fill="none" xmlns="http://www.w3.org/2000/svg">
     <path d="M8 47 L22 47 L24 37 L6 37Z" stroke="currentColor" stroke-width="0.75" stroke-linejoin="round"/>
     <path d="M5 37 L25 37" stroke="currentColor" stroke-width="0.75" stroke-linecap="round"/>
     <path d="M15 37 L15 28" stroke="currentColor" stroke-width="0.7" stroke-linecap="round"/>
@@ -524,6 +577,7 @@ body.visible .studio-crumb {
 </div>
 
 <!-- Right panel -->
+<main id="main-content">
 <div class="info-panel">
   <div class="zone-badge">Systems</div>
   <h1 class="project-title">A research analyst<br>that responds<br>to context</h1>
@@ -554,11 +608,12 @@ body.visible .studio-crumb {
   <div class="reflection-label">What I Wanted to Show</div>
   <p class="reflection-quote">Research compounds when it adapts. Static insight ages.</p>
 
-  <button class="case-study-link" onclick="navigateTo('case-study-dayli.html?from=ci')">
+  <button class="case-study-link" aria-label="View case study" onclick="navigateTo('case-study-dayli.html?from=ci')">
     Case Study
-    <span class="case-study-arrow"></span>
+    <span class="case-study-arrow" aria-hidden="true"></span>
   </button>
 </div>
+</main>
 
 <script>
 'use strict';

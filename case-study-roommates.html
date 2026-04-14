@@ -47,7 +47,7 @@ button:focus:not(:focus-visible) { outline: none; }
 body {
   font-family: 'DM Sans', sans-serif;
   color: var(--text);
-  overflow-x: hidden;
+  overflow-x: clip;
   opacity: 0;
   transition: opacity 0.55s cubic-bezier(0.25, 0.46, 0.45, 0.94);
 }
@@ -294,6 +294,10 @@ body.visible { opacity: 1; }
   .stat-bar        { grid-template-columns: 1fr 1fr; }
   .wc-grid         { grid-template-columns: 1fr; }
   .method-grid     { grid-template-columns: 1fr; }
+
+  /* Touch targets — minimum 44px */
+  .chip-btn        { min-height: 44px; display: inline-flex; align-items: center; padding: 10px 16px; }
+  .nav-back        { min-height: 44px; padding: 10px 18px 10px 14px; }
 }
 @media (max-width: 480px) {
   .hero-title      { font-size: 38px; }
@@ -301,6 +305,7 @@ body.visible { opacity: 1; }
   .section-heading { font-size: clamp(22px, 5.5vw, 32px); }
   .stat-cell       { padding: 20px 18px; }
   .stat-number     { font-size: 36px; }
+  .nav-back        { padding: 10px 14px 10px 10px; font-size: 9px; min-height: 44px; }
 }
 </style>
 </head>
@@ -336,6 +341,10 @@ body.visible { opacity: 1; }
       <div>
         <div class="hero-meta-label">Context</div>
         <div class="hero-meta-value">Ages 18-40 · Chicago</div>
+      </div>
+      <div>
+        <div class="hero-meta-label">Year</div>
+        <div class="hero-meta-value">2023</div>
       </div>
       <div>
         <div class="hero-meta-label">Type</div>
@@ -385,7 +394,7 @@ body.visible { opacity: 1; }
 <!-- ══════════════════════════════════════
      01 THE CHALLENGE
 ══════════════════════════════════════ -->
-<section class="cs-section alt reveal">
+<section class="cs-section alt reveal" aria-label="The Challenge">
   <div class="section-inner">
     <div class="two-col">
       <div>
@@ -438,7 +447,7 @@ body.visible { opacity: 1; }
 <!-- ══════════════════════════════════════
      02 SURVEY DESIGN
 ══════════════════════════════════════ -->
-<section class="cs-section reveal">
+<section class="cs-section reveal" aria-label="Survey Design">
   <div class="section-inner">
     <div class="section-label">Survey Design</div>
     <h2 class="section-heading">Four lenses on one experience</h2>
@@ -473,7 +482,7 @@ body.visible { opacity: 1; }
 <!-- ══════════════════════════════════════
      03 PAIN POINTS
 ══════════════════════════════════════ -->
-<section class="cs-section alt reveal">
+<section class="cs-section alt reveal" aria-label="Pain Points">
   <div class="section-inner">
     <div class="section-label">Pain Points</div>
     <h2 class="section-heading">What the data kept surfacing</h2>
@@ -547,7 +556,7 @@ body.visible { opacity: 1; }
 <!-- ══════════════════════════════════════
      04 DATA SYNTHESIS
 ══════════════════════════════════════ -->
-<section class="cs-section reveal">
+<section class="cs-section reveal" aria-label="Data Synthesis">
   <div class="section-inner">
     <div class="section-label">Data Synthesis</div>
     <h2 class="section-heading">From responses to patterns</h2>
@@ -621,7 +630,7 @@ body.visible { opacity: 1; }
 <!-- ══════════════════════════════════════
      05 RESEARCH PROCESS
 ══════════════════════════════════════ -->
-<section class="cs-section alt reveal">
+<section class="cs-section alt reveal" aria-label="Research Process">
   <div class="section-inner">
     <div class="section-label">Research Process</div>
     <h2 class="section-heading">How insights became a system</h2>
@@ -663,7 +672,7 @@ body.visible { opacity: 1; }
 <!-- ══════════════════════════════════════
      06 DESIGN INTENTS
 ══════════════════════════════════════ -->
-<section class="cs-section reveal">
+<section class="cs-section reveal" aria-label="Design Intents">
   <div class="section-inner">
     <div class="section-label">Design Intents</div>
     <h2 class="section-heading">Three principles for the platform</h2>
@@ -692,7 +701,7 @@ body.visible { opacity: 1; }
 <!-- ══════════════════════════════════════
      07 PROPOSAL
 ══════════════════════════════════════ -->
-<section class="cs-section alt reveal">
+<section class="cs-section alt reveal" aria-label="What Comes Next">
   <div class="section-inner">
     <div class="section-label">What Comes Next</div>
     <h2 class="section-heading">Three phases to build the platform</h2>
@@ -743,7 +752,7 @@ body.visible { opacity: 1; }
 <!-- ══════════════════════════════════════
      REFLECTION
 ══════════════════════════════════════ -->
-<section class="reflection-wrap reveal">
+<section class="reflection-wrap reveal" aria-label="Reflection">
   <div class="reflection-label">Design Reflection</div>
   <blockquote class="reflection-quote">
     "The best roommate match isn't found — it's understood. Compatibility lives in the details people forget to discuss until the silence becomes friction."

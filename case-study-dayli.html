@@ -16,6 +16,18 @@
 
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
+/* ── SKIP LINK ── */
+.skip-link {
+  position: absolute; top: -100px; left: 16px;
+  background: var(--dayli-purple); color: #fff;
+  padding: 10px 20px; border-radius: 0 0 8px 8px;
+  font-size: 13px; font-weight: 500;
+  z-index: 10000; text-decoration: none;
+  transition: top 0.2s ease;
+}
+.skip-link:focus { top: 0; }
+body.light-mode .skip-link { background: #461F65; color: #fff; }
+
 :root {
   /* Dayli Living Labs brand palette — dark mode */
   --dayli-purple:  #9230E3;
@@ -947,7 +959,7 @@ body.visible { opacity: 1; }
    MOBILE
 ══════════════════════════════════ */
 @media (max-width: 860px) {
-  .hero { padding: 0 36px 60px; }
+  .hero { padding: 0 36px 60px; background-attachment: scroll; }
   .cs-section { padding: 72px 36px; }
   .reflection-wrap { padding: 80px 36px; }
   .hero-title { font-size: 54px; }
@@ -971,6 +983,33 @@ body.visible { opacity: 1; }
   .chip-group + .chip-group { border-left: none; padding-left: 0; border-top: 1px solid rgba(146,48,227,0.1); padding-top: 20px; }
   .chip-btn { font-size: 12px; padding: 10px 16px; min-height: 44px; }
   .pull-quote-wrap { padding-left: 24px; }
+
+  /* Stream card footer — stack status + link on mobile */
+  /* Stream card footer — stack status + link on mobile */
+  .stream-footer {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+
+  /* Dev system embed — taller on mobile for usable interaction */
+  .dev-embed-frame {
+    aspect-ratio: 3 / 4 !important;
+  }
+
+  /* Research Analyst embed — taller on mobile to show full prototype */
+  .tool-embed-card {
+    aspect-ratio: 3 / 5;
+  }
+
+  /* Dayli Dev — put text before chat demo on mobile */
+  .tool-section {
+    display: flex;
+    flex-direction: column;
+  }
+  .tool-section > .chat-demo {
+    order: 2;
+  }
 
   /* Touch targets — minimum 44px */
   .nav-back { min-height: 44px; padding: 10px 18px 10px 14px; }
@@ -1056,6 +1095,8 @@ noscript .reveal { opacity: 1; transform: none; }
 </head>
 <body>
 
+<a href="#main-content" class="skip-link">Skip to content</a>
+
 <!-- Light switch -->
 <div class="light-switch" onclick="document.body.classList.toggle('light-mode');this.setAttribute('aria-checked',document.body.classList.contains('light-mode'))" role="switch" aria-checked="false" aria-label="Toggle light mode" tabindex="0" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();this.click()}">
   <div class="switch-plate">
@@ -1094,7 +1135,7 @@ noscript .reveal { opacity: 1; transform: none; }
 </script>
 </nav>
 
-<main>
+<main id="main-content">
 <!-- ══════════════════════════════════
      HERO
 ══════════════════════════════════ -->
@@ -1307,7 +1348,7 @@ noscript .reveal { opacity: 1; transform: none; }
 
     <!-- Embedded Dev System Prototype -->
     <div class="reveal">
-      <div style="max-width:900px; margin:0 auto; border-radius:16px; overflow:hidden; border:1px solid rgba(146,48,227,0.25); box-shadow:0 8px 40px rgba(0,0,0,0.5), 0 0 0 1px rgba(146,48,227,0.1); aspect-ratio:16/10;">
+      <div class="dev-embed-frame" style="max-width:900px; margin:0 auto; border-radius:16px; overflow:hidden; border:1px solid rgba(146,48,227,0.25); box-shadow:0 8px 40px rgba(0,0,0,0.5), 0 0 0 1px rgba(146,48,227,0.1); aspect-ratio:16/10;">
         <iframe src="prototype-dayli-dev-system.html" title="Dayli Development System interactive prototype" style="width:100%; height:100%; border:none;" loading="lazy"></iframe>
       </div>
       <p style="font-size:8.5px; font-weight:500; letter-spacing:0.28em; text-transform:uppercase; color:rgba(219,176,255,0.4); margin-top:12px; text-align:center;">Interactive · Video · Walkthrough · Speed Run · Setup Guide</p>

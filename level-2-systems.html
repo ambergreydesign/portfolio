@@ -153,7 +153,7 @@ body.visible .card-inner {
   font-weight: 300;
   letter-spacing: 0.3em;
   text-transform: uppercase;
-  color: rgba(190,155,90,0.80);
+  color: rgba(190,155,90,0.95);
   margin-bottom: 14px;
 }
 
@@ -230,7 +230,7 @@ body.visible .card-inner {
   font-weight: 300;
   letter-spacing: 0.16em;
   text-transform: uppercase;
-  color: rgba(200,185,165,0.55);
+  color: rgba(200,185,165,0.85);
   border: 1px solid rgba(180,160,130,0.2);
   padding: 3px 9px;
   white-space: nowrap;
@@ -241,7 +241,7 @@ body.visible .card-inner {
   font-family: 'DM Sans', sans-serif;
   font-size: 12px;
   font-weight: 300;
-  color: rgba(175,162,145,0.75);
+  color: rgba(185,172,155,0.88);
   letter-spacing: 0.02em;
   line-height: 1.5;
 }
@@ -253,6 +253,8 @@ body.visible .card-inner {
   transition: color 0.25s ease;
 }
 .project-item:hover .project-arrow { color: rgba(200,185,165,0.41); }
+.project-item:focus-visible .project-name { color: rgba(235,225,208,0.74); }
+.project-item:focus-visible .project-arrow { color: rgba(200,185,165,0.41); }
 
 /* ── STUDIO CRUMB ── */
 .studio-crumb {
@@ -261,7 +263,10 @@ body.visible .card-inner {
   align-items: center;
   gap: 10px;
   cursor: pointer;
-  color: rgba(210,195,172,0.55);
+  background: none;
+  border: none;
+  padding: 0;
+  color: rgba(210,195,172,0.78);
   transition: color 0.3s ease, opacity 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94) 0.12s, transform 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94) 0.12s;
   user-select: none;
   opacity: 0;
@@ -313,27 +318,69 @@ body.visible .studio-crumb {
   .wordmark      { display: none; }
   .studio-crumb  { margin-top: 4px; }
 }
+
+/* ── SKIP LINK ── */
+.skip-link {
+  position: absolute;
+  left: -9999px;
+  top: auto;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 12px;
+  color: #be9b5a;
+  background: rgba(11, 28, 38, 0.95);
+  padding: 10px 18px;
+  border-radius: 6px;
+  z-index: 200;
+  text-decoration: none;
+}
+.skip-link:focus {
+  position: fixed;
+  left: 16px;
+  top: 16px;
+  width: auto;
+  height: auto;
+}
+
+/* ── FOCUS STYLES ── */
+:focus-visible {
+  outline: 2px solid #be9b5a;
+  outline-offset: 3px;
+}
+
+/* ── REDUCED MOTION ── */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
 </style>
 </head>
 <body>
+<a href="#main-content" class="skip-link">Skip to content</a>
 
-<div id="page-exit"></div>
-<div id="page-enter"></div>
-<div class="wordmark">Amber Grey</div>
+<div id="page-exit" aria-hidden="true"></div>
+<div id="page-enter" aria-hidden="true"></div>
+<div class="wordmark" aria-hidden="true">Amber Grey</div>
 
-<button class="back-link" onclick="navigateTo('studio-portfolio.html')">
-  <span class="back-arrow"></span>
+<button class="back-link" aria-label="Back to Studio portfolio" onclick="navigateTo('studio-portfolio.html')">
+  <span class="back-arrow" aria-hidden="true"></span>
   Studio
 </button>
 
+<main id="main-content">
 <div id="content-wrap">
 <div class="glass-card">
   <div class="card-inner">
   <div class="zone-eyebrow">Systems</div>
   <h1 class="zone-title">Structure as a way of thinking</h1>
-  <div class="section-rule"></div>
+  <div class="section-rule" aria-hidden="true"></div>
   <ul class="project-list">
-    <li class="project-item" onclick="navigateTo('level-3-dev-system.html')">
+    <li class="project-item" role="button" tabindex="0" onclick="navigateTo('level-3-dev-system.html')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();navigateTo('level-3-dev-system.html')}">
       <div class="project-text">
         <div class="project-header">
           <span class="project-name">Lowering the Barrier to Build</span>
@@ -341,9 +388,9 @@ body.visible .studio-crumb {
         </div>
         <span class="project-tagline">Ship at the speed of conversation — the system behind Dayli AI</span>
       </div>
-      <span class="project-arrow">→</span>
+      <span class="project-arrow" aria-hidden="true">→</span>
     </li>
-    <li class="project-item" onclick="navigateTo('level-3-dayli-research-analyst.html')">
+    <li class="project-item" role="button" tabindex="0" onclick="navigateTo('level-3-dayli-research-analyst.html')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();navigateTo('level-3-dayli-research-analyst.html')}">
       <div class="project-text">
         <div class="project-header">
           <span class="project-name">Contextual Intelligence</span>
@@ -351,9 +398,9 @@ body.visible .studio-crumb {
         </div>
         <span class="project-tagline">Designing systems that adapt to human context in real time</span>
       </div>
-      <span class="project-arrow">→</span>
+      <span class="project-arrow" aria-hidden="true">→</span>
     </li>
-    <li class="project-item" onclick="navigateTo('level-3-socratic.html')">
+    <li class="project-item" role="button" tabindex="0" onclick="navigateTo('level-3-socratic.html')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();navigateTo('level-3-socratic.html')}">
       <div class="project-text">
         <div class="project-header">
           <span class="project-name">The Socratic Agent</span>
@@ -361,9 +408,9 @@ body.visible .studio-crumb {
         </div>
         <span class="project-tagline">Replacing forms with conversation</span>
       </div>
-      <span class="project-arrow">→</span>
+      <span class="project-arrow" aria-hidden="true">→</span>
     </li>
-    <li class="project-item" onclick="navigateTo('level-3-playground.html')">
+    <li class="project-item" role="button" tabindex="0" onclick="navigateTo('level-3-playground.html')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();navigateTo('level-3-playground.html')}">
       <div class="project-text">
         <div class="project-header">
           <span class="project-name">Portfolio Playground System</span>
@@ -371,14 +418,14 @@ body.visible .studio-crumb {
         </div>
         <span class="project-tagline">A living system for showing work</span>
       </div>
-      <span class="project-arrow">→</span>
+      <span class="project-arrow" aria-hidden="true">→</span>
     </li>
   </ul>
   </div>
 </div>
 
-<div class="studio-crumb" onclick="navigateTo('studio-portfolio.html')">
-  <svg class="crumb-plant" width="30" height="48" viewBox="0 0 30 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+<button class="studio-crumb" tabindex="0" aria-label="Go to Studio portfolio" onclick="navigateTo('studio-portfolio.html')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();navigateTo('studio-portfolio.html')}">
+  <svg class="crumb-plant" aria-hidden="true" width="30" height="48" viewBox="0 0 30 48" fill="none" xmlns="http://www.w3.org/2000/svg">
     <!-- Pot -->
     <path d="M8 47 L22 47 L24 37 L6 37Z" stroke="currentColor" stroke-width="0.75" stroke-linejoin="round"/>
     <path d="M5 37 L25 37" stroke="currentColor" stroke-width="0.75" stroke-linecap="round"/>
@@ -392,8 +439,9 @@ body.visible .studio-crumb {
     <path d="M15 28 C12 23 12 17 15 14 C18 17 18 23 15 28" stroke="currentColor" stroke-width="0.6" stroke-linecap="round"/>
   </svg>
   <span class="crumb-text">Studio</span>
+</button>
 </div>
-</div>
+</main>
 
 <script>
 'use strict';
@@ -448,6 +496,7 @@ requestAnimationFrame(() => {
     item.addEventListener('mouseenter', () => {
       field = document.createElement('div');
       field.style.cssText = 'position:absolute;inset:0;pointer-events:none;';
+      field.setAttribute('aria-hidden', 'true');
       const w = item.offsetWidth, h = item.offsetHeight;
       for (let i = 0; i < 26; i++) {
         const dot = document.createElement('div');

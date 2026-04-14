@@ -419,28 +419,85 @@ body.visible .studio-crumb{opacity:1;transform:translateY(0)}
   .gallery-grid{column-gap:8px}
   .gallery-item{margin-bottom:8px}
 }
+
+/* ── MOBILE TOUCH TARGETS & FONT SIZES ── */
+@media(max-width:580px){
+  .filter-pill{font-size:10px;min-height:44px;display:inline-flex;align-items:center}
+  .overlay-tag{font-size:10px}
+  .scroll-hint span{font-size:10px}
+  .crumb-text{font-size:10px}
+  .lightbox-tag{font-size:10px}
+  .lightbox-counter{font-size:10px}
+  .filter-count{font-size:9px}
+}
+
+/* ── SKIP LINK ── */
+.skip-link{
+  position:fixed;top:-100%;left:16px;z-index:10000;
+  background:#0b1c26;color:rgba(190,155,90,0.80);
+  border:1px solid rgba(190,155,90,0.80);border-radius:8px;
+  padding:12px 20px;font-family:'DM Sans',sans-serif;
+  font-size:13px;font-weight:400;letter-spacing:0.1em;
+  text-decoration:none;transition:top .2s ease;
+}
+.skip-link:focus{top:16px}
+
+/* ── FOCUS VISIBLE ── */
+*:focus{outline:none}
+*:focus-visible{
+  outline:2px solid rgba(190,155,90,0.80);
+  outline-offset:3px;border-radius:4px;
+}
+.back-link:focus-visible{outline-offset:2px;border-radius:100px}
+.filter-pill:focus-visible{outline-offset:2px;border-radius:100px}
+.gallery-item:focus-visible{outline-offset:0;border-radius:8px}
+.lb-close:focus-visible,.lb-arrow:focus-visible{outline-offset:2px;border-radius:50%}
+.studio-crumb:focus-visible{outline-offset:3px;border-radius:8px}
+
+/* ── REDUCED MOTION ── */
+@media(prefers-reduced-motion:reduce){
+  *,*::before,*::after{
+    animation-duration:0.01ms !important;
+    animation-iteration-count:1 !important;
+    transition-duration:0.01ms !important;
+    scroll-behavior:auto !important;
+  }
+  .hero-title,.hero-statement,.scroll-hint{
+    opacity:1 !important;transform:none !important;
+  }
+  .glass-card,.card-inner,.studio-crumb{
+    opacity:1 !important;transform:none !important;
+  }
+  .gallery-item{opacity:1 !important;transform:none !important}
+  .glitter-dot{display:none}
+}
 </style>
 </head>
 <body>
+
+<!-- Skip link -->
+<a class="skip-link" href="#galleryGrid">Skip to gallery</a>
 
 <!-- transitions -->
 <div id="page-enter"></div>
 <div id="page-exit"></div>
 
 <!-- back -->
-<a class="back-link" onclick="navOut('level-2-perspective.html')">
-  <span class="back-arrow"></span>Perspectives
+<a class="back-link" href="level-2-perspective.html" onclick="navOut('level-2-perspective.html'); return false;" aria-label="Back to Perspectives">
+  <span class="back-arrow" aria-hidden="true"></span>Perspectives
 </a>
 
 <!-- wordmark -->
-<div class="wordmark">Amber Grey</div>
+<div class="wordmark" aria-hidden="true">Amber Grey</div>
+
+<main>
 
 <!-- hero -->
-<section class="hero">
-  <div class="hero-grid"></div>
+<section class="hero" aria-label="Introduction">
+  <div class="hero-grid" aria-hidden="true"></div>
   <h1 class="hero-title">graphic design</h1>
   <p class="hero-statement">Graphic design taught me how to bring someone else's vision to life without losing its essence. Through collaboration, I learned to listen deeply, translate abstract ideas, and shape them into something tangible that others can see, feel, and understand.</p>
-  <div class="scroll-hint">
+  <div class="scroll-hint" aria-hidden="true">
     <span>Explore</span>
     <div class="scroll-chevron-wrap"><div class="scroll-chevron"></div></div>
   </div>
@@ -452,22 +509,22 @@ body.visible .studio-crumb{opacity:1;transform:translateY(0)}
   <div class="glass-card">
     <div class="card-inner">
       <div class="zone-eyebrow">Visual Work</div>
-      <h1 class="zone-title">graphic <span>Design</span></h1>
+      <h2 class="zone-title">graphic <span>Design</span></h2>
       <p class="zone-intro">a collection of graphic design, illustration, and visual communication work.</p>
 
       <!-- filters -->
-      <div class="filter-bar" id="filterBar"></div>
+      <nav class="filter-bar" id="filterBar" aria-label="Filter artworks by category"></nav>
 
       <div class="section-rule"></div>
 
       <!-- gallery grid -->
-      <div class="gallery-grid" id="galleryGrid" style="margin-top:20px"></div>
+      <div class="gallery-grid" id="galleryGrid" role="list" aria-label="Artwork gallery" style="margin-top:20px" tabindex="-1"></div>
     </div>
   </div>
 
   <!-- crumb -->
-  <a class="studio-crumb" onclick="navOut('level-2-perspective.html')">
-    <svg class="crumb-icon" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round">
+  <a class="studio-crumb" href="level-2-perspective.html" onclick="navOut('level-2-perspective.html'); return false;" aria-label="Return to Perspectives">
+    <svg class="crumb-icon" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
       <path d="M12 19l-7-7 7-7"/>
       <path d="M18 13H6"/>
       <circle cx="17" cy="7" r="3" stroke-dasharray="2 2"/>
@@ -477,18 +534,20 @@ body.visible .studio-crumb{opacity:1;transform:translateY(0)}
 </div>
 </div>
 
+</main>
+
 <!-- lightbox -->
-<div class="lightbox" id="lightbox">
+<div class="lightbox" id="lightbox" role="dialog" aria-modal="true" aria-label="Artwork viewer">
   <div class="lightbox-backdrop" onclick="closeLightbox()"></div>
-  <div class="lb-close" onclick="closeLightbox()"></div>
-  <div class="lb-arrow lb-prev" onclick="lbNav(-1)"></div>
-  <div class="lb-arrow lb-next" onclick="lbNav(1)"></div>
+  <button class="lb-close" onclick="closeLightbox()" aria-label="Close lightbox"></button>
+  <button class="lb-arrow lb-prev" onclick="lbNav(-1)" aria-label="Previous artwork"></button>
+  <button class="lb-arrow lb-next" onclick="lbNav(1)" aria-label="Next artwork"></button>
   <div class="lightbox-content">
     <div class="lightbox-placeholder" id="lbImage"></div>
     <div class="lightbox-info">
       <div class="lightbox-title" id="lbTitle"></div>
       <div class="lightbox-tag" id="lbTag"></div>
-      <div class="lightbox-counter" id="lbCounter"></div>
+      <div class="lightbox-counter" id="lbCounter" aria-live="polite"></div>
     </div>
   </div>
 </div>
@@ -570,6 +629,7 @@ Object.entries(categories).forEach(([key, label]) => {
   const pill = document.createElement('button');
   pill.className = 'filter-pill' + (key === 'all' ? ' active' : '');
   pill.dataset.cat = key;
+  pill.setAttribute('aria-pressed', key === 'all' ? 'true' : 'false');
   pill.innerHTML = label + '<span class="filter-count">' + count + '</span>';
   pill.onclick = () => filterTo(key);
   filterBar.appendChild(pill);
@@ -596,6 +656,7 @@ function makeItem(p, i) {
       ph.autoplay = true;
       ph.style.width = '100%';
       ph.style.display = 'block';
+      ph.setAttribute('aria-label', p.title);
     } else if (p.img) {
       ph = document.createElement('img');
       ph.className = 'gallery-placeholder';
@@ -614,10 +675,16 @@ function makeItem(p, i) {
 
     const overlay = document.createElement('div');
     overlay.className = 'gallery-overlay';
+    overlay.setAttribute('aria-hidden', 'true');
     overlay.innerHTML = '<div class="overlay-title">' + p.title + '</div><div class="overlay-tag">' + categories[p.cat] + '</div>';
 
     item.appendChild(ph);
     item.appendChild(overlay);
+
+    // accessibility
+    item.setAttribute('tabindex', '0');
+    item.setAttribute('role', 'listitem');
+    item.setAttribute('aria-label', p.title + ', ' + categories[p.cat]);
 
     // glitter on hover
     item.addEventListener('mouseenter', spawnGlitter);
@@ -625,6 +692,9 @@ function makeItem(p, i) {
 
     // lightbox
     item.addEventListener('click', () => openLightbox(i));
+    item.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); openLightbox(i); }
+    });
 
     return item;
 }
@@ -640,7 +710,11 @@ buildGrid();
 /* ── FILTER ── */
 function filterTo(cat) {
   activeCat = cat;
-  document.querySelectorAll('.filter-pill').forEach(p => p.classList.toggle('active', p.dataset.cat === cat));
+  document.querySelectorAll('.filter-pill').forEach(p => {
+    const isActive = p.dataset.cat === cat;
+    p.classList.toggle('active', isActive);
+    p.setAttribute('aria-pressed', isActive ? 'true' : 'false');
+  });
 
   const items = document.querySelectorAll('.gallery-item');
   let delay = 0;
@@ -742,6 +816,7 @@ function renderLightbox() {
     el.playsInline = true;
     el.autoplay = true;
     el.controls = true;
+    el.setAttribute('aria-label', p.title);
   } else if (p.img) {
     el = document.createElement('img');
     el.className = 'lightbox-img';

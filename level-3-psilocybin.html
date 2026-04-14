@@ -518,6 +518,15 @@ body.visible .studio-crumb {
     scroll-behavior: auto !important;
   }
 }
+
+/* ── HIGH CONTRAST ── */
+@media (prefers-contrast: more) {
+  .nav-back { border-color: rgba(255, 255, 255, 0.5); color: rgba(200, 185, 165, 1); }
+  .case-study-link { filter: brightness(1.5); }
+  .meta-label { filter: brightness(1.3); }
+  .artifact-card { border-color: rgba(255, 255, 255, 0.4); }
+  .studio-crumb { color: rgba(210, 195, 172, 0.85); }
+}
 </style>
 </head>
 <body>

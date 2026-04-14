@@ -29,7 +29,7 @@ html { background: var(--bg); scroll-behavior: smooth; }
 body {
   font-family: 'DM Sans', sans-serif;
   color: var(--text);
-  overflow-x: hidden;
+  overflow-x: clip;
   opacity: 0;
   transition: opacity 0.55s cubic-bezier(0.25, 0.46, 0.45, 0.94);
 }
@@ -834,8 +834,9 @@ body.visible { opacity: 1; }
   .wordmark        { display: none; }
   .research-stats-bar { grid-template-columns: 1fr 1fr; }
   .chip-panel      { padding: 24px 22px; }
-  .chip-btn        { font-size: 12px; padding: 8px 16px; min-height: 36px; }
-  .vid-tag         { font-size: 11px; padding: 6px 12px; }
+  .chip-btn        { font-size: 12px; padding: 8px 16px; min-height: 44px; display: inline-flex; align-items: center; }
+  .vid-tag         { font-size: 11px; padding: 6px 12px; min-height: 44px; display: inline-flex; align-items: center; }
+  .nav-back        { min-height: 44px; padding: 10px 18px 10px 14px; }
   .video-card-title { font-size: 16px; }
   .overview-intro  { font-size: 14px; }
   .stat-cell       { padding: 16px 18px; }
@@ -857,11 +858,11 @@ body.visible { opacity: 1; }
   .research-stats-bar { grid-template-columns: 1fr 1fr; }
   .stat-number     { font-size: 32px; }
   .stat-label      { font-size: 7px; letter-spacing: 0.12em; }
-  .chip-btn        { font-size: 11.5px; padding: 7px 14px; }
+  .chip-btn        { font-size: 11.5px; padding: 7px 14px; min-height: 44px; }
   .vid-modal-meta  { padding: 16px 18px 20px; }
   .video-card-desc { font-size: 13px; }
   .video-card-footer { gap: 14px; }
-  .nav-back        { padding: 8px 14px 8px 10px; font-size: 9px; }
+  .nav-back        { padding: 10px 14px 10px 10px; font-size: 9px; min-height: 44px; }
 }
 
 /* ── SKIP LINK ── */
@@ -1262,7 +1263,7 @@ body.visible { opacity: 1; }
      HERO
 ══════════════════════════════════════ -->
 <main id="main-content">
-<section class="hero">
+<section class="hero" aria-label="Project introduction">
   <div class="hero-video-bg">
     <video autoplay muted loop playsinline>
       <source src="https://amber.design/wp-content/uploads/2025/12/Landing-Loop.mp4" type="video/mp4">
@@ -1296,7 +1297,7 @@ body.visible { opacity: 1; }
 <!-- ══════════════════════════════════════
      00 PROJECT OVERVIEW
 ══════════════════════════════════════ -->
-<section class="cs-section reveal">
+<section class="cs-section reveal" aria-label="Project Overview">
   <div class="section-inner">
     <div class="section-label">Project Overview</div>
     <p class="overview-intro">This is as much a <em>speculative design exercise</em> as it is a research project — a look at where zoos could go if they chose transparency over spectacle. Six months of field research across 9 AZA-accredited zoos, financial forensics, and behavioral systems design, distilled into tools and frameworks that make the invisible visible. The prototype is the evidence. The research is the argument.</p>
@@ -1339,7 +1340,7 @@ body.visible { opacity: 1; }
 <!-- ══════════════════════════════════════
      01 THE CHALLENGE
 ══════════════════════════════════════ -->
-<section class="cs-section alt reveal">
+<section class="cs-section alt reveal" aria-label="The Challenge">
   <div class="section-inner">
     <div class="two-col">
       <div>
@@ -1370,7 +1371,7 @@ body.visible { opacity: 1; }
 <!-- ══════════════════════════════════════
      02 KEY SIGNALS
 ══════════════════════════════════════ -->
-<section class="cs-section reveal">
+<section class="cs-section reveal" aria-label="Research Signals">
   <div class="section-inner">
     <div class="section-label">Research Signals</div>
     <h2 class="section-heading">What the data kept saying</h2>
@@ -1449,7 +1450,7 @@ body.visible { opacity: 1; }
 <!-- ══════════════════════════════════════
      03 NOW / NEW / NEXT
 ══════════════════════════════════════ -->
-<section class="cs-section alt reveal">
+<section class="cs-section alt reveal" aria-label="Research Framework">
   <div class="section-inner">
     <div class="section-label">Research Framework</div>
     <h2 class="section-heading">A Now, New, Next look</h2>
@@ -1478,7 +1479,7 @@ body.visible { opacity: 1; }
 <!-- ══════════════════════════════════════
      04 RESEARCH LIBRARY
 ══════════════════════════════════════ -->
-<section class="cs-section reveal">
+<section class="cs-section reveal" aria-label="Research Library">
   <div class="section-inner">
 
     <div class="research-library-header">
@@ -1729,7 +1730,7 @@ body.visible { opacity: 1; }
 <!-- ══════════════════════════════════════
      05 THE SIGNS FRAMEWORK
 ══════════════════════════════════════ -->
-<section class="cs-section alt reveal">
+<section class="cs-section alt reveal" aria-label="Design Framework">
   <div class="section-inner">
     <div class="section-label">Design Framework</div>
     <h2 class="section-heading">The SIGNS Framework</h2>
@@ -1776,7 +1777,7 @@ body.visible { opacity: 1; }
 <!-- ══════════════════════════════════════
      06 THE TOOL
 ══════════════════════════════════════ -->
-<section class="cs-section reveal">
+<section class="cs-section reveal" aria-label="The Artifact">
   <div class="section-inner">
     <div class="section-label">The Artifact</div>
     <h2 class="section-heading">Following the money</h2>
@@ -1795,7 +1796,7 @@ body.visible { opacity: 1; }
 <!-- ══════════════════════════════════════
      07 GWI VISUALIZER
 ══════════════════════════════════════ -->
-<section class="cs-section alt reveal">
+<section class="cs-section alt reveal" aria-label="Research Tool">
   <div class="section-inner">
 
     <div class="section-label">Research Tool</div>
@@ -1837,10 +1838,10 @@ body.visible { opacity: 1; }
 <!-- ══════════════════════════════════════
      REFLECTION
 ══════════════════════════════════════ -->
-<div class="reflection-wrap reveal">
+<section class="reflection-wrap reveal" aria-label="Reflection">
   <div class="reflection-label">What I Wanted to Show</div>
   <p class="reflection-quote">Conservation funding is easier to announce than to trace.</p>
-</div>
+</section>
 
 </main>
 
