@@ -222,80 +222,81 @@ body.visible { opacity: 1; }
   font-weight: 400;
 }
 
+/* ── SKILLS & METHODS TIMELINE ── */
 .proj-meta-outer {
-  border: 1px solid rgba(234, 175, 251, 0.18);
-  border-radius: 18px;
-  overflow: hidden;
-  position: relative;
+  margin-top: 40px;
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: 0 48px;
+  align-items: start;
 }
-.proj-meta-outer::before {
-  content: '';
-  position: absolute; inset: 0;
-  background: radial-gradient(ellipse 80% 60% at var(--mx,50%) var(--my,40%),
-    rgba(191,85,224,0.07) 0%, transparent 70%);
-  pointer-events: none; z-index: 0;
-  transition: opacity 0.4s ease;
+.sm-timeline { position: relative; }
+.sm-timeline::before {
+  content: ''; position: absolute; left: 14px; top: 0; bottom: 0; width: 1px;
+  background: linear-gradient(180deg, transparent 0%, rgba(191,85,224,0.2) 4%, rgba(191,85,224,0.2) 96%, transparent 100%);
 }
-
-.chip-panel {
-  position: relative; z-index: 1;
-  background: linear-gradient(160deg, #141f10, #0a1208);
-  padding: 36px 40px;
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 36px 52px;
+.sm-tl-section { position: relative; padding-left: 44px; margin-bottom: 8px; }
+.sm-tl-section-label {
+  font-size: 9px; font-weight: 500; letter-spacing: 0.28em; text-transform: uppercase;
+  color: var(--magenta, rgba(234,175,251,0.72)); padding: 12px 0;
+  display: flex; align-items: center; gap: 12px;
 }
-
-.chip-group-label {
-  font-size: 9px; font-weight: 500;
-  letter-spacing: 0.26em; text-transform: uppercase;
-  color: rgba(200, 185, 165, 0.3); margin-bottom: 12px;
+.sm-tl-section-label::after {
+  content: ''; flex: 1; height: 1px;
+  background: linear-gradient(90deg, rgba(191,85,224,0.15) 0%, transparent 100%);
 }
-.chip-row { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 12px; }
-
-.chip-btn {
-  background: rgba(191, 85, 224, 0.07);
-  border: 1px solid rgba(234, 175, 251, 0.15);
-  border-radius: 100px;
-  padding: 7px 15px;
-  font-family: 'DM Sans', sans-serif;
-  font-size: 11.5px; font-weight: 400;
-  letter-spacing: 0.04em;
-  color: rgba(220, 195, 235, 0.6);
-  cursor: pointer;
-  transition: background 0.22s ease, border-color 0.22s ease, color 0.22s ease, box-shadow 0.22s ease, transform 0.18s ease;
-  line-height: 1;
+.sm-tl-section::before {
+  content: ''; position: absolute; left: 10px; top: 16px;
+  width: 9px; height: 9px; border-radius: 50%;
+  background: var(--magenta, #bf55e0); box-shadow: 0 0 12px rgba(191,85,224,0.4); z-index: 2;
 }
-.chip-btn:hover,
-.chip-btn:focus {
-  background: rgba(191, 85, 224, 0.22);
-  border-color: rgba(234, 175, 251, 0.6);
-  color: rgba(240, 215, 255, 1);
-  box-shadow: 0 0 14px rgba(191,85,224,0.25);
-  transform: translateY(-1px);
-  outline: none;
+.sm-tl-node { position: relative; padding-left: 44px; margin-bottom: 4px; }
+.sm-tl-node::before {
+  content: ''; position: absolute; left: 12px; top: 18px;
+  width: 5px; height: 5px; border-radius: 50%;
+  background: rgba(191,85,224,0.35); transition: background 0.25s, box-shadow 0.25s; z-index: 2;
 }
-.chip-btn.active {
-  background: rgba(191, 85, 224, 0.28);
-  border-color: rgba(234, 175, 251, 0.75);
-  color: #fff;
-  box-shadow: 0 0 18px rgba(191,85,224,0.3);
+.sm-tl-node.open::before { background: var(--magenta, #eaaffc); box-shadow: 0 0 10px rgba(234,175,251,0.3); }
+.sm-tl-node::after {
+  content: ''; position: absolute; left: 17px; top: 20px;
+  width: 27px; height: 1px; background: rgba(191,85,224,0.12); transition: background 0.25s;
 }
-
-.chip-detail {
-  font-size: 12px; font-weight: 400;
-  line-height: 1.7; color: rgba(200, 185, 165, 0.35);
-  letter-spacing: 0.02em; min-height: 38px;
-  font-style: italic;
-  transition: color 0.25s ease, transform 0.25s ease, opacity 0.25s ease;
-  transform: translateY(2px); opacity: 0.7;
+.sm-tl-node.open::after { background: rgba(191,85,224,0.3); }
+.sm-tl-trigger {
+  display: flex; align-items: center; gap: 10px; width: 100%;
+  background: rgba(191,85,224,0.04); border: 1px solid rgba(191,85,224,0.12); border-radius: 12px;
+  padding: 12px 18px; cursor: pointer; font-family: inherit; color: inherit; text-align: left;
+  transition: all 0.25s cubic-bezier(0.4,0,0.2,1);
 }
-.chip-detail.has-value {
-  color: rgba(210, 185, 235, 0.82);
-  font-style: normal;
-  transform: translateY(0);
-  opacity: 1;
+.sm-tl-trigger:hover { background: rgba(191,85,224,0.08); border-color: rgba(191,85,224,0.25); }
+.sm-tl-node.open .sm-tl-trigger {
+  background: rgba(191,85,224,0.1); border-color: rgba(191,85,224,0.3);
+  border-bottom-left-radius: 0; border-bottom-right-radius: 0; border-bottom-color: transparent;
 }
+.sm-tl-trigger-label {
+  flex: 1; font-size: 13px; font-weight: 400; letter-spacing: 0.03em;
+  color: rgba(234,175,251,0.7); transition: color 0.25s;
+}
+.sm-tl-node.open .sm-tl-trigger-label,
+.sm-tl-trigger:hover .sm-tl-trigger-label { color: rgba(240,215,255,0.95); }
+.sm-tl-trigger-arrow {
+  font-size: 10px; color: rgba(234,175,251,0.3);
+  transition: transform 0.3s cubic-bezier(0.4,0,0.2,1), color 0.25s; flex-shrink: 0;
+}
+.sm-tl-node.open .sm-tl-trigger-arrow { transform: rotate(180deg); color: rgba(234,175,251,0.6); }
+.sm-tl-panel { overflow: hidden; max-height: 0; transition: max-height 0.35s cubic-bezier(0.4,0,0.2,1); }
+.sm-tl-node.open .sm-tl-panel { max-height: 200px; }
+.sm-tl-panel-inner {
+  background: rgba(191,85,224,0.06); border: 1px solid rgba(191,85,224,0.3); border-top: none;
+  border-radius: 0 0 12px 12px; padding: 18px 20px;
+  opacity: 0; transform: translateY(-6px);
+  transition: opacity 0.25s ease 0.06s, transform 0.25s ease 0.06s;
+}
+.sm-tl-node.open .sm-tl-panel-inner { opacity: 1; transform: translateY(0); }
+.sm-tl-panel-text {
+  font-size: 12.5px; font-weight: 300; letter-spacing: 0.03em; line-height: 1.6;
+  color: rgba(234,175,251,0.75); font-style: italic;
+}
+.sm-tl-trigger:focus-visible { outline: 2px solid var(--magenta, #eaaffc); outline-offset: 2px; }
 
 /* ── INSIGHT ACCORDION ── */
 .insight-grid {
@@ -686,7 +687,7 @@ body.visible { opacity: 1; }
 /* ── SIGNS EMBED ── */
 .signs-embed-wrap {
   width: 100%;
-  height: 620px;
+  height: 720px;
   border-radius: 14px;
   border: 1px solid rgba(240, 32, 176, 0.20);
   overflow: hidden;
@@ -790,25 +791,51 @@ body.visible { opacity: 1; }
 
 /* ── REFLECTION ── */
 .reflection-wrap {
-  padding: 112px 88px; text-align: center;
-  border-top: 1px solid var(--border);
+  padding: 96px 64px 120px; position: relative; overflow: hidden;
+  background: linear-gradient(180deg, var(--bg-alt, #0a1208) 0%, var(--bg, #080e06) 100%);
 }
+.reflection-fireflies {
+  position: absolute; inset: 0;
+  pointer-events: none; overflow: hidden; z-index: 0;
+}
+.reflection-firefly {
+  position: absolute;
+  border-radius: 50%;
+  background: rgba(234,175,251,0.55);
+  box-shadow: 0 0 8px rgba(234,175,251,0.5), 0 0 24px rgba(191,85,224,0.25), 0 0 48px rgba(191,85,224,0.1);
+  animation: rwFireflyFloat linear infinite;
+}
+@keyframes rwFireflyFloat {
+  0%   { transform: translateY(0) translateX(0); opacity: 0; }
+  8%   { opacity: 1; }
+  50%  { transform: translateY(-40vh) translateX(30px); }
+  92%  { opacity: 1; }
+  100% { transform: translateY(-80vh) translateX(-20px); opacity: 0; }
+}
+[data-theme="light"] .reflection-firefly {
+  background: rgba(144,64,184,0.45);
+  box-shadow: 0 0 8px rgba(144,64,184,0.4), 0 0 24px rgba(144,64,184,0.18), 0 0 48px rgba(144,64,184,0.08);
+}
+.reflection-inner { max-width: 720px; margin: 0 auto; position: relative; z-index: 1; }
 .reflection-label {
-  font-size: 9px; font-weight: 500; letter-spacing: 0.32em;
-  text-transform: uppercase; color: var(--magenta); margin-bottom: 28px;
+  font-size: 8.5px; font-weight: 500; letter-spacing: 0.34em;
+  text-transform: uppercase; color: var(--magenta); margin-bottom: 24px;
 }
 .reflection-quote {
   font-family: 'Cormorant Garamond', serif;
-  font-size: clamp(26px, 3.2vw, 44px);
-  font-weight: 400; font-style: italic; line-height: 1.45;
-  color: var(--pink); max-width: 820px; margin: 0 auto; text-wrap: balance;
+  font-size: clamp(28px, 3.5vw, 48px); font-weight: 400; font-style: italic;
+  line-height: 1.3; color: var(--pink); margin-bottom: 0;
+}
+.reflection-attr {
+  font-size: 12px; font-weight: 400; letter-spacing: 0.08em;
+  color: rgba(200,185,165,0.45); margin-top: 20px;
 }
 
 /* ══ RESPONSIVE ════════════════════════════════════════════════ */
 @media (max-width: 860px) {
   .hero            { padding: 0 36px 60px; }
   .cs-section      { padding: 72px 36px; }
-  .reflection-wrap { padding: 80px 36px; }
+  .reflection-wrap { padding: 72px 32px 96px; }
   .insight-grid    { grid-template-columns: 1fr 1fr; }
   .hero-title      { font-size: 54px; }
   .two-col         { grid-template-columns: 1fr; gap: 40px; }
@@ -816,7 +843,11 @@ body.visible { opacity: 1; }
   .video-card-featured { flex-direction: column; }
   .video-card-featured .video-thumb-wrap { width: 100%; height: auto; aspect-ratio: 16/9; }
   .video-card-featured .video-card-body { padding: 20px 24px; }
-  .chip-panel      { grid-template-columns: 1fr; gap: 28px; }
+  .proj-meta-outer  { grid-template-columns: 1fr; gap: 12px; }
+  .sm-tl-trigger { padding: 10px 14px; }
+  .sm-tl-trigger-label { font-size: 12px; }
+  .sm-tl-panel-inner { padding: 14px 16px; }
+  .sm-tl-panel-text { font-size: 12px; }
   .research-stats-bar { grid-template-columns: 1fr 1fr; }
   .stat-cell:nth-child(2) { border-right: none; }
   .stat-cell       { padding: 20px 24px; }
@@ -824,7 +855,7 @@ body.visible { opacity: 1; }
 @media (max-width: 560px) {
   .hero            { padding: 0 22px 48px; }
   .cs-section      { padding: 56px 22px; }
-  .reflection-wrap { padding: 64px 22px; }
+  .reflection-wrap { padding: 56px 22px 80px; }
   .insight-grid    { grid-template-columns: 1fr; }
   .horizon-row     { grid-template-columns: 1fr; gap: 32px; }
   .video-grid      { grid-template-columns: 1fr; }
@@ -833,8 +864,6 @@ body.visible { opacity: 1; }
   .nav-back        { top: 16px; left: 16px; }
   .wordmark        { display: none; }
   .research-stats-bar { grid-template-columns: 1fr 1fr; }
-  .chip-panel      { padding: 24px 22px; }
-  .chip-btn        { font-size: 12px; padding: 8px 16px; min-height: 44px; display: inline-flex; align-items: center; }
   .vid-tag         { font-size: 11px; padding: 6px 12px; min-height: 44px; display: inline-flex; align-items: center; }
   .nav-back        { min-height: 44px; padding: 10px 18px 10px 14px; }
   .video-card-title { font-size: 16px; }
@@ -858,7 +887,6 @@ body.visible { opacity: 1; }
   .research-stats-bar { grid-template-columns: 1fr 1fr; }
   .stat-number     { font-size: 32px; }
   .stat-label      { font-size: 7px; letter-spacing: 0.12em; }
-  .chip-btn        { font-size: 11.5px; padding: 7px 14px; min-height: 44px; }
   .vid-modal-meta  { padding: 16px 18px 20px; }
   .video-card-desc { font-size: 13px; }
   .video-card-footer { gap: 14px; }
@@ -1016,47 +1044,25 @@ body.visible { opacity: 1; }
   color: rgba(42, 36, 32, 0.92);
 }
 
-[data-theme="light"] .proj-meta-outer {
-  border-color: rgba(144, 64, 184, 0.2);
-}
-[data-theme="light"] .proj-meta-outer::before {
-  background: radial-gradient(ellipse 80% 60% at var(--mx,50%) var(--my,40%),
-    rgba(144, 64, 184, 0.06) 0%, transparent 70%);
-}
-
-[data-theme="light"] .chip-panel {
-  background: linear-gradient(160deg, #f0ebe4, #e8e2da);
-}
-
-[data-theme="light"] .chip-group-label {
-  color: rgba(42, 36, 32, 0.35);
-}
-
-[data-theme="light"] .chip-btn {
-  background: rgba(144, 64, 184, 0.06);
-  border-color: rgba(144, 64, 184, 0.18);
-  color: rgba(90, 50, 110, 0.7);
-}
-[data-theme="light"] .chip-btn:hover,
-[data-theme="light"] .chip-btn:focus {
-  background: rgba(144, 64, 184, 0.15);
-  border-color: rgba(144, 64, 184, 0.5);
-  color: rgba(90, 40, 120, 1);
-  box-shadow: 0 0 14px rgba(144, 64, 184, 0.15);
-}
-[data-theme="light"] .chip-btn.active {
-  background: rgba(144, 64, 184, 0.2);
-  border-color: rgba(144, 64, 184, 0.6);
-  color: #5a2a70;
-  box-shadow: 0 0 18px rgba(144, 64, 184, 0.18);
-}
-
-[data-theme="light"] .chip-detail {
-  color: rgba(42, 36, 32, 0.52);
-}
-[data-theme="light"] .chip-detail.has-value {
-  color: rgba(80, 40, 100, 0.92);
-}
+[data-theme="light"] .sm-timeline::before { background: linear-gradient(180deg, transparent 0%, rgba(144,64,184,0.15) 4%, rgba(144,64,184,0.15) 96%, transparent 100%); }
+[data-theme="light"] .sm-tl-section::before { background: #9040b8; box-shadow: 0 0 12px rgba(144,64,184,0.3); }
+[data-theme="light"] .sm-tl-section-label { color: #9040b8; }
+[data-theme="light"] .sm-tl-section-label::after { background: linear-gradient(90deg, rgba(144,64,184,0.12) 0%, transparent 100%); }
+[data-theme="light"] .sm-tl-node::before { background: rgba(144,64,184,0.25); }
+[data-theme="light"] .sm-tl-node.open::before { background: #9040b8; box-shadow: 0 0 10px rgba(144,64,184,0.25); }
+[data-theme="light"] .sm-tl-node::after { background: rgba(144,64,184,0.1); }
+[data-theme="light"] .sm-tl-node.open::after { background: rgba(144,64,184,0.25); }
+[data-theme="light"] .sm-tl-trigger { background: rgba(144,64,184,0.04); border-color: rgba(144,64,184,0.12); }
+[data-theme="light"] .sm-tl-trigger:hover { background: rgba(144,64,184,0.08); border-color: rgba(144,64,184,0.22); }
+[data-theme="light"] .sm-tl-node.open .sm-tl-trigger { background: rgba(144,64,184,0.1); border-color: rgba(144,64,184,0.28); }
+[data-theme="light"] .sm-tl-trigger-label { color: rgba(90,50,110,0.7); }
+[data-theme="light"] .sm-tl-node.open .sm-tl-trigger-label,
+[data-theme="light"] .sm-tl-trigger:hover .sm-tl-trigger-label { color: #5a2a70; }
+[data-theme="light"] .sm-tl-trigger-arrow { color: rgba(144,64,184,0.25); }
+[data-theme="light"] .sm-tl-node.open .sm-tl-trigger-arrow { color: rgba(144,64,184,0.5); }
+[data-theme="light"] .sm-tl-panel-inner { background: rgba(144,64,184,0.04); border-color: rgba(144,64,184,0.28); }
+[data-theme="light"] .sm-tl-panel-text { color: rgba(80,40,100,0.78); }
+[data-theme="light"] .sm-tl-trigger:focus-visible { outline-color: #9040b8; }
 
 [data-theme="light"] .insight-item {
   background:
@@ -1198,15 +1204,13 @@ body.visible { opacity: 1; }
 }
 
 [data-theme="light"] .reflection-wrap {
-  border-top-color: rgba(0, 0, 0, 0.06);
-  background: linear-gradient(135deg,
-    rgba(144, 64, 184, 0.04) 0%,
-    rgba(247, 244, 240, 1) 100%
-  );
+  background: linear-gradient(180deg, #f0ebe4 0%, #e8e2da 100%);
 }
-
 [data-theme="light"] .reflection-quote {
   color: #6a2d80;
+}
+[data-theme="light"] .reflection-attr {
+  color: rgba(42,36,32,0.4);
 }
 
 [data-theme="light"] .section-divider {
@@ -1270,7 +1274,7 @@ body.visible { opacity: 1; }
     </video>
   </div>
   <div class="hero-content">
-    <div class="hero-zone">Sense Making · Case Study</div>
+    <div class="hero-zone">Systems Research · Behavioral Design · Interaction Systems</div>
     <h1 class="hero-title">ReWilded</h1>
     <p class="hero-subtitle">Making zoos relevant to the generation that already knows better.</p>
     <div class="hero-meta">
@@ -1279,16 +1283,20 @@ body.visible { opacity: 1; }
         <div class="hero-meta-value">UX Research &amp; Interaction Systems Lead</div>
       </div>
       <div>
+        <div class="hero-meta-label">Year</div>
+        <div class="hero-meta-value">2025</div>
+      </div>
+      <div>
+        <div class="hero-meta-label">Type</div>
+        <div class="hero-meta-value">Systems Research · Speculative Prototype</div>
+      </div>
+      <div>
         <div class="hero-meta-label">Team</div>
         <div class="hero-meta-value">Solo</div>
       </div>
       <div>
-        <div class="hero-meta-label">Timeframe</div>
-        <div class="hero-meta-value">2025 · 6 months</div>
-      </div>
-      <div>
-        <div class="hero-meta-label">Type</div>
-        <div class="hero-meta-value">Prototype · Interactive System</div>
+        <div class="hero-meta-label">Context</div>
+        <div class="hero-meta-value">6-Month Field Study</div>
       </div>
     </div>
   </div>
@@ -1300,39 +1308,138 @@ body.visible { opacity: 1; }
 <section class="cs-section reveal" aria-label="Project Overview">
   <div class="section-inner">
     <div class="section-label">Project Overview</div>
-    <p class="overview-intro">This is as much a <em>speculative design exercise</em> as it is a research project — a look at where zoos could go if they chose transparency over spectacle. Six months of field research across 9 AZA-accredited zoos, financial forensics, and behavioral systems design, distilled into tools and frameworks that make the invisible visible. The prototype is the evidence. The research is the argument.</p>
+    <p class="overview-intro">This work sits between speculative design and research, exploring where zoos could go if they chose transparency over spectacle. Six months of field research across nine AZA-accredited zoos, financial analysis, and behavioral systems design are distilled into tools and frameworks that make the invisible visible. The prototype is the evidence. The research is the&nbsp;argument.</p>
 
     <div class="proj-meta-outer">
-      <div class="chip-panel">
 
-        <div>
-          <div class="chip-group-label">Skills</div>
-          <div class="chip-row">
-            <button class="chip-btn" data-group="skill" data-detail="Mapping conservation revenue as both a behavioral and structural design problem — tracing how money, mission, and meaning diverge.">Systems Thinking</button>
-            <button class="chip-btn" data-group="skill" data-detail="Surveys, field observation, and behavioral pattern analysis across institutions and demographics.">UX Research</button>
-            <button class="chip-btn" data-group="skill" data-detail="Parsing IRS 990s to surface the gap between stated mission and actual conservation expenditure.">Data Analysis</button>
-            <button class="chip-btn" data-group="skill" data-detail="Designing intentional friction — where ethical tension becomes a feature that deepens trust rather than degrading it.">Behavioral Design</button>
-            <button class="chip-btn" data-group="skill" data-detail="End-to-end experience architecture across physical zoo encounters and digital transparency tools.">Service Design</button>
-            <button class="chip-btn" data-group="skill" data-detail="Now/New/Next horizon framing to position design interventions across immediate, emerging, and speculative futures.">Strategic Innovation</button>
-            <button class="chip-btn" data-group="skill" data-detail="Narratives built to hold moral complexity — where the story doesn't flinch from what's uncomfortable.">Ethical Storytelling</button>
-            <button class="chip-btn" data-group="skill" data-detail="Interactive HTML/JS tools that turn public financial data into something impossible to misread.">Interaction Systems</button>
-          </div>
-          <div class="chip-detail" id="skill-detail">Hover a skill to explore it.</div>
+      <div class="sm-timeline">
+        <div class="sm-tl-section"><div class="sm-tl-section-label">Skills</div></div>
+
+        <div class="sm-tl-node">
+          <button class="sm-tl-trigger" aria-expanded="false">
+            <span class="sm-tl-trigger-label">Institutional Systems Analysis</span>
+            <span class="sm-tl-trigger-arrow">&#9662;</span>
+          </button>
+          <div class="sm-tl-panel" aria-hidden="true"><div class="sm-tl-panel-inner"><p class="sm-tl-panel-text">Mapping conservation revenue as both a behavioral and structural design problem, tracing how money, mission, and meaning diverge.</p></div></div>
         </div>
 
-        <div>
-          <div class="chip-group-label">Methods &amp; Tools</div>
-          <div class="chip-row">
-            <button class="chip-btn" data-group="tool" data-detail="IRS 990s, AZA accreditation filings, academic conservation literature, and institutional sustainability reports.">Desk Research</button>
-            <button class="chip-btn" data-group="tool" data-detail="Quantitative surveys designed to detect behavioral readiness for ethical friction — not just satisfaction scores.">Surveys &amp; Quant</button>
-            <button class="chip-btn" data-group="tool" data-detail="Causal loop diagrams and revenue flow maps to trace where institutional money actually moves vs. where it's claimed to move.">Systems Mapping</button>
-            <button class="chip-btn" data-group="tool" data-detail="Interactive HTML/CSS/JS tools built to make public financial data navigable and undeniable.">Prototyping</button>
-            <button class="chip-btn" data-group="tool" data-detail="Short-form research films that communicate complex findings without institutional distance or academic abstraction.">Video Narrative</button>
-          </div>
-          <div class="chip-detail" id="tool-detail">Hover a method to explore it.</div>
+        <div class="sm-tl-node">
+          <button class="sm-tl-trigger" aria-expanded="false">
+            <span class="sm-tl-trigger-label">Data Analysis</span>
+            <span class="sm-tl-trigger-arrow">&#9662;</span>
+          </button>
+          <div class="sm-tl-panel" aria-hidden="true"><div class="sm-tl-panel-inner"><p class="sm-tl-panel-text">Parsing IRS 990s to surface the gap between stated mission and actual conservation expenditure.</p></div></div>
         </div>
 
+        <div class="sm-tl-node">
+          <button class="sm-tl-trigger" aria-expanded="false">
+            <span class="sm-tl-trigger-label">Behavioral Design</span>
+            <span class="sm-tl-trigger-arrow">&#9662;</span>
+          </button>
+          <div class="sm-tl-panel" aria-hidden="true"><div class="sm-tl-panel-inner"><p class="sm-tl-panel-text">Designing intentional friction where ethical tension becomes a feature that deepens trust rather than degrading it.</p></div></div>
+        </div>
+
+        <div class="sm-tl-node">
+          <button class="sm-tl-trigger" aria-expanded="false">
+            <span class="sm-tl-trigger-label">Service Design</span>
+            <span class="sm-tl-trigger-arrow">&#9662;</span>
+          </button>
+          <div class="sm-tl-panel" aria-hidden="true"><div class="sm-tl-panel-inner"><p class="sm-tl-panel-text">End-to-end experience architecture across physical zoo encounters and digital transparency tools.</p></div></div>
+        </div>
+
+        <div class="sm-tl-node">
+          <button class="sm-tl-trigger" aria-expanded="false">
+            <span class="sm-tl-trigger-label">Horizon Strategy</span>
+            <span class="sm-tl-trigger-arrow">&#9662;</span>
+          </button>
+          <div class="sm-tl-panel" aria-hidden="true"><div class="sm-tl-panel-inner"><p class="sm-tl-panel-text">Now/New/Next horizon framing to position design interventions across immediate, emerging, and speculative futures.</p></div></div>
+        </div>
+
+        <div class="sm-tl-node">
+          <button class="sm-tl-trigger" aria-expanded="false">
+            <span class="sm-tl-trigger-label">Ethical Storytelling</span>
+            <span class="sm-tl-trigger-arrow">&#9662;</span>
+          </button>
+          <div class="sm-tl-panel" aria-hidden="true"><div class="sm-tl-panel-inner"><p class="sm-tl-panel-text">Narratives built to hold moral complexity, where the story doesn't flinch from what's uncomfortable.</p></div></div>
+        </div>
+
+        <div class="sm-tl-node">
+          <button class="sm-tl-trigger" aria-expanded="false">
+            <span class="sm-tl-trigger-label">Interaction Systems</span>
+            <span class="sm-tl-trigger-arrow">&#9662;</span>
+          </button>
+          <div class="sm-tl-panel" aria-hidden="true"><div class="sm-tl-panel-inner"><p class="sm-tl-panel-text">Interactive HTML/JS tools that turn public financial data into something impossible to misread.</p></div></div>
+        </div>
       </div>
+
+      <div class="sm-timeline">
+        <div class="sm-tl-section"><div class="sm-tl-section-label">Methods &amp; Tools</div></div>
+
+        <div class="sm-tl-node">
+          <button class="sm-tl-trigger" aria-expanded="false">
+            <span class="sm-tl-trigger-label">MAXQDA</span>
+            <span class="sm-tl-trigger-arrow">&#9662;</span>
+          </button>
+          <div class="sm-tl-panel" aria-hidden="true"><div class="sm-tl-panel-inner"><p class="sm-tl-panel-text">Qualitative coding of interview transcripts and field notes, surfacing thematic patterns across 700+ hours of ethnographic observation.</p></div></div>
+        </div>
+
+        <div class="sm-tl-node">
+          <button class="sm-tl-trigger" aria-expanded="false">
+            <span class="sm-tl-trigger-label">SPSS</span>
+            <span class="sm-tl-trigger-arrow">&#9662;</span>
+          </button>
+          <div class="sm-tl-panel" aria-hidden="true"><div class="sm-tl-panel-inner"><p class="sm-tl-panel-text">Statistical analysis of survey data, measuring correlations between emotional dissonance, behavioral readiness, and conservation engagement.</p></div></div>
+        </div>
+
+        <div class="sm-tl-node">
+          <button class="sm-tl-trigger" aria-expanded="false">
+            <span class="sm-tl-trigger-label">Surveys &amp; Quant</span>
+            <span class="sm-tl-trigger-arrow">&#9662;</span>
+          </button>
+          <div class="sm-tl-panel" aria-hidden="true"><div class="sm-tl-panel-inner"><p class="sm-tl-panel-text">Quantitative surveys designed to detect behavioral readiness for ethical friction, not just satisfaction scores.</p></div></div>
+        </div>
+
+        <div class="sm-tl-node">
+          <button class="sm-tl-trigger" aria-expanded="false">
+            <span class="sm-tl-trigger-label">Systems Mapping</span>
+            <span class="sm-tl-trigger-arrow">&#9662;</span>
+          </button>
+          <div class="sm-tl-panel" aria-hidden="true"><div class="sm-tl-panel-inner"><p class="sm-tl-panel-text">Causal loop diagrams and revenue flow maps to trace where institutional money actually moves vs. where it's claimed to move.</p></div></div>
+        </div>
+
+        <div class="sm-tl-node">
+          <button class="sm-tl-trigger" aria-expanded="false">
+            <span class="sm-tl-trigger-label">Video Narrative</span>
+            <span class="sm-tl-trigger-arrow">&#9662;</span>
+          </button>
+          <div class="sm-tl-panel" aria-hidden="true"><div class="sm-tl-panel-inner"><p class="sm-tl-panel-text">Short-form research films that communicate complex findings without institutional distance or academic abstraction.</p></div></div>
+        </div>
+
+        <div class="sm-tl-node">
+          <button class="sm-tl-trigger" aria-expanded="false">
+            <span class="sm-tl-trigger-label">Field Observation</span>
+            <span class="sm-tl-trigger-arrow">&#9662;</span>
+          </button>
+          <div class="sm-tl-panel" aria-hidden="true"><div class="sm-tl-panel-inner"><p class="sm-tl-panel-text">Over 700 hours across 9 AZA-accredited zoos, documenting visitor behavior, signage gaps, and the distance between institutional narrative and lived experience.</p></div></div>
+        </div>
+
+        <div class="sm-tl-node">
+          <button class="sm-tl-trigger" aria-expanded="false">
+            <span class="sm-tl-trigger-label">Financial Forensics</span>
+            <span class="sm-tl-trigger-arrow">&#9662;</span>
+          </button>
+          <div class="sm-tl-panel" aria-hidden="true"><div class="sm-tl-panel-inner"><p class="sm-tl-panel-text">IRS 990 Schedule I and F data analysis across 114 AZA institutions via ProPublica's Nonprofit Explorer, mapping the gap between stated mission and actual conservation spending.</p></div></div>
+        </div>
+
+        <div class="sm-tl-node">
+          <button class="sm-tl-trigger" aria-expanded="false">
+            <span class="sm-tl-trigger-label">Framework Design</span>
+            <span class="sm-tl-trigger-arrow">&#9662;</span>
+          </button>
+          <div class="sm-tl-panel" aria-hidden="true"><div class="sm-tl-panel-inner"><p class="sm-tl-panel-text">The SIGNS framework, a custom diagnostic tool built from hundreds of observation hours to identify the five friction points where meaning slips and design can bring it back.</p></div></div>
+        </div>
+      </div>
+
     </div>
   </div>
 </section>
@@ -1342,29 +1449,11 @@ body.visible { opacity: 1; }
 ══════════════════════════════════════ -->
 <section class="cs-section alt reveal" aria-label="The Challenge">
   <div class="section-inner">
-    <div class="two-col">
-      <div>
-        <div class="section-label">The Challenge</div>
-        <h2 class="section-heading">The Trust Gap</h2>
-        <p class="section-body">Gen Z is the most environmentally aware generation in history — and the least convinced that institutions are doing anything real about it. Zoos market themselves as conservation organizations, but for a generation raised on transparency, the gap between the narrative and the receipts is hard to ignore.</p>
-        <div class="section-divider"></div>
-        <p class="section-body">This project asked: what would it take to make a zoo genuinely credible — not just legible — to the people who already know how to spot greenwashing?</p>
-      </div>
-      <div class="brief-meta">
-        <div>
-          <div class="meta-item-label">Methods</div>
-          <div class="meta-item-value">Data Analysis · Systems Mapping · UX Research · Behavioral Design</div>
-        </div>
-        <div>
-          <div class="meta-item-label">Context</div>
-          <div class="meta-item-value">Dallas Zoo · Rewilded</div>
-        </div>
-        <div>
-          <div class="meta-item-label">Skills</div>
-          <div class="meta-item-value">Systems Thinking · Service Design · Strategic Innovation · Storytelling</div>
-        </div>
-      </div>
-    </div>
+    <div class="section-label">The Challenge</div>
+    <h2 class="section-heading">The Trust Gap</h2>
+    <p class="section-body">Gen Z is the most environmentally aware generation in history, and the least convinced that institutions are doing anything real about it. Zoos market themselves as conservation organizations, but for a generation raised on transparency, the gap between the narrative and the receipts is hard to&nbsp;ignore.</p>
+    <div class="section-divider"></div>
+    <p class="section-body">This project asked: what would it take to make a zoo genuinely credible, not just legible, to the people who already know how to spot&nbsp;greenwashing?</p>
   </div>
 </section>
 
@@ -1375,7 +1464,7 @@ body.visible { opacity: 1; }
   <div class="section-inner">
     <div class="section-label">Research Signals</div>
     <h2 class="section-heading">What the data kept saying</h2>
-    <p class="section-body">Four signals emerged across the research — not as findings to present, but as design constraints to work inside of.</p>
+    <p class="section-body">Four signals emerged across the research. Not as findings to present, but as design constraints to work inside&nbsp;of.</p>
 
     <div class="insight-grid">
 
@@ -1438,7 +1527,7 @@ body.visible { opacity: 1; }
           <span class="insight-chev" aria-hidden="true"></span>
         </summary>
         <div class="insight-body">
-          <p>Boutique experiences — sunrise yoga, sound baths, zero-waste concessions — create higher willingness to pay, stronger emotional alignment, and transparent conservation pathways.</p>
+          <p>Boutique experiences (sunrise yoga, sound baths, zero-waste concessions) create higher willingness to pay, stronger emotional alignment, and transparent conservation pathways.</p>
           <p class="insight-implication"><strong>Implication:</strong> Conservation credibility can become a revenue advantage.</p>
         </div>
       </details>
@@ -1454,7 +1543,7 @@ body.visible { opacity: 1; }
   <div class="section-inner">
     <div class="section-label">Research Framework</div>
     <h2 class="section-heading">A Now, New, Next look</h2>
-    <p class="section-body">The research was structured across three horizons — where we are, what's emerging, and where this could go. Each horizon shaped what kinds of interventions were worth designing.</p>
+    <p class="section-body">The research was structured across three horizons: where we are, what's emerging, and where this could go. Each horizon shaped what kinds of interventions were worth designing.</p>
 
     <div class="horizon-row">
       <div class="horizon-card">
@@ -1465,7 +1554,7 @@ body.visible { opacity: 1; }
       <div class="horizon-card">
         <div class="horizon-label">New</div>
         <h3 class="horizon-heading">What's emerging</h3>
-        <p class="horizon-body">Conservation funding data is public — 990s, IRS filings, mission statements. But it's never been made legible to the people asking the questions.</p>
+        <p class="horizon-body">Conservation funding data is public: 990s, IRS filings, mission statements. But it's never been made legible to the people asking the&nbsp;questions.</p>
       </div>
       <div class="horizon-card">
         <div class="horizon-label">Next</div>
@@ -1511,13 +1600,13 @@ body.visible { opacity: 1; }
       <div class="video-card"
         data-vid="AR1gRdaK6x4"
         data-title="Gen Z and the Zoo"
-        data-desc="'The Trust Gap' — how the generation raised on awareness sees through spectacle, and what it would take to earn their belief."
+        data-desc="'The Trust Gap': how the generation raised on awareness sees through spectacle, and what it would take to earn their belief."
         data-pdf=""
         data-tool="">
         <img class="video-card-thumb" src="https://amberuxd.wordpress.com/wp-content/uploads/2026/02/now.png" alt="Gen Z and the Zoo">
         <div class="video-card-body">
           <div class="video-card-title">Gen Z and the Zoo</div>
-          <div class="video-card-desc">"The Trust Gap" — how the generation raised on awareness sees through spectacle.</div>
+          <div class="video-card-desc">"The Trust Gap": how the generation raised on awareness sees through spectacle.</div>
           <div class="video-card-footer">
             <span class="video-card-time">1 min</span>
             <div class="video-card-tags">
@@ -1574,7 +1663,7 @@ body.visible { opacity: 1; }
         <img class="video-card-thumb" src="https://amberuxd.wordpress.com/wp-content/uploads/2025/11/resesarch-video-thumbnail.jpeg" alt="Designing with Dissonance">
         <div class="video-card-body">
           <div class="video-card-title">Designing with Dissonance</div>
-          <div class="video-card-desc">When discomfort becomes data. Surveys reveal how emotional tension can predict readiness for change.</div>
+          <div class="video-card-desc">When discomfort becomes data. Surveys reveal how emotional tension can predict readiness for&nbsp;change.</div>
           <div class="video-card-footer">
             <span class="video-card-time">5 min</span>
             <div class="video-card-tags">
@@ -1594,7 +1683,7 @@ body.visible { opacity: 1; }
         <img class="video-card-thumb" src="https://amberuxd.wordpress.com/wp-content/uploads/2025/12/13-copythe-next-visit-designing-for-a-generation-losing-faith-in-zoos.-23-image-9.png" alt="The World Wide Zoo Economy">
         <div class="video-card-body">
           <div class="video-card-title">The World Wide Zoo Economy</div>
-          <div class="video-card-desc">How the money comes in and where it goes. What following the money tells us about purpose.</div>
+          <div class="video-card-desc">How the money comes in and where it goes. What following the money tells us about&nbsp;purpose.</div>
           <div class="video-card-footer">
             <span class="video-card-time">3 min</span>
             <div class="video-card-tags">
@@ -1614,7 +1703,7 @@ body.visible { opacity: 1; }
         <img class="video-card-thumb" src="https://amberuxd.wordpress.com/wp-content/uploads/2025/12/13-copythe-next-visit-designing-for-a-generation-losing-faith-in-zoos.-23-image-10.png" alt="The Greenwashing Index">
         <div class="video-card-body">
           <div class="video-card-title">The Greenwashing Index</div>
-          <div class="video-card-desc">Diving into 990s to find the gap between what zoos say in mission statements and what they fund.</div>
+          <div class="video-card-desc">Diving into 990s to find the gap between what zoos say in mission statements and what they&nbsp;fund.</div>
           <div class="video-card-footer">
             <span class="video-card-time">2 min</span>
             <div class="video-card-tags">
@@ -1634,7 +1723,7 @@ body.visible { opacity: 1; }
         <img class="video-card-thumb" src="https://amberuxd.wordpress.com/wp-content/uploads/2025/12/signs-thumbnail.png" alt="S.I.G.N.S.">
         <div class="video-card-body">
           <div class="video-card-title">S.I.G.N.S.</div>
-          <div class="video-card-desc">Introducing a new standard of human interaction, designed to inspire empathy and conservation.</div>
+          <div class="video-card-desc">Introducing a new standard of human interaction, designed to inspire empathy and&nbsp;conservation.</div>
           <div class="video-card-footer">
             <span class="video-card-time">4 min</span>
             <div class="video-card-tags">
@@ -1653,7 +1742,7 @@ body.visible { opacity: 1; }
         <img class="video-card-thumb" src="https://amberuxd.wordpress.com/wp-content/uploads/2025/12/stories-that-stay_thumbnail.png" alt="Stories that Stay">
         <div class="video-card-body">
           <div class="video-card-title">Stories that Stay</div>
-          <div class="video-card-desc">Emotional storytelling that turns everyday zoo moments into lasting real-world conservation action.</div>
+          <div class="video-card-desc">Emotional storytelling that turns everyday zoo moments into lasting real-world conservation&nbsp;action.</div>
           <div class="video-card-footer">
             <span class="video-card-time">2 min</span>
             <div class="video-card-tags">
@@ -1672,7 +1761,7 @@ body.visible { opacity: 1; }
         <img class="video-card-thumb" src="https://amberuxd.wordpress.com/wp-content/uploads/2025/12/green-eats-thumbnail.png" alt="Green Eats">
         <div class="video-card-body">
           <div class="video-card-title">Green Eats</div>
-          <div class="video-card-desc">Environmentally friendly snacks that transform concessions into meaningful conservation opportunities.</div>
+          <div class="video-card-desc">Environmentally friendly snacks that transform concessions into meaningful conservation&nbsp;opportunities.</div>
           <div class="video-card-footer">
             <span class="video-card-time">1.5 min</span>
             <div class="video-card-tags">
@@ -1685,7 +1774,7 @@ body.visible { opacity: 1; }
       <div class="video-card video-card-featured"
         data-vid="o07THA1P4L0"
         data-title="The Full Story"
-        data-desc="A complete, end-to-end arc. From the trust gap to prototypes to the future model — the whole argument in one place."
+        data-desc="A complete, end-to-end arc. From the trust gap to prototypes to the future model. The whole argument in one place."
         data-pdf=""
         data-tool="">
         <img class="video-card-thumb" src="A Images/The Full Story .webp" alt="The Full Story">
@@ -1734,9 +1823,9 @@ body.visible { opacity: 1; }
   <div class="section-inner">
     <div class="section-label">Design Framework</div>
     <h2 class="section-heading">The SIGNS Framework</h2>
-    <p class="section-body">In Plato's allegory of the cave, people believed shadows were real because no one had ever guided them outside. Zoo visitors face the same problem. They're smart, compassionate, and curious — but most of what they see is only the surface of an animal's life. A shadow on a wall. A moment without meaning. A behavior without interpretation. And without guidance, the mind fills in the rest.</p>
+    <p class="section-body">In Plato's allegory of the cave, people believed shadows were real because no one had ever guided them outside. Zoo visitors face the same problem. They're smart, compassionate, and curious, but most of what they see is only the surface of an animal's life. A shadow on a wall. A moment without meaning. A behavior without interpretation. And without guidance, the mind fills in the rest.</p>
     <div class="section-divider"></div>
-    <p class="section-body">Across hundreds of observation hours, the same five friction points kept appearing. I call them the SIGNS — five signals where meaning slips, and where design can bring it back.</p>
+    <p class="section-body">Across hundreds of observation hours, the same five friction points kept appearing. I call them the SIGNS: five signals where meaning slips, and where design can bring it back.</p>
 
     <div class="signs-signals">
       <div class="signs-signal-item">
@@ -1781,7 +1870,7 @@ body.visible { opacity: 1; }
   <div class="section-inner">
     <div class="section-label">The Artifact</div>
     <h2 class="section-heading">Following the money</h2>
-    <p class="section-body">The Zoo Economy tool makes public financial data navigable — mapping how revenue flows in and where it goes, and surfacing the gap between what institutions say they fund and what the 990s show they actually fund.</p>
+    <p class="section-body">The Zoo Economy tool makes public financial data navigable, mapping how revenue flows in and where it goes, and surfacing the gap between what institutions say they fund and what the 990s show they actually fund.</p>
     <div class="section-divider"></div>
     <p class="section-body" style="margin-bottom: 36px;">The data is already public. The tool just makes it impossible to ignore.</p>
 
@@ -1804,12 +1893,12 @@ body.visible { opacity: 1; }
 
     <div class="gwi-intro-row">
       <div>
-        <p class="section-body">The GWI is built from IRS Form 990 Schedule I and F data — domestic and international conservation grants — pulled from ProPublica's Nonprofit Explorer across 114 AZA-accredited institutions. Every number here is public record. The tool just makes it impossible to look&nbsp;away.</p>
+        <p class="section-body">The GWI is built from IRS Form 990 Schedule I and F data, domestic and international conservation grants, pulled from ProPublica's Nonprofit Explorer across 114 AZA-accredited institutions. Every number here is public record. The tool just makes it impossible to look&nbsp;away.</p>
         <div class="section-divider"></div>
-        <p class="section-body">Mission score measures how prominently conservation language appears in a zoo's stated purpose. Action score measures the percentage of revenue that actually goes to conservation grants. The gap between them — the GWI — is the distance between what an institution says it is and what it funds.</p>
+        <p class="section-body">Mission score measures how prominently conservation language appears in a zoo's stated purpose. Action score measures the percentage of revenue that actually goes to conservation grants. The gap between them, the GWI, is the distance between what an institution says it is and what it&nbsp;funds.</p>
       </div>
       <div>
-        <p class="section-body" style="font-size: 13.5px; line-height: 1.95; color: rgba(200,185,165,0.5); margin-bottom: 0;">A negative GWI means a zoo is giving more than its mission language would predict — an overperformer. Zero means aligned. Positive means the rhetoric exceeds the receipts. The tool surfaces that signal across every institution in the dataset, sortable by score, filterable by behavior.</p>
+        <p class="section-body" style="font-size: 13.5px; line-height: 1.95; color: rgba(200,185,165,0.5); margin-bottom: 0;">A negative GWI means a zoo is giving more than its mission language would predict, an overperformer. Zero means aligned. Positive means the rhetoric exceeds the receipts. The tool surfaces that signal across every institution in the dataset, sortable by score, filterable by behavior.</p>
         <div class="gwi-stat-row">
           <div class="gwi-stat">
             <div class="gwi-stat-num">114</div>
@@ -1838,9 +1927,13 @@ body.visible { opacity: 1; }
 <!-- ══════════════════════════════════════
      REFLECTION
 ══════════════════════════════════════ -->
-<section class="reflection-wrap reveal" aria-label="Reflection">
-  <div class="reflection-label">What I Wanted to Show</div>
-  <p class="reflection-quote">Conservation funding is easier to announce than to trace.</p>
+<section class="reflection-wrap" aria-label="Reflection">
+  <div class="reflection-fireflies" id="reflectionFireflies" aria-hidden="true"></div>
+  <div class="reflection-inner reveal">
+    <p class="reflection-label">Reflection</p>
+    <p class="reflection-quote">"We protect only what we love, we love only what we understand, and we understand only what we are&nbsp;taught."</p>
+    <p class="reflection-attr">Baba Dioum, conservationist</p>
+  </div>
 </section>
 
 </main>
@@ -1848,54 +1941,57 @@ body.visible { opacity: 1; }
 <script>
 'use strict';
 
+/* ── SKILLS & METHODS TIMELINE ── */
+(function() {
+  var nodes = document.querySelectorAll('.sm-tl-node');
+  nodes.forEach(function(node) {
+    var trigger = node.querySelector('.sm-tl-trigger');
+    var panel = node.querySelector('.sm-tl-panel');
+    trigger.addEventListener('click', function() {
+      var isOpen = node.classList.contains('open');
+      nodes.forEach(function(n) {
+        if (n !== node && n.classList.contains('open')) {
+          n.classList.remove('open');
+          n.querySelector('.sm-tl-trigger').setAttribute('aria-expanded', 'false');
+          n.querySelector('.sm-tl-panel').setAttribute('aria-hidden', 'true');
+        }
+      });
+      if (isOpen) {
+        node.classList.remove('open');
+        trigger.setAttribute('aria-expanded', 'false');
+        panel.setAttribute('aria-hidden', 'true');
+      } else {
+        node.classList.add('open');
+        trigger.setAttribute('aria-expanded', 'true');
+        panel.setAttribute('aria-hidden', 'false');
+      }
+    });
+  });
+})();
+
+// Reflection fireflies
+(function() {
+  var c = document.getElementById('reflectionFireflies');
+  if (!c) return;
+  for (var i = 0; i < 28; i++) {
+    var f = document.createElement('div');
+    f.className = 'reflection-firefly';
+    var size = 2 + Math.random() * 3.5;
+    f.style.width = f.style.height = size + 'px';
+    f.style.left = Math.random() * 100 + '%';
+    f.style.bottom = '-4px';
+    f.style.animationDuration = (14 + Math.random() * 22) + 's';
+    f.style.animationDelay = (Math.random() * 18) + 's';
+    c.appendChild(f);
+  }
+})();
+
 function navigateTo(url) {
   const exit = document.getElementById('page-exit');
   exit.classList.add('active');
   setTimeout(() => { window.location.href = url; }, 320);
 }
 
-/* ── CHIP CURSOR GLOW ── */
-(function() {
-  const outer = document.querySelector('.proj-meta-outer');
-  if (!outer) return;
-  outer.addEventListener('mousemove', function(e) {
-    const rect = outer.getBoundingClientRect();
-    const x = ((e.clientX - rect.left) / rect.width * 100).toFixed(1);
-    const y = ((e.clientY - rect.top)  / rect.height * 100).toFixed(1);
-    outer.style.setProperty('--mx', x + '%');
-    outer.style.setProperty('--my', y + '%');
-  });
-})();
-
-/* ── CHIP INTERACTIONS ── */
-document.querySelectorAll('.chip-btn').forEach(btn => {
-  const group  = btn.dataset.group;
-  const detail = btn.dataset.detail;
-  const target = document.getElementById(group + '-detail');
-  if (!target) return;
-
-  const defaultText = group === 'skill' ? 'Hover a skill to explore it.' : 'Hover a method to explore it.';
-
-  btn.addEventListener('mouseenter', () => {
-    document.querySelectorAll('.chip-btn[data-group="' + group + '"]').forEach(b => b.classList.remove('active'));
-    btn.classList.add('active');
-    target.textContent = detail;
-    target.classList.add('has-value');
-  });
-  btn.addEventListener('focus', () => {
-    target.textContent = detail;
-    target.classList.add('has-value');
-  });
-  btn.addEventListener('mouseleave', () => {
-    btn.classList.remove('active');
-    target.textContent = defaultText;
-    target.classList.remove('has-value');
-  });
-  btn.addEventListener('blur', () => {
-    target.textContent = defaultText;
-    target.classList.remove('has-value');
-  });
-});
 
 /* ── THUMB WRAPPING ── */
 document.querySelectorAll('.video-card-thumb').forEach(img => {

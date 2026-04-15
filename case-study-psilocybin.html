@@ -711,8 +711,96 @@ body {
   html { scroll-behavior: auto; }
 }
 
+/* ── SKILLS & METHODS (Timeline) ── */
+.sm-columns {
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: 0 48px; width: 100%; max-width: 960px;
+  margin: 48px auto 0; align-items: start;
+}
+.sm-timeline { position: relative; width: 100%; }
+.sm-timeline::before {
+  content: ''; position: absolute;
+  left: 14px; top: 0; bottom: 0; width: 1px;
+  background: linear-gradient(180deg, transparent 0%, rgba(155,109,255,0.2) 4%, rgba(155,109,255,0.2) 96%, transparent 100%);
+}
+.sm-tl-section { position: relative; padding-left: 44px; margin-bottom: 8px; }
+.sm-tl-section-label {
+  font-size: 9px; font-weight: 500; letter-spacing: 0.28em; text-transform: uppercase;
+  color: rgba(155,109,255,0.72); padding: 12px 0;
+  display: flex; align-items: center; gap: 12px;
+}
+.sm-tl-section-label::after {
+  content: ''; flex: 1; height: 1px;
+  background: linear-gradient(90deg, rgba(155,109,255,0.15) 0%, transparent 100%);
+}
+.sm-tl-section::before {
+  content: ''; position: absolute;
+  left: 10px; top: 16px; width: 9px; height: 9px;
+  border-radius: 50%; background: var(--accent);
+  box-shadow: 0 0 12px rgba(155,109,255,0.4); z-index: 2;
+}
+.sm-tl-node { position: relative; padding-left: 44px; margin-bottom: 4px; }
+.sm-tl-node::before {
+  content: ''; position: absolute;
+  left: 12px; top: 18px; width: 5px; height: 5px;
+  border-radius: 50%; background: rgba(155,109,255,0.35);
+  transition: background 0.25s, box-shadow 0.25s; z-index: 2;
+}
+.sm-tl-node.open::before { background: var(--accent-bright); box-shadow: 0 0 10px rgba(196,168,255,0.3); }
+.sm-tl-node::after {
+  content: ''; position: absolute;
+  left: 17px; top: 20px; width: 27px; height: 1px;
+  background: rgba(155,109,255,0.12); transition: background 0.25s;
+}
+.sm-tl-node.open::after { background: rgba(155,109,255,0.3); }
+.sm-tl-trigger {
+  display: flex; align-items: center; gap: 10px; width: 100%;
+  background: rgba(155,109,255,0.04); border: 1px solid rgba(155,109,255,0.12);
+  border-radius: 12px; padding: 12px 18px; cursor: pointer;
+  font-family: inherit; color: inherit; text-align: left;
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.sm-tl-trigger:hover { background: rgba(155,109,255,0.08); border-color: rgba(155,109,255,0.25); }
+.sm-tl-node.open .sm-tl-trigger {
+  background: rgba(155,109,255,0.1); border-color: rgba(155,109,255,0.3);
+  border-bottom-left-radius: 0; border-bottom-right-radius: 0; border-bottom-color: transparent;
+}
+.sm-tl-trigger-label {
+  flex: 1; font-size: 13px; font-weight: 400; letter-spacing: 0.03em;
+  color: rgba(155,109,255,0.7); transition: color 0.25s;
+}
+.sm-tl-node.open .sm-tl-trigger-label,
+.sm-tl-trigger:hover .sm-tl-trigger-label { color: rgba(196,168,255,0.95); }
+.sm-tl-trigger-arrow {
+  font-size: 10px; color: rgba(155,109,255,0.3);
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), color 0.25s; flex-shrink: 0;
+}
+.sm-tl-node.open .sm-tl-trigger-arrow { transform: rotate(180deg); color: rgba(155,109,255,0.6); }
+.sm-tl-panel { overflow: hidden; max-height: 0; transition: max-height 0.35s cubic-bezier(0.4, 0, 0.2, 1); }
+.sm-tl-node.open .sm-tl-panel { max-height: 200px; }
+.sm-tl-panel-inner {
+  background: rgba(155,109,255,0.06); border: 1px solid rgba(155,109,255,0.3);
+  border-top: none; border-radius: 0 0 12px 12px; padding: 18px 20px;
+  opacity: 0; transform: translateY(-6px);
+  transition: opacity 0.25s ease 0.06s, transform 0.25s ease 0.06s;
+}
+.sm-tl-node.open .sm-tl-panel-inner { opacity: 1; transform: translateY(0); }
+.sm-tl-panel-text {
+  font-size: 12.5px; font-weight: 300; letter-spacing: 0.03em;
+  line-height: 1.6; color: rgba(196,168,255,0.75); font-style: italic;
+}
+.sm-tl-trigger:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 12px; }
+[data-theme="light"] .sm-tl-trigger { background: rgba(100,60,180,0.03); border-color: rgba(100,60,180,0.12); }
+[data-theme="light"] .sm-tl-trigger:hover { background: rgba(100,60,180,0.06); border-color: rgba(100,60,180,0.22); }
+[data-theme="light"] .sm-tl-trigger-label { color: rgba(100,60,180,0.6); }
+[data-theme="light"] .sm-tl-node.open .sm-tl-trigger-label,
+[data-theme="light"] .sm-tl-trigger:hover .sm-tl-trigger-label { color: #6a3cb4; }
+[data-theme="light"] .sm-tl-panel-inner { background: rgba(100,60,180,0.03); border-color: rgba(100,60,180,0.2); }
+[data-theme="light"] .sm-tl-panel-text { color: rgba(42,30,60,0.65); }
+
 /* ── MOBILE ── */
 @media (max-width: 860px) {
+  .sm-columns { grid-template-columns: 1fr; gap: 12px 0; }
   .framework-grid { grid-template-columns: 1fr; }
   .wil-grid { grid-template-columns: 1fr; gap: 12px; }
   .stat-row { grid-template-columns: 1fr; }
@@ -733,6 +821,10 @@ body {
   /* Touch targets — minimum 44px */
   .chip-btn { min-height: 44px; display: inline-flex; align-items: center; padding: 10px 16px; }
   .nav-back { min-height: 44px; padding: 10px 18px 10px 14px; }
+  .sm-tl-trigger { padding: 10px 14px; }
+  .sm-tl-trigger-label { font-size: 12px; }
+  .sm-tl-panel-inner { padding: 14px 16px; }
+  .sm-tl-panel-text { font-size: 12px; }
 }
 @media (max-width: 480px) {
   .chip-group + .chip-group { border-top-color: var(--accent-border); }
@@ -765,7 +857,7 @@ body {
 
 <!-- ── HERO ── -->
 <section class="hero" aria-label="Hero">
-  <div class="hero-eyebrow">Psilocybin as System · Case Study</div>
+  <div class="hero-eyebrow">Systems Thinking · Speculative Design · UX Research</div>
   <h1>Psilocybin<br>as System</h1>
   <p class="hero-subtitle">What if altered states of consciousness could reveal the hidden architecture of creativity?</p>
   <div class="hero-meta" role="list">
@@ -774,20 +866,20 @@ body {
       <span class="hero-meta-value">UX Researcher · Observational Lead</span>
     </div>
     <div class="hero-meta-item" role="listitem">
+      <span class="hero-meta-label">Year</span>
+      <span class="hero-meta-value">2022</span>
+    </div>
+    <div class="hero-meta-item" role="listitem">
+      <span class="hero-meta-label">Type</span>
+      <span class="hero-meta-value">Qualitative Research · Systems Mapping</span>
+    </div>
+    <div class="hero-meta-item" role="listitem">
       <span class="hero-meta-label">Team</span>
       <span class="hero-meta-value">Solo</span>
     </div>
     <div class="hero-meta-item" role="listitem">
       <span class="hero-meta-label">Context</span>
       <span class="hero-meta-value">Academic · Professor Approved</span>
-    </div>
-    <div class="hero-meta-item" role="listitem">
-      <span class="hero-meta-label">Focus</span>
-      <span class="hero-meta-value">Creativity · Altered States · Systems</span>
-    </div>
-    <div class="hero-meta-item" role="listitem">
-      <span class="hero-meta-label">Year</span>
-      <span class="hero-meta-value">2022</span>
     </div>
   </div>
 </section>
@@ -805,31 +897,49 @@ body {
       <p class="thesis-attr">Psilocybin as System · Core Inquiry</p>
     </div>
 
-    <!-- skills / tools chip panel -->
-    <div class="proj-meta-outer reveal" id="chipOuter">
-      <div class="chip-panel">
-        <div class="chip-group">
-          <div class="chip-group-label" id="skills-label">Skills</div>
-          <div class="chip-row" role="group" aria-labelledby="skills-label">
-            <span class="chip-btn" tabindex="0" data-detail="Observational study design · Ethnographic observation · Qualitative analysis · Behavioral documentation">Observational Research</span>
-            <span class="chip-btn" tabindex="0" data-detail="Ritual space analysis · Creative flow mapping · Altered state dynamics · Feedback loop identification">Systems Thinking</span>
-            <span class="chip-btn" tabindex="0" data-detail="Image synthesis · Compositional merging · Intuitive interpretation · Visual narrative construction">Visual Synthesis</span>
-            <span class="chip-btn" tabindex="0" data-detail="Non-directive facilitation · Environmental design · Creative material selection · Participant safety">Facilitation Design</span>
-            <span class="chip-btn" tabindex="0" data-detail="Psychedelic research context · Creative cognition · Altered states literature · Ethical research framing">Academic Research</span>
-          </div>
+    <!-- skills / methods timeline -->
+    <div class="sm-columns reveal">
+      <div class="sm-timeline">
+        <div class="sm-tl-section"><div class="sm-tl-section-label">Skills</div></div>
+        <div class="sm-tl-node">
+          <button class="sm-tl-trigger" aria-expanded="false"><span class="sm-tl-trigger-label">Observational Research</span><span class="sm-tl-trigger-arrow">&#9662;</span></button>
+          <div class="sm-tl-panel" aria-hidden="true"><div class="sm-tl-panel-inner"><p class="sm-tl-panel-text">Designing and conducting an observational study of creative behavior under altered states, documenting behavioral shifts, emotional responses, and spontaneous expression in real time.</p></div></div>
         </div>
-        <div class="chip-group">
-          <div class="chip-group-label" id="tools-label">Tools</div>
-          <div class="chip-row" role="group" aria-labelledby="tools-label">
-            <span class="chip-btn" tabindex="0" data-detail="Field journals · Audio documentation · Photographic documentation · Observational protocols">Research & Documentation</span>
-            <span class="chip-btn" tabindex="0" data-detail="Markers · Paper · Paint · Mixed media — provided for spontaneous artistic expression">Creative Materials</span>
-            <span class="chip-btn" tabindex="0" data-detail="Photoshop · Illustrator · Mixed media painting · Image compositing">Design & Synthesis</span>
-            <span class="chip-btn" tabindex="0" data-detail="Academic databases · Peer-reviewed psychedelic research · Creative cognition literature">Literature & Context</span>
-          </div>
+        <div class="sm-tl-node">
+          <button class="sm-tl-trigger" aria-expanded="false"><span class="sm-tl-trigger-label">Creative Systems Mapping</span><span class="sm-tl-trigger-arrow">&#9662;</span></button>
+          <div class="sm-tl-panel" aria-hidden="true"><div class="sm-tl-panel-inner"><p class="sm-tl-panel-text">Mapping creativity not as a linear process but as a dynamic system with feedback loops, ritual structures, and emergent properties that mirror biological and cognitive patterns.</p></div></div>
+        </div>
+        <div class="sm-tl-node">
+          <button class="sm-tl-trigger" aria-expanded="false"><span class="sm-tl-trigger-label">Visual Synthesis</span><span class="sm-tl-trigger-arrow">&#9662;</span></button>
+          <div class="sm-tl-panel" aria-hidden="true"><div class="sm-tl-panel-inner"><p class="sm-tl-panel-text">Merging individual participant artworks into a single composite image, translating many voices into one visual narrative that represents collective creative emergence.</p></div></div>
+        </div>
+        <div class="sm-tl-node">
+          <button class="sm-tl-trigger" aria-expanded="false"><span class="sm-tl-trigger-label">Facilitation Design</span><span class="sm-tl-trigger-arrow">&#9662;</span></button>
+          <div class="sm-tl-panel" aria-hidden="true"><div class="sm-tl-panel-inner"><p class="sm-tl-panel-text">Designing the environment, material selection, and non-directive facilitation approach to support authentic creative expression without introducing researcher bias.</p></div></div>
         </div>
       </div>
-      <div class="chip-detail-wrap">
-        <div class="chip-detail" id="chipDetail" aria-live="polite">Hover a chip to see what it means in this project.</div>
+      <div class="sm-timeline">
+        <div class="sm-tl-section"><div class="sm-tl-section-label">Methods</div></div>
+        <div class="sm-tl-node">
+          <button class="sm-tl-trigger" aria-expanded="false"><span class="sm-tl-trigger-label">Ethnographic Observation</span><span class="sm-tl-trigger-arrow">&#9662;</span></button>
+          <div class="sm-tl-panel" aria-hidden="true"><div class="sm-tl-panel-inner"><p class="sm-tl-panel-text">Embedded observation during creative sessions, documenting behavioral patterns, emotional shifts, and creative breakthroughs as they happened in real time.</p></div></div>
+        </div>
+        <div class="sm-tl-node">
+          <button class="sm-tl-trigger" aria-expanded="false"><span class="sm-tl-trigger-label">Ritual Space Analysis</span><span class="sm-tl-trigger-arrow">&#9662;</span></button>
+          <div class="sm-tl-panel" aria-hidden="true"><div class="sm-tl-panel-inner"><p class="sm-tl-panel-text">Analyzing how the physical and social environment shaped creative output, from material placement to group dynamics and temporal flow.</p></div></div>
+        </div>
+        <div class="sm-tl-node">
+          <button class="sm-tl-trigger" aria-expanded="false"><span class="sm-tl-trigger-label">Image Compositing</span><span class="sm-tl-trigger-arrow">&#9662;</span></button>
+          <div class="sm-tl-panel" aria-hidden="true"><div class="sm-tl-panel-inner"><p class="sm-tl-panel-text">Using Photoshop and Illustrator to layer and merge individual artworks into a single synthesized composition that captures the collective creative voice.</p></div></div>
+        </div>
+        <div class="sm-tl-node">
+          <button class="sm-tl-trigger" aria-expanded="false"><span class="sm-tl-trigger-label">Qualitative Analysis</span><span class="sm-tl-trigger-arrow">&#9662;</span></button>
+          <div class="sm-tl-panel" aria-hidden="true"><div class="sm-tl-panel-inner"><p class="sm-tl-panel-text">Coding observational notes and participant behaviors into thematic categories to identify patterns in creative flow, inhibition release, and collaborative emergence.</p></div></div>
+        </div>
+        <div class="sm-tl-node">
+          <button class="sm-tl-trigger" aria-expanded="false"><span class="sm-tl-trigger-label">Literature Review</span><span class="sm-tl-trigger-arrow">&#9662;</span></button>
+          <div class="sm-tl-panel" aria-hidden="true"><div class="sm-tl-panel-inner"><p class="sm-tl-panel-text">Grounding the study in peer-reviewed psychedelic research, creative cognition literature, and ethical research frameworks to ensure academic rigor.</p></div></div>
+        </div>
       </div>
     </div>
 
@@ -995,6 +1105,34 @@ body {
 
 <script>
 'use strict';
+
+// ── SKILLS & METHODS ACCORDION ───────────────────────────────
+(function() {
+  var nodes = document.querySelectorAll('.sm-tl-node');
+  nodes.forEach(function(node) {
+    var trigger = node.querySelector('.sm-tl-trigger');
+    var panel = node.querySelector('.sm-tl-panel');
+    trigger.addEventListener('click', function() {
+      var isOpen = node.classList.contains('open');
+      nodes.forEach(function(n) {
+        if (n !== node && n.classList.contains('open')) {
+          n.classList.remove('open');
+          n.querySelector('.sm-tl-trigger').setAttribute('aria-expanded', 'false');
+          n.querySelector('.sm-tl-panel').setAttribute('aria-hidden', 'true');
+        }
+      });
+      if (isOpen) {
+        node.classList.remove('open');
+        trigger.setAttribute('aria-expanded', 'false');
+        panel.setAttribute('aria-hidden', 'true');
+      } else {
+        node.classList.add('open');
+        trigger.setAttribute('aria-expanded', 'true');
+        panel.setAttribute('aria-hidden', 'false');
+      }
+    });
+  });
+})();
 
 // ── PAGE TRANSITION ──────────────────────────────────────────
 function navigateTo(url) {

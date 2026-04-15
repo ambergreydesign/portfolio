@@ -395,6 +395,107 @@ body.visible { opacity: 1; }
   color: rgba(200, 185, 165, 0.68); letter-spacing: 0.025em;
 }
 
+/* ── SKILLS & METHODS TIMELINE ── */
+.proj-meta-outer {
+  margin-top: 40px;
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: 0 48px; align-items: start;
+}
+.sm-timeline { position: relative; }
+.sm-timeline::before {
+  content: ''; position: absolute; left: 14px; top: 0; bottom: 0; width: 1px;
+  background: linear-gradient(180deg, transparent 0%, rgba(196,122,46,0.2) 4%, rgba(196,122,46,0.2) 96%, transparent 100%);
+}
+.sm-tl-section { position: relative; padding-left: 44px; margin-bottom: 8px; }
+.sm-tl-section-label {
+  font-size: 9px; font-weight: 500; letter-spacing: 0.28em; text-transform: uppercase;
+  color: var(--amber); padding: 12px 0;
+  display: flex; align-items: center; gap: 12px;
+}
+.sm-tl-section-label::after {
+  content: ''; flex: 1; height: 1px;
+  background: linear-gradient(90deg, rgba(196,122,46,0.15) 0%, transparent 100%);
+}
+.sm-tl-section::before {
+  content: ''; position: absolute; left: 10px; top: 16px;
+  width: 9px; height: 9px; border-radius: 50%;
+  background: var(--amber); box-shadow: 0 0 12px rgba(220,162,91,0.4); z-index: 2;
+}
+.sm-tl-node { position: relative; padding-left: 44px; margin-bottom: 4px; }
+.sm-tl-node::before {
+  content: ''; position: absolute; left: 12px; top: 18px;
+  width: 5px; height: 5px; border-radius: 50%;
+  background: rgba(196,122,46,0.35); transition: background 0.25s, box-shadow 0.25s; z-index: 2;
+}
+.sm-tl-node.open::before { background: var(--amber); box-shadow: 0 0 10px rgba(220,162,91,0.3); }
+.sm-tl-node::after {
+  content: ''; position: absolute; left: 17px; top: 20px;
+  width: 27px; height: 1px; background: rgba(196,122,46,0.12); transition: background 0.25s;
+}
+.sm-tl-node.open::after { background: rgba(196,122,46,0.3); }
+.sm-tl-trigger {
+  display: flex; align-items: center; gap: 10px; width: 100%;
+  background: rgba(196,122,46,0.04); border: 1px solid rgba(196,122,46,0.12); border-radius: 12px;
+  padding: 12px 18px; cursor: pointer; font-family: inherit; color: inherit; text-align: left;
+  transition: all 0.25s cubic-bezier(0.4,0,0.2,1);
+}
+.sm-tl-trigger:hover { background: rgba(196,122,46,0.08); border-color: rgba(196,122,46,0.25); }
+.sm-tl-node.open .sm-tl-trigger {
+  background: rgba(196,122,46,0.1); border-color: rgba(196,122,46,0.3);
+  border-bottom-left-radius: 0; border-bottom-right-radius: 0; border-bottom-color: transparent;
+}
+.sm-tl-trigger-label {
+  flex: 1; font-size: 13px; font-weight: 400; letter-spacing: 0.03em;
+  color: rgba(220,162,91,0.7); transition: color 0.25s;
+}
+.sm-tl-node.open .sm-tl-trigger-label,
+.sm-tl-trigger:hover .sm-tl-trigger-label { color: rgba(234,198,206,0.95); }
+.sm-tl-trigger-arrow {
+  font-size: 10px; color: rgba(196,122,46,0.3);
+  transition: transform 0.3s cubic-bezier(0.4,0,0.2,1), color 0.25s; flex-shrink: 0;
+}
+.sm-tl-node.open .sm-tl-trigger-arrow { transform: rotate(180deg); color: rgba(220,162,91,0.6); }
+.sm-tl-panel { overflow: hidden; max-height: 0; transition: max-height 0.35s cubic-bezier(0.4,0,0.2,1); }
+.sm-tl-node.open .sm-tl-panel { max-height: 200px; }
+.sm-tl-panel-inner {
+  background: rgba(196,122,46,0.06); border: 1px solid rgba(196,122,46,0.3); border-top: none;
+  border-radius: 0 0 12px 12px; padding: 18px 20px;
+  opacity: 0; transform: translateY(-6px);
+  transition: opacity 0.25s ease 0.06s, transform 0.25s ease 0.06s;
+}
+.sm-tl-node.open .sm-tl-panel-inner { opacity: 1; transform: translateY(0); }
+.sm-tl-panel-text {
+  font-size: 12.5px; font-weight: 300; letter-spacing: 0.03em; line-height: 1.6;
+  color: rgba(220,162,91,0.75); font-style: italic;
+}
+.sm-tl-trigger:focus-visible { outline: 2px solid var(--amber); outline-offset: 2px; }
+[data-theme="light"] .sm-timeline::before { background: linear-gradient(180deg, transparent 0%, rgba(150,90,30,0.15) 4%, rgba(150,90,30,0.15) 96%, transparent 100%); }
+[data-theme="light"] .sm-tl-section::before { background: #96641e; box-shadow: 0 0 12px rgba(150,90,30,0.3); }
+[data-theme="light"] .sm-tl-section-label { color: #96641e; }
+[data-theme="light"] .sm-tl-section-label::after { background: linear-gradient(90deg, rgba(150,90,30,0.12) 0%, transparent 100%); }
+[data-theme="light"] .sm-tl-node::before { background: rgba(150,90,30,0.25); }
+[data-theme="light"] .sm-tl-node.open::before { background: #96641e; box-shadow: 0 0 10px rgba(150,90,30,0.25); }
+[data-theme="light"] .sm-tl-node::after { background: rgba(150,90,30,0.1); }
+[data-theme="light"] .sm-tl-node.open::after { background: rgba(150,90,30,0.25); }
+[data-theme="light"] .sm-tl-trigger { background: rgba(150,90,30,0.04); border-color: rgba(150,90,30,0.12); }
+[data-theme="light"] .sm-tl-trigger:hover { background: rgba(150,90,30,0.08); border-color: rgba(150,90,30,0.22); }
+[data-theme="light"] .sm-tl-node.open .sm-tl-trigger { background: rgba(150,90,30,0.1); border-color: rgba(150,90,30,0.28); }
+[data-theme="light"] .sm-tl-trigger-label { color: rgba(100,60,20,0.7); }
+[data-theme="light"] .sm-tl-node.open .sm-tl-trigger-label,
+[data-theme="light"] .sm-tl-trigger:hover .sm-tl-trigger-label { color: #5a3010; }
+[data-theme="light"] .sm-tl-trigger-arrow { color: rgba(150,90,30,0.25); }
+[data-theme="light"] .sm-tl-node.open .sm-tl-trigger-arrow { color: rgba(150,90,30,0.5); }
+[data-theme="light"] .sm-tl-panel-inner { background: rgba(150,90,30,0.04); border-color: rgba(150,90,30,0.28); }
+[data-theme="light"] .sm-tl-panel-text { color: rgba(100,60,20,0.78); }
+[data-theme="light"] .sm-tl-trigger:focus-visible { outline-color: #96641e; }
+@media (max-width: 768px) {
+  .proj-meta-outer { grid-template-columns: 1fr; gap: 12px; }
+  .sm-tl-trigger { padding: 10px 14px; }
+  .sm-tl-trigger-label { font-size: 12px; }
+  .sm-tl-panel-inner { padding: 14px 16px; }
+  .sm-tl-panel-text { font-size: 12px; }
+}
+
 /* -- SCROLL REVEAL -- */
 .reveal { opacity: 0; transform: translateY(20px); transition: opacity 0.7s ease, transform 0.7s ease; will-change: opacity, transform; }
 .reveal.is-visible { opacity: 1; transform: translateY(0); }
@@ -590,16 +691,15 @@ body.visible { opacity: 1; }
   border-top-color: rgba(196,122,46,0.1);
 }
 
-[data-theme="light"] .reflection-section {
-  background: linear-gradient(135deg,
-    rgba(196, 122, 46, 0.04) 0%,
-    rgba(250, 246, 240, 1) 100%
-  );
-  border-top-color: rgba(196, 122, 46, 0.08);
+[data-theme="light"] .reflection-wrap {
+  background: linear-gradient(180deg, #f0ebe4 0%, #faf6f0 100%);
 }
-
 [data-theme="light"] .reflection-quote {
   color: #8a5a20;
+}
+[data-theme="light"] .reflection-firefly {
+  background: rgba(150,90,30,0.4);
+  box-shadow: 0 0 8px rgba(150,90,30,0.35), 0 0 24px rgba(150,90,30,0.15), 0 0 48px rgba(150,90,30,0.06);
 }
 
 [data-theme="light"] .section-divider {
@@ -615,18 +715,36 @@ body.visible { opacity: 1; }
 }
 
 /* -- REFLECTION -- */
-.reflection-section {
-  background: linear-gradient(135deg,
-    rgba(30, 20, 42, 0.5) 0%,
-    rgba(14, 13, 18, 1) 100%
-  );
-  border-top: 1px solid rgba(255,255,255,0.05);
+.reflection-wrap {
+  padding: 96px 64px 120px; position: relative; overflow: hidden;
+  background: linear-gradient(180deg, var(--bg-alt) 0%, var(--bg) 100%);
+}
+.reflection-fireflies {
+  position: absolute; inset: 0;
+  pointer-events: none; overflow: hidden; z-index: 0;
+}
+.reflection-firefly {
+  position: absolute; border-radius: 50%;
+  background: rgba(220,162,91,0.5);
+  box-shadow: 0 0 8px rgba(220,162,91,0.45), 0 0 24px rgba(196,122,46,0.2), 0 0 48px rgba(196,122,46,0.08);
+  animation: mgFireflyFloat linear infinite;
+}
+@keyframes mgFireflyFloat {
+  0%   { transform: translateY(0) translateX(0); opacity: 0; }
+  8%   { opacity: 1; }
+  50%  { transform: translateY(-40vh) translateX(30px); }
+  92%  { opacity: 1; }
+  100% { transform: translateY(-80vh) translateX(-20px); opacity: 0; }
+}
+.reflection-inner { max-width: 720px; margin: 0 auto; position: relative; z-index: 1; }
+.reflection-label {
+  font-size: 8.5px; font-weight: 500; letter-spacing: 0.34em;
+  text-transform: uppercase; color: var(--amber); margin-bottom: 24px;
 }
 .reflection-quote {
   font-family: 'Cormorant Garamond', serif;
-  font-size: clamp(28px, 3.6vw, 50px);
-  font-weight: 400; font-style: italic; line-height: 1.45;
-  color: var(--pink); max-width: 760px; margin-bottom: 36px;
+  font-size: clamp(28px, 3.5vw, 48px); font-weight: 400; font-style: italic;
+  line-height: 1.3; color: var(--pink); margin-bottom: 0;
 }
 .reflection-attr {
   font-size: 10px; font-weight: 400;
@@ -680,7 +798,7 @@ body.visible { opacity: 1; }
   .cs-section { padding: 52px 20px; }
   .section-heading { font-size: clamp(22px, 5.5vw, 32px); }
   .nav-back { padding: 10px 14px 10px 10px; font-size: 9px; min-height: 44px; }
-  .reflection-quote { font-size: clamp(22px, 5vw, 36px); }
+  .reflection-wrap { padding: 72px 32px 96px; }
   .theme-card { padding: 24px 18px; }
 }
 
@@ -740,29 +858,29 @@ body.visible { opacity: 1; }
 <main id="main-content">
 <section class="hero" aria-label="Project introduction">
   <div class="hero-content">
-  <div class="hero-zone">Speculative Design &middot; Case Study</div>
+  <div class="hero-zone">Speculative Design &middot; AI Visualization &middot; Worldbuilding</div>
   <h1 class="hero-title">MaterGenesis</h1>
-  <p class="hero-desc">A speculative world where gender equity, ecological harmony, and cultural preservation aren't aspirations — they're the foundation everything was built on.</p>
+  <p class="hero-desc">A speculative world where gender equity, ecological harmony, and cultural preservation aren't aspirations. They're the foundation everything was built on.</p>
   <div class="hero-meta">
     <div>
       <div class="hero-meta-label">Role</div>
       <div class="hero-meta-value">Research &amp; Speculative Design Lead</div>
     </div>
     <div>
-      <div class="hero-meta-label">Team</div>
-      <div class="hero-meta-value">Group A &mdash; IADS Capstone</div>
-    </div>
-    <div>
       <div class="hero-meta-label">Year</div>
       <div class="hero-meta-value">2023</div>
     </div>
     <div>
-      <div class="hero-meta-label">Methods</div>
-      <div class="hero-meta-value">Lit Review &middot; AI Visualization &middot; Worldbuilding</div>
-    </div>
-    <div>
       <div class="hero-meta-label">Type</div>
       <div class="hero-meta-value">Speculative Design &middot; Research &middot; Art</div>
+    </div>
+    <div>
+      <div class="hero-meta-label">Team</div>
+      <div class="hero-meta-value">Group &middot; IADS Capstone</div>
+    </div>
+    <div>
+      <div class="hero-meta-label">Context</div>
+      <div class="hero-meta-value">Academic Project</div>
     </div>
   </div>
   </div>
@@ -773,33 +891,104 @@ body.visible { opacity: 1; }
 ══════════════════════════════════════ -->
 <section class="cs-section reveal" aria-label="The Brief">
   <div class="section-inner">
-    <div class="two-col">
-      <div>
-        <div class="section-label">01 &mdash; The Brief</div>
-        <h2 class="section-heading">What if our world had taken a different path?</h2>
-        <p class="section-body">MaterGenesis explores an alternate timeline where the patriarchy never came into existence and women were always treated as equals — honored as life givers and spiritual leaders. Born as part of an IADS capstone project, my focus areas were Art, Religion, and Ecology. The project used literature reviews to inform AI-generated prompts, producing imagery that paints a picture of this imagined world.</p>
-        <div class="section-divider"></div>
-        <p class="section-body">The broader group project — "A World Without the Patriarchy, According to AI" — brought together four researchers, each exploring what different domains would look like without male-dominated power structures: graphic design, architecture, fashion, colonization, and my own focus on ecology, religion, and art through the MaterGenesis lens.</p>
+    <div class="section-label">Project Overview</div>
+    <h2 class="section-heading">What if our world had taken a different path?</h2>
+    <p class="section-body">MaterGenesis explores an alternate timeline where the patriarchy never came into existence and women were always treated as equals, honored as life givers and spiritual leaders. Born as part of an IADS capstone project, my focus areas were Art, Religion, and Ecology. The project used literature reviews to inform AI-generated prompts, producing imagery that paints a picture of this imagined&nbsp;world.</p>
+    <div class="section-divider"></div>
+    <p class="section-body">The broader group project, "A World Without the Patriarchy, According to AI," brought together four researchers, each exploring what different domains would look like without male-dominated power structures: graphic design, architecture, fashion, colonization, and my own focus on ecology, religion, and art through the MaterGenesis&nbsp;lens.</p>
+
+    <div class="proj-meta-outer reveal">
+
+      <div class="sm-timeline">
+        <div class="sm-tl-section"><div class="sm-tl-section-label">Skills</div></div>
+
+        <div class="sm-tl-node">
+          <button class="sm-tl-trigger" aria-expanded="false">
+            <span class="sm-tl-trigger-label">Speculative Design</span>
+            <span class="sm-tl-trigger-arrow">&#9662;</span>
+          </button>
+          <div class="sm-tl-panel" aria-hidden="true"><div class="sm-tl-panel-inner"><p class="sm-tl-panel-text">Constructing an alternate world grounded in research, where gender equity, ecological harmony, and cultural preservation are the foundation rather than the&nbsp;aspiration.</p></div></div>
+        </div>
+
+        <div class="sm-tl-node">
+          <button class="sm-tl-trigger" aria-expanded="false">
+            <span class="sm-tl-trigger-label">Cross-Domain Research Translation</span>
+            <span class="sm-tl-trigger-arrow">&#9662;</span>
+          </button>
+          <div class="sm-tl-panel" aria-hidden="true"><div class="sm-tl-panel-inner"><p class="sm-tl-panel-text">Translating academic literature across ecology, religion, and art into structured prompts and visual narratives that make abstract concepts&nbsp;tangible.</p></div></div>
+        </div>
+
+        <div class="sm-tl-node">
+          <button class="sm-tl-trigger" aria-expanded="false">
+            <span class="sm-tl-trigger-label">Worldbuilding</span>
+            <span class="sm-tl-trigger-arrow">&#9662;</span>
+          </button>
+          <div class="sm-tl-panel" aria-hidden="true"><div class="sm-tl-panel-inner"><p class="sm-tl-panel-text">Designing the MaterGenesis universe through concept maps, creation myths, and interconnected domain research that forms a coherent alternate&nbsp;reality.</p></div></div>
+        </div>
+
+        <div class="sm-tl-node">
+          <button class="sm-tl-trigger" aria-expanded="false">
+            <span class="sm-tl-trigger-label">Visual Narrative</span>
+            <span class="sm-tl-trigger-arrow">&#9662;</span>
+          </button>
+          <div class="sm-tl-panel" aria-hidden="true"><div class="sm-tl-panel-inner"><p class="sm-tl-panel-text">Over 130 AI-generated images across Art, Ecology, and Religion, each traced from a concept map branch through a refined prompt to a MidJourney&nbsp;visualization.</p></div></div>
+        </div>
+
+        <div class="sm-tl-node">
+          <button class="sm-tl-trigger" aria-expanded="false">
+            <span class="sm-tl-trigger-label">Mythic Narrative</span>
+            <span class="sm-tl-trigger-arrow">&#9662;</span>
+          </button>
+          <div class="sm-tl-panel" aria-hidden="true"><div class="sm-tl-panel-inner"><p class="sm-tl-panel-text">Crafting narratives that hold moral complexity, including a full creation myth for the MaterGenesis universe born from the Religion&nbsp;domain.</p></div></div>
+        </div>
       </div>
-      <div class="brief-meta">
-        <div>
-          <div class="meta-item-label">Institution</div>
-          <div class="meta-item-value">IADS Capstone Project<br>Group A</div>
+
+      <div class="sm-timeline">
+        <div class="sm-tl-section"><div class="sm-tl-section-label">Methods &amp; Tools</div></div>
+
+        <div class="sm-tl-node">
+          <button class="sm-tl-trigger" aria-expanded="false">
+            <span class="sm-tl-trigger-label">Interdisciplinary Lit Review</span>
+            <span class="sm-tl-trigger-arrow">&#9662;</span>
+          </button>
+          <div class="sm-tl-panel" aria-hidden="true"><div class="sm-tl-panel-inner"><p class="sm-tl-panel-text">Academic sources across ecology, religion, art history, and gender studies, forming the research backbone for each domain's speculative&nbsp;branch.</p></div></div>
         </div>
-        <div>
-          <div class="meta-item-label">My Focus</div>
-          <div class="meta-item-value">Ecology &middot; Religion &middot; Art<br>Worldbuilding &middot; Concept Map</div>
+
+        <div class="sm-tl-node">
+          <button class="sm-tl-trigger" aria-expanded="false">
+            <span class="sm-tl-trigger-label">AI Prompt Engineering</span>
+            <span class="sm-tl-trigger-arrow">&#9662;</span>
+          </button>
+          <div class="sm-tl-panel" aria-hidden="true"><div class="sm-tl-panel-inner"><p class="sm-tl-panel-text">Iterative prompt design using ChatGPT to refine research findings into structured prompts, then MidJourney to generate visual&nbsp;output.</p></div></div>
         </div>
-        <div>
-          <div class="meta-item-label">Tools</div>
-          <div class="meta-item-value">MidJourney &middot; ChatGPT<br>Iterative Prompt Design</div>
+
+        <div class="sm-tl-node">
+          <button class="sm-tl-trigger" aria-expanded="false">
+            <span class="sm-tl-trigger-label">Concept Mapping</span>
+            <span class="sm-tl-trigger-arrow">&#9662;</span>
+          </button>
+          <div class="sm-tl-panel" aria-hidden="true"><div class="sm-tl-panel-inner"><p class="sm-tl-panel-text">Three-branch concept map connecting Ecology, Religion, and Art domains into a unified worldbuilding&nbsp;framework.</p></div></div>
         </div>
-        <div>
-          <div class="meta-item-label">Deliverables</div>
-          <div class="meta-item-value">Concept Map &middot; Creation Story<br>AI Visual Narratives &middot; Research Film</div>
+
+        <div class="sm-tl-node">
+          <button class="sm-tl-trigger" aria-expanded="false">
+            <span class="sm-tl-trigger-label">MidJourney</span>
+            <span class="sm-tl-trigger-arrow">&#9662;</span>
+          </button>
+          <div class="sm-tl-panel" aria-hidden="true"><div class="sm-tl-panel-inner"><p class="sm-tl-panel-text">AI image generation tool used to produce over 130 visualizations of the MaterGenesis world, each grounded in specific research&nbsp;prompts.</p></div></div>
+        </div>
+
+        <div class="sm-tl-node">
+          <button class="sm-tl-trigger" aria-expanded="false">
+            <span class="sm-tl-trigger-label">Speculative Film</span>
+            <span class="sm-tl-trigger-arrow">&#9662;</span>
+          </button>
+          <div class="sm-tl-panel" aria-hidden="true"><div class="sm-tl-panel-inner"><p class="sm-tl-panel-text">Research film that communicates the MaterGenesis world and its findings without academic abstraction or institutional&nbsp;distance.</p></div></div>
         </div>
       </div>
+
     </div>
+
   </div>
 </section>
 
@@ -808,11 +997,11 @@ body.visible { opacity: 1; }
 ══════════════════════════════════════ -->
 <section class="cs-section alt reveal" aria-label="The Problem">
   <div class="section-inner">
-    <div class="section-label">02 &mdash; The Problem</div>
+    <div class="section-label">The Problem</div>
     <h2 class="section-heading">Systems shaped by what was never questioned</h2>
-    <p class="section-body">Deeply ingrained gender biases, unsustainable environmental practices, and the lingering effects of colonial power structures continue to shape societal dynamics — resulting in economic disparities, ecological degradation, and cultural erasure.</p>
+    <p class="section-body">Deeply ingrained gender biases, unsustainable environmental practices, and the lingering effects of colonial power structures continue to shape societal dynamics, resulting in economic disparities, ecological degradation, and cultural erasure.</p>
     <div class="section-divider"></div>
-    <p class="section-body">Despite global efforts toward equality and sustainability, progress remains hindered by systemic barriers and entrenched mindsets. MaterGenesis addresses these challenges by constructing a speculative world where those barriers never formed — and then asking what we can learn from the difference.</p>
+    <p class="section-body">Despite global efforts toward equality and sustainability, progress remains hindered by systemic barriers and entrenched mindsets. MaterGenesis addresses these challenges by constructing a speculative world where those barriers never formed, and then asking what we can learn from the difference.</p>
   </div>
 </section>
 
@@ -821,7 +1010,7 @@ body.visible { opacity: 1; }
 ══════════════════════════════════════ -->
 <section class="cs-section reveal" aria-label="Core Themes">
   <div class="section-inner">
-    <div class="section-label">03 &mdash; Core Themes</div>
+    <div class="section-label">Core Themes</div>
     <h2 class="section-heading">Three pillars of an alternate foundation</h2>
     <p class="section-body">The MaterGenesis universe is built on three interlocking systems that, in our timeline, were disrupted or dismantled. Each became a lens for worldbuilding.</p>
 
@@ -830,13 +1019,13 @@ body.visible { opacity: 1; }
       <div class="theme-card">
         <div class="theme-kicker">Pillar One</div>
         <div class="theme-title">Gender Equity</div>
-        <p class="theme-body">A world where matriarchal structures evolved alongside egalitarian governance — where power was distributed, not concentrated. Communities organized around balance rather than dominance.</p>
+        <p class="theme-body">A world where matriarchal structures evolved alongside egalitarian governance, where power was distributed, not concentrated. Communities organized around balance rather than dominance.</p>
       </div>
 
       <div class="theme-card">
         <div class="theme-kicker">Pillar Two</div>
         <div class="theme-title">Ecological Harmony</div>
-        <p class="theme-body">Architecture, agriculture, and industry developed in symbiosis with the natural world. Sustainability wasn't a movement — it was the default. Cities grew with forests, not over them.</p>
+        <p class="theme-body">Architecture, agriculture, and industry developed in symbiosis with the natural world. Sustainability wasn't a movement. It was the default. Cities grew with forests, not over them.</p>
       </div>
 
       <div class="theme-card">
@@ -854,11 +1043,11 @@ body.visible { opacity: 1; }
 ══════════════════════════════════════ -->
 <section class="cs-section alt reveal" aria-label="Research Methodology">
   <div class="section-inner">
-    <div class="section-label">04 &mdash; Research Methodology</div>
+    <div class="section-label">Research Methodology</div>
     <h2 class="section-heading">From brainstorming to a visual world</h2>
     <p class="section-body">The initial brainstorming phase began with a single question: "How might the world be different?" From there, the exploration moved through defining matriarchy vs. patriarchy, mapping historical and contemporary power structures through block definition diagrams and Venn diagrams, and ultimately arriving at a universal prompt: "What if women weren't economically dependent on men?"</p>
     <div class="section-divider"></div>
-    <p class="section-body">This foundation informed three focal domains — Ecology, Religion, and Art — each explored through a systematic pipeline: literature review, concept listing, ChatGPT prompt refinement, and MidJourney image generation. The results were assembled into the MaterGenesis Concept Map.</p>
+    <p class="section-body">This foundation informed three focal domains (Ecology, Religion, and Art) each explored through a systematic pipeline: literature review, concept listing, ChatGPT prompt refinement, and MidJourney image generation. The results were assembled into the MaterGenesis Concept Map.</p>
 
     <div class="process-steps">
       <div class="process-step">
@@ -869,12 +1058,12 @@ body.visible { opacity: 1; }
       <div class="process-step">
         <div class="process-num">Phase 02</div>
         <div class="process-heading">Literature Review</div>
-        <p class="process-body">Deep research into each domain — ecological systems, belief structures, and creative expression — to build a foundation of real-world knowledge.</p>
+        <p class="process-body">Deep research into each domain: ecological systems, belief structures, and creative expression. To build a foundation of real-world knowledge.</p>
       </div>
       <div class="process-step">
         <div class="process-num">Phase 03</div>
         <div class="process-heading">Concept Map</div>
-        <p class="process-body">Built a visual map with "Matriarchal World" at the center, branching into Art, Ecology, and Religion — each with sub-categories and prompt-ready details.</p>
+        <p class="process-body">Built a visual map with "Matriarchal World" at the center, branching into Art, Ecology, and Religion, each with sub-categories and prompt-ready details.</p>
       </div>
       <div class="process-step">
         <div class="process-num">Phase 04</div>
@@ -892,7 +1081,7 @@ body.visible { opacity: 1; }
   <div class="section-inner">
     <div class="section-label">The Visual Output</div>
     <h2 class="section-heading">Visions of MaterGenesis</h2>
-    <p class="section-body">The methodology produced over 130 AI-generated images across Art, Ecology, Religion, and worldbuilding scenes — each one traced from a concept map branch, through a ChatGPT-refined prompt, to a MidJourney visualization. Explore the full collection below.</p>
+    <p class="section-body">The methodology produced over 130 AI-generated images across Art, Ecology, Religion, and worldbuilding scenes, each one traced from a concept map branch, through a ChatGPT-refined prompt, to a MidJourney visualization. Explore the full collection below.</p>
 
     <p class="mob-tool-link">Open on desktop for full gallery experience</p>
     <div class="artifact-wrapper" style="height: 720px; margin-top: 36px;">
@@ -907,7 +1096,7 @@ body.visible { opacity: 1; }
 ══════════════════════════════════════ -->
 <section class="cs-section reveal" aria-label="Three Research Domains">
   <div class="section-inner">
-    <div class="section-label">05 &mdash; Three Research Domains</div>
+    <div class="section-label">Three Research Domains</div>
     <h2 class="section-heading">Ecology, Religion, and Art — reimagined</h2>
     <p class="section-body">Each domain began with a fundamental question, explored through its own pipeline of research, listing, and AI visualization. Together they form the three branches of the MaterGenesis Concept Map.</p>
 
@@ -916,19 +1105,19 @@ body.visible { opacity: 1; }
       <div class="theme-card">
         <div class="theme-kicker">Ecology</div>
         <div class="theme-title">Would life thrive?</div>
-        <p class="theme-body">Starting with "Would life thrive in a matriarchal world?", this domain explored how ecological systems might diverge — and which species currently functionally extinct might still flourish. The research produced an extinction timeline and visualizations of species like the northern white rhino, Javan wildlife, and Yangtze River dolphins thriving in untouched habitats.</p>
+        <p class="theme-body">Starting with "Would life thrive in a matriarchal world?", this domain explored how ecological systems might diverge, and which species currently functionally extinct might still flourish. The research produced an extinction timeline and visualizations of species like the northern white rhino, Javan wildlife, and Yangtze River dolphins thriving in untouched&nbsp;habitats.</p>
       </div>
 
       <div class="theme-card">
         <div class="theme-kicker">Religion</div>
         <div class="theme-title">Belief without patriarchy</div>
-        <p class="theme-body">This domain peeled back layers of belief systems to find what would persist without human hierarchy. The research honed in on a belief system linked with nature, where women as stewards of worship sought enlightenment through the natural world. It culminated in the MaterGenesis Creation Story — an origin narrative for this alternate world.</p>
+        <p class="theme-body">This domain peeled back layers of belief systems to find what would persist without human hierarchy. The research honed in on a belief system linked with nature, where women as stewards of worship sought enlightenment through the natural world. It culminated in the MaterGenesis Creation Story, an origin narrative for this alternate world.</p>
       </div>
 
       <div class="theme-card">
         <div class="theme-kicker">Art</div>
-        <div class="theme-title">Creativity intertwined with nature</div>
-        <p class="theme-body">The art domain envisioned a world where creativity seamlessly intertwined with nature. Brainstorming produced a list of creative facets that would take distinct form in this imagined world — from inclusive art institutions and community-based collaboration to gender-equal art criticism and preservation practices.</p>
+        <div class="theme-title">Creativity and&nbsp;nature</div>
+        <p class="theme-body">The art domain envisioned a world where creativity seamlessly intertwined with nature. Brainstorming produced a list of creative facets that would take distinct form in this imagined world, from inclusive art institutions and community-based collaboration to gender-equal art criticism and preservation practices.</p>
       </div>
 
     </div>
@@ -941,17 +1130,17 @@ body.visible { opacity: 1; }
 ══════════════════════════════════════ -->
 <section class="cs-section alt reveal" aria-label="The Creation Story">
   <div class="section-inner">
-    <div class="section-label">06 &mdash; The Creation Story</div>
+    <div class="section-label">The Creation Story</div>
     <h2 class="section-heading">An origin narrative for a world that never broke</h2>
-    <p class="section-body">The Religion domain produced something unexpected — a complete creation myth for the MaterGenesis universe. Beginning with "a vast and tranquil void, a canvas of endless potential," the narrative describes a primordial consciousness known as "The Mother," an embodiment of the essence of creation itself.</p>
+    <p class="section-body">The Religion domain produced something unexpected: a complete creation myth for the MaterGenesis universe. Beginning with "a vast and tranquil void, a canvas of endless potential," the narrative describes a primordial consciousness known as "The Mother," an embodiment of the essence of creation itself.</p>
     <div class="section-divider"></div>
-    <p class="section-body">This creation story became the anchor for the entire project. It wasn't just a narrative device — it was the lens through which every AI prompt was written. Each MidJourney prompt embedded the world's foundational values: women as equals in leadership, revered as life givers, honored as spiritual wisdom holders. The prompts spanned goddess-centered worship, nature-based rituals, inclusive art institutions, eco-feminist agriculture, and species that never went extinct.</p>
+    <p class="section-body">This creation story became the anchor for the entire project. It wasn't just a narrative device. It was the lens through which every AI prompt was written. Each MidJourney prompt embedded the world's foundational values: women as equals in leadership, revered as life givers, honored as spiritual wisdom holders. The prompts spanned goddess-centered worship, nature-based rituals, inclusive art institutions, eco-feminist agriculture, and species that never went extinct.</p>
 
     <div class="horizon-row">
       <div class="horizon-card">
         <div class="horizon-label">Religion Prompts</div>
         <div class="horizon-heading">Sacred rituals &amp; divine worship</div>
-        <p class="horizon-body">Goddess-centered ceremonies, matriarchal mythology, spiritual guidance by women and men equally, nature-based healing practices, and rituals where roles are determined by ability — not gender.</p>
+        <p class="horizon-body">Goddess-centered ceremonies, matriarchal mythology, spiritual guidance by women and men equally, nature-based healing practices, and rituals where roles are determined by ability, not&nbsp;gender.</p>
       </div>
       <div class="horizon-card">
         <div class="horizon-label">Art Prompts</div>
@@ -961,7 +1150,7 @@ body.visible { opacity: 1; }
       <div class="horizon-card">
         <div class="horizon-label">Ecology Prompts</div>
         <div class="horizon-heading">Thriving species &amp; environmental stewardship</div>
-        <p class="horizon-body">Sustainable agriculture, eco-feminist values, renewable energy, sacred groves, and vivid scenes of functionally extinct species — white rhinos, Yangtze dolphins, golden toads — alive in untouched habitats.</p>
+        <p class="horizon-body">Sustainable agriculture, eco-feminist values, renewable energy, sacred groves, and vivid scenes of functionally extinct species (white rhinos, Yangtze dolphins, golden toads) alive in untouched habitats.</p>
       </div>
     </div>
 
@@ -975,7 +1164,7 @@ body.visible { opacity: 1; }
   <div class="section-inner">
     <div class="section-label">Ecology &mdash; Would Life Thrive?</div>
     <h2 class="section-heading">The species that might have survived</h2>
-    <p class="section-body">One of the most striking outputs of the ecology domain was the extinction timeline — a comparison of species that went functionally extinct in our timeline with what their world might look like in MaterGenesis. The tool below lets you explore both realities side by side.</p>
+    <p class="section-body">One of the most striking outputs of the ecology domain was the extinction timeline, a comparison of species that went functionally extinct in our timeline with what their world might look like in MaterGenesis. The tool below lets you explore both realities side by side.</p>
 
     <p class="mob-tool-link">Open on desktop for full tool functionality</p>
     <div class="artifact-wrapper" style="height: 700px;">
@@ -990,9 +1179,9 @@ body.visible { opacity: 1; }
 ══════════════════════════════════════ -->
 <section class="cs-section alt reveal" aria-label="Research Signals">
   <div class="section-inner">
-    <div class="section-label">07 &mdash; Research Signals</div>
+    <div class="section-label">Research Signals</div>
     <h2 class="section-heading">What the worldbuilding revealed</h2>
-    <p class="section-body">Four signals kept surfacing across the research — not as answers, but as lenses that reframed the questions worth asking about our own timeline.</p>
+    <p class="section-body">Four signals kept surfacing across the research. Not as answers, but as lenses that reframed the questions worth asking about our own timeline.</p>
 
     <div class="insight-grid">
 
@@ -1005,8 +1194,8 @@ body.visible { opacity: 1; }
           <span class="insight-chev" aria-hidden="true"></span>
         </summary>
         <div class="insight-body">
-          <p>Every system in the MaterGenesis world — from agriculture to architecture to governance — reflected the foundational distribution of power. When power was shared, every downstream system was different.</p>
-          <p class="insight-implication"><strong>Implication:</strong> Design interventions targeting outcomes without addressing power structures will always be surface-level.</p>
+          <p>Every system in the MaterGenesis world, from agriculture to architecture to governance, reflected the foundational distribution of power. When power was shared, every downstream system was different.</p>
+          <p class="insight-implication"><strong>Implication:</strong> Design interventions targeting outcomes without addressing power structures will always be&nbsp;surface-level.</p>
         </div>
       </details>
 
@@ -1033,7 +1222,7 @@ body.visible { opacity: 1; }
           <span class="insight-chev" aria-hidden="true"></span>
         </summary>
         <div class="insight-body">
-          <p>Cultural preservation wasn't a program or a policy — it was woven into governance itself. Language, tradition, and knowledge were treated as infrastructure, not heritage.</p>
+          <p>Cultural preservation wasn't a program or a policy. It was woven into governance itself. Language, tradition, and knowledge were treated as infrastructure, not heritage.</p>
           <p class="insight-implication"><strong>Implication:</strong> Treating culture as something to "preserve" already positions it as separate from progress.</p>
         </div>
       </details>
@@ -1047,7 +1236,7 @@ body.visible { opacity: 1; }
           <span class="insight-chev" aria-hidden="true"></span>
         </summary>
         <div class="insight-body">
-          <p>The act of building an alternate world wasn't just creative expression — it generated real design insights. Speculative worldbuilding forced decisions that revealed assumptions invisible in our timeline.</p>
+          <p>The act of building an alternate world wasn't just creative expression. It generated real design insights. Speculative worldbuilding forced decisions that revealed assumptions invisible in our timeline.</p>
           <p class="insight-implication"><strong>Implication:</strong> Speculative design isn't escapism. It's a diagnostic tool for the present.</p>
         </div>
       </details>
@@ -1061,32 +1250,32 @@ body.visible { opacity: 1; }
 ══════════════════════════════════════ -->
 <section class="cs-section reveal" aria-label="The Group Project">
   <div class="section-inner">
-    <div class="section-label">08 &mdash; The Group Project</div>
+    <div class="section-label">The Group Project</div>
     <h2 class="section-heading">Four lenses on a world without patriarchy</h2>
-    <p class="section-body">MaterGenesis was my contribution to a larger IADS capstone collaboration. Each team member used the same AI-driven methodology — literature review, ChatGPT prompt design, image generation — to explore a different domain of this alternate world. Together, the work formed a comprehensive picture of what "according to AI" a world without patriarchy might look like.</p>
+    <p class="section-body">MaterGenesis was my contribution to a larger IADS capstone collaboration. Each team member used the same AI-driven methodology (literature review, ChatGPT prompt design, image generation) to explore a different domain of this alternate world. Together, the work formed a comprehensive picture of what "according to AI" a world without patriarchy might look like.</p>
     <div class="section-divider"></div>
-    <p class="section-body">The project culminated in a presentation and interactive worksheet activity where participants crafted their own MidJourney prompts from the creation story — turning the audience from spectators into co-creators of this speculative world.</p>
+    <p class="section-body">The project culminated in a presentation and interactive worksheet activity where participants crafted their own MidJourney prompts from the creation story, turning the audience from spectators into co-creators of this speculative world.</p>
 
     <div class="process-steps">
       <div class="process-step">
         <div class="process-num">Amber</div>
         <div class="process-heading">MaterGenesis</div>
-        <p class="process-body">Ecology, Religion, and Art — worldbuilding through concept mapping, creation stories, and AI-generated imagery of a matriarchal world.</p>
+        <p class="process-body">Ecology, Religion, and Art: worldbuilding through concept mapping, creation stories, and AI-generated imagery of a matriarchal world.</p>
       </div>
       <div class="process-step">
         <div class="process-num">Marixie</div>
         <div class="process-heading">Design According to AI</div>
-        <p class="process-body">Graphic and architectural design without male influence — exploring how visual culture and built environments would shift.</p>
+        <p class="process-body">Graphic and architectural design without male influence, exploring how visual culture and built environments would shift.</p>
       </div>
       <div class="process-step">
         <div class="process-num">Rachel</div>
         <div class="process-heading">Fashion According to AI</div>
-        <p class="process-body">Fashion design, trade affairs, and business structures — reimagining an industry historically shaped by patriarchal aesthetics.</p>
+        <p class="process-body">Fashion design, trade affairs, and business structures, reimagining an industry historically shaped by patriarchal aesthetics.</p>
       </div>
       <div class="process-step">
         <div class="process-num">Zantua</div>
-        <div class="process-heading">Colonialism According to AI</div>
-        <p class="process-body">History, economy, and religion under colonialism — examining how power, faith, and finance operate without patriarchy as a driver.</p>
+        <div class="process-heading">Colonialism via AI</div>
+        <p class="process-body">History, economy, and religion under colonialism, examining how power, faith, and finance operate without patriarchy as a&nbsp;driver.</p>
       </div>
     </div>
   </div>
@@ -1097,22 +1286,22 @@ body.visible { opacity: 1; }
 ══════════════════════════════════════ -->
 <section class="cs-section alt reveal" aria-label="What It Became">
   <div class="section-inner">
-    <div class="section-label">09 &mdash; What It Became</div>
+    <div class="section-label">What It Became</div>
     <h2 class="section-heading">A mirror built from imagination</h2>
-    <p class="section-body">What started as a capstone "What if?" became a comprehensive speculative universe — a concept map with three branching worlds, a creation myth, dozens of AI-generated scenes, an extinction timeline of species that might have survived, and a group collaboration that asked AI itself to picture a world without patriarchy.</p>
+    <p class="section-body">What started as a capstone "What if?" became a comprehensive speculative universe: a concept map with three branching worlds, a creation myth, dozens of AI-generated scenes, an extinction timeline of species that might have survived, and a group collaboration that asked AI itself to picture a world without patriarchy.</p>
     <div class="section-divider"></div>
-    <p class="section-body">The project's most lasting insight wasn't any single image or prompt. It was the discovery that AI — trained on our world's data — still carries the biases of this timeline. The iterative work of minimizing that bias, of teaching a machine to imagine equity, became its own form of research. MaterGenesis doesn't just show an alternate world. It reveals how deeply this one is encoded into everything we build — including our tools.</p>
+    <p class="section-body">The project's most lasting insight wasn't any single image or prompt. It was the discovery that AI, trained on our world's data, still carries the biases of this timeline. The iterative work of minimizing that bias, of teaching a machine to imagine equity, became its own form of research. MaterGenesis doesn't just show an alternate world. It reveals how deeply this one is encoded into everything we build, including our&nbsp;tools.</p>
   </div>
 </section>
 
 <!-- ══════════════════════════════════════
      REFLECTION
 ══════════════════════════════════════ -->
-<section class="cs-section reflection-section reveal" aria-label="Reflection">
-  <div class="section-inner">
-    <div class="section-label">What I Wanted to Show</div>
-    <p class="reflection-quote">"The world we live in isn't the only one that was possible — and imagining the alternative is the first act of changing it."</p>
-    <div class="reflection-attr">Amber Grey</div>
+<section class="reflection-wrap" aria-label="Reflection">
+  <div class="reflection-fireflies" id="reflectionFireflies" aria-hidden="true"></div>
+  <div class="reflection-inner reveal">
+    <p class="reflection-label">Reflection</p>
+    <p class="reflection-quote">The world we live in isn't the only one that was possible. Imagining the alternative is the first act of changing&nbsp;it.</p>
   </div>
 </section>
 
@@ -1121,6 +1310,51 @@ body.visible { opacity: 1; }
 
 <script>
 'use strict';
+
+// Reflection fireflies
+(function() {
+  var c = document.getElementById('reflectionFireflies');
+  if (!c) return;
+  for (var i = 0; i < 18; i++) {
+    var f = document.createElement('div');
+    f.className = 'reflection-firefly';
+    var size = 1.5 + Math.random() * 2.5;
+    f.style.width = f.style.height = size + 'px';
+    f.style.left = Math.random() * 100 + '%';
+    f.style.bottom = '-4px';
+    f.style.animationDuration = (14 + Math.random() * 22) + 's';
+    f.style.animationDelay = (Math.random() * 18) + 's';
+    c.appendChild(f);
+  }
+})();
+
+// Skills & Methods timeline
+(function() {
+  var nodes = document.querySelectorAll('.sm-tl-node');
+  nodes.forEach(function(node) {
+    var trigger = node.querySelector('.sm-tl-trigger');
+    var panel = node.querySelector('.sm-tl-panel');
+    trigger.addEventListener('click', function() {
+      var isOpen = node.classList.contains('open');
+      nodes.forEach(function(n) {
+        if (n !== node && n.classList.contains('open')) {
+          n.classList.remove('open');
+          n.querySelector('.sm-tl-trigger').setAttribute('aria-expanded', 'false');
+          n.querySelector('.sm-tl-panel').setAttribute('aria-hidden', 'true');
+        }
+      });
+      if (isOpen) {
+        node.classList.remove('open');
+        trigger.setAttribute('aria-expanded', 'false');
+        panel.setAttribute('aria-hidden', 'true');
+      } else {
+        node.classList.add('open');
+        trigger.setAttribute('aria-expanded', 'true');
+        panel.setAttribute('aria-hidden', 'false');
+      }
+    });
+  });
+})();
 
 function navigateTo(url) {
   document.body.style.transition = 'opacity 0.28s ease-in';

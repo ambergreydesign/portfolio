@@ -124,16 +124,80 @@ body.visible { opacity: 1; }
 .overview-intro em { font-style: normal; color: rgba(200,185,165,0.82); font-weight: 400; }
 
 /* ── CHIP PANEL ── */
-.proj-meta-outer { border: 1px solid rgba(122,171,222,0.18); border-radius: 18px; overflow: hidden; position: relative; }
-.proj-meta-outer::before { content: ''; position: absolute; inset: 0; background: radial-gradient(ellipse 80% 60% at var(--mx,50%) var(--my,40%), rgba(122,171,222,0.06) 0%, transparent 70%); pointer-events: none; z-index: 0; }
-.chip-panel { position: relative; z-index: 1; background: linear-gradient(160deg, #0e1428, #080c1a); padding: 36px 40px; display: grid; grid-template-columns: 1fr 1fr; gap: 36px 52px; }
-.chip-group-label { font-size: 9px; font-weight: 500; letter-spacing: 0.26em; text-transform: uppercase; color: rgba(200,185,165,0.3); margin-bottom: 12px; }
-.chip-row { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 12px; }
-.chip-btn { background: rgba(122,171,222,0.07); border: 1px solid rgba(122,171,222,0.15); border-radius: 100px; padding: 7px 15px; font-family: 'DM Sans', sans-serif; font-size: 11.5px; font-weight: 400; letter-spacing: 0.04em; color: rgba(180,210,240,0.6); cursor: pointer; transition: background 0.22s ease, border-color 0.22s ease, color 0.22s ease, box-shadow 0.22s ease, transform 0.18s ease; line-height: 1; }
-.chip-btn:hover, .chip-btn:focus { background: rgba(122,171,222,0.22); border-color: rgba(122,171,222,0.6); color: rgba(220,235,255,1); box-shadow: 0 0 14px rgba(122,171,222,0.22); transform: translateY(-1px); outline: none; }
-.chip-btn.active { background: rgba(122,171,222,0.28); border-color: rgba(122,171,222,0.75); color: #fff; box-shadow: 0 0 18px rgba(122,171,222,0.28); }
-.chip-detail { font-size: 12px; font-weight: 400; line-height: 1.7; color: rgba(200,185,165,0.35); letter-spacing: 0.02em; min-height: 38px; font-style: italic; transition: color 0.25s ease, transform 0.25s ease, opacity 0.25s ease; transform: translateY(2px); opacity: 0.7; }
-.chip-detail.has-value { color: rgba(180,210,240,0.82); font-style: normal; transform: translateY(0); opacity: 1; }
+/* ── SKILLS & METHODS TIMELINE ── */
+.proj-meta-outer {
+  margin-top: 40px;
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: 0 48px; align-items: start;
+}
+.sm-timeline { position: relative; }
+.sm-timeline::before {
+  content: ''; position: absolute; left: 14px; top: 0; bottom: 0; width: 1px;
+  background: linear-gradient(180deg, transparent 0%, rgba(122,171,222,0.2) 4%, rgba(122,171,222,0.2) 96%, transparent 100%);
+}
+.sm-tl-section { position: relative; padding-left: 44px; margin-bottom: 8px; }
+.sm-tl-section-label {
+  font-size: 9px; font-weight: 500; letter-spacing: 0.28em; text-transform: uppercase;
+  color: var(--blue); padding: 12px 0;
+  display: flex; align-items: center; gap: 12px;
+}
+.sm-tl-section-label::after {
+  content: ''; flex: 1; height: 1px;
+  background: linear-gradient(90deg, rgba(122,171,222,0.15) 0%, transparent 100%);
+}
+.sm-tl-section::before {
+  content: ''; position: absolute; left: 10px; top: 16px;
+  width: 9px; height: 9px; border-radius: 50%;
+  background: var(--blue); box-shadow: 0 0 12px rgba(122,171,222,0.4); z-index: 2;
+}
+.sm-tl-node { position: relative; padding-left: 44px; margin-bottom: 4px; }
+.sm-tl-node::before {
+  content: ''; position: absolute; left: 12px; top: 18px;
+  width: 5px; height: 5px; border-radius: 50%;
+  background: rgba(122,171,222,0.35); transition: background 0.25s, box-shadow 0.25s; z-index: 2;
+}
+.sm-tl-node.open::before { background: var(--blue); box-shadow: 0 0 10px rgba(122,171,222,0.3); }
+.sm-tl-node::after {
+  content: ''; position: absolute; left: 17px; top: 20px;
+  width: 27px; height: 1px; background: rgba(122,171,222,0.12); transition: background 0.25s;
+}
+.sm-tl-node.open::after { background: rgba(122,171,222,0.3); }
+.sm-tl-trigger {
+  display: flex; align-items: center; gap: 10px; width: 100%;
+  background: rgba(122,171,222,0.04); border: 1px solid rgba(122,171,222,0.12); border-radius: 12px;
+  padding: 12px 18px; cursor: pointer; font-family: inherit; color: inherit; text-align: left;
+  transition: all 0.25s cubic-bezier(0.4,0,0.2,1);
+}
+.sm-tl-trigger:hover { background: rgba(122,171,222,0.08); border-color: rgba(122,171,222,0.25); }
+.sm-tl-node.open .sm-tl-trigger {
+  background: rgba(122,171,222,0.1); border-color: rgba(122,171,222,0.3);
+  border-bottom-left-radius: 0; border-bottom-right-radius: 0; border-bottom-color: transparent;
+}
+.sm-tl-trigger-label {
+  flex: 1; font-size: 13px; font-weight: 400; letter-spacing: 0.03em;
+  color: rgba(180,210,240,0.7); transition: color 0.25s;
+}
+.sm-tl-node.open .sm-tl-trigger-label,
+.sm-tl-trigger:hover .sm-tl-trigger-label { color: rgba(220,235,255,0.95); }
+.sm-tl-trigger-arrow {
+  font-size: 10px; color: rgba(122,171,222,0.3);
+  transition: transform 0.3s cubic-bezier(0.4,0,0.2,1), color 0.25s; flex-shrink: 0;
+}
+.sm-tl-node.open .sm-tl-trigger-arrow { transform: rotate(180deg); color: rgba(122,171,222,0.6); }
+.sm-tl-panel { overflow: hidden; max-height: 0; transition: max-height 0.35s cubic-bezier(0.4,0,0.2,1); }
+.sm-tl-node.open .sm-tl-panel { max-height: 200px; }
+.sm-tl-panel-inner {
+  background: rgba(122,171,222,0.06); border: 1px solid rgba(122,171,222,0.3); border-top: none;
+  border-radius: 0 0 12px 12px; padding: 18px 20px;
+  opacity: 0; transform: translateY(-6px);
+  transition: opacity 0.25s ease 0.06s, transform 0.25s ease 0.06s;
+}
+.sm-tl-node.open .sm-tl-panel-inner { opacity: 1; transform: translateY(0); }
+.sm-tl-panel-text {
+  font-size: 12.5px; font-weight: 300; letter-spacing: 0.03em; line-height: 1.6;
+  color: rgba(180,210,240,0.75); font-style: italic;
+}
+.sm-tl-trigger:focus-visible { outline: 2px solid var(--blue); outline-offset: 2px; }
 
 /* ── STAT BAR ── */
 .stat-bar {
@@ -283,9 +347,34 @@ body.visible { opacity: 1; }
 .phase-body li { margin-bottom: 6px; }
 
 /* ── REFLECTION ── */
-.reflection-wrap { padding: 112px 88px; text-align: center; border-top: 1px solid var(--border); }
-.reflection-label { font-size: 9px; font-weight: 500; letter-spacing: 0.32em; text-transform: uppercase; color: var(--blue); margin-bottom: 28px; }
-.reflection-quote { font-family: 'Cormorant Garamond', serif; font-size: clamp(26px, 3.2vw, 44px); font-weight: 400; font-style: italic; line-height: 1.5; color: var(--ice); max-width: 820px; margin: 0 auto; text-wrap: balance; }
+.reflection-wrap {
+  padding: 96px 64px 120px; position: relative; overflow: hidden;
+  background: linear-gradient(180deg, var(--bg-alt) 0%, var(--bg) 100%);
+}
+.reflection-fireflies {
+  position: absolute; inset: 0;
+  pointer-events: none; overflow: hidden; z-index: 0;
+}
+.reflection-firefly {
+  position: absolute; border-radius: 50%;
+  background: rgba(122,171,222,0.5);
+  box-shadow: 0 0 8px rgba(122,171,222,0.45), 0 0 24px rgba(122,171,222,0.2), 0 0 48px rgba(122,171,222,0.08);
+  animation: dcFireflyFloat linear infinite;
+}
+@keyframes dcFireflyFloat {
+  0%   { transform: translateY(0) translateX(0); opacity: 0; }
+  8%   { opacity: 1; }
+  50%  { transform: translateY(-40vh) translateX(30px); }
+  92%  { opacity: 1; }
+  100% { transform: translateY(-80vh) translateX(-20px); opacity: 0; }
+}
+[data-theme="light"] .reflection-firefly {
+  background: rgba(74,140,200,0.4);
+  box-shadow: 0 0 8px rgba(74,140,200,0.35), 0 0 24px rgba(74,140,200,0.15), 0 0 48px rgba(74,140,200,0.06);
+}
+.reflection-inner { max-width: 720px; margin: 0 auto; position: relative; z-index: 1; }
+.reflection-label { font-size: 8.5px; font-weight: 500; letter-spacing: 0.34em; text-transform: uppercase; color: var(--blue); margin-bottom: 24px; }
+.reflection-quote { font-family: 'Cormorant Garamond', serif; font-size: clamp(28px, 3.5vw, 48px); font-weight: 400; font-style: italic; line-height: 1.3; color: var(--ice); margin-bottom: 0; }
 
 /* ── SCROLL REVEAL ── */
 .reveal { opacity: 0; transform: translateY(20px); transition: opacity 0.7s ease, transform 0.7s ease; will-change: opacity, transform; }
@@ -296,12 +385,16 @@ body.visible { opacity: 1; }
 @media (max-width: 860px) {
   .hero            { padding: 0 36px 60px; }
   .cs-section      { padding: 72px 36px; }
-  .reflection-wrap { padding: 80px 36px; }
+  .reflection-wrap { padding: 72px 32px 96px; }
   .insight-grid    { grid-template-columns: 1fr 1fr; }
   .two-col         { grid-template-columns: 1fr; gap: 40px; }
   .flow-grid       { grid-template-columns: 1fr 1fr; }
   .phase-row       { grid-template-columns: 1fr; gap: 12px; }
-  .chip-panel      { grid-template-columns: 1fr; gap: 28px; }
+  .proj-meta-outer  { grid-template-columns: 1fr; gap: 12px; }
+  .sm-tl-trigger { padding: 10px 14px; }
+  .sm-tl-trigger-label { font-size: 12px; }
+  .sm-tl-panel-inner { padding: 14px 16px; }
+  .sm-tl-panel-text { font-size: 12px; }
   .stat-bar        { grid-template-columns: repeat(3, 1fr); }
   .nudge-callout   { grid-template-columns: 1fr; gap: 16px; }
   .persona-grid    { grid-template-columns: 1fr; gap: 12px; }
@@ -312,7 +405,7 @@ body.visible { opacity: 1; }
 @media (max-width: 560px) {
   .hero            { padding: 0 22px 48px; }
   .cs-section      { padding: 56px 22px; }
-  .reflection-wrap { padding: 64px 22px; }
+  .reflection-wrap { padding: 56px 22px 80px; }
   .insight-grid    { grid-template-columns: 1fr; }
   .horizon-row     { grid-template-columns: 1fr; gap: 32px; }
   .flow-grid       { grid-template-columns: 1fr; }
@@ -324,7 +417,6 @@ body.visible { opacity: 1; }
   .screens-row     { grid-template-columns: 1fr 1fr; }
 
   /* Touch targets — minimum 44px */
-  .chip-btn        { min-height: 44px; display: inline-flex; align-items: center; padding: 10px 16px; }
   .nav-back        { min-height: 44px; padding: 10px 18px 10px 14px; }
 }
 @media (max-width: 480px) {
@@ -499,38 +591,25 @@ body.visible { opacity: 1; }
   color: rgba(30, 42, 62, 0.82);
 }
 
-[data-theme="light"] .proj-meta-outer {
-  border-color: rgba(74, 140, 200, 0.22);
-}
-[data-theme="light"] .chip-panel {
-  background: linear-gradient(160deg, #f0f4fa, #e8ecf6);
-}
-[data-theme="light"] .chip-group-label {
-  color: rgba(42, 62, 92, 0.35);
-}
-[data-theme="light"] .chip-btn {
-  background: rgba(74, 140, 200, 0.08);
-  border-color: rgba(74, 140, 200, 0.2);
-  color: rgba(42, 62, 92, 0.6);
-}
-[data-theme="light"] .chip-btn:hover,
-[data-theme="light"] .chip-btn:focus {
-  background: rgba(74, 140, 200, 0.18);
-  border-color: rgba(74, 140, 200, 0.55);
-  color: rgba(30, 42, 62, 1);
-  box-shadow: 0 0 14px rgba(74, 140, 200, 0.15);
-}
-[data-theme="light"] .chip-btn.active {
-  background: rgba(74, 140, 200, 0.22);
-  border-color: rgba(74, 140, 200, 0.65);
-  color: var(--text);
-}
-[data-theme="light"] .chip-detail {
-  color: rgba(42, 62, 92, 0.4);
-}
-[data-theme="light"] .chip-detail.has-value {
-  color: rgba(30, 42, 62, 0.78);
-}
+[data-theme="light"] .sm-timeline::before { background: linear-gradient(180deg, transparent 0%, rgba(74,140,200,0.15) 4%, rgba(74,140,200,0.15) 96%, transparent 100%); }
+[data-theme="light"] .sm-tl-section::before { background: #4a8cc8; box-shadow: 0 0 12px rgba(74,140,200,0.3); }
+[data-theme="light"] .sm-tl-section-label { color: #4a8cc8; }
+[data-theme="light"] .sm-tl-section-label::after { background: linear-gradient(90deg, rgba(74,140,200,0.12) 0%, transparent 100%); }
+[data-theme="light"] .sm-tl-node::before { background: rgba(74,140,200,0.25); }
+[data-theme="light"] .sm-tl-node.open::before { background: #4a8cc8; box-shadow: 0 0 10px rgba(74,140,200,0.25); }
+[data-theme="light"] .sm-tl-node::after { background: rgba(74,140,200,0.1); }
+[data-theme="light"] .sm-tl-node.open::after { background: rgba(74,140,200,0.25); }
+[data-theme="light"] .sm-tl-trigger { background: rgba(74,140,200,0.04); border-color: rgba(74,140,200,0.12); }
+[data-theme="light"] .sm-tl-trigger:hover { background: rgba(74,140,200,0.08); border-color: rgba(74,140,200,0.22); }
+[data-theme="light"] .sm-tl-node.open .sm-tl-trigger { background: rgba(74,140,200,0.1); border-color: rgba(74,140,200,0.28); }
+[data-theme="light"] .sm-tl-trigger-label { color: rgba(42,62,92,0.7); }
+[data-theme="light"] .sm-tl-node.open .sm-tl-trigger-label,
+[data-theme="light"] .sm-tl-trigger:hover .sm-tl-trigger-label { color: #1e2a3e; }
+[data-theme="light"] .sm-tl-trigger-arrow { color: rgba(74,140,200,0.25); }
+[data-theme="light"] .sm-tl-node.open .sm-tl-trigger-arrow { color: rgba(74,140,200,0.5); }
+[data-theme="light"] .sm-tl-panel-inner { background: rgba(74,140,200,0.04); border-color: rgba(74,140,200,0.28); }
+[data-theme="light"] .sm-tl-panel-text { color: rgba(42,62,92,0.78); }
+[data-theme="light"] .sm-tl-trigger:focus-visible { outline-color: #4a8cc8; }
 
 [data-theme="light"] .stat-bar {
   background: linear-gradient(135deg, #edf0f8, #f5f7fc);
@@ -669,11 +748,10 @@ body.visible { opacity: 1; }
 }
 
 [data-theme="light"] .reflection-wrap {
-  background: linear-gradient(135deg, rgba(74, 140, 200, 0.04) 0%, #f5f7fc 100%);
-  border-top-color: rgba(74, 140, 200, 0.08);
+  background: linear-gradient(180deg, #edf0f8 0%, #f5f7fc 100%);
 }
 [data-theme="light"] .reflection-quote {
-  color: var(--blue);
+  color: #3a6a9e;
 }
 
 [data-theme="light"] .section-divider {
@@ -716,7 +794,7 @@ body.visible { opacity: 1; }
 ══════════════════════════════════════ -->
 <section class="hero" aria-label="Project overview">
   <div class="hero-content">
-    <div class="hero-zone">Interactions · Case Study</div>
+    <div class="hero-zone">Speculative Design · Embodied Interaction · UX Research</div>
     <h1 class="hero-title">dotCALM</h1>
     <p class="hero-subtitle">Regulation you can feel.</p>
     <div class="hero-meta">
@@ -725,20 +803,20 @@ body.visible { opacity: 1; }
         <div class="hero-meta-value">Interaction Systems Lead</div>
       </div>
       <div>
-        <div class="hero-meta-label">Team</div>
-        <div class="hero-meta-value">3 People</div>
-      </div>
-      <div>
-        <div class="hero-meta-label">Focus</div>
-        <div class="hero-meta-value">Research Framing · Interaction Architecture · Prototyping</div>
-      </div>
-      <div>
         <div class="hero-meta-label">Year</div>
         <div class="hero-meta-value">2024</div>
       </div>
       <div>
         <div class="hero-meta-label">Type</div>
-        <div class="hero-meta-value">Speculative Concept · Research-Backed</div>
+        <div class="hero-meta-value">Speculative Concept · Embodied Interaction</div>
+      </div>
+      <div>
+        <div class="hero-meta-label">Team</div>
+        <div class="hero-meta-value">3 People</div>
+      </div>
+      <div>
+        <div class="hero-meta-label">Context</div>
+        <div class="hero-meta-value">Academic Project</div>
       </div>
     </div>
   </div>
@@ -750,33 +828,99 @@ body.visible { opacity: 1; }
 <section class="cs-section reveal" aria-label="Project overview details">
   <div class="section-inner">
     <div class="section-label">Project Overview</div>
-    <p class="overview-intro">A research-backed speculative design investigation into what it would take to give children — and the caregivers who support them — <em>a moment before the moment</em>. dotCALM is a two-sided system: a wearable sensory band on the child and a companion app for caregivers. The band detects early signs of overstimulation and initiates a breathing sequence. The app alerts the caregiver and lets them reach across the room — or across the building — with a gentle haptic nudge. Together, they make calm something you can <em>send</em>.</p>
+    <p class="overview-intro">A research-backed speculative design investigation into what it would take to give children, and the caregivers who support them, <em>a moment before the moment</em>. dotCALM is a two-sided system: a wearable sensory band on the child and a companion app for caregivers. The band detects early signs of overstimulation and initiates a breathing sequence. The app alerts the caregiver and lets them reach across the room, or across the building, with a gentle haptic nudge. Together, they make calm something you can&nbsp;<em>send</em>.</p>
 
     <div class="proj-meta-outer">
-      <div class="chip-panel">
-        <div>
-          <div class="chip-group-label">Skills</div>
-          <div class="chip-row">
-            <button class="chip-btn" data-group="skill" data-detail="Designing a two-sided interaction system — the child's wearable and the caregiver's companion app — as a single coherent ecosystem with shared haptic language.">Interaction Architecture</button>
-            <button class="chip-btn" data-group="skill" data-detail="Translating caregiver burnout research and sensory processing studies into design constraints that shaped both the wearable and app experience.">Research Synthesis</button>
-            <button class="chip-btn" data-group="skill" data-detail="Designing for the body first — haptic feedback patterns, breathing ring animation, and tactile cues that guide regulation through felt experience rather than instruction.">Behavioral Design</button>
-            <button class="chip-btn" data-group="skill" data-detail="Proposing a wearable regulation system grounded in evidence, designed for what's technically possible, and built to provoke the right next question in the field.">Speculative Design</button>
-            <button class="chip-btn" data-group="skill" data-detail="Mid-fidelity wearable prototype + companion app (Figma) with full interaction flows, haptic sequences, and a real-world validation test plan.">Prototyping</button>
-            <button class="chip-btn" data-group="skill" data-detail="Framing dysregulation not as a behavioral failure but as a systems problem — where environment, timing, tooling, and caregiver capacity all play a role.">Systems Thinking</button>
-          </div>
-          <div class="chip-detail" id="skill-detail">Hover a skill to explore it.</div>
+
+      <div class="sm-timeline">
+        <div class="sm-tl-section"><div class="sm-tl-section-label">Skills</div></div>
+
+        <div class="sm-tl-node">
+          <button class="sm-tl-trigger" aria-expanded="false">
+            <span class="sm-tl-trigger-label">Interaction Architecture</span>
+            <span class="sm-tl-trigger-arrow">&#9662;</span>
+          </button>
+          <div class="sm-tl-panel" aria-hidden="true"><div class="sm-tl-panel-inner"><p class="sm-tl-panel-text">Designing a two-sided interaction system, the child's wearable and the caregiver's companion app, as a single coherent ecosystem with shared haptic language.</p></div></div>
         </div>
-        <div>
-          <div class="chip-group-label">Methods &amp; Tools</div>
-          <div class="chip-row">
-            <button class="chip-btn" data-group="tool" data-detail="Studies on caregiver burnout, co-regulation demands, and the limits of reactive support models — quantified: 57% of surveyed parents reported burnout tied directly to helping children find calm.">Caregiver Research</button>
-            <button class="chip-btn" data-group="tool" data-detail="Literature on sensory processing differences, interoception, and the physiological signatures of pre-escalation states — what the body signals before the mind catches up.">Sensory Processing Studies</button>
-            <button class="chip-btn" data-group="tool" data-detail="Three personas: Lizzy (child), Sarah (caretaker), and Ray (anti-persona) — plus journey maps showing the full dysregulation lifecycle with and without dotCALM.">Persona &amp; Journey Mapping</button>
-            <button class="chip-btn" data-group="tool" data-detail="Mid-fi companion app prototype in Figma — full interaction flows from lock screen alert through caregiver response, with neumorphic soft UI and Buzz companion integration.">Mid-fi Prototyping (Figma)</button>
-          </div>
-          <div class="chip-detail" id="tool-detail">Hover a method to explore it.</div>
+
+        <div class="sm-tl-node">
+          <button class="sm-tl-trigger" aria-expanded="false">
+            <span class="sm-tl-trigger-label">Research Synthesis</span>
+            <span class="sm-tl-trigger-arrow">&#9662;</span>
+          </button>
+          <div class="sm-tl-panel" aria-hidden="true"><div class="sm-tl-panel-inner"><p class="sm-tl-panel-text">Translating caregiver burnout research and sensory processing studies into design constraints that shaped both the wearable and app experience.</p></div></div>
+        </div>
+
+        <div class="sm-tl-node">
+          <button class="sm-tl-trigger" aria-expanded="false">
+            <span class="sm-tl-trigger-label">Embodied Regulation Design</span>
+            <span class="sm-tl-trigger-arrow">&#9662;</span>
+          </button>
+          <div class="sm-tl-panel" aria-hidden="true"><div class="sm-tl-panel-inner"><p class="sm-tl-panel-text">Designing for the body first: haptic feedback patterns, breathing ring animation, and tactile cues that guide regulation through felt experience rather than instruction.</p></div></div>
+        </div>
+
+        <div class="sm-tl-node">
+          <button class="sm-tl-trigger" aria-expanded="false">
+            <span class="sm-tl-trigger-label">Wearable Prototyping</span>
+            <span class="sm-tl-trigger-arrow">&#9662;</span>
+          </button>
+          <div class="sm-tl-panel" aria-hidden="true"><div class="sm-tl-panel-inner"><p class="sm-tl-panel-text">Mid-fidelity wearable prototype plus companion app in Figma with full interaction flows, haptic sequences, and a real-world validation test plan.</p></div></div>
+        </div>
+
+      </div>
+
+      <div class="sm-timeline">
+        <div class="sm-tl-section"><div class="sm-tl-section-label">Methods &amp; Tools</div></div>
+
+        <div class="sm-tl-node">
+          <button class="sm-tl-trigger" aria-expanded="false">
+            <span class="sm-tl-trigger-label">Caregiver Research</span>
+            <span class="sm-tl-trigger-arrow">&#9662;</span>
+          </button>
+          <div class="sm-tl-panel" aria-hidden="true"><div class="sm-tl-panel-inner"><p class="sm-tl-panel-text">Studies on caregiver burnout, co-regulation demands, and the limits of reactive support models. 57% of surveyed parents reported burnout tied directly to helping children find calm.</p></div></div>
+        </div>
+
+        <div class="sm-tl-node">
+          <button class="sm-tl-trigger" aria-expanded="false">
+            <span class="sm-tl-trigger-label">Sensory Processing Studies</span>
+            <span class="sm-tl-trigger-arrow">&#9662;</span>
+          </button>
+          <div class="sm-tl-panel" aria-hidden="true"><div class="sm-tl-panel-inner"><p class="sm-tl-panel-text">Literature on sensory processing differences, interoception, and the physiological signatures of pre-escalation states: what the body signals before the mind catches up.</p></div></div>
+        </div>
+
+        <div class="sm-tl-node">
+          <button class="sm-tl-trigger" aria-expanded="false">
+            <span class="sm-tl-trigger-label">Wearable Hardware Prototyping</span>
+            <span class="sm-tl-trigger-arrow">&#9662;</span>
+          </button>
+          <div class="sm-tl-panel" aria-hidden="true"><div class="sm-tl-panel-inner"><p class="sm-tl-panel-text">Built a working wearable prototype using an Arduino Nano with haptic motors to simulate the breathing pulse and caregiver nudge patterns, enabling hands-on user testing of the regulation experience before committing to production&nbsp;hardware.</p></div></div>
+        </div>
+
+        <div class="sm-tl-node">
+          <button class="sm-tl-trigger" aria-expanded="false">
+            <span class="sm-tl-trigger-label">Mid-fi Prototyping (Figma)</span>
+            <span class="sm-tl-trigger-arrow">&#9662;</span>
+          </button>
+          <div class="sm-tl-panel" aria-hidden="true"><div class="sm-tl-panel-inner"><p class="sm-tl-panel-text">Mid-fi companion app prototype in Figma with full interaction flows from lock screen alert through caregiver response, with neumorphic soft UI and Buzz companion integration.</p></div></div>
+        </div>
+
+        <div class="sm-tl-node">
+          <button class="sm-tl-trigger" aria-expanded="false">
+            <span class="sm-tl-trigger-label">Competitive Analysis</span>
+            <span class="sm-tl-trigger-arrow">&#9662;</span>
+          </button>
+          <div class="sm-tl-panel" aria-hidden="true"><div class="sm-tl-panel-inner"><p class="sm-tl-panel-text">Landscape review of existing wearable regulation tools, identifying what current solutions miss around pre-escalation detection and caregiver coordination.</p></div></div>
+        </div>
+
+        <div class="sm-tl-node">
+          <button class="sm-tl-trigger" aria-expanded="false">
+            <span class="sm-tl-trigger-label">Haptic Pattern Design</span>
+            <span class="sm-tl-trigger-arrow">&#9662;</span>
+          </button>
+          <div class="sm-tl-panel" aria-hidden="true"><div class="sm-tl-panel-inner"><p class="sm-tl-panel-text">Designing distinct vibration patterns for breathing cues, caregiver nudges, and escalation alerts so the body can distinguish each signal without visual or auditory input.</p></div></div>
         </div>
       </div>
+
     </div>
   </div>
 </section>
@@ -790,11 +934,11 @@ body.visible { opacity: 1; }
       <div>
         <div class="section-label">The Challenge</div>
         <h2 class="section-heading">The Regulation Gap</h2>
-        <p class="section-body">Dysregulation doesn't arrive without warning. There are signs — a rise in heart rate, a tightening of breath, a narrowing of focus — that precede the moment the system breaks down. But by the time most support arrives, the window has already closed.</p>
+        <p class="section-body">Dysregulation doesn't arrive without warning. There are signs: a rise in heart rate, a tightening of breath, a narrowing of focus. These precede the moment the system breaks down. But by the time most support arrives, the window has already&nbsp;closed.</p>
         <div class="section-divider"></div>
-        <p class="section-body">Current support models place the entire burden of co-regulation on caregivers — teachers, parents, aides — who are themselves running on diminishing reserves. The result is a cycle: child dysregulates, caregiver intervenes, both recover, repeat. 57% of surveyed parents reported burnout directly tied to helping children find moments of calm.</p>
+        <p class="section-body">Current support models place the entire burden of co-regulation on caregivers (teachers, parents, aides) who are themselves running on diminishing reserves. The result is a cycle: child dysregulates, caregiver intervenes, both recover, repeat. 57% of surveyed parents reported burnout directly tied to helping children find moments of&nbsp;calm.</p>
         <div class="section-divider"></div>
-        <p class="section-body">This project asked: what if the intervention arrived before the crisis — quiet, felt, and already underway?</p>
+        <p class="section-body">This project asked: what if the intervention arrived before the crisis? Quiet, felt, and already&nbsp;underway.</p>
       </div>
       <div class="brief-meta">
         <div>
@@ -807,7 +951,7 @@ body.visible { opacity: 1; }
         </div>
         <div>
           <div class="meta-item-label">Skills</div>
-          <div class="meta-item-value">Interaction Architecture · Behavioral Design · Speculative Design · Systems Thinking</div>
+          <div class="meta-item-value">Interaction Architecture · Embodied Regulation Design · Research Synthesis · Wearable Prototyping</div>
         </div>
         <div>
           <div class="meta-item-label">Type</div>
@@ -840,7 +984,7 @@ body.visible { opacity: 1; }
 <section class="cs-section reveal" aria-label="Personas">
   <div class="section-inner">
     <div class="section-label">Personas</div>
-    <h2 class="section-heading">Who this was designed for — and who it wasn't</h2>
+    <h2 class="section-heading">Who this was designed for, and who it wasn't</h2>
     <p class="section-body">Three perspectives shaped the design: the child experiencing overwhelm, the caregiver trying to help without burning out, and the anti-persona whose relationship with control revealed exactly what dotCALM needed to resist.</p>
 
     <div class="persona-grid">
@@ -974,7 +1118,7 @@ body.visible { opacity: 1; }
   <div class="section-inner">
     <div class="section-label">Research Signals</div>
     <h2 class="section-heading">What the research kept saying</h2>
-    <p class="section-body">Four signals emerged across the research — not as findings to file away, but as design constraints to work inside of.</p>
+    <p class="section-body">Four signals emerged across the research. Not as findings to file away, but as design constraints to work inside&nbsp;of.</p>
 
     <div class="insight-grid">
 
@@ -987,8 +1131,8 @@ body.visible { opacity: 1; }
           <span class="insight-chev"></span>
         </summary>
         <div class="insight-body">
-          <p>Every dysregulation event has a pre-escalation phase — a window where the body is already signaling distress before the mind has caught up. Vital signs shift. Heart rate variability drops. The system is loading.</p>
-          <p>Most interventions target the aftermath. The most impactful design opportunity lives in this window — quiet, brief, and almost always missed.</p>
+          <p>Every dysregulation event has a pre-escalation phase, a window where the body is already signaling distress before the mind has caught up. Vital signs shift. Heart rate variability drops. The system is&nbsp;loading.</p>
+          <p>Most interventions target the aftermath. The most impactful design opportunity lives in this window. Quiet, brief, and almost always&nbsp;missed.</p>
           <p class="insight-implication"><strong>Implication:</strong> The value of the intervention lives in its timing, not its intensity.</p>
         </div>
       </details>
@@ -1002,9 +1146,9 @@ body.visible { opacity: 1; }
           <span class="insight-chev"></span>
         </summary>
         <div class="insight-body">
-          <p>Regulation cannot be instructed into the body. It has to be felt — rhythm, breath, pressure — until the body learns to recognize and recreate that state on its own.</p>
-          <p>The felt experience is not a supplement to learning. It is the learning. The body's pattern library is written in sensation, not instruction.</p>
-          <p class="insight-implication"><strong>Implication:</strong> Haptic and tactile cues are not a secondary channel. They are the primary one.</p>
+          <p>Regulation cannot be instructed into the body. It has to be felt: rhythm, breath, pressure, until the body learns to recognize and recreate that state on its own.</p>
+          <p>The felt experience is not a supplement to learning. It is the learning. The body's pattern library is written in sensation, not&nbsp;instruction.</p>
+          <p class="insight-implication"><strong>Implication:</strong> Haptic and tactile cues are not a secondary channel. They are the primary&nbsp;one.</p>
         </div>
       </details>
 
@@ -1017,9 +1161,9 @@ body.visible { opacity: 1; }
           <span class="insight-chev"></span>
         </summary>
         <div class="insight-body">
-          <p>Co-regulation works. But it requires a regulated caregiver — someone with the presence and capacity to hold the child's nervous system long enough to help it settle.</p>
+          <p>Co-regulation works. But it requires a regulated caregiver, someone with the presence and capacity to hold the child's nervous system long enough to help it&nbsp;settle.</p>
           <p>In classrooms of twenty-plus, or homes stretched by work and compounding demands, that capacity runs out. 57% of surveyed parents reported burnout directly tied to co-regulation demands alone.</p>
-          <p class="insight-implication"><strong>Implication:</strong> The design has to work when caregivers can't be fully present — or can't be there at all.</p>
+          <p class="insight-implication"><strong>Implication:</strong> The design has to work when caregivers can't be fully present, or can't be there at&nbsp;all.</p>
         </div>
       </details>
 
@@ -1032,9 +1176,9 @@ body.visible { opacity: 1; }
           <span class="insight-chev"></span>
         </summary>
         <div class="insight-body">
-          <p>The goal of any regulation support is internalization — not dependence on the tool. The child eventually recognizes the signals themselves, initiates the response themselves, and no longer needs the prompt.</p>
+          <p>The goal of any regulation support is internalization, not dependence on the tool. The child eventually recognizes the signals themselves, initiates the response themselves, and no longer needs the&nbsp;prompt.</p>
           <p>That's not a product failure. That's the outcome the entire system is optimizing for.</p>
-          <p class="insight-implication"><strong>Implication:</strong> Success is measured by how quickly the device becomes unnecessary.</p>
+          <p class="insight-implication"><strong>Implication:</strong> Success is measured by how quickly the device becomes&nbsp;unnecessary.</p>
         </div>
       </details>
 
@@ -1049,18 +1193,18 @@ body.visible { opacity: 1; }
   <div class="section-inner">
     <div class="section-label">The Ecosystem</div>
     <h2 class="section-heading">Two surfaces. One system.</h2>
-    <p class="section-body">dotCALM is not a single device — it's a shared experience. The wearable belongs to the child. The companion app belongs to the caregiver. They speak to each other through haptic signals that cross rooms, buildings, and the gap between dysregulation and calm.</p>
+    <p class="section-body">dotCALM is not a single device. It's a shared experience. The wearable belongs to the child. The companion app belongs to the caregiver. They speak to each other through haptic signals that cross rooms, buildings, and the gap between dysregulation and&nbsp;calm.</p>
 
     <div class="system-diagram">
       <div class="system-side">
         <div class="system-side-label">The Wearable · Child</div>
         <div class="system-side-title">The band on Lizzy's wrist</div>
         <div class="system-side-items">
-          <div class="system-item"><div class="system-item-dot"></div>Monitors heart rate, heart rate variability, and breathing rate continuously</div>
-          <div class="system-item"><div class="system-item-dot"></div>Detects pre-escalation signals before the child is consciously aware</div>
-          <div class="system-item"><div class="system-item-dot"></div>Delivers a subtle haptic pulse — an invitation to pause, not an alert</div>
-          <div class="system-item"><div class="system-item-dot"></div>Guides breathing through an expanding visual ring synchronized with haptic rhythm</div>
-          <div class="system-item"><div class="system-item-dot"></div>Receives Nudge signals from caregiver — a quiet "I'm here" from across the room</div>
+          <div class="system-item"><div class="system-item-dot"></div>Monitors heart rate, heart rate variability, and breathing rate&nbsp;continuously</div>
+          <div class="system-item"><div class="system-item-dot"></div>Detects pre-escalation signals before the child is consciously&nbsp;aware</div>
+          <div class="system-item"><div class="system-item-dot"></div>Delivers a subtle haptic pulse, an invitation to pause, not an&nbsp;alert</div>
+          <div class="system-item"><div class="system-item-dot"></div>Guides breathing through an expanding visual ring synchronized with haptic&nbsp;rhythm</div>
+          <div class="system-item"><div class="system-item-dot"></div>Receives Nudge signals from caregiver, a quiet "I'm here" from across the&nbsp;room</div>
         </div>
       </div>
 
@@ -1074,11 +1218,11 @@ body.visible { opacity: 1; }
         <div class="system-side-label">The Companion App · Caregiver</div>
         <div class="system-side-title">The app in Sarah's pocket</div>
         <div class="system-side-items">
-          <div class="system-item"><div class="system-item-dot"></div>Receives lock screen alerts when the child's vitals elevate</div>
-          <div class="system-item"><div class="system-item-dot"></div>Shows real-time vitals: heart rate, average rate, HRV, breathing rate</div>
+          <div class="system-item"><div class="system-item-dot"></div>Receives lock screen alerts when the child's vitals&nbsp;elevate</div>
+          <div class="system-item"><div class="system-item-dot"></div>Shows real-time vitals: heart rate, average rate, HRV, breathing&nbsp;rate</div>
           <div class="system-item"><div class="system-item-dot"></div>Offers a choice: Help (active) or Ignore (trust the wearable)</div>
-          <div class="system-item"><div class="system-item-dot"></div>Sends reminders via the Nudge — deep breath, a message, or a tool prompt</div>
-          <div class="system-item"><div class="system-item-dot"></div>Logs history across sessions to reveal patterns over time</div>
+          <div class="system-item"><div class="system-item-dot"></div>Sends reminders via the Nudge: deep breath, a message, or a tool&nbsp;prompt</div>
+          <div class="system-item"><div class="system-item-dot"></div>Logs history across sessions to reveal patterns over&nbsp;time</div>
         </div>
       </div>
     </div>
@@ -1103,7 +1247,7 @@ body.visible { opacity: 1; }
         <div class="flow-num">03</div>
         <div class="flow-icon">◯</div>
         <div class="flow-name">The Nudge Sent</div>
-        <div class="flow-desc">Caregiver chooses — deep breath reminder, a message, or a Buzz tool. Sent in one tap.</div>
+        <div class="flow-desc">Caregiver chooses: deep breath reminder, a message, or a Buzz tool. Sent in one tap.</div>
         <div class="flow-tag">App → Wearable</div>
       </div>
       <div class="flow-step">
@@ -1125,7 +1269,7 @@ body.visible { opacity: 1; }
   <div class="section-inner">
     <div class="section-label">The Prototype</div>
     <h2 class="section-heading">The caregiver companion app</h2>
-    <p class="section-body">The mid-fidelity Figma prototype focused on the caregiver's side of the system — the companion app that receives alerts, shows vitals, and lets caregivers respond. The visual language is soft neumorphic: rounded surfaces, lavender palette, and gentle depth that communicate calm even in moments of urgency.</p>
+    <p class="section-body">The mid-fidelity Figma prototype focused on the caregiver's side of the system, the companion app that receives alerts, shows vitals, and lets caregivers respond. The visual language is soft neumorphic: rounded surfaces, lavender palette, and gentle depth that communicate calm even in moments of&nbsp;urgency.</p>
 
     <div class="screens-row">
 
@@ -1237,12 +1381,12 @@ body.visible { opacity: 1; }
 
     </div>
 
-    <p class="section-body" style="margin-top:36px; max-width:760px;">The Buzz integration is significant — a named companion character gives children an anchor outside of themselves. Feeding Buzz, petting Buzz, playing with Buzz are regulation cues framed as care for something else. The child is practicing self-soothing through the low-stakes act of caring for a companion.</p>
+    <p class="section-body" style="margin-top:36px; max-width:760px;">The Buzz integration is significant. A named companion character gives children an anchor outside of themselves. Feeding Buzz, petting Buzz, playing with Buzz are regulation cues framed as care for something else. The child is practicing self-soothing through the low-stakes act of caring for a&nbsp;companion.</p>
 
     <!-- Interactive Ecosystem Prototype -->
     <div style="margin-top:48px;">
       <h2 class="section-heading" style="margin-bottom:12px;">The ecosystem in motion</h2>
-      <p class="section-body" style="margin-bottom:28px;">An interactive walkthrough of the full dotCALM system — wearable, companion app, and haptic language working together. Use the tabs to explore three modes: the care reminder flow, the haptic language exchange, and a hands-on sandbox.</p>
+      <p class="section-body" style="margin-bottom:28px;">An interactive walkthrough of the full dotCALM system: wearable, companion app, and haptic language working together. Use the tabs to explore three modes: the care reminder flow, the haptic language exchange, and a hands-on sandbox.</p>
       <div style="width:100%;max-width:900px;aspect-ratio:822/659;border-radius:14px;border:1px solid rgba(255,255,255,0.12);overflow:hidden;">
         <iframe src="prototype-dotcalm.html" title="dotCALM Ecosystem Prototype" loading="lazy" style="width:100%;height:100%;border:none;display:block;border-radius:13px;"></iframe>
       </div>
@@ -1257,24 +1401,24 @@ body.visible { opacity: 1; }
 <section class="cs-section reveal" aria-label="Design intents">
   <div class="section-inner">
     <div class="section-label">Design Intents</div>
-    <h2 class="section-heading">Three things this had to do</h2>
-    <p class="section-body">dotCALM wasn't designed to solve dysregulation. It was designed to reframe where the intervention lives — and who carries the weight of it.</p>
+    <h2 class="section-heading">What this system had to do</h2>
+    <p class="section-body">dotCALM wasn't designed to solve dysregulation. It was designed to reframe where the intervention lives, and who carries the weight of&nbsp;it.</p>
 
     <div class="horizon-row">
       <div class="horizon-card">
         <div class="horizon-label">Autonomy</div>
         <div class="horizon-heading">Put regulation in the child's hands</div>
-        <p class="horizon-body">Every design decision pushed toward independence. The band provides scaffolding meant to fade. Buzz gives children a relational anchor that doesn't require a caregiver to be present. The goal is internalization, not dependency.</p>
+        <p class="horizon-body">Every design decision pushed toward independence. The band provides scaffolding meant to fade. Buzz gives children a relational anchor that doesn't require a caregiver to be present. The goal is internalization, not&nbsp;dependency.</p>
       </div>
       <div class="horizon-card">
         <div class="horizon-label">Timing</div>
         <div class="horizon-heading">Catch it before it breaks</div>
-        <p class="horizon-body">Pre-escalation, not post-crisis. The system catches the rising heart rate, the narrowing tolerance — the quiet signals most environments are too loud to hear. The intervention is already underway before the child needs rescuing.</p>
+        <p class="horizon-body">Pre-escalation, not post-crisis. The system catches the rising heart rate, the narrowing tolerance, the quiet signals most environments are too loud to hear. The intervention is already underway before the child needs&nbsp;rescuing.</p>
       </div>
       <div class="horizon-card">
         <div class="horizon-label">Embodiment</div>
-        <div class="horizon-heading">Minimal visuals. Maximum felt sense.</div>
-        <p class="horizon-body">Haptic feedback and tactile guidance lead. The body doesn't need to be told to calm down — it needs to be shown what calm feels like, again and again, until the pattern becomes its own. The ring expands. The rhythm teaches.</p>
+        <div class="horizon-heading">Less screen. More felt&nbsp;sense.</div>
+        <p class="horizon-body">Haptic feedback and tactile guidance lead. The body doesn't need to be told to calm down. It needs to be shown what calm feels like, again and again, until the pattern becomes its own. The ring expands. The rhythm&nbsp;teaches.</p>
       </div>
     </div>
 
@@ -1283,7 +1427,7 @@ body.visible { opacity: 1; }
       <div>
         <div class="nudge-label">Feature</div>
         <div class="nudge-title">dotCALM Nudge</div>
-        <p class="nudge-body">When the child needs more than the band can offer alone, dotCALM Nudge allows a caregiver to send a remote haptic signal — from across the room, the building, or the city. A quiet way to say <em>I'm here</em> without interrupting the space, the classroom, or the child's process. It keeps the autonomy intact while preserving the connection that makes regulation feel safe.</p>
+        <p class="nudge-body">When the child needs more than the band can offer alone, dotCALM Nudge allows a caregiver to send a remote haptic signal, from across the room, the building, or the city. A quiet way to say <em>I'm here</em> without interrupting the space, the classroom, or the child's process. It keeps the autonomy intact while preserving the connection that makes regulation feel&nbsp;safe.</p>
       </div>
     </div>
 
@@ -1297,7 +1441,7 @@ body.visible { opacity: 1; }
   <div class="section-inner">
     <div class="section-label">What Comes Next</div>
     <h2 class="section-heading">Three phases to test the argument</h2>
-    <p class="section-body">The prototype opens questions. These three phases are how we answer them — not with assumptions, but with evidence gathered from the people this was designed for.</p>
+    <p class="section-body">The prototype opens questions. These three phases are how we answer them, not with assumptions, but with evidence gathered from the people this was designed&nbsp;for.</p>
 
     <div class="phase-row">
       <div class="phase-card">
@@ -1305,10 +1449,10 @@ body.visible { opacity: 1; }
         <div class="phase-title">Refine the Prototype</div>
         <div class="phase-body">
           <ul>
-            <li>Iterate haptic pulse patterns across different arousal states</li>
+            <li>Iterate haptic pulse patterns across different arousal&nbsp;states</li>
             <li>Test escalation thresholds and cue timing</li>
-            <li>Develop shared haptic vocabulary for the Nudge</li>
-            <li>Refine the Buzz companion mechanic with child users</li>
+            <li>Develop shared haptic vocabulary for the&nbsp;Nudge</li>
+            <li>Refine the Buzz companion mechanic with child&nbsp;users</li>
           </ul>
         </div>
       </div>
@@ -1317,8 +1461,8 @@ body.visible { opacity: 1; }
         <div class="phase-title">Define Success</div>
         <div class="phase-body">
           <ul>
-            <li>Expert interviews to align on behavioral benchmarks</li>
-            <li>Establish measures: independent regulation frequency, time-to-recovery, reduction in caregiver burden over time</li>
+            <li>Expert interviews to align on behavioral&nbsp;benchmarks</li>
+            <li>Establish measures: independent regulation frequency, time-to-recovery, reduction in caregiver burden over&nbsp;time</li>
           </ul>
         </div>
       </div>
@@ -1327,9 +1471,9 @@ body.visible { opacity: 1; }
         <div class="phase-title">Validate in the Field</div>
         <div class="phase-body">
           <ul>
-            <li>Small pilot with caregivers and educators in classroom and home settings</li>
-            <li>Test cue clarity, classroom feasibility, and perceived child autonomy</li>
-            <li>Iterate based on what the environment teaches us</li>
+            <li>Small pilot with caregivers and educators in classroom and home&nbsp;settings</li>
+            <li>Test cue clarity, classroom feasibility, and perceived child&nbsp;autonomy</li>
+            <li>Iterate based on what the environment teaches&nbsp;us</li>
           </ul>
         </div>
       </div>
@@ -1341,11 +1485,12 @@ body.visible { opacity: 1; }
 <!-- ══════════════════════════════════════
      REFLECTION
 ══════════════════════════════════════ -->
-<section class="reflection-wrap reveal" aria-label="Design reflection">
-  <div class="reflection-label">Design Reflection</div>
-  <blockquote class="reflection-quote">
-    "Regulation must be felt before it can be taught. That feeling becomes the body's blueprint for self-control and autonomy."
-  </blockquote>
+<section class="reflection-wrap" aria-label="Reflection">
+  <div class="reflection-fireflies" id="reflectionFireflies" aria-hidden="true"></div>
+  <div class="reflection-inner reveal">
+    <p class="reflection-label">Reflection</p>
+    <p class="reflection-quote">Regulation begins as a feeling. We "Find the pause". That feeling becomes the body's blueprint for self-control and&nbsp;autonomy.</p>
+  </div>
 </section>
 
 </main>
@@ -1372,31 +1517,50 @@ const revealObserver = new IntersectionObserver((entries) => {
 }, { threshold: 0.08 });
 document.querySelectorAll('.reveal').forEach(el => revealObserver.observe(el));
 
-document.querySelectorAll('.chip-btn').forEach(btn => {
-  const group = btn.dataset.group;
-  const detail = document.getElementById(`${group}-detail`);
-  if (!detail) return;
-  btn.addEventListener('mouseenter', () => {
-    detail.textContent = btn.dataset.detail;
-    detail.classList.add('has-value');
-    document.querySelectorAll(`.chip-btn[data-group="${group}"]`).forEach(b => b.classList.remove('active'));
-    btn.classList.add('active');
-  });
-  btn.addEventListener('mouseleave', () => {
-    detail.classList.remove('has-value');
-    btn.classList.remove('active');
-    detail.textContent = group === 'skill' ? 'Hover a skill to explore it.' : 'Hover a method to explore it.';
-  });
-});
+// Reflection fireflies
+(function() {
+  var c = document.getElementById('reflectionFireflies');
+  if (!c) return;
+  for (var i = 0; i < 18; i++) {
+    var f = document.createElement('div');
+    f.className = 'reflection-firefly';
+    var size = 1.5 + Math.random() * 2.5;
+    f.style.width = f.style.height = size + 'px';
+    f.style.left = Math.random() * 100 + '%';
+    f.style.bottom = '-4px';
+    f.style.animationDuration = (14 + Math.random() * 22) + 's';
+    f.style.animationDelay = (Math.random() * 18) + 's';
+    c.appendChild(f);
+  }
+})();
 
-const outer = document.querySelector('.proj-meta-outer');
-if (outer) {
-  outer.addEventListener('mousemove', e => {
-    const r = outer.getBoundingClientRect();
-    outer.style.setProperty('--mx', `${((e.clientX - r.left) / r.width * 100).toFixed(1)}%`);
-    outer.style.setProperty('--my', `${((e.clientY - r.top) / r.height * 100).toFixed(1)}%`);
+/* Skills & Methods timeline */
+(function() {
+  var nodes = document.querySelectorAll('.sm-tl-node');
+  nodes.forEach(function(node) {
+    var trigger = node.querySelector('.sm-tl-trigger');
+    var panel = node.querySelector('.sm-tl-panel');
+    trigger.addEventListener('click', function() {
+      var isOpen = node.classList.contains('open');
+      nodes.forEach(function(n) {
+        if (n !== node && n.classList.contains('open')) {
+          n.classList.remove('open');
+          n.querySelector('.sm-tl-trigger').setAttribute('aria-expanded', 'false');
+          n.querySelector('.sm-tl-panel').setAttribute('aria-hidden', 'true');
+        }
+      });
+      if (isOpen) {
+        node.classList.remove('open');
+        trigger.setAttribute('aria-expanded', 'false');
+        panel.setAttribute('aria-hidden', 'true');
+      } else {
+        node.classList.add('open');
+        trigger.setAttribute('aria-expanded', 'true');
+        panel.setAttribute('aria-hidden', 'false');
+      }
+    });
   });
-}
+})();
 
 // Theme toggle
 (function() {

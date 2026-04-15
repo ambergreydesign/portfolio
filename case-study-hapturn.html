@@ -206,7 +206,7 @@ body {
 
 /* ── THEME TRANSITION ── */
 body, .nav-back, .cs-section, .reflection-wrap,
-.chip-btn, .stat-cell, .quote-card, .persona-card,
+.sm-tl-trigger, .stat-cell, .quote-card, .persona-card,
 .hmw-block, .north-star, .competitor-card, .gap-callout,
 .hardware-list li, .feedback-mode, .wil-card {
   transition: background-color 0.4s ease, color 0.4s ease, border-color 0.4s ease;
@@ -331,51 +331,84 @@ body, .nav-back, .cs-section, .reflection-wrap,
 .overview-intro em { color: var(--body-em); font-style: italic; }
 
 /* ── CHIP PANEL ── */
-.proj-meta-outer {
-  border: 1px solid var(--card-border);
-  border-radius: 14px;
-  background: var(--card-bg);
-  position: relative; overflow: hidden;
-  margin-bottom: 12px;
-}
-.proj-meta-outer::before {
-  content: ''; position: absolute; inset: 0; pointer-events: none;
-  background: radial-gradient(ellipse 80% 60% at var(--mx,50%) var(--my,40%), var(--card-bg) 0%, transparent 70%);
-  transition: background 0.1s ease; border-radius: inherit;
-}
-.chip-panel {
+/* ── SKILLS & METHODS ACCORDION TIMELINE ── */
+.sm-columns {
   display: grid; grid-template-columns: 1fr 1fr;
-  gap: 0; padding: 36px 40px;
+  gap: 0 40px; margin-bottom: 12px;
 }
-.chip-group { display: flex; flex-direction: column; gap: 16px; }
-.chip-group + .chip-group { border-left: 1px solid var(--card-border); padding-left: 40px; }
-.chip-group-label {
-  font-size: 9px; font-weight: 500; letter-spacing: 0.26em; text-transform: uppercase;
-  color: var(--section-eyebrow); margin-bottom: 4px;
+.sm-timeline { position: relative; }
+.sm-timeline::before {
+  content: ''; position: absolute; left: 14px; top: 0; bottom: 0; width: 1px;
+  background: linear-gradient(180deg, transparent 0%, var(--card-border) 4%, var(--card-border) 96%, transparent 100%);
 }
-.chip-row { display: flex; flex-wrap: wrap; gap: 8px; }
-.chip-btn {
-  font-size: 11px; font-weight: 400; letter-spacing: 0.06em;
-  color: var(--chip-color);
-  background: var(--chip-bg);
-  border: 1px solid var(--chip-border);
-  border-radius: 100px; padding: 6px 14px;
-  cursor: default; white-space: nowrap;
-  transition: background 0.2s, border-color 0.2s, color 0.2s;
-  position: relative;
+.sm-tl-section { position: relative; padding-left: 44px; margin-bottom: 8px; }
+.sm-tl-section-label {
+  font-size: 9px; font-weight: 500; letter-spacing: 0.28em; text-transform: uppercase;
+  color: var(--section-eyebrow); padding: 12px 0;
+  display: flex; align-items: center; gap: 12px;
 }
-.chip-btn.active, .chip-btn:hover {
-  background: var(--chip-active-bg);
-  border-color: var(--chip-active-border);
-  color: var(--chip-active-color);
+.sm-tl-section-label::after {
+  content: ''; flex: 1; height: 1px;
+  background: linear-gradient(90deg, var(--card-border) 0%, transparent 100%);
 }
-.chip-detail-wrap { padding: 0 40px 28px; min-height: 28px; }
-.chip-detail {
+.sm-tl-section::before {
+  content: ''; position: absolute; left: 10px; top: 16px;
+  width: 9px; height: 9px; border-radius: 50%;
+  background: var(--teal); box-shadow: 0 0 12px rgba(13,148,136,0.4); z-index: 2;
+}
+.sm-tl-node { position: relative; padding-left: 44px; margin-bottom: 4px; }
+.sm-tl-node::before {
+  content: ''; position: absolute; left: 12px; top: 18px;
+  width: 5px; height: 5px; border-radius: 50%;
+  background: rgba(13,148,136,0.35); transition: background 0.25s, box-shadow 0.25s; z-index: 2;
+}
+.sm-tl-node.open::before { background: var(--cyan); box-shadow: 0 0 10px rgba(94,234,212,0.3); }
+.sm-tl-node::after {
+  content: ''; position: absolute; left: 17px; top: 20px;
+  width: 27px; height: 1px; background: rgba(13,148,136,0.12); transition: background 0.25s;
+}
+.sm-tl-node.open::after { background: rgba(13,148,136,0.3); }
+.sm-tl-trigger {
+  display: flex; align-items: center; gap: 10px; width: 100%;
+  background: var(--chip-bg); border: 1px solid var(--chip-border);
+  border-radius: 12px; padding: 12px 18px; cursor: pointer;
+  font-family: inherit; color: inherit; text-align: left;
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.sm-tl-trigger:hover {
+  background: var(--chip-active-bg); border-color: rgba(13,148,136,0.25);
+}
+.sm-tl-node.open .sm-tl-trigger {
+  background: var(--chip-active-bg); border-color: var(--chip-active-border);
+  border-bottom-left-radius: 0; border-bottom-right-radius: 0; border-bottom-color: transparent;
+}
+.sm-tl-trigger-label {
+  flex: 1; font-size: 13px; font-weight: 400; letter-spacing: 0.03em;
+  color: var(--chip-color); transition: color 0.25s;
+}
+.sm-tl-node.open .sm-tl-trigger-label,
+.sm-tl-trigger:hover .sm-tl-trigger-label { color: var(--chip-active-color); }
+.sm-tl-trigger-arrow {
+  font-size: 10px; color: rgba(94,234,212,0.3);
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), color 0.25s; flex-shrink: 0;
+}
+.sm-tl-node.open .sm-tl-trigger-arrow { transform: rotate(180deg); color: rgba(94,234,212,0.6); }
+.sm-tl-panel {
+  overflow: hidden; max-height: 0;
+  transition: max-height 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.sm-tl-node.open .sm-tl-panel { max-height: 200px; }
+.sm-tl-panel-inner {
+  background: rgba(13,148,136,0.06); border: 1px solid var(--chip-active-border);
+  border-top: none; border-radius: 0 0 12px 12px; padding: 18px 20px;
+  opacity: 0; transform: translateY(-6px);
+  transition: opacity 0.25s ease 0.06s, transform 0.25s ease 0.06s;
+}
+.sm-tl-node.open .sm-tl-panel-inner { opacity: 1; transform: translateY(0); }
+.sm-tl-panel-text {
   font-size: 12px; font-weight: 300; letter-spacing: 0.04em;
-  color: var(--chip-detail-color); font-style: italic;
-  transition: opacity 0.2s ease; opacity: 0;
+  line-height: 1.6; color: var(--chip-detail-color); font-style: italic;
 }
-.chip-detail.has-value { opacity: 1; }
 
 /* ── PROBLEM STATS ── */
 .stat-row { display: flex; gap: 0; margin: 48px 0; border: 1px solid var(--stat-border); border-radius: 14px; overflow: hidden; }
@@ -497,8 +530,8 @@ body, .nav-back, .cs-section, .reflection-wrap,
 .prototype-body strong { color: var(--body-strong); font-weight: 500; }
 
 .hardware-list {
-  list-style: none; margin: 24px 0;
-  display: flex; flex-direction: column; gap: 8px;
+  list-style: none; margin: 40px 0 0;
+  display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px;
 }
 .hardware-list li {
   display: flex; align-items: center; gap: 12px;
@@ -507,6 +540,12 @@ body, .nav-back, .cs-section, .reflection-wrap,
   border: 1px solid var(--hw-item-border);
   border-radius: 8px;
   background: var(--hw-item-bg);
+  transition: border-color 0.25s ease, background 0.25s ease;
+  cursor: default;
+}
+.hardware-list li:hover {
+  border-color: var(--teal-border);
+  background: var(--teal-dim);
 }
 .hardware-list li::before { content: '—'; color: var(--hw-dash); flex-shrink: 0; }
 
@@ -594,20 +633,41 @@ body, .nav-back, .cs-section, .reflection-wrap,
 }
 
 /* ── WHAT I LEARNED ── */
-.wil-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 40px; }
+.wil-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; margin-top: 40px; }
 .wil-card {
   padding: 28px 24px;
   border: 1px solid var(--wil-border);
   border-radius: 12px;
   background: var(--wil-bg);
+  cursor: pointer;
+  transition: border-color 0.25s ease, background 0.25s ease;
 }
+.wil-card:hover { border-color: var(--teal-border); background: var(--teal-dim); }
+.wil-card.active { border-color: var(--teal-border); background: var(--teal-dim); }
+.wil-header { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; }
+.wil-toggle {
+  flex-shrink: 0; width: 20px; height: 20px; display: flex; align-items: center; justify-content: center;
+  font-size: 14px; color: var(--wil-title); opacity: 0.5;
+  transition: transform 0.3s ease, opacity 0.25s ease;
+  margin-top: 2px;
+}
+.wil-card:hover .wil-toggle { opacity: 1; }
+.wil-card.active .wil-toggle { transform: rotate(45deg); opacity: 1; }
 .wil-number { font-family: 'Cormorant Garamond', serif; font-size: 32px; font-weight: 600; color: var(--wil-number); line-height: 1; margin-bottom: 12px; }
-.wil-title { font-size: 11px; font-weight: 500; letter-spacing: 0.12em; text-transform: uppercase; color: var(--wil-title); margin-bottom: 10px; }
-.wil-body { font-size: 13px; font-weight: 300; line-height: 1.75; color: var(--wil-body); }
+.wil-title { font-size: 11px; font-weight: 500; letter-spacing: 0.12em; text-transform: uppercase; color: var(--wil-title); margin-bottom: 0; }
+.wil-body {
+  font-size: 13px; font-weight: 300; line-height: 1.75; color: var(--wil-body);
+  max-height: 0; overflow: hidden; opacity: 0;
+  transition: max-height 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94), opacity 0.3s ease, margin-top 0.3s ease;
+  margin-top: 0;
+}
+.wil-card.active .wil-body { max-height: 200px; opacity: 1; margin-top: 12px; }
+.wil-card.active .wil-title { margin-bottom: 0; }
 
 @media (max-width: 860px) {
   .carplay-copy { grid-template-columns: 1fr; gap: 24px; }
   .wil-grid { grid-template-columns: 1fr; gap: 12px; }
+  .hardware-list { grid-template-columns: 1fr; }
 }
 
 /* ── REFLECTION ── */
@@ -615,10 +675,28 @@ body, .nav-back, .cs-section, .reflection-wrap,
   padding: 96px 64px 120px; position: relative; overflow: hidden;
   background: linear-gradient(180deg, var(--bg-alt) 0%, var(--bg) 100%);
 }
-.reflection-wrap::before {
-  content: ''; position: absolute; inset: 0;
-  background: radial-gradient(ellipse 60% 70% at 50% 0%, var(--reflection-glow) 0%, transparent 60%);
-  pointer-events: none;
+/* Fireflies container */
+.reflection-fireflies {
+  position: absolute; inset: 0;
+  pointer-events: none; overflow: hidden; z-index: 0;
+}
+.reflection-firefly {
+  position: absolute;
+  border-radius: 50%;
+  background: rgba(94,234,212,0.35);
+  box-shadow: 0 0 6px rgba(94,234,212,0.3), 0 0 18px rgba(94,234,212,0.12);
+  animation: fireflyFloat linear infinite;
+}
+@keyframes fireflyFloat {
+  0%   { transform: translateY(0) translateX(0); opacity: 0; }
+  8%   { opacity: 1; }
+  50%  { transform: translateY(-40vh) translateX(30px); }
+  92%  { opacity: 1; }
+  100% { transform: translateY(-80vh) translateX(-20px); opacity: 0; }
+}
+[data-theme="light"] .reflection-firefly {
+  background: rgba(13,148,136,0.3);
+  box-shadow: 0 0 6px rgba(13,148,136,0.25), 0 0 18px rgba(13,148,136,0.1);
 }
 .reflection-inner { max-width: 720px; margin: 0 auto; position: relative; z-index: 1; }
 .reflection-label { font-size: 8.5px; font-weight: 500; letter-spacing: 0.34em; text-transform: uppercase; color: var(--reflection-label); margin-bottom: 24px; }
@@ -632,7 +710,7 @@ body, .nav-back, .cs-section, .reflection-wrap,
 *:focus { outline: none; }
 *:focus-visible { outline: 2px solid var(--cyan); outline-offset: 3px; border-radius: 4px; }
 .nav-back:focus-visible { outline-offset: 2px; border-radius: 100px; }
-.chip-btn:focus-visible { outline-offset: 1px; border-radius: 100px; background: var(--chip-active-bg); border-color: var(--chip-active-border); color: var(--chip-active-color); }
+.sm-tl-trigger:focus-visible { outline-offset: 2px; border-radius: 12px; }
 .figma-cta:focus-visible { outline-offset: 2px; border-radius: 100px; }
 
 /* ── SR-ONLY ── */
@@ -672,14 +750,12 @@ body, .nav-back, .cs-section, .reflection-wrap,
   .persona-grid { grid-template-columns: 1fr; gap: 16px; }
   .competitor-grid { grid-template-columns: 1fr; gap: 12px; }
   .prototype-grid { grid-template-columns: 1fr; gap: 36px; }
-  .chip-panel { grid-template-columns: 1fr; gap: 28px; padding: 28px 24px; }
-  .chip-group + .chip-group { border-left: none; padding-left: 0; border-top: 1px solid var(--card-border); padding-top: 24px; }
-  .chip-detail-wrap { padding: 0 24px 20px; }
+  .sm-columns { grid-template-columns: 1fr; gap: 12px 0; }
   .carplay-embed { height: 420px; }
   .wil-card[style*="max-width: 50%"] { max-width: 100% !important; }
 
   /* Touch targets: min 44px */
-  .chip-btn { min-height: 44px; padding: 10px 16px; font-size: 12px; display: inline-flex; align-items: center; }
+  .sm-tl-trigger { min-height: 44px; }
   .nav-back { min-height: 44px; padding: 10px 18px 10px 14px; }
   .figma-cta { min-height: 44px; padding: 12px 24px; }
   .light-switch .switch-plate { min-width: 44px; min-height: 56px; }
@@ -688,7 +764,7 @@ body, .nav-back, .cs-section, .reflection-wrap,
   .hero-eyebrow { font-size: 10px; }
   .section-eyebrow { font-size: 10px; }
   .hero-meta-label { font-size: 10px; }
-  .chip-group-label { font-size: 10px; }
+  .sm-tl-section-label { font-size: 10px; }
   .wip-banner { font-size: 10px; }
   .motor-cols, .switch-label { font-size: 10px; }
   .reflection-label { font-size: 10px; }
@@ -704,8 +780,8 @@ body, .nav-back, .cs-section, .reflection-wrap,
   .north-star { flex-direction: column; gap: 12px; }
   .nav-back { top: 16px; left: 16px; }
   .carplay-embed { height: 340px; }
-  .chip-panel { padding: 22px 18px; }
-  .chip-detail-wrap { padding: 0 18px 16px; }
+  .sm-tl-trigger { padding: 10px 14px; }
+  .sm-tl-trigger-label { font-size: 12px; }
 }
 
 /* ── HIGH CONTRAST ── */
@@ -753,50 +829,36 @@ body, .nav-back, .cs-section, .reflection-wrap,
   width: 36px; height: 56px;
   background: #0a1f1d;
   border-radius: 6px;
-  border: 2px solid #143330;
+  border: 2px solid rgba(94,234,212,0.25);
   display: flex; align-items: center; justify-content: center;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.05);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.3), inset 0 1px 0 rgba(94,234,212,0.06);
   transition: all 0.3s;
   position: relative;
 }
 
 [data-theme="light"] .switch-plate {
   background: #eef5f4;
-  border-color: #c8ddd9;
+  border-color: rgba(13,148,136,0.3);
   box-shadow: 0 2px 8px rgba(0,0,0,0.08), inset 0 1px 0 rgba(255,255,255,0.8);
 }
 
 .switch-toggle {
   width: 20px; height: 24px;
-  background: linear-gradient(180deg, #1a4a45, #0f3330);
+  background: linear-gradient(180deg, #5eead4, #3bc4ad);
   border-radius: 3px;
-  border: 1px solid #2a5e58;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+  border: 1px solid rgba(94,234,212,0.6);
+  box-shadow: 0 2px 4px rgba(0,0,0,0.3), 0 0 8px rgba(94,234,212,0.2);
   transition: all 0.15s ease;
   transform: translateY(6px);
 }
 
 [data-theme="light"] .switch-toggle {
-  background: linear-gradient(180deg, #FFFFFF, #e8f2f0);
-  border-color: #a8ccc7;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.08);
+  background: linear-gradient(180deg, #0d9488, #0a7a70);
+  border-color: rgba(13,148,136,0.5);
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1), 0 0 8px rgba(13,148,136,0.15);
   transform: translateY(-6px);
 }
 
-.switch-label {
-  position: absolute;
-  bottom: -18px; left: 50%;
-  transform: translateX(-50%);
-  font-size: 7px; font-weight: 500;
-  letter-spacing: 0.15em; text-transform: uppercase;
-  color: rgba(94,234,212,0.3);
-  white-space: nowrap;
-  transition: color 0.3s;
-}
-
-[data-theme="light"] .switch-label {
-  color: rgba(13,148,136,0.3);
-}
 </style>
 </head>
 <body>
@@ -810,7 +872,6 @@ body, .nav-back, .cs-section, .reflection-wrap,
   <div class="switch-plate">
     <div class="switch-toggle"></div>
   </div>
-  <div class="switch-label">Light</div>
 </div>
 
 <button class="nav-back" onclick="navigateTo('level-3-hapturn.html')">
@@ -856,40 +917,55 @@ body, .nav-back, .cs-section, .reflection-wrap,
 <section class="cs-section" aria-label="Overview">
   <div class="section-inner">
     <div class="reveal">
-      <div class="wip-banner"><span class="wip-dot"></span>Case Study in Progress</div>
       <p class="overview-intro">
-        Drivers with ADHD and anxiety don't have a focus problem behind the wheel — they have a <em>feedback problem.</em> GPS systems are designed for people who are already paying attention. HapTurn asks: what if the navigation spoke through touch instead of demanding it?
+        Drivers with ADHD and anxiety often experience cognitive strain behind the wheel. It's not just a focus problem, it's a <em>feedback problem.</em> GPS systems are designed for people who are already paying attention. HapTurn reduces the cost of attention by guiding through touch, easing the anxiety of constant focus.
       </p>
     </div>
 
-    <div class="proj-meta-outer reveal" id="chipPanelOuter">
-      <div class="chip-panel">
-        <div class="chip-group">
-          <div class="chip-group-label">Skills</div>
-          <div class="chip-row">
-            <button class="chip-btn" data-detail="Conducting surveys, ethnographic interviews, and card sorts to understand how ADHD and anxiety affect driving.">UX Research</button>
-            <button class="chip-btn" data-detail="Designing haptic feedback patterns and CarPlay UI for intuitive, in-motion navigation.">Interaction Design</button>
-            <button class="chip-btn" data-detail="Building a working hardware prototype with Arduino, motors, and breadboard circuitry.">Physical Prototyping</button>
-            <button class="chip-btn" data-detail="Connecting software logic to physical components — programming vibration patterns in Arduino IDE.">Hardware Integration</button>
-            <button class="chip-btn" data-detail="Analyzing survey data to surface correlations between stress levels, ADHD status, and missed exits.">Data Analysis</button>
-          </div>
+    <div class="sm-columns reveal">
+      <!-- Skills timeline -->
+      <div class="sm-timeline">
+        <div class="sm-tl-section"><div class="sm-tl-section-label">Skills</div></div>
+        <div class="sm-tl-node">
+          <button class="sm-tl-trigger" aria-expanded="false"><span class="sm-tl-trigger-label">Haptic Interface Design</span><span class="sm-tl-trigger-arrow">&#9662;</span></button>
+          <div class="sm-tl-panel" aria-hidden="true"><div class="sm-tl-panel-inner"><p class="sm-tl-panel-text">Designing haptic feedback patterns and CarPlay UI for intuitive, in-motion navigation.</p></div></div>
         </div>
-        <div class="chip-group">
-          <div class="chip-group-label">Methods</div>
-          <div class="chip-row">
-            <button class="chip-btn" data-detail="Quantitative research mapping ADHD/anxiety status, missed exit frequency, and stress levels.">Surveys</button>
-            <button class="chip-btn" data-detail="Five in-depth interviews revealing the emotional and behavioral texture of driving with ADHD.">Ethnographic Interviews</button>
-            <button class="chip-btn" data-detail="Grouping insights by theme to identify the highest-priority design opportunities.">Affinity Mapping</button>
-            <button class="chip-btn" data-detail="Collaborative brainstorming with Rachana, Kristy, and Aditya to explore solution directions.">Rapid Ideation</button>
-            <button class="chip-btn" data-detail="Participant input on how navigation features should be sequenced and structured.">Card Sorting</button>
-            <button class="chip-btn" data-detail="Prioritizing solutions by feasibility and value — haptic feedback emerged as high-impact, low-effort.">Impact/Effort Matrix</button>
-            <button class="chip-btn" data-detail="Manually triggering haptic patterns during simulated drives to evaluate timing and feel.">Wizard of Oz Testing</button>
-            <button class="chip-btn" data-detail="Programming motor outputs and button inputs on a Nano microcontroller to simulate real navigation cues.">Arduino / Physical Computing</button>
-          </div>
+        <div class="sm-tl-node">
+          <button class="sm-tl-trigger" aria-expanded="false"><span class="sm-tl-trigger-label">Physical Prototyping</span><span class="sm-tl-trigger-arrow">&#9662;</span></button>
+          <div class="sm-tl-panel" aria-hidden="true"><div class="sm-tl-panel-inner"><p class="sm-tl-panel-text">Building a working hardware prototype with Arduino, motors, and breadboard circuitry.</p></div></div>
+        </div>
+        <div class="sm-tl-node">
+          <button class="sm-tl-trigger" aria-expanded="false"><span class="sm-tl-trigger-label">Hardware Integration</span><span class="sm-tl-trigger-arrow">&#9662;</span></button>
+          <div class="sm-tl-panel" aria-hidden="true"><div class="sm-tl-panel-inner"><p class="sm-tl-panel-text">Connecting software logic to physical components: programming vibration patterns in Arduino IDE.</p></div></div>
+        </div>
+        <div class="sm-tl-node">
+          <button class="sm-tl-trigger" aria-expanded="false"><span class="sm-tl-trigger-label">Survey Analytics</span><span class="sm-tl-trigger-arrow">&#9662;</span></button>
+          <div class="sm-tl-panel" aria-hidden="true"><div class="sm-tl-panel-inner"><p class="sm-tl-panel-text">Analyzing survey data to surface correlations between stress levels, ADHD status, and missed exits.</p></div></div>
         </div>
       </div>
-      <div class="chip-detail-wrap">
-        <p class="chip-detail" id="chipDetail">Hover a chip to learn more.</p>
+      <!-- Methods timeline -->
+      <div class="sm-timeline">
+        <div class="sm-tl-section"><div class="sm-tl-section-label">Methods</div></div>
+        <div class="sm-tl-node">
+          <button class="sm-tl-trigger" aria-expanded="false"><span class="sm-tl-trigger-label">Targeted Surveying</span><span class="sm-tl-trigger-arrow">&#9662;</span></button>
+          <div class="sm-tl-panel" aria-hidden="true"><div class="sm-tl-panel-inner"><p class="sm-tl-panel-text">Quantitative research mapping ADHD/anxiety status, missed exit frequency, and stress levels.</p></div></div>
+        </div>
+        <div class="sm-tl-node">
+          <button class="sm-tl-trigger" aria-expanded="false"><span class="sm-tl-trigger-label">ADHD Driver Interviews</span><span class="sm-tl-trigger-arrow">&#9662;</span></button>
+          <div class="sm-tl-panel" aria-hidden="true"><div class="sm-tl-panel-inner"><p class="sm-tl-panel-text">Five in-depth interviews revealing the emotional and behavioral texture of driving with ADHD.</p></div></div>
+        </div>
+        <div class="sm-tl-node">
+          <button class="sm-tl-trigger" aria-expanded="false"><span class="sm-tl-trigger-label">Impact/Effort Matrix</span><span class="sm-tl-trigger-arrow">&#9662;</span></button>
+          <div class="sm-tl-panel" aria-hidden="true"><div class="sm-tl-panel-inner"><p class="sm-tl-panel-text">Prioritizing solutions by feasibility and value. Haptic feedback emerged as high-impact, low-effort.</p></div></div>
+        </div>
+        <div class="sm-tl-node">
+          <button class="sm-tl-trigger" aria-expanded="false"><span class="sm-tl-trigger-label">Wizard of Oz Testing</span><span class="sm-tl-trigger-arrow">&#9662;</span></button>
+          <div class="sm-tl-panel" aria-hidden="true"><div class="sm-tl-panel-inner"><p class="sm-tl-panel-text">Manually triggering haptic patterns during simulated drives to evaluate timing and feel.</p></div></div>
+        </div>
+        <div class="sm-tl-node">
+          <button class="sm-tl-trigger" aria-expanded="false"><span class="sm-tl-trigger-label">Arduino / Physical Computing</span><span class="sm-tl-trigger-arrow">&#9662;</span></button>
+          <div class="sm-tl-panel" aria-hidden="true"><div class="sm-tl-panel-inner"><p class="sm-tl-panel-text">Programming motor outputs and button inputs on a Nano microcontroller to simulate real navigation cues.</p></div></div>
+        </div>
       </div>
     </div>
   </div>
@@ -902,12 +978,12 @@ body, .nav-back, .cs-section, .reflection-wrap,
   <div class="section-inner">
     <div class="reveal">
       <p class="section-eyebrow">The Problem</p>
-      <h2 class="section-heading">GPS is built for people who are already&nbsp;paying attention.</h2>
+      <h2 class="section-heading">GPS is built for people who are already&nbsp;paying&nbsp;attention</h2>
     </div>
 
     <div class="reveal">
-      <p class="problem-body">Drivers with ADHD and anxiety know their routes. They know where to turn. But between the cognitive load of driving, the lag in audio prompts, and the visual complexity of map interfaces, the moment of decision arrives faster than the cue — and the exit is gone.</p>
-      <p class="problem-body">The result isn't a navigation failure. It's a <strong>feedback design failure.</strong> Current GPS systems rely entirely on auditory and visual channels — the same channels already saturated by the demands of driving. For users whose attention regulation works differently, this creates a cascade: a missed exit becomes stress, stress becomes distraction, distraction becomes more missed exits.</p>
+      <p class="problem-body">Drivers with ADHD and anxiety know their routes. They know where to turn. But between the cognitive load of driving, the lag in audio prompts, and the visual complexity of map interfaces, the moment of decision arrives faster than the cue, and the exit is gone.</p>
+      <p class="problem-body">The result isn't a navigation failure. It's a <strong>feedback design failure.</strong> Current GPS systems rely entirely on auditory and visual channels, the same channels already saturated by the demands of driving. For users whose attention regulation works differently, this creates a cascade: a missed exit becomes stress, stress becomes distraction, distraction becomes more missed exits.</p>
     </div>
 
     <div class="stat-row reveal">
@@ -927,7 +1003,7 @@ body, .nav-back, .cs-section, .reflection-wrap,
     </div>
 
     <div class="reveal">
-      <p class="problem-body">The data confirmed what interviews already made clear: <strong>the problem isn't the driver — it's the interface.</strong> And the interface has room to improve.</p>
+      <p class="problem-body">The data confirmed what interviews already made clear: <strong>the problem isn't the driver. It's the interface.</strong> And the interface has room to improve.</p>
     </div>
   </div>
 </section>
@@ -939,8 +1015,8 @@ body, .nav-back, .cs-section, .reflection-wrap,
   <div class="section-inner">
     <div class="reveal">
       <p class="section-eyebrow">Research</p>
-      <h2 class="section-heading">What drivers actually said.</h2>
-      <p class="problem-body">User research combined quantitative surveys with ethnographic interviews to understand not just the frequency of the problem, but the emotional texture of it. Survey data revealed the correlation between stress and missed exits. Interviews revealed the human cost — the anxiety that compounds every time a prompt arrives too late.</p>
+      <h2 class="section-heading">What drivers actually said</h2>
+      <p class="problem-body">User research combined quantitative surveys with ethnographic interviews to understand not just the frequency of the problem, but the emotional texture of it. Survey data revealed the correlation between stress and missed exits. Interviews revealed the human cost: the anxiety that compounds every time a prompt arrives too late.</p>
     </div>
 
     <blockquote class="pull-quote-wrap reveal">
@@ -964,7 +1040,7 @@ body, .nav-back, .cs-section, .reflection-wrap,
     </div>
 
     <div class="reveal">
-      <p class="problem-body">Across five interviews, three patterns emerged consistently: the need for <strong>earlier notice</strong> before turns, frustration with <strong>visual complexity</strong> during navigation, and a desire for cues that don't compete with the act of driving itself. Stress and missed exits weren't just correlated in the data — they were described as self-reinforcing by nearly every participant.</p>
+      <p class="problem-body">Across five interviews, three patterns emerged consistently: the need for <strong>earlier notice</strong> before turns, frustration with <strong>visual complexity</strong> during navigation, and a desire for cues that don't compete with the act of driving itself. Stress and missed exits weren't just correlated in the data. They were described as self-reinforcing by nearly every participant.</p>
     </div>
   </div>
 </section>
@@ -977,7 +1053,7 @@ body, .nav-back, .cs-section, .reflection-wrap,
     <div class="reveal">
       <p class="section-eyebrow">Define</p>
       <h2 class="section-heading">Two drivers. One shared experience.</h2>
-      <p class="problem-body">Both personas emerged from real research data — not archetypes, but composites of actual interview and survey participants. Their situations are different. Their pain is the same.</p>
+      <p class="problem-body">Both personas emerged from real research data, not archetypes but composites of actual interview and survey participants. Their situations are different. Their pain is the same.</p>
     </div>
 
     <div class="persona-grid reveal">
@@ -986,14 +1062,14 @@ body, .nav-back, .cs-section, .reflection-wrap,
         <h3 class="persona-name">Jordan</h3>
         <p class="persona-role">28 · Software Developer · Seattle, WA</p>
         <blockquote class="persona-quote">"When I'm commuting to work, I'll often miss turns I know well because I zone out. It's frustrating because I feel like I lose focus even on familiar routes, and that just adds more stress to my day."</blockquote>
-        <p class="persona-body">Jordan is tech-savvy and high-functioning — she manages complex systems at work every day. Behind the wheel, something shifts. She suspects ADHD but is undiagnosed. Her biggest challenge isn't <strong>unfamiliar routes</strong>. It's the familiar ones that trip her up, because she stops actively paying attention to roads she thinks she knows.</p>
+        <p class="persona-body">Jordan is tech-savvy and high-functioning. She manages complex systems at work every day. Behind the wheel, something shifts. She suspects ADHD but is undiagnosed. Her biggest challenge isn't <strong>unfamiliar routes</strong>. It's the familiar ones that trip her up, because she stops actively paying attention to roads she thinks she knows.</p>
       </div>
       <div class="persona-card">
         <p class="persona-tag">Persona 02</p>
         <h3 class="persona-name">Alex</h3>
         <p class="persona-role">35 · Graphic Designer · Portland, OR</p>
         <blockquote class="persona-quote">"Driving in new places is always stressful for me. I rely on GPS, but sometimes the directions are too complicated or come too late, which makes me anxious about missing turns."</blockquote>
-        <p class="persona-body">Alex is diagnosed with ADHD and describes driving as the <strong>only time he feels stressed.</strong> Complex GPS prompts overwhelm him — he needs directions that are simpler, earlier, and more frequent. The anxiety isn't about the road. It's about not trusting the system to give him enough time to respond.</p>
+        <p class="persona-body">Alex is diagnosed with ADHD and describes driving as the <strong>only time he feels stressed.</strong> Complex GPS prompts overwhelm him. He needs directions that are simpler, earlier, and more frequent. The anxiety isn't about the road. It's about not trusting the system to give him enough time to respond.</p>
       </div>
     </div>
 
@@ -1011,7 +1087,7 @@ body, .nav-back, .cs-section, .reflection-wrap,
   <div class="section-inner">
     <div class="reveal">
       <p class="section-eyebrow">The Solution</p>
-      <h2 class="section-heading">HapTurn: navigation through touch.</h2>
+      <h2 class="section-heading">HapTurn: navigation through touch</h2>
     </div>
 
     <div class="north-star reveal">
@@ -1023,13 +1099,13 @@ body, .nav-back, .cs-section, .reflection-wrap,
     </div>
 
     <div class="reveal">
-      <p class="solution-intro">HapTurn is a haptic steering wheel system that delivers tactile feedback for navigation — guiding drivers through subtle vibrations instead of audio prompts that compete with an already demanding environment. <strong>No new screen. No new voice.</strong> Just a quiet signal through the hands already on the wheel.</p>
-      <p class="solution-intro">By delivering haptic cues for left turns, right turns, lane changes, and exits — and doing so earlier than current systems — HapTurn shifts the navigation experience from reactive to proactive. Drivers with ADHD or anxiety don't have to monitor the system. The system monitors the route for them.</p>
+      <p class="solution-intro">HapTurn is a haptic steering wheel system that delivers tactile feedback for navigation, guiding drivers through subtle vibrations instead of audio prompts that compete with an already demanding environment. <strong>No new screen. No new voice.</strong> Just a quiet signal through the hands already on the wheel.</p>
+      <p class="solution-intro">By delivering haptic cues for left turns, right turns, lane changes, and exits, and doing so earlier than current systems, HapTurn shifts the navigation experience from reactive to proactive. Drivers with ADHD or anxiety don't have to monitor the system. The system monitors the route for them.</p>
     </div>
 
     <div class="reveal">
       <p class="section-eyebrow" style="margin-top: 48px; margin-bottom: 20px;">Competitive Landscape</p>
-      <p class="problem-body">Existing ADAS (Advanced Driver Assistance Systems) use haptic feedback — but only for hazard detection, not navigation assistance. The gap is significant.</p>
+      <p class="problem-body">Existing ADAS (Advanced Driver Assistance Systems) use haptic feedback, but only for hazard detection, not navigation assistance. The gap is&nbsp;significant.</p>
       <div class="competitor-grid">
         <div class="competitor-card">
           <p class="competitor-name">Cadillac</p>
@@ -1048,7 +1124,7 @@ body, .nav-back, .cs-section, .reflection-wrap,
         </div>
       </div>
       <div class="gap-callout">
-        <strong>The gap:</strong> Every existing system uses haptic feedback to alert drivers to danger. None uses it to guide them through a route. HapTurn is the first to apply directional haptics specifically to navigation — designed for the users who need it most.
+        <strong>The gap:</strong> Every existing system uses haptic feedback to alert drivers to danger. None uses it to guide them through a route. HapTurn is the first to apply directional haptics specifically to navigation, designed for the users who need it most.
       </div>
     </div>
   </div>
@@ -1061,23 +1137,14 @@ body, .nav-back, .cs-section, .reflection-wrap,
   <div class="section-inner">
     <div class="reveal">
       <p class="section-eyebrow">The Prototype</p>
-      <h2 class="section-heading">Built to be felt, not just imagined.</h2>
+      <h2 class="section-heading">Built to be felt, not just imagined</h2>
     </div>
 
     <div class="prototype-grid reveal">
       <div>
-        <p class="prototype-body">The mid-fidelity prototype isn't a clickable mockup — it's a working physical system. Built with a Nano microcontroller, breadboard, cell motors, soldered components, and custom Arduino code, the prototype simulates real haptic feedback patterns through a steering wheel form factor.</p>
-        <p class="prototype-body"><strong>Why physical?</strong> Haptic feedback can't be fully evaluated on a screen. The point of HapTurn is the sensation itself — how early it arrives, how distinguishable left feels from right, how a sudden route change communicates urgency without panic. That required actually building it.</p>
-        <p class="prototype-body">Testing used a <strong>Wizard of Oz</strong> methodology — a facilitator triggered vibration patterns manually while participants drove a simulated route, allowing evaluation of timing and clarity without full automation. Iterative adjustments refined delay intervals and motor intensity based on user feedback.</p>
-
-        <ul class="hardware-list">
-          <li>Arduino Nano microcontroller</li>
-          <li>Breadboard + soldering kit</li>
-          <li>Cell (vibration) motors × 2</li>
-          <li>Push buttons for directional input</li>
-          <li>Wiring + connectors</li>
-          <li>Arduino IDE (custom haptic patterns)</li>
-        </ul>
+        <p class="prototype-body">The mid-fidelity prototype isn't a clickable mockup. It's a working physical system. Built with a Nano microcontroller, breadboard, cell motors, soldered components, and custom Arduino code, the prototype simulates real haptic feedback patterns through a steering wheel form factor.</p>
+        <p class="prototype-body"><strong>Why physical?</strong> Haptic feedback can't be fully evaluated on a screen. The point of HapTurn is the sensation itself: how early it arrives, how distinguishable left feels from right, how a sudden route change communicates urgency without panic. That required actually building&nbsp;it.</p>
+        <p class="prototype-body">Testing used a <strong>Wizard of Oz</strong> methodology. A facilitator triggered vibration patterns manually while participants drove a simulated route, allowing evaluation of timing and clarity without full automation. Iterative adjustments refined delay intervals and motor intensity based on user feedback.</p>
       </div>
 
       <div>
@@ -1086,7 +1153,7 @@ body, .nav-back, .cs-section, .reflection-wrap,
             <div class="feedback-icon">↰</div>
             <div>
               <p class="feedback-label">Left Turn</p>
-              <p class="feedback-desc">Short pulse on left motor, delivered 400m before the turn — earlier than standard GPS audio cues.</p>
+              <p class="feedback-desc">Short pulse on left motor, delivered 400m before the turn. Earlier than standard GPS audio cues.</p>
             </div>
           </div>
           <div class="feedback-mode">
@@ -1100,7 +1167,7 @@ body, .nav-back, .cs-section, .reflection-wrap,
             <div class="feedback-icon">⟳</div>
             <div>
               <p class="feedback-label">Sudden Route Change</p>
-              <p class="feedback-desc">Alternating bilateral pulse pattern — distinct from directional cues to signal urgency without triggering panic.</p>
+              <p class="feedback-desc">Alternating bilateral pulse pattern, distinct from directional cues to signal urgency without triggering panic.</p>
             </div>
           </div>
           <div class="feedback-mode">
@@ -1114,27 +1181,36 @@ body, .nav-back, .cs-section, .reflection-wrap,
       </div>
     </div>
 
+    <ul class="hardware-list reveal">
+      <li>Arduino Nano microcontroller</li>
+      <li>Breadboard + soldering kit</li>
+      <li>Cell (vibration) motors × 2</li>
+      <li>Push buttons for directional input</li>
+      <li>Wiring + connectors</li>
+      <li>Arduino IDE (custom haptic patterns)</li>
+    </ul>
+
     <div class="reveal">
       <p class="section-eyebrow" style="margin-top: 48px; margin-bottom: 6px;">Lo-Fi Prototype</p>
-      <p class="prototype-body" style="margin-bottom: 0;">Before Wizard of Oz testing, a rough working circuit proved the concept: two cell motors, two buttons, one Nano — enough to feel whether left and right were distinguishable by vibration alone.</p>
+      <p class="prototype-body" style="margin-bottom: 0;">Before Wizard of Oz testing, a rough working circuit proved the concept: two cell motors, two buttons, one Nano. Enough to feel whether left and right were distinguishable by vibration alone.</p>
       <div class="lofi-grid">
         <div>
           <div class="lofi-img">
             <img src="A Images/Hapturn Prototype 1.webp" alt="Full lo-fi prototype: Arduino Nano on breadboard with two cell motors and labeled red/black wiring extending to both sides">
           </div>
-          <p class="lofi-caption">Full circuit — two cell motors, breadboard, USB connection</p>
+          <p class="lofi-caption">Full circuit: two cell motors, breadboard, USB&nbsp;connection</p>
         </div>
         <div>
           <div class="lofi-img">
             <img src="A Images/Hapturn Prototype 2.webp" alt="Close-up of Arduino Nano microcontroller on breadboard with red, black, and yellow wire pin connections">
           </div>
-          <p class="lofi-caption">Arduino Nano — close-up of pin connections</p>
+          <p class="lofi-caption">Arduino Nano: close-up of pin connections</p>
         </div>
         <div>
           <div class="lofi-img">
-            <img src="A Images/Hapturn Prototype 3.webp" alt="Arduino IDE showing Steering_Wheel_Haptic_Code — motor and button pin definitions with haptic pattern logic">
+            <img src="A Images/Hapturn Prototype 3.webp" alt="Arduino IDE showing Steering_Wheel_Haptic_Code, motor and button pin definitions with haptic pattern logic">
           </div>
-          <p class="lofi-caption">Steering_Wheel_Haptic_Code — custom haptic patterns</p>
+          <p class="lofi-caption">Steering_Wheel_Haptic_Code: custom haptic patterns</p>
         </div>
       </div>
     </div>
@@ -1148,17 +1224,17 @@ body, .nav-back, .cs-section, .reflection-wrap,
   <div class="section-inner">
     <div class="reveal">
       <p class="section-eyebrow">CarPlay Integration</p>
-      <h2 class="section-heading">Taking it further — into the dashboard.</h2>
+      <h2 class="section-heading">Taking it further, into the dashboard</h2>
     </div>
 
     <!-- copy: two columns above the embed -->
     <div class="carplay-copy reveal">
       <div>
-        <p class="prototype-body">As part of the development process, I explored what it would look like to integrate HapTurn directly into <strong>Apple CarPlay</strong> — embedding haptic control into a system millions of drivers already use daily. The interactive prototype below simulates a real navigation drive: as the vehicle approaches a turn, the steering wheel's left or right motor fires — early, before the audio cue.</p>
-        <p class="prototype-body">This integration surfaces the broader potential of directional haptics: not as a standalone device, but as a <strong>layer on top of existing navigation infrastructure.</strong> The cognitive and sensory needs it addresses are widespread — the adoption path should be too.</p>
+        <p class="prototype-body">As part of the development process, I explored what it would look like to integrate HapTurn directly into <strong>Apple CarPlay</strong>, embedding haptic control into a system millions of drivers already use daily. The interactive prototype below simulates a real navigation drive: as the vehicle approaches a turn, the steering wheel's left or right motor fires early, before the audio cue.</p>
+        <p class="prototype-body">This integration surfaces the broader potential of directional haptics: not as a standalone device, but as a <strong>layer on top of existing navigation infrastructure.</strong> The cognitive and sensory needs it addresses are widespread. The adoption path should be too.</p>
       </div>
       <div>
-        <p class="prototype-body">Try the demo drive, or manually trigger any pattern — left turn, right turn, sudden reroute, lane change — and watch the steering wheel respond. Each pattern is distinct by design: <strong>no two situations feel the same.</strong></p>
+        <p class="prototype-body">Try the demo drive, or manually trigger any pattern (left turn, right turn, sudden reroute, lane change) and watch the steering wheel respond. Each pattern is distinct by design: <strong>no two situations feel the same.</strong></p>
         <a class="figma-cta"
            href="https://www.figma.com/design/eJQJtXq49dI4DfhJ1DdSps/Steering-Wheel-Haptics?node-id=164-1995&t=18cbgNLZqhBipGzk-1"
            target="_blank" rel="noopener"
@@ -1186,34 +1262,57 @@ body, .nav-back, .cs-section, .reflection-wrap,
   <div class="section-inner">
     <div class="reveal">
       <p class="section-eyebrow">What I Learned</p>
-      <h2 class="section-heading">Five things this project changed about how I design.</h2>
+      <h2 class="section-heading">Six things this project changed about how I design</h2>
     </div>
 
     <div class="wil-grid reveal">
-      <div class="wil-card">
+      <div class="wil-card" tabindex="0" role="button" aria-expanded="false" onclick="this.classList.toggle('active');this.setAttribute('aria-expanded',this.classList.contains('active'))" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();this.click()}">
         <div class="wil-number">01</div>
-        <p class="wil-title">Designing for Neurodiversity</p>
-        <p class="wil-body">Understanding the specific challenges of ADHD and anxiety — zoning out, stress from missed turns, cognitive overload — pushed me to think about sensory-driven solutions rather than adding more information to an already saturated interface.</p>
+        <div class="wil-header">
+          <p class="wil-title">Designing for Neurodiversity</p>
+          <span class="wil-toggle" aria-hidden="true">+</span>
+        </div>
+        <p class="wil-body">Understanding the specific challenges of ADHD and anxiety, like zoning out, stress from missed turns, and cognitive overload, pushed me to think about sensory-driven solutions rather than adding more information to an already saturated interface.</p>
       </div>
-      <div class="wil-card">
+      <div class="wil-card" tabindex="0" role="button" aria-expanded="false" onclick="this.classList.toggle('active');this.setAttribute('aria-expanded',this.classList.contains('active'))" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();this.click()}">
         <div class="wil-number">02</div>
-        <p class="wil-title">Hardware–Software Integration</p>
-        <p class="wil-body">Building the mid-fidelity prototype required calibrating motor intensity and timing with real-time feedback. Working across disciplines — code, circuit design, and UX — taught me how to synchronize hardware functionality with actual user needs.</p>
+        <div class="wil-header">
+          <p class="wil-title">Hardware and Software Integration</p>
+          <span class="wil-toggle" aria-hidden="true">+</span>
+        </div>
+        <p class="wil-body">Building the mid-fidelity prototype required calibrating motor intensity and timing with real-time feedback. Working across disciplines like code, circuit design, and UX taught me how to synchronize hardware functionality with actual user needs.</p>
       </div>
-      <div class="wil-card">
+      <div class="wil-card" tabindex="0" role="button" aria-expanded="false" onclick="this.classList.toggle('active');this.setAttribute('aria-expanded',this.classList.contains('active'))" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();this.click()}">
         <div class="wil-number">03</div>
-        <p class="wil-title">Cognitive Load in Design</p>
+        <div class="wil-header">
+          <p class="wil-title">Cognitive Load in Design</p>
+          <span class="wil-toggle" aria-hidden="true">+</span>
+        </div>
         <p class="wil-body">Focusing on simplified navigation prompts and reduced distractions showed me how directly cognitive psychology principles apply to interaction design. Good design for neurodivergent users is almost always better design for everyone.</p>
       </div>
-      <div class="wil-card">
+      <div class="wil-card" tabindex="0" role="button" aria-expanded="false" onclick="this.classList.toggle('active');this.setAttribute('aria-expanded',this.classList.contains('active'))" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();this.click()}">
         <div class="wil-number">04</div>
-        <p class="wil-title">Ethical Research Practice</p>
-        <p class="wil-body">Conducting research with neurodiverse participants required more care than standard user testing — accommodating individual needs, creating psychologically safe environments, and handling sensitive data with intention.</p>
+        <div class="wil-header">
+          <p class="wil-title">Ethical Research Practice</p>
+          <span class="wil-toggle" aria-hidden="true">+</span>
+        </div>
+        <p class="wil-body">Conducting research with neurodiverse participants required more care than standard user testing. Accommodating individual needs, creating psychologically safe environments, and handling sensitive data with intention shaped how I approach every study since.</p>
       </div>
-      <div class="wil-card" style="grid-column: 1 / -1; max-width: 50%;">
+      <div class="wil-card" tabindex="0" role="button" aria-expanded="false" onclick="this.classList.toggle('active');this.setAttribute('aria-expanded',this.classList.contains('active'))" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();this.click()}">
         <div class="wil-number">05</div>
-        <p class="wil-title">Iterative Prototyping and Problem Solving</p>
-        <p class="wil-body">Overcoming hardware constraints — inconsistent motor response, timing delays, wiring failures — reinforced that the design process doesn't pause when something physical breaks. Adaptability is part of the method, not a deviation from it.</p>
+        <div class="wil-header">
+          <p class="wil-title">Iterative Prototyping</p>
+          <span class="wil-toggle" aria-hidden="true">+</span>
+        </div>
+        <p class="wil-body">Overcoming hardware constraints like inconsistent motor response, timing delays, and wiring failures reinforced that the design process doesn't pause when something physical breaks. Adaptability is part of the method, not a deviation from it.</p>
+      </div>
+      <div class="wil-card" tabindex="0" role="button" aria-expanded="false" onclick="this.classList.toggle('active');this.setAttribute('aria-expanded',this.classList.contains('active'))" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();this.click()}">
+        <div class="wil-number">06</div>
+        <div class="wil-header">
+          <p class="wil-title">Designing Beyond the Screen</p>
+          <span class="wil-toggle" aria-hidden="true">+</span>
+        </div>
+        <p class="wil-body">This project proved that meaningful interaction design doesn't always live on a display. Touch, timing, and spatial awareness can carry just as much information as pixels when the modality matches the&nbsp;moment.</p>
       </div>
     </div>
   </div>
@@ -1223,15 +1322,33 @@ body, .nav-back, .cs-section, .reflection-wrap,
      REFLECTION
 ══════════════════════════════════ -->
 <section class="reflection-wrap" aria-label="Reflection">
+  <div class="reflection-fireflies" id="reflectionFireflies" aria-hidden="true"></div>
   <div class="reflection-inner reveal">
     <p class="reflection-label">Reflection</p>
-    <p class="reflection-quote">Designing for neurodivergence isn't about adding more information — it's about delivering the right information through the right channel at the right moment.</p>
+    <p class="reflection-quote">Designing for neurodivergence isn't about adding more information. It's about delivering the right information through the right channel at the right&nbsp;moment.</p>
   </div>
 </section>
 </main>
 
 <script>
 'use strict';
+
+// Reflection fireflies
+(function() {
+  var c = document.getElementById('reflectionFireflies');
+  if (!c) return;
+  for (var i = 0; i < 18; i++) {
+    var f = document.createElement('div');
+    f.className = 'reflection-firefly';
+    var size = 1.5 + Math.random() * 2.5;
+    f.style.width = f.style.height = size + 'px';
+    f.style.left = Math.random() * 100 + '%';
+    f.style.bottom = '-4px';
+    f.style.animationDuration = (14 + Math.random() * 22) + 's';
+    f.style.animationDelay = (Math.random() * 18) + 's';
+    c.appendChild(f);
+  }
+})();
 
 function navigateTo(url) {
   const exit = document.getElementById('page-exit');
@@ -1245,32 +1362,28 @@ const observer = new IntersectionObserver(entries => {
 }, { threshold: 0.08 });
 document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
 
-// Chip panel cursor glow + detail hover
-const outer = document.getElementById('chipPanelOuter');
-if (outer) {
-  outer.addEventListener('mousemove', e => {
-    const r = outer.getBoundingClientRect();
-    outer.style.setProperty('--mx', ((e.clientX - r.left) / r.width * 100).toFixed(1) + '%');
-    outer.style.setProperty('--my', ((e.clientY - r.top) / r.height * 100).toFixed(1) + '%');
+// Skills & Methods accordion timeline
+document.querySelectorAll('.sm-tl-node').forEach(node => {
+  const trigger = node.querySelector('.sm-tl-trigger');
+  trigger.addEventListener('click', () => {
+    const isOpen = node.classList.contains('open');
+    document.querySelectorAll('.sm-tl-node').forEach(n => {
+      if (n !== node && n.classList.contains('open')) {
+        n.classList.remove('open');
+        n.querySelector('.sm-tl-trigger').setAttribute('aria-expanded', 'false');
+        n.querySelector('.sm-tl-panel').setAttribute('aria-hidden', 'true');
+      }
+    });
+    if (isOpen) {
+      node.classList.remove('open');
+      trigger.setAttribute('aria-expanded', 'false');
+      node.querySelector('.sm-tl-panel').setAttribute('aria-hidden', 'true');
+    } else {
+      node.classList.add('open');
+      trigger.setAttribute('aria-expanded', 'true');
+      node.querySelector('.sm-tl-panel').setAttribute('aria-hidden', 'false');
+    }
   });
-}
-const detail = document.getElementById('chipDetail');
-function showChipDetail(btn) {
-  btn.classList.add('active');
-  if (detail && btn.dataset.detail) {
-    detail.textContent = btn.dataset.detail;
-    detail.classList.add('has-value');
-  }
-}
-function hideChipDetail(btn) {
-  btn.classList.remove('active');
-  if (detail) detail.classList.remove('has-value');
-}
-document.querySelectorAll('.chip-btn').forEach(btn => {
-  btn.addEventListener('mouseenter', () => showChipDetail(btn));
-  btn.addEventListener('mouseleave', () => hideChipDetail(btn));
-  btn.addEventListener('focus', () => showChipDetail(btn));
-  btn.addEventListener('blur', () => hideChipDetail(btn));
 });
 
 // Theme toggle
