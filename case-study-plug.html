@@ -13,7 +13,7 @@
 /* ── SKIP LINK ── */
 .skip-link {
   position: absolute; top: -100px; left: 16px;
-  background: var(--warm, #f0d08c); color: #0c0a07;
+  background: var(--warm, #c47878); color: #141414;
   padding: 10px 20px; border-radius: 0 0 8px 8px;
   font-size: 13px; font-weight: 500; letter-spacing: 0.06em;
   z-index: 10000; text-decoration: none;
@@ -23,11 +23,11 @@
 
 /* ── FOCUS STYLES ── */
 *:focus-visible {
-  outline: 2px solid #f0d08c;
+  outline: 2px solid #c47878;
   outline-offset: 3px;
 }
 button:focus-visible {
-  outline: 2px solid #f0d08c;
+  outline: 2px solid #c47878;
   outline-offset: 3px;
 }
 
@@ -42,18 +42,18 @@ button:focus-visible {
 }
 
 :root {
-  --copper:        #c47a2e;
-  --copper-dim:    rgba(196, 122, 46, 0.10);
-  --copper-border: rgba(196, 122, 46, 0.24);
-  --copper-deep:   #5a3714;
-  --warm:          #f0d08c;
-  --bg:            #0c0a07;
-  --bg-alt:        #100d08;
-  --bg-card:       #16120b;
-  --bg-card-deep:  #0e0b06;
-  --text:          #ede4d4;
-  --text-muted:    #6b5d48;
-  --text-dim:      #1e180f;
+  --copper:        #d48888;
+  --copper-dim:    rgba(212, 136, 136, 0.10);
+  --copper-border: rgba(212, 136, 136, 0.24);
+  --copper-deep:   #9a5858;
+  --warm:          #e8b4b4;
+  --bg:            #141414;
+  --bg-alt:        #1a1a1a;
+  --bg-card:       #1e1e1e;
+  --bg-card-deep:  #171717;
+  --text:          #f0ebe6;
+  --text-muted:    #7a7068;
+  --text-dim:      #2a2422;
   --border:        rgba(255, 255, 255, 0.06);
   /* shared transition for theme switch */
   --theme-speed:   0.45s;
@@ -63,189 +63,189 @@ button:focus-visible {
    LIGHT THEME
 ══════════════════════════════════ */
 [data-theme="light"] {
-  --copper:        #8a5518;
-  --copper-dim:    rgba(138, 85, 24, 0.08);
-  --copper-border: rgba(138, 85, 24, 0.22);
-  --copper-deep:   #6a4010;
-  --warm:          #3a2e1e;
-  --bg:            #f6f3ee;
-  --bg-alt:        #edeae4;
+  --copper:        #a85a5a;
+  --copper-dim:    rgba(168, 90, 90, 0.08);
+  --copper-border: rgba(168, 90, 90, 0.22);
+  --copper-deep:   #7a3e3e;
+  --warm:          #2a2424;
+  --bg:            #f8f5f3;
+  --bg-alt:        #f0ece9;
   --bg-card:       #ffffff;
-  --bg-card-deep:  #f8f6f2;
-  --text:          #1a1714;
-  --text-muted:    #6b6050;
-  --text-dim:      #c4bdb2;
+  --bg-card-deep:  #faf8f6;
+  --text:          #1a1818;
+  --text-muted:    #6b5f5f;
+  --text-dim:      #c4bab8;
   --border:        rgba(0, 0, 0, 0.07);
 }
-[data-theme="light"] *:focus-visible { outline-color: #6a4010; }
-[data-theme="light"] .skip-link { background: #6a4010; color: #fff; }
+[data-theme="light"] *:focus-visible { outline-color: #7a3e3e; }
+[data-theme="light"] .skip-link { background: #7a3e3e; color: #fff; }
 
 /* Hero */
 [data-theme="light"] .hero {
   background-image:
     linear-gradient(to bottom,
-      rgba(246,243,238,0.5) 0%,
-      rgba(246,243,238,0.9) 65%,
-      #f6f3ee 100%),
+      rgba(248,245,243,0.5) 0%,
+      rgba(248,245,243,0.9) 65%,
+      #f8f5f3 100%),
     url('Studio_Edited.webp');
 }
 [data-theme="light"] .hero-bg {
   background:
-    radial-gradient(ellipse 80% 60% at 20% 30%, rgba(138,85,24,0.1) 0%, transparent 60%),
-    radial-gradient(ellipse 60% 50% at 80% 70%, rgba(106,64,16,0.08) 0%, transparent 55%);
+    radial-gradient(ellipse 80% 60% at 20% 30%, rgba(168,90,90,0.1) 0%, transparent 60%),
+    radial-gradient(ellipse 60% 50% at 80% 70%, rgba(122,62,62,0.08) 0%, transparent 55%);
 }
 [data-theme="light"] .hero-grid {
   background-image:
-    linear-gradient(rgba(138,85,24,0.04) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(138,85,24,0.04) 1px, transparent 1px);
+    linear-gradient(rgba(168,90,90,0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(168,90,90,0.04) 1px, transparent 1px);
 }
 [data-theme="light"] .hero-fade {
-  background: linear-gradient(to bottom, transparent, #f6f3ee);
+  background: linear-gradient(to bottom, transparent, #f8f5f3);
 }
-[data-theme="light"] .hero-eyebrow { color: #7a4a18; }
+[data-theme="light"] .hero-eyebrow { color: #a85a5a; }
 [data-theme="light"] .hero-title { color: var(--warm); }
-[data-theme="light"] .hero-subtitle { color: rgba(42,34,22,0.7); }
-[data-theme="light"] .hero-meta { border-top-color: rgba(138,85,24,0.2); }
+[data-theme="light"] .hero-subtitle { color: rgba(42,36,36,0.7); }
+[data-theme="light"] .hero-meta { border-top-color: rgba(168,90,90,0.2); }
 [data-theme="light"] .hero-meta-label { color: #6b6050; }
-[data-theme="light"] .hero-meta-value { color: rgba(42,34,22,0.75); }
+[data-theme="light"] .hero-meta-value { color: rgba(42,36,36,0.75); }
 
 /* Page exit */
-[data-theme="light"] #page-exit { background: #f6f3ee; }
+[data-theme="light"] #page-exit { background: #f8f5f3; }
 
 /* Nav */
 [data-theme="light"] .nav-back {
   background: rgba(0,0,0,0.04); border-color: rgba(0,0,0,0.12);
-  color: #7a4a18;
+  color: #a85a5a;
 }
 [data-theme="light"] .nav-back:hover {
-  background: rgba(0,0,0,0.08); color: #5a3810; border-color: rgba(0,0,0,0.2);
+  background: rgba(0,0,0,0.08); color: #6a3636; border-color: rgba(0,0,0,0.2);
 }
-[data-theme="light"] .wordmark { color: rgba(138,85,24,0.12); }
+[data-theme="light"] .wordmark { color: rgba(168,90,90,0.12); }
 
 /* Section text */
-[data-theme="light"] .section-label { color: #7a4a18; }
+[data-theme="light"] .section-label { color: #a85a5a; }
 [data-theme="light"] .section-heading { color: var(--warm); }
-[data-theme="light"] .section-body { color: rgba(26,23,20,0.72); }
-[data-theme="light"] .section-body em { color: rgba(26,23,20,0.9); }
-[data-theme="light"] .section-body strong { color: rgba(26,23,20,0.9); }
+[data-theme="light"] .section-body { color: rgba(26,24,24,0.72); }
+[data-theme="light"] .section-body em { color: rgba(26,24,24,0.9); }
+[data-theme="light"] .section-body strong { color: rgba(26,24,24,0.9); }
 
 /* Overview */
-[data-theme="light"] .overview-intro { color: rgba(26,23,20,0.65); }
+[data-theme="light"] .overview-intro { color: rgba(26,24,24,0.65); }
 [data-theme="light"] .overview-intro em { color: var(--warm); }
 
 /* Chip panel */
 [data-theme="light"] .proj-meta-outer {
-  border-color: rgba(138,85,24,0.18);
-  background: linear-gradient(160deg, #ffffff, #f8f6f2);
+  border-color: rgba(168,90,90,0.18);
+  background: linear-gradient(160deg, #ffffff, #faf8f6);
 }
 [data-theme="light"] .proj-meta-outer::before {
   background: radial-gradient(ellipse 80% 60% at var(--mx,50%) var(--my,40%),
-    rgba(138,85,24,0.05) 0%, transparent 70%);
+    rgba(168,90,90,0.05) 0%, transparent 70%);
 }
-[data-theme="light"] .chip-group + .chip-group { border-left-color: rgba(138,85,24,0.1); }
-[data-theme="light"] .chip-group-label { color: #7a4a18; }
+[data-theme="light"] .chip-group + .chip-group { border-left-color: rgba(168,90,90,0.1); }
+[data-theme="light"] .chip-group-label { color: #a85a5a; }
 [data-theme="light"] .chip-btn {
-  color: rgba(26,23,20,0.7); background: rgba(138,85,24,0.04);
-  border-color: rgba(138,85,24,0.15);
+  color: rgba(26,24,24,0.7); background: rgba(168,90,90,0.04);
+  border-color: rgba(168,90,90,0.15);
 }
 [data-theme="light"] .chip-btn::before {
-  background: rgba(138,85,24,0.06); border-color: rgba(138,85,24,0.2);
-  color: #8a5518;
+  background: rgba(168,90,90,0.06); border-color: rgba(168,90,90,0.2);
+  color: #a85a5a;
 }
 [data-theme="light"] .chip-btn:hover {
-  background: rgba(138,85,24,0.08); border-color: rgba(138,85,24,0.25);
-  color: rgba(26,23,20,0.85);
+  background: rgba(168,90,90,0.08); border-color: rgba(168,90,90,0.25);
+  color: rgba(26,24,24,0.85);
 }
 [data-theme="light"] .chip-btn.active {
-  background: rgba(138,85,24,0.1); border-color: rgba(138,85,24,0.35);
+  background: rgba(168,90,90,0.1); border-color: rgba(168,90,90,0.35);
   color: #1a1714;
 }
 [data-theme="light"] .chip-btn.active::before {
-  background: rgba(138,85,24,0.18); border-color: #7a4a18; color: #6a4010;
+  background: rgba(168,90,90,0.18); border-color: #a85a5a; color: #7a3e3e;
 }
 [data-theme="light"] .chip-detail-inner {
-  background: rgba(138,85,24,0.03); border-left-color: rgba(138,85,24,0.3);
+  background: rgba(168,90,90,0.03); border-left-color: rgba(168,90,90,0.3);
 }
 [data-theme="light"] .chip-detail-icon {
-  background: rgba(138,85,24,0.08); border-color: rgba(138,85,24,0.18);
-  color: #7a4a18;
+  background: rgba(168,90,90,0.08); border-color: rgba(168,90,90,0.18);
+  color: #a85a5a;
 }
-[data-theme="light"] .chip-detail-text { color: rgba(26,23,20,0.72); }
+[data-theme="light"] .chip-detail-text { color: rgba(26,24,24,0.72); }
 [data-theme="light"] .chip-detail-text strong { color: #1a1714; }
 
 /* Thesis */
 [data-theme="light"] .thesis-block {
-  border-left-color: rgba(138,85,24,0.35); background: rgba(138,85,24,0.03);
+  border-left-color: rgba(168,90,90,0.35); background: rgba(168,90,90,0.03);
 }
-[data-theme="light"] .thesis-quote { color: rgba(42,34,22,0.85); }
-[data-theme="light"] .thesis-attr { color: #7a4a18; }
+[data-theme="light"] .thesis-quote { color: rgba(42,36,36,0.85); }
+[data-theme="light"] .thesis-attr { color: #a85a5a; }
 
 /* Stats */
 [data-theme="light"] .stats-bar {
-  border-color: rgba(138,85,24,0.15);
-  background: linear-gradient(160deg, #ffffff, #f8f6f2);
+  border-color: rgba(168,90,90,0.15);
+  background: linear-gradient(160deg, #ffffff, #faf8f6);
 }
-[data-theme="light"] .stat-cell { border-right-color: rgba(138,85,24,0.1); }
+[data-theme="light"] .stat-cell { border-right-color: rgba(168,90,90,0.1); }
 [data-theme="light"] .stat-number { color: var(--warm); }
-[data-theme="light"] .stat-label { color: #7a4a18; }
+[data-theme="light"] .stat-label { color: #a85a5a; }
 
 /* Approach cards */
 [data-theme="light"] .approach-card {
-  border-color: rgba(138,85,24,0.12);
-  background: linear-gradient(160deg, #ffffff, #faf8f4);
+  border-color: rgba(168,90,90,0.12);
+  background: linear-gradient(160deg, #ffffff, #faf8f6);
 }
-[data-theme="light"] .approach-card:hover { border-color: rgba(138,85,24,0.28); }
+[data-theme="light"] .approach-card:hover { border-color: rgba(168,90,90,0.28); }
 [data-theme="light"] .approach-card::before {
-  background: radial-gradient(ellipse 70% 50% at 50% 0%, rgba(138,85,24,0.04) 0%, transparent 70%);
+  background: radial-gradient(ellipse 70% 50% at 50% 0%, rgba(168,90,90,0.04) 0%, transparent 70%);
 }
-[data-theme="light"] .approach-card-num { color: #8a5518; }
+[data-theme="light"] .approach-card-num { color: #a85a5a; }
 [data-theme="light"] .approach-card-title { color: var(--warm); }
-[data-theme="light"] .approach-card-body { color: rgba(26,23,20,0.68); }
+[data-theme="light"] .approach-card-body { color: rgba(26,24,24,0.68); }
 
 /* Narrative */
-[data-theme="light"] .narrative-body p { color: rgba(26,23,20,0.68); }
-[data-theme="light"] .narrative-body p em { color: rgba(26,23,20,0.88); }
+[data-theme="light"] .narrative-body p { color: rgba(26,24,24,0.68); }
+[data-theme="light"] .narrative-body p em { color: rgba(26,24,24,0.88); }
 [data-theme="light"] .narrative-body p strong { color: #1a1714; }
-[data-theme="light"] .narrative-callout { border-left-color: rgba(138,85,24,0.25); }
-[data-theme="light"] .narrative-callout-label { color: #7a4a18; }
-[data-theme="light"] .narrative-callout-body p { color: rgba(26,23,20,0.65); }
-[data-theme="light"] .narrative-callout-body p em { color: rgba(26,23,20,0.85); }
+[data-theme="light"] .narrative-callout { border-left-color: rgba(168,90,90,0.25); }
+[data-theme="light"] .narrative-callout-label { color: #a85a5a; }
+[data-theme="light"] .narrative-callout-body p { color: rgba(26,24,24,0.65); }
+[data-theme="light"] .narrative-callout-body p em { color: rgba(26,24,24,0.85); }
 
 /* Insight cards */
 [data-theme="light"] .insight-card {
-  border-color: rgba(138,85,24,0.12);
-  background: linear-gradient(160deg, #ffffff, #faf8f4);
+  border-color: rgba(168,90,90,0.12);
+  background: linear-gradient(160deg, #ffffff, #faf8f6);
 }
-[data-theme="light"] .insight-card:hover { border-color: rgba(138,85,24,0.28); }
-[data-theme="light"] .insight-num { color: #8a5518; }
+[data-theme="light"] .insight-card:hover { border-color: rgba(168,90,90,0.28); }
+[data-theme="light"] .insight-num { color: #a85a5a; }
 [data-theme="light"] .insight-title { color: var(--warm); }
-[data-theme="light"] .insight-body { color: rgba(26,23,20,0.68); }
+[data-theme="light"] .insight-body { color: rgba(26,24,24,0.68); }
 
 /* Carousel */
 [data-theme="light"] .carousel-wrap {
-  border-color: rgba(138,85,24,0.15); background: #fff;
+  border-color: rgba(168,90,90,0.15); background: #fff;
 }
 [data-theme="light"] .carousel-slide { background: #fff; }
 [data-theme="light"] .carousel-slide img { filter: drop-shadow(0 4px 12px rgba(0,0,0,0.1)); }
-[data-theme="light"] .carousel-caption { color: rgba(26,23,20,0.65); }
+[data-theme="light"] .carousel-caption { color: rgba(26,24,24,0.65); }
 [data-theme="light"] .carousel-arrow {
-  background: rgba(138,85,24,0.08); border-color: rgba(138,85,24,0.25);
-  color: #7a4a18;
+  background: rgba(168,90,90,0.08); border-color: rgba(168,90,90,0.25);
+  color: #a85a5a;
 }
 [data-theme="light"] .carousel-arrow:hover {
-  background: rgba(138,85,24,0.14); color: #5a3810;
+  background: rgba(168,90,90,0.14); color: #6a3636;
 }
-[data-theme="light"] .carousel-dot { background: rgba(138,85,24,0.18); }
-[data-theme="light"] .carousel-dot.active { background: #7a4a18; }
-[data-theme="light"] .carousel-label { color: rgba(26,23,20,0.58); }
+[data-theme="light"] .carousel-dot { background: rgba(168,90,90,0.18); }
+[data-theme="light"] .carousel-dot.active { background: #a85a5a; }
+[data-theme="light"] .carousel-label { color: rgba(26,24,24,0.58); }
 
 /* Proto embed */
-[data-theme="light"] .proto-embed { border-color: rgba(138,85,24,0.15); background: #fff; }
-[data-theme="light"] .proto-embed-label { color: rgba(26,23,20,0.58); }
+[data-theme="light"] .proto-embed { border-color: rgba(168,90,90,0.15); background: #fff; }
+[data-theme="light"] .proto-embed-label { color: rgba(26,24,24,0.58); }
 
 /* Reflection */
-[data-theme="light"] .reflection-label { color: #7a4a18; }
-[data-theme="light"] .reflection-quote { color: rgba(42,34,22,0.75); }
+[data-theme="light"] .reflection-label { color: #a85a5a; }
+[data-theme="light"] .reflection-quote { color: #7a3e3e; }
 
 /* Alt bg sections */
 [data-theme="light"] .cs-section.alt-bg { background: var(--bg-alt); }
@@ -263,34 +263,45 @@ html, html * {
 }
 .switch-plate {
   width: 30px; height: 48px;
-  background: linear-gradient(160deg, #3a3832, #2a2824);
-  border: 1px solid rgba(255,255,255,0.1);
+  background: linear-gradient(160deg, #2a1e1e, #1e1616);
+  border: 1.5px solid rgba(212,136,136,0.35);
   border-radius: 5px;
-  box-shadow: 0 2px 10px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.06);
+  box-shadow: 0 2px 10px rgba(212,136,136,0.15), 0 0 20px rgba(212,136,136,0.08), inset 0 1px 0 rgba(255,255,255,0.06);
   display: flex; align-items: center; justify-content: center;
   position: relative;
   transition: background 0.35s ease, border-color 0.35s ease, box-shadow 0.35s ease;
+  animation: switchGlow 3s ease-in-out infinite alternate;
+}
+@keyframes switchGlow {
+  0%   { box-shadow: 0 2px 10px rgba(212,136,136,0.15), 0 0 20px rgba(212,136,136,0.08); }
+  100% { box-shadow: 0 2px 14px rgba(212,136,136,0.25), 0 0 28px rgba(212,136,136,0.14); }
 }
 .switch-lever {
   width: 16px; height: 22px;
-  background: linear-gradient(180deg, #c0bcb4, #a8a49c, #908c84);
+  background: linear-gradient(180deg, #e8a0a0, #d48888, #b87070);
   border-radius: 3px;
-  border: 1px solid rgba(255,255,255,0.15);
-  box-shadow: 0 2px 6px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.3);
+  border: 1px solid rgba(232,180,180,0.4);
+  box-shadow: 0 2px 6px rgba(212,136,136,0.35), 0 0 10px rgba(212,136,136,0.15), inset 0 1px 0 rgba(255,255,255,0.25);
   transform: translateY(6px);
   transition: transform 0.3s cubic-bezier(0.22,1,0.36,1), background 0.3s ease, box-shadow 0.3s ease;
 }
 
-/* Light mode switch — darker plate for visibility */
+/* Light mode switch */
 [data-theme="light"] .switch-plate {
-  background: linear-gradient(160deg, #c8c4bc, #b8b4ac);
-  border-color: rgba(0,0,0,0.2);
-  box-shadow: 0 2px 10px rgba(0,0,0,0.15), inset 0 1px 0 rgba(255,255,255,0.4);
+  background: linear-gradient(160deg, #f5e8e8, #e8d8d8);
+  border-color: rgba(168,90,90,0.3);
+  box-shadow: 0 2px 10px rgba(168,90,90,0.12), 0 0 16px rgba(168,90,90,0.06), inset 0 1px 0 rgba(255,255,255,0.6);
+  animation: switchGlowLight 3s ease-in-out infinite alternate;
+}
+@keyframes switchGlowLight {
+  0%   { box-shadow: 0 2px 10px rgba(168,90,90,0.12), 0 0 16px rgba(168,90,90,0.06); }
+  100% { box-shadow: 0 2px 14px rgba(168,90,90,0.2), 0 0 22px rgba(168,90,90,0.1); }
 }
 [data-theme="light"] .switch-lever {
   transform: translateY(-6px);
-  background: linear-gradient(180deg, #e8e4dc, #d8d4cc, #ccc8c0);
-  box-shadow: 0 -2px 6px rgba(0,0,0,0.12), inset 0 1px 0 rgba(255,255,255,0.5);
+  background: linear-gradient(180deg, #ffffff, #f5e0e0, #e8cccc);
+  border-color: rgba(168,90,90,0.25);
+  box-shadow: 0 -2px 6px rgba(168,90,90,0.15), 0 0 8px rgba(168,90,90,0.08), inset 0 1px 0 rgba(255,255,255,0.5);
 }
 
 html { background: var(--bg); scroll-behavior: smooth; }
@@ -324,13 +335,13 @@ body.visible { opacity: 1; }
   border-radius: 100px;
   padding: 9px 18px 9px 14px;
   cursor: pointer;
-  color: rgba(240,208,140,0.75);
+  color: rgba(230,222,214,0.75);
   font-size: 10px; font-weight: 400;
   letter-spacing: 0.22em; text-transform: uppercase;
   transition: background 0.25s, color 0.25s, border-color 0.25s;
   z-index: 200;
 }
-.nav-back:hover { background: rgba(255,255,255,0.11); color: rgba(240,208,140,1); border-color: rgba(255,255,255,0.18); }
+.nav-back:hover { background: rgba(255,255,255,0.11); color: rgba(230,222,214,1); border-color: rgba(255,255,255,0.18); }
 .nav-back-arrow { display: inline-block; width: 16px; height: 1px; background: currentColor; position: relative; flex-shrink: 0; }
 .nav-back-arrow::before {
   content: ''; position: absolute; left: 0; top: -3px;
@@ -342,7 +353,7 @@ body.visible { opacity: 1; }
 .wordmark {
   position: fixed; bottom: 24px; left: 21px;
   font-size: 13px; font-weight: 300; letter-spacing: 0.2em;
-  color: rgba(240,208,140,0.14); pointer-events: none; z-index: 10;
+  color: rgba(230,222,214,0.14); pointer-events: none; z-index: 10;
 }
 
 /* ── SCROLL REVEAL ── */
@@ -360,9 +371,9 @@ body.visible { opacity: 1; }
   overflow: hidden;
   background-image:
     linear-gradient(to bottom,
-      rgba(12,10,7,0.38) 0%,
-      rgba(12,10,7,0.86) 65%,
-      #0c0a07 100%),
+      rgba(20,20,20,0.38) 0%,
+      rgba(20,20,20,0.86) 65%,
+      #141414 100%),
     url('Studio_Edited.webp');
   background-size: cover;
   background-position: center top;
@@ -372,8 +383,8 @@ body.visible { opacity: 1; }
 .hero-bg {
   position: absolute; inset: 0;
   background:
-    radial-gradient(ellipse 80% 60% at 20% 30%, rgba(196,122,46,0.18) 0%, transparent 60%),
-    radial-gradient(ellipse 60% 50% at 80% 70%, rgba(90,55,20,0.16) 0%, transparent 55%);
+    radial-gradient(ellipse 80% 60% at 20% 30%, rgba(212,136,136,0.18) 0%, transparent 60%),
+    radial-gradient(ellipse 60% 50% at 80% 70%, rgba(120,80,80,0.16) 0%, transparent 55%);
   animation: heroPulse 8s ease-in-out infinite alternate;
 }
 @keyframes heroPulse {
@@ -384,15 +395,15 @@ body.visible { opacity: 1; }
 .hero-grid {
   position: absolute; inset: 0; pointer-events: none;
   background-image:
-    linear-gradient(rgba(196,122,46,0.025) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(196,122,46,0.025) 1px, transparent 1px);
+    linear-gradient(rgba(212,136,136,0.025) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(212,136,136,0.025) 1px, transparent 1px);
   background-size: 64px 64px;
   mask-image: linear-gradient(180deg, rgba(0,0,0,0.6) 0%, rgba(0,0,0,0) 80%);
 }
 
 .hero-fade {
   position: absolute; bottom: 0; left: 0; right: 0; height: 280px;
-  background: linear-gradient(to bottom, transparent, #0c0a07);
+  background: linear-gradient(to bottom, transparent, #141414);
   pointer-events: none;
 }
 
@@ -400,7 +411,7 @@ body.visible { opacity: 1; }
 
 .hero-eyebrow {
   font-size: 9px; font-weight: 500; letter-spacing: 0.36em; text-transform: uppercase;
-  color: rgba(240,208,140,0.88); margin-bottom: 22px;
+  color: rgba(230,222,214,0.88); margin-bottom: 22px;
 }
 
 .hero-title {
@@ -412,23 +423,23 @@ body.visible { opacity: 1; }
 
 .hero-subtitle {
   font-size: clamp(16px, 2vw, 22px); font-weight: 300; line-height: 1.5;
-  color: rgba(240,208,140,0.68); max-width: 580px; margin-bottom: 56px;
+  color: rgba(230,222,214,0.68); max-width: 580px; margin-bottom: 56px;
   font-style: italic; font-family: 'Cormorant Garamond', serif;
 }
 
 .hero-meta {
   display: flex; gap: 48px; flex-wrap: wrap;
-  border-top: 1px solid rgba(196,122,46,0.18);
+  border-top: 1px solid rgba(212,136,136,0.18);
   padding-top: 28px;
 }
 .hero-meta-item { display: flex; flex-direction: column; gap: 5px; }
 .hero-meta-label {
   font-size: 8px; font-weight: 500; letter-spacing: 0.28em; text-transform: uppercase;
-  color: rgba(240,208,140,0.62);
+  color: rgba(230,222,214,0.62);
 }
 .hero-meta-value {
   font-size: 13px; font-weight: 400; letter-spacing: 0.06em;
-  color: rgba(240,208,140,0.7);
+  color: rgba(230,222,214,0.7);
 }
 
 /* ══════════════════════════════════
@@ -443,7 +454,7 @@ body.visible { opacity: 1; }
 
 .section-label {
   font-size: 9px; font-weight: 500; letter-spacing: 0.34em; text-transform: uppercase;
-  color: rgba(240,208,140,0.72); margin-bottom: 18px;
+  color: rgba(230,222,214,0.72); margin-bottom: 18px;
 }
 .section-heading {
   font-family: 'Cormorant Garamond', serif;
@@ -452,10 +463,10 @@ body.visible { opacity: 1; }
 }
 .section-body {
   font-size: 15px; font-weight: 300; line-height: 1.85;
-  color: rgba(240,208,140,0.75); max-width: 640px;
+  color: rgba(230,222,214,0.75); max-width: 640px;
 }
-.section-body em { font-style: italic; color: rgba(240,218,160,0.92); }
-.section-body strong { color: rgba(240,208,140,0.92); font-weight: 500; }
+.section-body em { font-style: italic; color: rgba(240,235,228,0.92); }
+.section-body strong { color: rgba(230,222,214,0.92); font-weight: 500; }
 
 /* ══════════════════════════════════
    OVERVIEW / CHIP PANEL
@@ -463,7 +474,7 @@ body.visible { opacity: 1; }
 .overview-intro {
   font-family: 'Cormorant Garamond', serif;
   font-size: clamp(17px, 2.2vw, 22px); font-weight: 400; font-style: italic;
-  line-height: 1.65; color: rgba(240,208,140,0.68);
+  line-height: 1.65; color: rgba(230,222,214,0.68);
   max-width: 760px; margin-bottom: 56px;
 }
 .overview-intro em { color: var(--warm); font-style: italic; }
@@ -477,7 +488,7 @@ body.visible { opacity: 1; }
 .proj-meta-outer::before {
   content: ''; position: absolute; inset: 0; pointer-events: none;
   background: radial-gradient(ellipse 80% 60% at var(--mx,50%) var(--my,40%),
-    rgba(196,122,46,0.07) 0%, transparent 70%);
+    rgba(212,136,136,0.07) 0%, transparent 70%);
   transition: background 0.1s ease; border-radius: inherit;
 }
 
@@ -486,19 +497,19 @@ body.visible { opacity: 1; }
   gap: 0; padding: 40px 44px;
 }
 .chip-group { display: flex; flex-direction: column; gap: 16px; }
-.chip-group + .chip-group { border-left: 1px solid rgba(196,122,46,0.12); padding-left: 44px; }
+.chip-group + .chip-group { border-left: 1px solid rgba(212,136,136,0.12); padding-left: 44px; }
 .chip-group-label {
   font-size: 9px; font-weight: 500; letter-spacing: 0.26em; text-transform: uppercase;
-  color: rgba(240,208,140,0.72); margin-bottom: 4px;
+  color: rgba(230,222,214,0.72); margin-bottom: 4px;
 }
 .chip-row { display: flex; flex-wrap: wrap; gap: 8px; }
 
 /* ── Interactive chips ── */
 .chip-btn {
   font-size: 11.5px; font-weight: 400; letter-spacing: 0.06em;
-  color: rgba(240,208,140,0.72);
-  background: rgba(196,122,46,0.05);
-  border: 1px solid rgba(196,122,46,0.12);
+  color: rgba(230,222,214,0.72);
+  background: rgba(212,136,136,0.05);
+  border: 1px solid rgba(212,136,136,0.12);
   border-radius: 100px; padding: 7px 14px 7px 12px;
   cursor: pointer; position: relative;
   display: inline-flex; align-items: center; gap: 7px;
@@ -508,33 +519,33 @@ body.visible { opacity: 1; }
   content: '+';
   display: inline-flex; align-items: center; justify-content: center;
   width: 16px; height: 16px; border-radius: 50%;
-  background: rgba(196,122,46,0.1);
-  border: 1px solid rgba(196,122,46,0.2);
+  background: rgba(212,136,136,0.1);
+  border: 1px solid rgba(212,136,136,0.2);
   font-size: 11px; font-weight: 600; line-height: 1;
-  color: rgba(196,122,46,0.5);
+  color: rgba(212,136,136,0.5);
   transition: all 0.3s ease;
   flex-shrink: 0;
 }
 .chip-btn:hover {
-  background: rgba(196,122,46,0.1);
-  border-color: rgba(196,122,46,0.28);
-  color: rgba(240,208,140,0.8);
+  background: rgba(212,136,136,0.1);
+  border-color: rgba(212,136,136,0.28);
+  color: rgba(230,222,214,0.8);
   transform: translateY(-1px);
 }
 .chip-btn:hover::before {
-  background: rgba(196,122,46,0.18);
-  border-color: rgba(196,122,46,0.35);
+  background: rgba(212,136,136,0.18);
+  border-color: rgba(212,136,136,0.35);
   color: var(--copper);
 }
 .chip-btn.active {
-  background: rgba(196,122,46,0.14);
-  border-color: rgba(196,122,46,0.4);
-  color: rgba(240,218,170,0.95);
-  box-shadow: 0 0 16px rgba(196,122,46,0.08);
+  background: rgba(212,136,136,0.14);
+  border-color: rgba(212,136,136,0.4);
+  color: rgba(240,235,228,0.95);
+  box-shadow: 0 0 16px rgba(212,136,136,0.08);
 }
 .chip-btn.active::before {
   content: '\2212';
-  background: rgba(196,122,46,0.25);
+  background: rgba(212,136,136,0.25);
   border-color: var(--copper);
   color: var(--warm);
   transform: rotate(0deg);
@@ -553,33 +564,33 @@ body.visible { opacity: 1; }
 .chip-detail-inner {
   display: flex; gap: 16px; align-items: flex-start;
   padding: 18px 22px;
-  background: rgba(196,122,46,0.04);
-  border-left: 2px solid rgba(196,122,46,0.3);
+  background: rgba(212,136,136,0.04);
+  border-left: 2px solid rgba(212,136,136,0.3);
   border-radius: 0 10px 10px 0;
 }
 .chip-detail-icon {
   width: 28px; height: 28px; flex-shrink: 0;
   border-radius: 8px;
-  background: rgba(196,122,46,0.1);
-  border: 1px solid rgba(196,122,46,0.2);
+  background: rgba(212,136,136,0.1);
+  border: 1px solid rgba(212,136,136,0.2);
   display: flex; align-items: center; justify-content: center;
   font-size: 13px; color: var(--copper);
   margin-top: 1px;
 }
 .chip-detail-text {
   font-size: 12.5px; font-weight: 300; line-height: 1.7;
-  color: rgba(240,208,140,0.72);
+  color: rgba(230,222,214,0.72);
 }
 .chip-detail-text strong {
-  color: rgba(240,218,170,0.92); font-weight: 500;
+  color: rgba(240,235,228,0.92); font-weight: 500;
 }
 
 /* ══════════════════════════════════
    THESIS BLOCK
 ══════════════════════════════════ */
 .thesis-block {
-  border-left: 3px solid rgba(196,122,46,0.35);
-  background: rgba(196,122,46,0.03);
+  border-left: 3px solid rgba(212,136,136,0.35);
+  background: rgba(212,136,136,0.03);
   border-radius: 0 12px 12px 0;
   padding: 28px 36px;
   margin: 40px 0;
@@ -587,11 +598,11 @@ body.visible { opacity: 1; }
 .thesis-quote {
   font-family: 'Cormorant Garamond', serif;
   font-size: clamp(20px, 2.4vw, 28px); font-weight: 400; font-style: italic;
-  line-height: 1.4; color: rgba(240,218,160,0.82);
+  line-height: 1.4; color: rgba(240,235,228,0.82);
 }
 .thesis-attr {
   font-size: 10px; font-weight: 500; letter-spacing: 0.22em; text-transform: uppercase;
-  color: rgba(196,122,46,0.45); margin-top: 14px;
+  color: rgba(212,136,136,0.45); margin-top: 14px;
 }
 
 /* ══════════════════════════════════
@@ -599,7 +610,7 @@ body.visible { opacity: 1; }
 ══════════════════════════════════ */
 .stats-bar {
   display: grid; grid-template-columns: repeat(3, 1fr);
-  border: 1px solid rgba(196,122,46,0.18);
+  border: 1px solid rgba(212,136,136,0.18);
   border-radius: 12px; overflow: hidden;
   background: linear-gradient(160deg, var(--bg-card), var(--bg-card-deep));
   position: relative; transform: translateZ(0);
@@ -608,7 +619,7 @@ body.visible { opacity: 1; }
 .stats-bar::before {
   content: ''; position: absolute;
   top: -40%; bottom: -40%; width: 35%; left: -45%;
-  background: linear-gradient(90deg, rgba(196,122,46,0) 0%, rgba(196,122,46,0.08) 35%, rgba(120,75,30,0.12) 60%, rgba(196,122,46,0) 100%);
+  background: linear-gradient(90deg, rgba(212,136,136,0) 0%, rgba(212,136,136,0.08) 35%, rgba(150,100,100,0.12) 60%, rgba(212,136,136,0) 100%);
   filter: blur(10px); transform: skewX(-18deg); opacity: 0;
 }
 .reveal.is-visible .stats-bar::before {
@@ -623,7 +634,7 @@ body.visible { opacity: 1; }
 
 .stat-cell {
   padding: 28px 32px; display: flex; flex-direction: column; gap: 8px;
-  border-right: 1px solid rgba(196,122,46,0.12);
+  border-right: 1px solid rgba(212,136,136,0.12);
 }
 .stat-cell:last-child { border-right: none; }
 .stat-number {
@@ -633,7 +644,7 @@ body.visible { opacity: 1; }
 }
 .stat-label {
   font-size: 9px; font-weight: 500; letter-spacing: 0.22em; text-transform: uppercase;
-  color: rgba(196,122,46,0.7);
+  color: rgba(212,136,136,0.7);
 }
 .reveal.is-visible .stat-cell:nth-child(1) .stat-number { animation: statPop .55s cubic-bezier(0.22,1,0.36,1) .35s both; }
 .reveal.is-visible .stat-cell:nth-child(2) .stat-number { animation: statPop .55s cubic-bezier(0.22,1,0.36,1) .48s both; }
@@ -653,7 +664,7 @@ body.visible { opacity: 1; }
 }
 .approach-card {
   border-radius: 14px;
-  border: 1px solid rgba(196,122,46,0.15);
+  border: 1px solid rgba(212,136,136,0.15);
   background: linear-gradient(160deg, var(--bg-card), var(--bg-card-deep));
   padding: 36px 32px 32px;
   display: flex; flex-direction: column; gap: 12px;
@@ -661,18 +672,18 @@ body.visible { opacity: 1; }
   transition: border-color 0.3s ease, transform 0.3s ease;
 }
 .approach-card:hover {
-  border-color: rgba(196,122,46,0.32);
+  border-color: rgba(212,136,136,0.32);
   transform: translateY(-3px);
 }
 .approach-card::before {
   content: ''; position: absolute; inset: 0;
-  background: radial-gradient(ellipse 70% 50% at 50% 0%, rgba(196,122,46,0.06) 0%, transparent 70%);
+  background: radial-gradient(ellipse 70% 50% at 50% 0%, rgba(212,136,136,0.06) 0%, transparent 70%);
   pointer-events: none;
 }
 .approach-card-num {
   font-family: 'Cormorant Garamond', serif;
   font-size: 11px; font-weight: 400; letter-spacing: 0.22em;
-  color: rgba(196,122,46,0.4);
+  color: rgba(212,136,136,0.4);
 }
 .approach-card-title {
   font-family: 'Cormorant Garamond', serif;
@@ -681,7 +692,7 @@ body.visible { opacity: 1; }
 }
 .approach-card-body {
   font-size: 14px; font-weight: 300; line-height: 1.75;
-  color: rgba(240,208,140,0.75); flex-grow: 1;
+  color: rgba(230,222,214,0.75); flex-grow: 1;
 }
 
 /* ══════════════════════════════════
@@ -693,25 +704,25 @@ body.visible { opacity: 1; }
 }
 .narrative-body p {
   font-size: 15px; font-weight: 300; line-height: 1.85;
-  color: rgba(240,208,140,0.62); margin-bottom: 20px;
+  color: rgba(230,222,214,0.62); margin-bottom: 20px;
 }
-.narrative-body p em { color: rgba(240,218,160,0.92); font-style: italic; }
-.narrative-body p strong { color: rgba(240,208,140,0.92); font-weight: 500; }
+.narrative-body p em { color: rgba(240,235,228,0.92); font-style: italic; }
+.narrative-body p strong { color: rgba(230,222,214,0.92); font-weight: 500; }
 
 .narrative-callout {
-  border-left: 2px solid rgba(196,122,46,0.25);
+  border-left: 2px solid rgba(212,136,136,0.25);
   padding-left: 28px;
   align-self: start;
 }
 .narrative-callout-label {
   font-size: 9px; font-weight: 500; letter-spacing: 0.26em; text-transform: uppercase;
-  color: rgba(196,122,46,0.55); margin-bottom: 14px;
+  color: rgba(212,136,136,0.55); margin-bottom: 14px;
 }
 .narrative-callout-body p {
   font-size: 14px; font-weight: 300; line-height: 1.8;
-  color: rgba(240,208,140,0.75); margin-bottom: 16px;
+  color: rgba(230,222,214,0.75); margin-bottom: 16px;
 }
-.narrative-callout-body p em { color: rgba(240,218,160,0.85); font-style: italic; }
+.narrative-callout-body p em { color: rgba(240,235,228,0.85); font-style: italic; }
 
 /* ══════════════════════════════════
    INSIGHT CARDS
@@ -722,7 +733,7 @@ body.visible { opacity: 1; }
 }
 .insight-card {
   border-radius: 14px;
-  border: 1px solid rgba(196,122,46,0.15);
+  border: 1px solid rgba(212,136,136,0.15);
   background: linear-gradient(160deg, var(--bg-card), var(--bg-card-deep));
   padding: 32px 28px 28px;
   display: flex; flex-direction: column; gap: 12px;
@@ -730,18 +741,18 @@ body.visible { opacity: 1; }
   transition: border-color 0.3s ease, transform 0.3s ease;
 }
 .insight-card:hover {
-  border-color: rgba(196,122,46,0.32);
+  border-color: rgba(212,136,136,0.32);
   transform: translateY(-3px);
 }
 .insight-card::before {
   content: ''; position: absolute; inset: 0;
-  background: radial-gradient(ellipse 70% 50% at 50% 0%, rgba(196,122,46,0.05) 0%, transparent 70%);
+  background: radial-gradient(ellipse 70% 50% at 50% 0%, rgba(212,136,136,0.05) 0%, transparent 70%);
   pointer-events: none;
 }
 .insight-num {
   font-family: 'Cormorant Garamond', serif;
   font-size: 11px; font-weight: 400; letter-spacing: 0.22em;
-  color: rgba(196,122,46,0.4);
+  color: rgba(212,136,136,0.4);
 }
 .insight-title {
   font-family: 'Cormorant Garamond', serif;
@@ -750,7 +761,7 @@ body.visible { opacity: 1; }
 }
 .insight-body {
   font-size: 13.5px; font-weight: 300; line-height: 1.75;
-  color: rgba(240,208,140,0.75); flex-grow: 1;
+  color: rgba(230,222,214,0.75); flex-grow: 1;
 }
 
 /* ══════════════════════════════════
@@ -760,7 +771,7 @@ body.visible { opacity: 1; }
   position: relative;
   border-radius: 16px;
   overflow: hidden;
-  border: 1px solid rgba(196,122,46,0.18);
+  border: 1px solid rgba(212,136,136,0.18);
   background: var(--bg-card);
   margin-top: 40px;
 }
@@ -782,7 +793,7 @@ body.visible { opacity: 1; }
   filter: drop-shadow(0 4px 16px rgba(0,0,0,0.3));
 }
 .carousel-caption {
-  font-size: 11px; font-weight: 300; color: rgba(240,208,140,0.68);
+  font-size: 11px; font-weight: 300; color: rgba(230,222,214,0.68);
   text-align: center; padding: 0 24px 18px; font-style: italic;
 }
 
@@ -790,20 +801,20 @@ body.visible { opacity: 1; }
 .carousel-arrow {
   position: absolute; top: 50%; transform: translateY(-50%);
   width: 36px; height: 36px;
-  background: rgba(196,122,46,0.1);
+  background: rgba(212,136,136,0.1);
   backdrop-filter: blur(8px);
-  border: 1px solid rgba(196,122,46,0.2);
+  border: 1px solid rgba(212,136,136,0.2);
   border-radius: 50%;
   cursor: pointer; z-index: 5;
   display: flex; align-items: center; justify-content: center;
-  color: rgba(240,208,140,0.6);
+  color: rgba(230,222,214,0.6);
   font-size: 16px; line-height: 1;
   transition: all 0.25s;
 }
 .carousel-arrow:hover {
-  background: rgba(196,122,46,0.2);
+  background: rgba(212,136,136,0.2);
   color: var(--warm);
-  border-color: rgba(196,122,46,0.4);
+  border-color: rgba(212,136,136,0.4);
 }
 .carousel-arrow.prev { left: 12px; }
 .carousel-arrow.next { right: 12px; }
@@ -816,20 +827,20 @@ body.visible { opacity: 1; }
 .carousel-dot {
   width: 6px; height: 6px;
   border-radius: 50%;
-  background: rgba(196,122,46,0.2);
+  background: rgba(212,136,136,0.2);
   border: none; cursor: pointer;
   transition: all 0.25s;
   padding: 0;
 }
 .carousel-dot.active {
   background: var(--copper);
-  box-shadow: 0 0 8px rgba(196,122,46,0.3);
+  box-shadow: 0 0 8px rgba(212,136,136,0.3);
   transform: scale(1.3);
 }
 
 .carousel-label {
   font-size: 10px; font-weight: 400; letter-spacing: 0.14em;
-  color: rgba(240,208,140,0.62); text-align: center;
+  color: rgba(230,222,214,0.62); text-align: center;
   margin-top: 12px;
 }
 
@@ -840,7 +851,7 @@ body.visible { opacity: 1; }
   width: 100%;
   border-radius: 16px;
   overflow: hidden;
-  border: 1px solid rgba(196,122,46,0.18);
+  border: 1px solid rgba(212,136,136,0.18);
   background: var(--bg-card);
   margin-top: 40px;
 }
@@ -850,26 +861,186 @@ body.visible { opacity: 1; }
 }
 .proto-embed-label {
   font-size: 10px; font-weight: 400; letter-spacing: 0.14em;
-  color: rgba(240,208,140,0.35); text-align: center;
+  color: rgba(230,222,214,0.35); text-align: center;
   margin-top: 14px;
 }
 
 /* ══════════════════════════════════
-   REFLECTION
+   REFLECTION (Fireflies)
 ══════════════════════════════════ */
 .reflection-wrap {
-  padding: 120px 72px;
-  text-align: center;
+  padding: 96px 64px 120px;
+  position: relative; overflow: hidden;
+  background: linear-gradient(180deg, var(--bg-alt) 0%, var(--bg) 100%);
 }
-.reflection-inner { max-width: 680px; margin: 0 auto; }
+.reflection-fireflies {
+  position: absolute; inset: 0;
+  pointer-events: none; overflow: hidden; z-index: 0;
+}
+.reflection-firefly {
+  position: absolute;
+  border-radius: 50%;
+  background: rgba(212,136,136,0.45);
+  box-shadow: 0 0 6px rgba(212,136,136,0.35), 0 0 18px rgba(212,136,136,0.15);
+  animation: plugFireflyFloat linear infinite;
+}
+@keyframes plugFireflyFloat {
+  0%   { transform: translateY(0) translateX(0); opacity: 0; }
+  8%   { opacity: 1; }
+  50%  { transform: translateY(-40vh) translateX(30px); }
+  92%  { opacity: 1; }
+  100% { transform: translateY(-80vh) translateX(-20px); opacity: 0; }
+}
+[data-theme="light"] .reflection-firefly {
+  background: rgba(168,90,90,0.3);
+  box-shadow: 0 0 6px rgba(168,90,90,0.25), 0 0 18px rgba(168,90,90,0.1);
+}
+[data-theme="light"] .reflection-wrap {
+  background: linear-gradient(180deg, var(--bg-alt) 0%, var(--bg) 100%);
+}
+.reflection-inner {
+  max-width: 720px; margin: 0 auto;
+  position: relative; z-index: 1;
+}
 .reflection-label {
-  font-size: 9px; font-weight: 500; letter-spacing: 0.34em; text-transform: uppercase;
-  color: rgba(196,122,46,0.55); margin-bottom: 28px;
+  font-size: 8.5px; font-weight: 500; letter-spacing: 0.34em;
+  text-transform: uppercase; color: var(--copper); margin-bottom: 24px;
 }
 .reflection-quote {
   font-family: 'Cormorant Garamond', serif;
-  font-size: clamp(26px, 3.2vw, 42px); font-weight: 400; font-style: italic;
-  line-height: 1.3; color: rgba(240,218,160,0.72);
+  font-size: clamp(28px, 3.5vw, 48px); font-weight: 400; font-style: italic;
+  line-height: 1.3; color: var(--warm); margin-bottom: 0;
+}
+
+/* ── SKILLS & METHODS (Timeline) ── */
+.sm-columns {
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: 0 48px; width: 100%; max-width: 960px;
+  margin: 48px auto 0; align-items: start;
+}
+.sm-timeline { position: relative; width: 100%; }
+.sm-timeline::before {
+  content: ''; position: absolute;
+  left: 14px; top: 0; bottom: 0; width: 1px;
+  background: linear-gradient(180deg, transparent 0%, rgba(212,136,136,0.2) 4%, rgba(212,136,136,0.2) 96%, transparent 100%);
+}
+.sm-tl-section { position: relative; padding-left: 44px; margin-bottom: 8px; }
+.sm-tl-section-label {
+  font-size: 9px; font-weight: 500; letter-spacing: 0.28em; text-transform: uppercase;
+  color: rgba(212,136,136,0.72); padding: 12px 0;
+  display: flex; align-items: center; gap: 12px;
+}
+.sm-tl-section-label::after {
+  content: ''; flex: 1; height: 1px;
+  background: linear-gradient(90deg, rgba(212,136,136,0.15) 0%, transparent 100%);
+}
+.sm-tl-section::before {
+  content: ''; position: absolute;
+  left: 10px; top: 16px; width: 9px; height: 9px;
+  border-radius: 50%; background: var(--copper);
+  box-shadow: 0 0 12px rgba(212,136,136,0.4); z-index: 2;
+}
+.sm-tl-node { position: relative; padding-left: 44px; margin-bottom: 4px; }
+.sm-tl-node::before {
+  content: ''; position: absolute;
+  left: 12px; top: 18px; width: 5px; height: 5px;
+  border-radius: 50%; background: rgba(212,136,136,0.35);
+  transition: background 0.25s, box-shadow 0.25s; z-index: 2;
+}
+.sm-tl-node.open::before { background: var(--warm); box-shadow: 0 0 10px rgba(232,180,180,0.3); }
+.sm-tl-node::after {
+  content: ''; position: absolute;
+  left: 17px; top: 20px; width: 27px; height: 1px;
+  background: rgba(212,136,136,0.12); transition: background 0.25s;
+}
+.sm-tl-node.open::after { background: rgba(212,136,136,0.3); }
+.sm-tl-trigger {
+  display: flex; align-items: center; gap: 10px; width: 100%;
+  background: rgba(212,136,136,0.04); border: 1px solid rgba(212,136,136,0.12);
+  border-radius: 12px; padding: 12px 18px; cursor: pointer;
+  font-family: inherit; color: inherit; text-align: left;
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.sm-tl-trigger:hover { background: rgba(212,136,136,0.08); border-color: rgba(212,136,136,0.25); }
+.sm-tl-node.open .sm-tl-trigger {
+  background: rgba(212,136,136,0.1); border-color: rgba(212,136,136,0.3);
+  border-bottom-left-radius: 0; border-bottom-right-radius: 0; border-bottom-color: transparent;
+}
+.sm-tl-trigger-label {
+  flex: 1; font-size: 13px; font-weight: 400; letter-spacing: 0.03em;
+  color: rgba(212,136,136,0.7); transition: color 0.25s;
+}
+.sm-tl-node.open .sm-tl-trigger-label,
+.sm-tl-trigger:hover .sm-tl-trigger-label { color: rgba(240,235,228,0.95); }
+.sm-tl-trigger-arrow {
+  font-size: 10px; color: rgba(212,136,136,0.3);
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), color 0.25s; flex-shrink: 0;
+}
+.sm-tl-node.open .sm-tl-trigger-arrow { transform: rotate(180deg); color: rgba(212,136,136,0.6); }
+.sm-tl-panel { overflow: hidden; max-height: 0; transition: max-height 0.35s cubic-bezier(0.4, 0, 0.2, 1); }
+.sm-tl-node.open .sm-tl-panel { max-height: 200px; }
+.sm-tl-panel-inner {
+  background: rgba(212,136,136,0.06); border: 1px solid rgba(212,136,136,0.3);
+  border-top: none; border-radius: 0 0 12px 12px; padding: 18px 20px;
+  opacity: 0; transform: translateY(-6px);
+  transition: opacity 0.25s ease 0.06s, transform 0.25s ease 0.06s;
+}
+.sm-tl-node.open .sm-tl-panel-inner { opacity: 1; transform: translateY(0); }
+.sm-tl-panel-text {
+  font-size: 12.5px; font-weight: 300; letter-spacing: 0.03em;
+  line-height: 1.6; color: rgba(232,180,180,0.75); font-style: italic;
+}
+.sm-tl-trigger:focus-visible { outline: 2px solid var(--copper); outline-offset: 2px; border-radius: 12px; }
+[data-theme="light"] .sm-tl-trigger { background: rgba(168,90,90,0.03); border-color: rgba(168,90,90,0.12); }
+[data-theme="light"] .sm-tl-trigger:hover { background: rgba(168,90,90,0.06); border-color: rgba(168,90,90,0.22); }
+[data-theme="light"] .sm-tl-trigger-label { color: rgba(168,90,90,0.6); }
+[data-theme="light"] .sm-tl-node.open .sm-tl-trigger-label,
+[data-theme="light"] .sm-tl-trigger:hover .sm-tl-trigger-label { color: #a85a5a; }
+[data-theme="light"] .sm-tl-panel-inner { background: rgba(168,90,90,0.03); border-color: rgba(168,90,90,0.2); }
+[data-theme="light"] .sm-tl-panel-text { color: rgba(42,36,36,0.65); }
+
+/* ── STATS COUNTER ANIMATION ── */
+.stat-number[data-target] { display: inline-block; }
+@keyframes statCountUp {
+  from { opacity: 0; transform: translateY(12px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.stat-cell.counted .stat-number {
+  animation: statCountUp 0.6s cubic-bezier(0.22,1,0.36,1) both;
+}
+.stat-cell:nth-child(2).counted .stat-number { animation-delay: 0.15s; }
+.stat-cell:nth-child(3).counted .stat-number { animation-delay: 0.3s; }
+
+/* ── ENHANCED APPROACH CARDS ── */
+.approach-card {
+  transition: border-color 0.3s ease, transform 0.4s cubic-bezier(0.22,1,0.36,1), box-shadow 0.4s ease;
+}
+.approach-card:hover {
+  border-color: rgba(212,136,136,0.4);
+  transform: translateY(-6px);
+  box-shadow: 0 16px 48px rgba(212,136,136,0.08), 0 0 0 1px rgba(212,136,136,0.1);
+}
+.approach-card::after {
+  content: ''; position: absolute; bottom: 0; left: 0; right: 0;
+  height: 2px; background: linear-gradient(90deg, transparent, var(--copper), transparent);
+  opacity: 0; transition: opacity 0.4s ease;
+}
+.approach-card:hover::after { opacity: 0.5; }
+
+/* ── ENHANCED INSIGHT CARDS ── */
+.insight-card {
+  transition: border-color 0.3s ease, transform 0.4s cubic-bezier(0.22,1,0.36,1), box-shadow 0.4s ease;
+}
+.insight-card:hover {
+  border-color: rgba(212,136,136,0.4);
+  transform: translateY(-6px) scale(1.01);
+  box-shadow: 0 16px 48px rgba(212,136,136,0.08), 0 0 0 1px rgba(212,136,136,0.1);
+}
+.insight-card .insight-num {
+  transition: color 0.3s ease, transform 0.3s ease;
+}
+.insight-card:hover .insight-num {
+  color: var(--copper); transform: scale(1.15);
 }
 
 /* ══════════════════════════════════
@@ -881,13 +1052,14 @@ body.visible { opacity: 1; }
   .reflection-wrap { padding: 80px 36px; }
   .hero-meta { gap: 28px; }
   .chip-panel { grid-template-columns: 1fr; gap: 28px; }
-  .chip-group + .chip-group { border-left: none; padding-left: 0; border-top: 1px solid rgba(196,122,46,0.12); padding-top: 24px; }
+  .chip-group + .chip-group { border-left: none; padding-left: 0; border-top: 1px solid rgba(212,136,136,0.12); padding-top: 24px; }
   .stats-bar { grid-template-columns: 1fr; }
-  .stat-cell { border-right: none; border-bottom: 1px solid rgba(196,122,46,0.12); }
+  .stat-cell { border-right: none; border-bottom: 1px solid rgba(212,136,136,0.12); }
   .stat-cell:last-child { border-bottom: none; }
   .approach-grid { grid-template-columns: 1fr; }
   .narrative-cols { grid-template-columns: 1fr; gap: 32px; }
   .insight-grid { grid-template-columns: 1fr; }
+  .sm-columns { grid-template-columns: 1fr; gap: 12px 0; }
   .proto-embed iframe { height: 480px; }
   .chip-detail-card.open { margin: 0 20px 20px; }
 }
@@ -942,21 +1114,13 @@ body.visible { opacity: 1; }
   <div class="hero-grid" aria-hidden="true"></div>
   <div class="hero-fade" aria-hidden="true"></div>
   <div class="hero-content">
-    <div class="hero-eyebrow">Plug Redesign · Case Study</div>
+    <div class="hero-eyebrow">Inclusive Design · Field Research · Physical Prototyping</div>
     <h1 class="hero-title">Plug Redesign</h1>
-    <p class="hero-subtitle">Safe, ergonomic design solution for plugging in — in the dark.</p>
+    <p class="hero-subtitle">Safe, ergonomic design solution for plugging in, in the dark.</p>
     <div class="hero-meta">
       <div class="hero-meta-item">
         <div class="hero-meta-label">Role</div>
         <div class="hero-meta-value">UX Research · Product Design</div>
-      </div>
-      <div class="hero-meta-item">
-        <div class="hero-meta-label">Focus</div>
-        <div class="hero-meta-value">Accessibility · Ergonomics</div>
-      </div>
-      <div class="hero-meta-item">
-        <div class="hero-meta-label">Methods</div>
-        <div class="hero-meta-value">Field Research · Prototyping · User Testing</div>
       </div>
       <div class="hero-meta-item">
         <div class="hero-meta-label">Year</div>
@@ -965,6 +1129,14 @@ body.visible { opacity: 1; }
       <div class="hero-meta-item">
         <div class="hero-meta-label">Type</div>
         <div class="hero-meta-value">Industrial UX · Inclusive Design</div>
+      </div>
+      <div class="hero-meta-item">
+        <div class="hero-meta-label">Team</div>
+        <div class="hero-meta-value">Solo</div>
+      </div>
+      <div class="hero-meta-item">
+        <div class="hero-meta-label">Context</div>
+        <div class="hero-meta-value">Academic Project</div>
       </div>
     </div>
   </div>
@@ -977,52 +1149,82 @@ body.visible { opacity: 1; }
   <div class="section-inner">
 
     <div class="reveal">
-      <div class="section-label">Overview</div>
-      <h2 class="section-heading">Not all users can rely on visual cues.</h2>
+      <div class="section-label">Project Overview</div>
+      <h2 class="section-heading">Not all users can rely on visual cues</h2>
     </div>
 
     <p class="overview-intro reveal">
-      The design challenge revolves around creating a solution for connecting devices in low-light conditions, recognizing that <em>not all users can rely on visual cues.</em> The objective is to develop an intuitive, safe, and ergonomic system that accommodates users with varying levels of visual abilities.
+      The design challenge revolves around creating a solution for connecting devices in low-light conditions, recognizing that <em>not all users can rely on visual cues.</em> The objective is to develop an intuitive, safe, and ergonomic system that accommodates users with varying levels of visual&nbsp;abilities.
     </p>
 
     <div class="thesis-block reveal">
-      <div class="thesis-quote">"If a design only works when you can see it, it doesn't work."</div>
+      <div class="thesis-quote">If a design only works when you can see it, it doesn't work.</div>
       <div class="thesis-attr">Plug Redesign · Core Thesis</div>
     </div>
 
+
+  </div>
+</section>
+
+<!-- ══════════════════════════════════
+     SKILLS & METHODS
+══════════════════════════════════ -->
+<section class="cs-section alt-bg" aria-label="Skills and methods">
+  <div class="section-inner">
     <div class="reveal">
-      <div class="proj-meta-outer" id="chipPanelOuter">
-        <div class="chip-panel">
-          <div class="chip-group">
-            <div class="chip-group-label">Skills</div>
-            <div class="chip-row">
-              <button class="chip-btn" aria-expanded="false" aria-controls="chipDetailCard" data-icon="&#x1F50D;" data-detail="Observing how users interact with plugs and outlets across <strong>varying conditions of visibility</strong> — first with sight, then without.">UX Research</button>
-              <button class="chip-btn" aria-expanded="false" aria-controls="chipDetailCard" data-icon="&#x2B21;" data-detail="Designing <strong>physical form factors</strong> that guide users through touch rather than sight — the plug clip and outlet guide system.">Industrial Design</button>
-              <button class="chip-btn" aria-expanded="false" aria-controls="chipDetailCard" data-icon="&#x21C4;" data-detail="Developing <strong>tactile and spatial feedback</strong> mechanisms that communicate orientation without visual cues.">Interaction Design</button>
-              <button class="chip-btn" aria-expanded="false" aria-controls="chipDetailCard" data-icon="&#x2605;" data-detail="Creating solutions that work universally — for <strong>sighted, low-vision, and visually impaired users</strong> — without feeling like an accessibility product.">Inclusive Design</button>
-              <button class="chip-btn" aria-expanded="false" aria-controls="chipDetailCard" data-icon="&#x25CE;" data-detail="Iterating from <strong>field insight through physical prototyping</strong> to validated design across multiple test rounds.">Rapid Prototyping</button>
-            </div>
-          </div>
-          <div class="chip-group">
-            <div class="chip-group-label">Methods</div>
-            <div class="chip-row">
-              <button class="chip-btn" aria-expanded="false" aria-controls="chipDetailCard" data-icon="&#x25C9;" data-detail="Real-time observation and interviewing during plug-in tasks — <strong>first with visual cues, then without</strong> — to surface orientation gaps.">Field Research</button>
-              <button class="chip-btn" aria-expanded="false" aria-controls="chipDetailCard" data-icon="&#x21CC;" data-detail="Structured A/B testing: <strong>eyes open vs. eyes closed</strong>, standard vs. redesigned — comparing task time, confidence, and error rate.">Comparative Testing</button>
-              <button class="chip-btn" aria-expanded="false" aria-controls="chipDetailCard" data-icon="&#x2692;" data-detail="Physical model building to test <strong>tactile guidance, alignment accuracy, and ergonomic grip</strong> position across hand sizes.">Physical Prototyping</button>
-              <button class="chip-btn" aria-expanded="false" aria-controls="chipDetailCard" data-icon="&#x25B6;" data-detail="Recording participant behavior and collecting <strong>real-time verbal feedback</strong> during task completion — capturing hesitation, grip patterns, and safety concerns.">Behavioral Observation</button>
-              <button class="chip-btn" aria-expanded="false" aria-controls="chipDetailCard" data-icon="&#x2709;" data-detail="Post-task interviews exploring <strong>user confidence, frustration points, and perceived safety</strong> — the emotional layer of the interaction.">User Interviews</button>
-            </div>
-          </div>
+      <div class="section-label">Skills &amp; Methods</div>
+      <h2 class="section-heading">What I brought to this project</h2>
+      <p class="section-body">This solo project combined field research with physical prototyping to solve an orientation problem no one had designed for. Below are the skills and methods that shaped the&nbsp;work.</p>
+    </div>
+
+    <div class="sm-columns reveal">
+      <div class="sm-timeline">
+        <div class="sm-tl-section"><div class="sm-tl-section-label">Skills</div></div>
+        <div class="sm-tl-node">
+          <button class="sm-tl-trigger" aria-expanded="false"><span class="sm-tl-trigger-label">UX Research</span><span class="sm-tl-trigger-arrow">&#9662;</span></button>
+          <div class="sm-tl-panel" aria-hidden="true"><div class="sm-tl-panel-inner"><p class="sm-tl-panel-text">Observing how users interact with plugs and outlets across varying conditions of visibility, first with sight, then without.</p></div></div>
         </div>
-        <div class="chip-detail-card" id="chipDetailCard">
-          <div class="chip-detail-inner">
-            <div class="chip-detail-icon" id="chipDetailIcon"></div>
-            <div class="chip-detail-text" id="chipDetailText"></div>
-          </div>
+        <div class="sm-tl-node">
+          <button class="sm-tl-trigger" aria-expanded="false"><span class="sm-tl-trigger-label">Industrial Design</span><span class="sm-tl-trigger-arrow">&#9662;</span></button>
+          <div class="sm-tl-panel" aria-hidden="true"><div class="sm-tl-panel-inner"><p class="sm-tl-panel-text">Designing physical form factors that guide users through touch rather than sight, the plug clip and outlet guide system.</p></div></div>
+        </div>
+        <div class="sm-tl-node">
+          <button class="sm-tl-trigger" aria-expanded="false"><span class="sm-tl-trigger-label">Inclusive Design</span><span class="sm-tl-trigger-arrow">&#9662;</span></button>
+          <div class="sm-tl-panel" aria-hidden="true"><div class="sm-tl-panel-inner"><p class="sm-tl-panel-text">Creating solutions that work universally for sighted, low-vision, and visually impaired users without feeling like an accessibility product.</p></div></div>
+        </div>
+        <div class="sm-tl-node">
+          <button class="sm-tl-trigger" aria-expanded="false"><span class="sm-tl-trigger-label">Rapid Prototyping</span><span class="sm-tl-trigger-arrow">&#9662;</span></button>
+          <div class="sm-tl-panel" aria-hidden="true"><div class="sm-tl-panel-inner"><p class="sm-tl-panel-text">Iterating from field insight through physical prototyping to validated design across multiple test rounds.</p></div></div>
+        </div>
+        <div class="sm-tl-node">
+          <button class="sm-tl-trigger" aria-expanded="false"><span class="sm-tl-trigger-label">Interaction Design</span><span class="sm-tl-trigger-arrow">&#9662;</span></button>
+          <div class="sm-tl-panel" aria-hidden="true"><div class="sm-tl-panel-inner"><p class="sm-tl-panel-text">Developing tactile and spatial feedback mechanisms that communicate orientation without visual cues.</p></div></div>
+        </div>
+      </div>
+      <div class="sm-timeline">
+        <div class="sm-tl-section"><div class="sm-tl-section-label">Methods</div></div>
+        <div class="sm-tl-node">
+          <button class="sm-tl-trigger" aria-expanded="false"><span class="sm-tl-trigger-label">Field Research</span><span class="sm-tl-trigger-arrow">&#9662;</span></button>
+          <div class="sm-tl-panel" aria-hidden="true"><div class="sm-tl-panel-inner"><p class="sm-tl-panel-text">Real-time observation and interviewing during plug-in tasks, first with visual cues, then without, to surface orientation gaps.</p></div></div>
+        </div>
+        <div class="sm-tl-node">
+          <button class="sm-tl-trigger" aria-expanded="false"><span class="sm-tl-trigger-label">Comparative Testing</span><span class="sm-tl-trigger-arrow">&#9662;</span></button>
+          <div class="sm-tl-panel" aria-hidden="true"><div class="sm-tl-panel-inner"><p class="sm-tl-panel-text">Structured A/B testing: eyes open vs. eyes closed, standard vs. redesigned, comparing task time, confidence, and error rate.</p></div></div>
+        </div>
+        <div class="sm-tl-node">
+          <button class="sm-tl-trigger" aria-expanded="false"><span class="sm-tl-trigger-label">Physical Prototyping</span><span class="sm-tl-trigger-arrow">&#9662;</span></button>
+          <div class="sm-tl-panel" aria-hidden="true"><div class="sm-tl-panel-inner"><p class="sm-tl-panel-text">Building physical models to test tactile guidance, alignment accuracy, and ergonomic grip position across hand sizes.</p></div></div>
+        </div>
+        <div class="sm-tl-node">
+          <button class="sm-tl-trigger" aria-expanded="false"><span class="sm-tl-trigger-label">Behavioral Observation</span><span class="sm-tl-trigger-arrow">&#9662;</span></button>
+          <div class="sm-tl-panel" aria-hidden="true"><div class="sm-tl-panel-inner"><p class="sm-tl-panel-text">Recording participant behavior and real-time verbal feedback during task completion, capturing hesitation, grip patterns, and safety concerns.</p></div></div>
+        </div>
+        <div class="sm-tl-node">
+          <button class="sm-tl-trigger" aria-expanded="false"><span class="sm-tl-trigger-label">User Interviews</span><span class="sm-tl-trigger-arrow">&#9662;</span></button>
+          <div class="sm-tl-panel" aria-hidden="true"><div class="sm-tl-panel-inner"><p class="sm-tl-panel-text">Post-task interviews exploring user confidence, frustration points, and perceived safety, the emotional layer of the interaction.</p></div></div>
         </div>
       </div>
     </div>
-
   </div>
 </section>
 
@@ -1034,26 +1236,26 @@ body.visible { opacity: 1; }
 
     <div class="reveal">
       <div class="section-label">Field Research</div>
-      <h2 class="section-heading">First with sight. Then without.</h2>
+      <h2 class="section-heading">First with sight. Then without.</h2><!-- keep periods -->
     </div>
 
     <div class="narrative-cols reveal">
       <div class="narrative-body">
         <p>
-          Gaining a thorough understanding of the typical user's plugging-in experience was crucial. The testing phase began by <em>leveraging visual abilities</em> and then transitioned to focusing on the <em>absence of visual cues.</em>
+          Gaining a thorough understanding of the typical user's plugging-in experience was crucial. The testing phase began by <em>leveraging visual abilities</em> and then transitioned to focusing on the <em>absence of visual&nbsp;cues.</em>
         </p>
         <p>
-          Throughout each test, users were interviewed, offering real-time feedback on their distinctive perspectives and experiences. This dual approach allowed for a nuanced exploration of user interactions — first with visual clues and then under conditions simulating limited visual cues, akin to scenarios faced by visually impaired users or during nighttime use.
+          Throughout each test, users were interviewed, offering real-time feedback on their distinctive perspectives and experiences. This dual approach allowed for a nuanced exploration of user interactions, first with visual clues and then under conditions simulating limited visual cues, akin to scenarios faced by visually impaired users or during nighttime&nbsp;use.
         </p>
         <p>
-          The research surfaced a pattern: <strong>sighted users compensate instinctively</strong> — tilting plugs, feeling for prong alignment, squinting. But remove the visual channel entirely, and these micro-compensations collapse. Users reported frustration, safety concerns, and a loss of spatial confidence almost immediately.
+          The research surfaced a pattern: <strong>sighted users compensate instinctively</strong>, tilting plugs, feeling for prong alignment, squinting. But remove the visual channel entirely, and these micro-compensations collapse. Users reported frustration, safety concerns, and a loss of spatial confidence almost&nbsp;immediately.
         </p>
       </div>
       <div class="narrative-callout">
         <div class="narrative-callout-label">Key Finding</div>
         <div class="narrative-callout-body">
-          <p>The gap between sighted and non-sighted plugging wasn't a matter of difficulty — it was a <em>total loss of orientation.</em> Users didn't just struggle to plug in. They lost confidence in which direction they were facing, which prong was which, and whether the outlet was even the right way up.</p>
-          <p>This wasn't a usability problem. It was an <em>orientation problem</em> — and the existing plug design offered zero haptic information to resolve it.</p>
+          <p>The gap between sighted and non-sighted plugging wasn't a matter of difficulty, it was a <em>total loss of orientation.</em> Users didn't just struggle to plug in. They lost confidence in which direction they were facing, which prong was which, and whether the outlet was even the right way&nbsp;up.</p>
+          <p>This wasn't a usability problem. It was an <em>orientation problem</em>, and the existing plug design offered zero haptic information to resolve&nbsp;it.</p>
         </div>
       </div>
     </div>
@@ -1061,15 +1263,15 @@ body.visible { opacity: 1; }
     <div class="reveal">
       <div class="stats-bar">
         <div class="stat-cell">
-          <div class="stat-number">100%</div>
+          <div class="stat-number" data-target="100" data-suffix="%">0%</div>
           <div class="stat-label">Lost Orientation</div>
         </div>
         <div class="stat-cell">
-          <div class="stat-number">3x</div>
+          <div class="stat-number" data-target="3" data-suffix="x">0x</div>
           <div class="stat-label">Longer Task Time</div>
         </div>
         <div class="stat-cell">
-          <div class="stat-number">0</div>
+          <div class="stat-number" data-target="0" data-suffix="">0</div>
           <div class="stat-label">Haptic Cues in Current Design</div>
         </div>
       </div>
@@ -1086,39 +1288,39 @@ body.visible { opacity: 1; }
 
     <div class="reveal">
       <div class="section-label">Approach</div>
-      <h2 class="section-heading">A holistic redesign for visual-free orientation.</h2>
+      <h2 class="section-heading">A holistic redesign for visual-free orientation</h2>
       <p class="section-body">
-        The approach was not to design around the plug — but to redesign the <em>relationship between plug and outlet</em> so that the interaction itself becomes self-guiding. Every decision was filtered through one question: can this be understood entirely through touch?
+        The approach was not to design around the plug, but to redesign the <em>relationship between plug and outlet</em> so that the interaction itself becomes self-guiding. Every decision was filtered through one question: can this be understood entirely through&nbsp;touch?
       </p>
     </div>
 
     <div class="approach-grid reveal">
       <div class="approach-card">
-        <div class="approach-card-num">01 — Tactile</div>
+        <div class="approach-card-num">01, Tactile</div>
         <h3 class="approach-card-title">Curved Attachment</h3>
         <p class="approach-card-body">
-          A seamlessly integrated curved form factor added to the plug body. The curve isn't decorative — it provides instant spatial information. Users feel the orientation of the plug in their hand without needing to see it. The shape tells the story.
+          A seamlessly integrated curved form factor added to the plug body. The curve isn't decorative, it provides instant spatial information. Users feel the orientation of the plug in their hand without needing to see it. The shape tells the story.
         </p>
       </div>
       <div class="approach-card">
-        <div class="approach-card-num">02 — Spatial</div>
+        <div class="approach-card-num">02, Spatial</div>
         <h3 class="approach-card-title">Outlet Notch Guide</h3>
         <p class="approach-card-body">
           A purposeful notch on the outlet acts as a tactile guide for ensuring correct orientation before insertion. Users sweep a finger across the outlet face, find the notch, and know exactly where and how to align. No guessing. No rotation.
         </p>
       </div>
       <div class="approach-card">
-        <div class="approach-card-num">03 — Safety</div>
+        <div class="approach-card-num">03, Safety</div>
         <h3 class="approach-card-title">Ergonomic Grip Zone</h3>
         <p class="approach-card-body">
           The grip area was redesigned to reduce the chance of finger contact with prongs during insertion. A subtle texture change signals where to hold, keeping fingers at a safe distance even when the user can't see the plug face.
         </p>
       </div>
       <div class="approach-card">
-        <div class="approach-card-num">04 — Universal</div>
+        <div class="approach-card-num">04, Universal</div>
         <h3 class="approach-card-title">Add-On Architecture</h3>
         <p class="approach-card-body">
-          Rather than proposing a wholesale replacement of existing electrical infrastructure, the solution was designed as an add-on — compatible with current plug and outlet standards. Adoption doesn't require system-level change.
+          Rather than proposing a wholesale replacement of existing electrical infrastructure, the solution was designed as an add-on, compatible with current plug and outlet standards. Adoption doesn't require system-level change.
         </p>
       </div>
     </div>
@@ -1134,28 +1336,28 @@ body.visible { opacity: 1; }
 
     <div class="reveal">
       <div class="section-label">Implementation</div>
-      <h2 class="section-heading">Two add-ons. One intuitive system.</h2>
+      <h2 class="section-heading">Two add-ons. One intuitive system</h2>
     </div>
 
     <div class="narrative-cols reveal">
       <div class="narrative-body">
         <p>
-          The solution presents <strong>two streamlined add-ons</strong> to the current plug design, thoughtfully designed to enhance the user experience for those with visual limitations.
+          The solution presents <strong>two streamlined add-ons</strong> to the current plug design, thoughtfully designed to enhance the user experience for those with visual&nbsp;limitations.
         </p>
         <p>
-          A seamlessly integrated <em>curved attachment</em> enables users to feel for precise spatial alignment on the plug — the curve maps to the prong orientation, so the hand knows what the eyes can't see.
+          A seamlessly integrated <em>curved attachment</em> enables users to feel for precise spatial alignment on the plug. The curve maps to the prong orientation, so the hand knows what the eyes can't&nbsp;see.
         </p>
         <p>
           Meanwhile, a purposeful <em>notch on the outlet</em> acts as a tactile guide for ensuring correct orientation before the plug is ever inserted. The notch is positioned so that aligning the curve to the notch means the prongs are correctly oriented.
         </p>
         <p>
-          Together, the two components create a <strong>closed feedback loop</strong>: the plug tells you its orientation, and the outlet tells you where to go. No visual confirmation needed.
+          Together, the two components create a <strong>closed feedback loop</strong>: the plug tells you its orientation, and the outlet tells you where to go. No visual confirmation&nbsp;needed.
         </p>
       </div>
       <div class="narrative-callout">
         <div class="narrative-callout-label">Design Principle</div>
         <div class="narrative-callout-body">
-          <p>The design ensures straightforward interaction for visually impaired users — but it doesn't <em>feel</em> like an accessibility product. It feels like a better plug.</p>
+          <p>The design ensures straightforward interaction for visually impaired users, but it doesn't <em>feel</em> like an accessibility product. It feels like a better&nbsp;plug.</p>
           <p>That was intentional. The best inclusive design doesn't announce itself. It just works for everyone, and the people who need it most benefit the most.</p>
         </div>
       </div>
@@ -1172,15 +1374,15 @@ body.visible { opacity: 1; }
 
     <div class="reveal">
       <div class="section-label">User Testing</div>
-      <h2 class="section-heading">Without explicit instructions, they just knew.</h2>
+      <h2 class="section-heading">Without explicit instructions, they just knew</h2>
     </div>
 
     <p class="section-body reveal" style="margin-bottom: 48px;">
-      Participants interacted with a prototype that initially adhered to a generic design. With closed eyes, they attempted to plug in — mimicking real-world scenarios identified in previous field research. Subsequently, the prototype was reversed, revealing the visually impaired-friendly design. <strong>Participants, without explicit instructions, attempted the task&nbsp;again.</strong>
+      Participants interacted with a prototype that initially adhered to a generic design. With closed eyes, they attempted to plug in, mimicking real-world scenarios identified in previous field research. Subsequently, the prototype was reversed, revealing the visually impaired-friendly design. <strong>Participants, without explicit instructions, attempted the task&nbsp;again.</strong>
     </p>
 
     <div class="thesis-block reveal">
-      <div class="thesis-quote">"When the redesign was introduced, participants didn't need to be told what changed. Their hands found the answer."</div>
+      <div class="thesis-quote">When the redesign was introduced, participants didn't need to be told what changed. Their hands found the&nbsp;answer.</div>
       <div class="thesis-attr">User Testing · Key Observation</div>
     </div>
 
@@ -1188,17 +1390,17 @@ body.visible { opacity: 1; }
       <div class="insight-card">
         <div class="insight-num">01</div>
         <h3 class="insight-title">Immediate Recognition</h3>
-        <p class="insight-body">Users felt the curved attachment and instinctively oriented the plug correctly — without being told what the curve meant or how to use it. The form communicated the function.</p>
+        <p class="insight-body">Users felt the curved attachment and instinctively oriented the plug correctly, without being told what the curve meant or how to use it. The form communicated the function.</p>
       </div>
       <div class="insight-card">
         <div class="insight-num">02</div>
         <h3 class="insight-title">Confidence Restored</h3>
-        <p class="insight-body">The combination of plug curve and outlet notch eliminated the hesitation seen in the first round. Users reported feeling confident in their alignment before insertion — a complete inversion from the control test.</p>
+        <p class="insight-body">The combination of plug curve and outlet notch eliminated the hesitation seen in the first round. Users reported feeling confident in their alignment before insertion, a complete inversion from the control test.</p>
       </div>
       <div class="insight-card">
         <div class="insight-num">03</div>
         <h3 class="insight-title">Safety Perceived</h3>
-        <p class="insight-body">Several participants noted they felt safer — not just more capable. The redesigned grip zone kept fingers naturally away from the prongs, and users recognized the safety improvement without prompting.</p>
+        <p class="insight-body">Several participants noted they felt safer, not just more capable. The redesigned grip zone kept fingers naturally away from the prongs, and users recognized the safety improvement without prompting.</p>
       </div>
     </div>
 
@@ -1213,7 +1415,7 @@ body.visible { opacity: 1; }
 
     <div class="reveal">
       <div class="section-label">Design Illustrations</div>
-      <h2 class="section-heading">The system, visualized.</h2>
+      <h2 class="section-heading">The system, visualized</h2>
       <p class="section-body" style="margin-bottom: 8px;">
         Product illustrations showing the tactile add-on system and the Phase II magnetic concept.
       </p>
@@ -1259,9 +1461,9 @@ body.visible { opacity: 1; }
 
     <div class="reveal">
       <div class="section-label">Interactive Prototype</div>
-      <h2 class="section-heading">Experience it yourself.</h2>
+      <h2 class="section-heading">Experience it yourself</h2>
       <p class="section-body" style="margin-bottom: 8px;">
-        Try plugging in — in the dark — first with the standard design, then with the redesigned tactile guides. Toggle to <em>Design Anatomy</em> to explore the actual illustrations of each add-on and the Phase II magnetic concept.
+        Try plugging in, in the dark, first with the standard design, then with the redesigned tactile guides. Toggle to <em>Design Anatomy</em> to explore the actual illustrations of each add-on and the Phase II magnetic concept.
       </p>
     </div>
 
@@ -1287,26 +1489,26 @@ body.visible { opacity: 1; }
 
     <div class="reveal">
       <div class="section-label">Future Prototype</div>
-      <h2 class="section-heading">Phase II — Magnetic alignment for enhanced safety.</h2>
+      <h2 class="section-heading">Phase II, magnetic alignment for enhanced safety</h2>
     </div>
 
     <div class="narrative-cols reveal">
       <div class="narrative-body">
         <p>
-          Phase II of the design caters to future manufacturing, incorporating a <em>magnetic solution</em> for enhanced safety and ergonomic comfort. Drawing inspiration from technologies like the MacBook Pro MagSafe connector, this design ensures a secure and user-friendly approach.
+          Phase II of the design caters to future manufacturing, incorporating a <em>magnetic solution</em> for enhanced safety and ergonomic comfort. Drawing inspiration from technologies like the MacBook Pro MagSafe connector, this design ensures a secure and user-friendly&nbsp;approach.
         </p>
         <p>
-          The magnetic system would guide the plug into alignment automatically upon proximity — the user would only need to bring the plug close to the outlet, and the magnets handle final orientation and connection. <strong>The interaction collapses from a multi-step alignment task to a single gesture.</strong>
+          The magnetic system would guide the plug into alignment automatically upon proximity. The user would only need to bring the plug close to the outlet, and the magnets handle final orientation and connection. <strong>The interaction collapses from a multi-step alignment task to a single&nbsp;gesture.</strong>
         </p>
         <p>
-          This approach is especially beneficial for visually impaired users plugging in electronic devices, where the margin for error is highest and the consequences of misalignment — bent prongs, electrical arcing, outlet damage — are most significant.
+          This approach is especially beneficial for visually impaired users plugging in electronic devices, where the margin for error is highest and the consequences of misalignment (bent prongs, electrical arcing, outlet damage) are most&nbsp;significant.
         </p>
       </div>
       <div class="narrative-callout">
         <div class="narrative-callout-label">Manufacturing Consideration</div>
         <div class="narrative-callout-body">
           <p>The magnetic solution requires deeper integration with outlet manufacturing standards. Phase I was designed as an add-on precisely to lower the adoption barrier.</p>
-          <p>Phase II represents the <em>ideal state</em> — where the safety and ergonomic improvements are built into the infrastructure itself, not retrofitted onto it.</p>
+          <p>Phase II represents the <em>ideal state</em>, where the safety and ergonomic improvements are built into the infrastructure itself, not retrofitted onto it.</p>
         </div>
       </div>
     </div>
@@ -1318,12 +1520,10 @@ body.visible { opacity: 1; }
      REFLECTION
 ══════════════════════════════════ -->
 <section class="reflection-wrap" aria-label="Reflection">
+  <div class="reflection-fireflies" id="reflectionFireflies" aria-hidden="true"></div>
   <div class="reflection-inner reveal">
-    <div class="reflection-label">Reflection</div>
-    <p class="reflection-quote">
-      The best design for disability<br>
-      is better design for everyone.
-    </p>
+    <p class="reflection-label">Reflection</p>
+    <p class="reflection-quote">The best design for disability is better design for everyone. This project taught me that when you design for the hardest conditions first, the solution doesn't just work for edge cases. It works better for&nbsp;everyone.</p>
   </div>
 </section>
 </main>
@@ -1390,6 +1590,87 @@ if (outer) {
     outer.style.setProperty('--my', y);
   });
 }
+
+/* ── REFLECTION FIREFLIES ── */
+(function() {
+  var c = document.getElementById('reflectionFireflies');
+  if (!c) return;
+  for (var i = 0; i < 22; i++) {
+    var f = document.createElement('div');
+    f.className = 'reflection-firefly';
+    var size = 2 + Math.random() * 3;
+    f.style.width = f.style.height = size + 'px';
+    f.style.left = Math.random() * 100 + '%';
+    f.style.bottom = '-4px';
+    f.style.animationDuration = (14 + Math.random() * 22) + 's';
+    f.style.animationDelay = (Math.random() * 18) + 's';
+    c.appendChild(f);
+  }
+})();
+
+/* ── SKILLS & METHODS ACCORDION ── */
+(function() {
+  var nodes = document.querySelectorAll('.sm-tl-node');
+  nodes.forEach(function(node) {
+    var trigger = node.querySelector('.sm-tl-trigger');
+    var panel = node.querySelector('.sm-tl-panel');
+    trigger.addEventListener('click', function() {
+      var isOpen = node.classList.contains('open');
+      nodes.forEach(function(n) {
+        if (n !== node && n.classList.contains('open')) {
+          n.classList.remove('open');
+          n.querySelector('.sm-tl-trigger').setAttribute('aria-expanded', 'false');
+          n.querySelector('.sm-tl-panel').setAttribute('aria-hidden', 'true');
+        }
+      });
+      if (isOpen) {
+        node.classList.remove('open');
+        trigger.setAttribute('aria-expanded', 'false');
+        panel.setAttribute('aria-hidden', 'true');
+      } else {
+        node.classList.add('open');
+        trigger.setAttribute('aria-expanded', 'true');
+        panel.setAttribute('aria-hidden', 'false');
+      }
+    });
+  });
+})();
+
+/* ── STATS COUNTER ANIMATION ── */
+(function() {
+  var statsBar = document.querySelector('.stats-bar');
+  if (!statsBar) return;
+  var counted = false;
+  var statsObs = new IntersectionObserver(function(entries) {
+    entries.forEach(function(entry) {
+      if (entry.isIntersecting && !counted) {
+        counted = true;
+        var cells = statsBar.querySelectorAll('.stat-cell');
+        cells.forEach(function(cell, i) {
+          var numEl = cell.querySelector('.stat-number[data-target]');
+          if (!numEl) return;
+          var target = parseInt(numEl.dataset.target);
+          var suffix = numEl.dataset.suffix || '';
+          var duration = 1200;
+          var start = performance.now();
+          cell.classList.add('counted');
+          function animate(now) {
+            var elapsed = now - start - (i * 200);
+            if (elapsed < 0) { requestAnimationFrame(animate); return; }
+            var progress = Math.min(elapsed / duration, 1);
+            var eased = 1 - Math.pow(1 - progress, 3);
+            var current = Math.round(target * eased);
+            numEl.textContent = current + suffix;
+            if (progress < 1) requestAnimationFrame(animate);
+          }
+          requestAnimationFrame(animate);
+        });
+        statsObs.unobserve(statsBar);
+      }
+    });
+  }, { threshold: 0.5 });
+  statsObs.observe(statsBar);
+})();
 
 /* ── CHIP CLICK-TO-EXPAND ── */
 const chipCard = document.getElementById('chipDetailCard');

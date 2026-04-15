@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Plug Redesign — Color Scheme Options</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400;1,500&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: 'DM Sans', sans-serif;
+  background: #111;
+  color: #e0e0e0;
+  padding: 48px 32px 96px;
+  -webkit-font-smoothing: antialiased;
+}
+
+h1 {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 42px;
+  font-weight: 600;
+  text-align: center;
+  margin-bottom: 8px;
+  color: #fff;
+}
+.subtitle {
+  text-align: center;
+  font-size: 14px;
+  color: rgba(255,255,255,0.5);
+  letter-spacing: 0.04em;
+  margin-bottom: 56px;
+}
+
+.options {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+  gap: 32px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.option {
+  border-radius: 16px;
+  overflow: hidden;
+  border: 1px solid rgba(255,255,255,0.08);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+.option:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 40px rgba(0,0,0,0.4);
+}
+
+/* ── Preview card ── */
+.preview {
+  padding: 40px 32px 32px;
+  position: relative;
+}
+.preview-label {
+  font-size: 9px;
+  font-weight: 500;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  margin-bottom: 16px;
+}
+.preview-heading {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 32px;
+  font-weight: 600;
+  line-height: 1.1;
+  margin-bottom: 14px;
+}
+.preview-body {
+  font-size: 13px;
+  font-weight: 400;
+  line-height: 1.75;
+  letter-spacing: 0.03em;
+  max-width: 320px;
+  margin-bottom: 24px;
+}
+.preview-card {
+  border-radius: 8px;
+  padding: 16px 18px;
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 0.03em;
+  line-height: 1.5;
+  margin-bottom: 20px;
+}
+.preview-divider {
+  width: 36px;
+  height: 1px;
+  margin-bottom: 20px;
+}
+.preview-meta {
+  font-size: 10px;
+  font-weight: 400;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
+
+/* ── Swatches ── */
+.swatches-bar {
+  padding: 20px 32px;
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  background: rgba(0,0,0,0.25);
+  border-top: 1px solid rgba(255,255,255,0.05);
+}
+.swatch {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: 2px solid rgba(255,255,255,0.1);
+  flex-shrink: 0;
+  position: relative;
+}
+.swatch-label {
+  font-size: 9px;
+  letter-spacing: 0.08em;
+  color: rgba(255,255,255,0.4);
+  margin-left: auto;
+  white-space: nowrap;
+}
+
+/* ── Option name ── */
+.option-header {
+  padding: 18px 32px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: rgba(0,0,0,0.4);
+}
+.option-name {
+  font-size: 14px;
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  color: #fff;
+}
+.option-number {
+  font-size: 11px;
+  font-weight: 400;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.3);
+}
+
+/* ══ OPTION A: Slate + Electric Blue ══ */
+.opt-a .preview {
+  background: linear-gradient(160deg, #0e1318 0%, #0a0f14 100%);
+}
+.opt-a .preview-label { color: #4da8da; }
+.opt-a .preview-heading { color: #c8dce8; }
+.opt-a .preview-body { color: rgba(180,200,215,0.75); }
+.opt-a .preview-card {
+  background: rgba(77,168,218,0.06);
+  border: 1px solid rgba(77,168,218,0.18);
+  color: rgba(180,200,215,0.8);
+}
+.opt-a .preview-divider { background: rgba(77,168,218,0.4); }
+.opt-a .preview-meta { color: rgba(77,168,218,0.55); }
+
+/* ══ OPTION B: Deep Charcoal + Warm White + Soft Rose ══ */
+.opt-b .preview {
+  background: linear-gradient(160deg, #141414 0%, #0f0f0f 100%);
+}
+.opt-b .preview-label { color: #c47878; }
+.opt-b .preview-heading { color: #f0ebe6; }
+.opt-b .preview-body { color: rgba(230,222,214,0.7); }
+.opt-b .preview-card {
+  background: rgba(196,120,120,0.05);
+  border: 1px solid rgba(196,120,120,0.16);
+  color: rgba(230,222,214,0.75);
+}
+.opt-b .preview-divider { background: rgba(196,120,120,0.4); }
+.opt-b .preview-meta { color: rgba(196,120,120,0.5); }
+
+/* ══ OPTION C: Midnight + Amber Glow ══ */
+.opt-c .preview {
+  background: linear-gradient(160deg, #0d1017 0%, #090c12 100%);
+}
+.opt-c .preview-label { color: #e8a84c; }
+.opt-c .preview-heading { color: #f5e6cc; }
+.opt-c .preview-body { color: rgba(225,210,185,0.72); }
+.opt-c .preview-card {
+  background: rgba(232,168,76,0.05);
+  border: 1px solid rgba(232,168,76,0.16);
+  color: rgba(225,210,185,0.75);
+}
+.opt-c .preview-divider { background: rgba(232,168,76,0.4); }
+.opt-c .preview-meta { color: rgba(232,168,76,0.5); }
+
+/* ══ OPTION D: Deep Navy + Sage Green ══ */
+.opt-d .preview {
+  background: linear-gradient(160deg, #0a1018 0%, #080d14 100%);
+}
+.opt-d .preview-label { color: #7ab08a; }
+.opt-d .preview-heading { color: #d4e4d8; }
+.opt-d .preview-body { color: rgba(190,210,195,0.72); }
+.opt-d .preview-card {
+  background: rgba(122,176,138,0.05);
+  border: 1px solid rgba(122,176,138,0.16);
+  color: rgba(190,210,195,0.75);
+}
+.opt-d .preview-divider { background: rgba(122,176,138,0.4); }
+.opt-d .preview-meta { color: rgba(122,176,138,0.5); }
+
+@media (max-width: 720px) {
+  .options { grid-template-columns: 1fr; }
+  body { padding: 32px 16px 64px; }
+  h1 { font-size: 32px; }
+}
+</style>
+</head>
+<body>
+
+<h1>Plug Redesign — Color Schemes</h1>
+<p class="subtitle">Pick the direction that feels right. Each option shows the dark mode palette.</p>
+
+<div class="options">
+
+  <!-- ═══ OPTION A ═══ -->
+  <div class="option opt-a">
+    <div class="option-header">
+      <span class="option-number">Option A</span>
+      <span class="option-name">Slate + Electric Blue</span>
+    </div>
+    <div class="preview">
+      <div class="preview-label">Inclusive Design · Field Research</div>
+      <div class="preview-heading">Safe, ergonomic design for plugging in</div>
+      <div class="preview-body">Cool and technical. The electric blue signals precision engineering and accessibility innovation. Feels modern, functional, clinical.</div>
+      <div class="preview-card">Research revealed that 73% of participants experienced difficulty plugging in devices in low-light conditions.</div>
+      <div class="preview-divider"></div>
+      <div class="preview-meta">Role · UX Research · Product Design</div>
+    </div>
+    <div class="swatches-bar">
+      <div class="swatch" style="background:#0e1318;"></div>
+      <div class="swatch" style="background:#4da8da;"></div>
+      <div class="swatch" style="background:#c8dce8;"></div>
+      <div class="swatch" style="background:rgba(77,168,218,0.18); border-color:rgba(77,168,218,0.3);"></div>
+      <div class="swatch" style="background:rgba(180,200,215,0.75); border-color:rgba(180,200,215,0.3);"></div>
+      <span class="swatch-label">bg · accent · heading · card · body</span>
+    </div>
+  </div>
+
+  <!-- ═══ OPTION B ═══ -->
+  <div class="option opt-b">
+    <div class="option-header">
+      <span class="option-number">Option B</span>
+      <span class="option-name">Charcoal + Warm White + Soft Rose</span>
+    </div>
+    <div class="preview">
+      <div class="preview-label">Inclusive Design · Field Research</div>
+      <div class="preview-heading">Safe, ergonomic design for plugging in</div>
+      <div class="preview-body">Neutral with a human touch. Clean charcoal background, warm white text, and soft rose accents. Approachable and design-forward without being cold.</div>
+      <div class="preview-card">Research revealed that 73% of participants experienced difficulty plugging in devices in low-light conditions.</div>
+      <div class="preview-divider"></div>
+      <div class="preview-meta">Role · UX Research · Product Design</div>
+    </div>
+    <div class="swatches-bar">
+      <div class="swatch" style="background:#141414;"></div>
+      <div class="swatch" style="background:#c47878;"></div>
+      <div class="swatch" style="background:#f0ebe6;"></div>
+      <div class="swatch" style="background:rgba(196,120,120,0.16); border-color:rgba(196,120,120,0.3);"></div>
+      <div class="swatch" style="background:rgba(230,222,214,0.7); border-color:rgba(230,222,214,0.3);"></div>
+      <span class="swatch-label">bg · accent · heading · card · body</span>
+    </div>
+  </div>
+
+  <!-- ═══ OPTION C ═══ -->
+  <div class="option opt-c">
+    <div class="option-header">
+      <span class="option-number">Option C</span>
+      <span class="option-name">Midnight + Amber Glow</span>
+    </div>
+    <div class="preview">
+      <div class="preview-label">Inclusive Design · Field Research</div>
+      <div class="preview-heading">Safe, ergonomic design for plugging in</div>
+      <div class="preview-body">Keeps the warmth but ditches the brown. Deep navy-black background with a cleaner amber that feels like lamplight, not leather. The "dark room" metaphor, elevated.</div>
+      <div class="preview-card">Research revealed that 73% of participants experienced difficulty plugging in devices in low-light conditions.</div>
+      <div class="preview-divider"></div>
+      <div class="preview-meta">Role · UX Research · Product Design</div>
+    </div>
+    <div class="swatches-bar">
+      <div class="swatch" style="background:#0d1017;"></div>
+      <div class="swatch" style="background:#e8a84c;"></div>
+      <div class="swatch" style="background:#f5e6cc;"></div>
+      <div class="swatch" style="background:rgba(232,168,76,0.16); border-color:rgba(232,168,76,0.3);"></div>
+      <div class="swatch" style="background:rgba(225,210,185,0.72); border-color:rgba(225,210,185,0.3);"></div>
+      <span class="swatch-label">bg · accent · heading · card · body</span>
+    </div>
+  </div>
+
+  <!-- ═══ OPTION D ═══ -->
+  <div class="option opt-d">
+    <div class="option-header">
+      <span class="option-number">Option D</span>
+      <span class="option-name">Deep Navy + Sage Green</span>
+    </div>
+    <div class="preview">
+      <div class="preview-label">Inclusive Design · Field Research</div>
+      <div class="preview-heading">Safe, ergonomic design for plugging in</div>
+      <div class="preview-body">Organic and grounded. Sage green on deep navy feels calm, tactile, and connected to the physical world. Good match for a product about touch and ergonomics.</div>
+      <div class="preview-card">Research revealed that 73% of participants experienced difficulty plugging in devices in low-light conditions.</div>
+      <div class="preview-divider"></div>
+      <div class="preview-meta">Role · UX Research · Product Design</div>
+    </div>
+    <div class="swatches-bar">
+      <div class="swatch" style="background:#0a1018;"></div>
+      <div class="swatch" style="background:#7ab08a;"></div>
+      <div class="swatch" style="background:#d4e4d8;"></div>
+      <div class="swatch" style="background:rgba(122,176,138,0.16); border-color:rgba(122,176,138,0.3);"></div>
+      <div class="swatch" style="background:rgba(190,210,195,0.72); border-color:rgba(190,210,195,0.3);"></div>
+      <span class="swatch-label">bg · accent · heading · card · body</span>
+    </div>
+  </div>
+
+</div>
+
+</body>
+</html>

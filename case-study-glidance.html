@@ -16,11 +16,11 @@
   --magenta-border: rgba(212, 0, 107, 0.3);
   --bg:             #0b1221;
   --bg-alt:         #0e1529;
-  --text:           #e0d6c8;
-  --text-muted:     #a89bab;
-  --text-dim:       #8a7e94;
-  --pink:           #eac6ce;
-  --amber:          #dca25b;
+  --text:           #f0eae4;
+  --text-muted:     #c8bcc8;
+  --text-dim:       #9a8da4;
+  --pink:           #f5dce3;
+  --amber:          #d4006b;
   --border:         rgba(255, 255, 255, 0.07);
 }
 
@@ -62,7 +62,7 @@ body.visible { opacity: 1; }
   border-radius: 100px;
   padding: 9px 18px 9px 14px;
   cursor: pointer;
-  color: rgba(200, 185, 165, 0.88);
+  color: rgba(240, 234, 228, 0.88);
   font-family: 'DM Sans', sans-serif;
   font-size: 10px;
   font-weight: 400;
@@ -74,7 +74,7 @@ body.visible { opacity: 1; }
 }
 .nav-back:hover {
   background: rgba(255, 255, 255, 0.11);
-  color: rgba(200, 185, 165, 1);
+  color: rgba(240, 234, 228, 1);
   border-color: rgba(255, 255, 255, 0.18);
 }
 .nav-back-arrow {
@@ -149,7 +149,7 @@ body.visible { opacity: 1; }
   font-weight: 400;
   line-height: 1.8;
   letter-spacing: 0.035em;
-  color: rgba(200, 185, 165, 0.78);
+  color: rgba(240, 234, 228, 0.78);
   max-width: 540px;
   margin-bottom: 64px;
 }
@@ -212,7 +212,7 @@ body.visible { opacity: 1; }
   font-weight: 400;
   line-height: 1.88;
   letter-spacing: 0.03em;
-  color: rgba(200, 185, 165, 0.78);
+  color: rgba(240, 234, 228, 0.78);
   max-width: 600px;
 }
 
@@ -230,7 +230,7 @@ body.visible { opacity: 1; }
   font-weight: 400;
   line-height: 1.9;
   letter-spacing: 0.03em;
-  color: rgba(220, 205, 185, 0.82);
+  color: rgba(240, 234, 228, 0.82);
 }
 .brief-text + .brief-text { margin-top: 20px; }
 
@@ -328,7 +328,7 @@ body.visible { opacity: 1; }
   font-weight: 400;
   line-height: 1.5;
   letter-spacing: 0.03em;
-  color: rgba(200, 185, 165, 0.78);
+  color: rgba(240, 234, 228, 0.78);
   padding-left: 18px;
   position: relative;
 }
@@ -427,7 +427,7 @@ body.visible { opacity: 1; }
   font-size: 14px;
   font-weight: 400;
   letter-spacing: 0.04em;
-  color: rgba(200, 185, 165, 0.72);
+  color: rgba(240, 234, 228, 0.72);
 }
 
 .arrow-col {
@@ -549,7 +549,7 @@ body.visible { opacity: 1; }
   font-size: 12px;
   font-weight: 400;
   line-height: 1.75;
-  color: rgba(200, 185, 165, 0.72);
+  color: rgba(240, 234, 228, 0.72);
   margin-bottom: 24px;
   border-bottom: 1px solid var(--border);
   padding-bottom: 24px;
@@ -566,7 +566,7 @@ body.visible { opacity: 1; }
   font-size: 12px;
   font-weight: 500;
   letter-spacing: 0.03em;
-  color: rgba(200, 185, 165, 0.78);
+  color: rgba(240, 234, 228, 0.78);
   padding: 9px 12px;
   background: rgba(255,255,255,0.02);
   border: 1px solid var(--border);
@@ -584,40 +584,250 @@ body.visible { opacity: 1; }
   opacity: 0.85;
 }
 
-/* ── REFLECTION ── */
-.reflection-section {
-  background: linear-gradient(135deg,
-    rgba(31, 15, 56, 0.5) 0%,
-    rgba(11, 18, 33, 1) 100%
-  );
-  border-top: 1px solid rgba(255,255,255,0.05);
+/* ── SKILLS & METHODS (Timeline) ── */
+.sm-columns {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0 48px;
+  width: 100%;
+  max-width: 960px;
+  margin: 48px auto 0;
+  align-items: start;
+}
+.sm-timeline {
+  position: relative;
+  width: 100%;
+}
+.sm-timeline::before {
+  content: '';
+  position: absolute;
+  left: 14px; top: 0; bottom: 0;
+  width: 1px;
+  background: linear-gradient(180deg, transparent 0%, rgba(212,0,107,0.2) 4%, rgba(212,0,107,0.2) 96%, transparent 100%);
+}
+.sm-tl-section {
+  position: relative;
+  padding-left: 44px;
+  margin-bottom: 8px;
+}
+.sm-tl-section-label {
+  font-size: 9px; font-weight: 500;
+  letter-spacing: 0.28em; text-transform: uppercase;
+  color: rgba(212,0,107,0.72);
+  padding: 12px 0;
+  display: flex; align-items: center; gap: 12px;
+}
+.sm-tl-section-label::after {
+  content: ''; flex: 1; height: 1px;
+  background: linear-gradient(90deg, rgba(212,0,107,0.15) 0%, transparent 100%);
+}
+.sm-tl-section::before {
+  content: '';
+  position: absolute;
+  left: 10px; top: 16px;
+  width: 9px; height: 9px;
+  border-radius: 50%;
+  background: var(--magenta);
+  box-shadow: 0 0 12px rgba(212,0,107,0.4);
+  z-index: 2;
+}
+.sm-tl-node {
+  position: relative;
+  padding-left: 44px;
+  margin-bottom: 4px;
+}
+.sm-tl-node::before {
+  content: '';
+  position: absolute;
+  left: 12px; top: 18px;
+  width: 5px; height: 5px;
+  border-radius: 50%;
+  background: rgba(212,0,107,0.35);
+  transition: background 0.25s, box-shadow 0.25s;
+  z-index: 2;
+}
+.sm-tl-node.open::before {
+  background: var(--pink);
+  box-shadow: 0 0 10px rgba(245,220,227,0.3);
+}
+.sm-tl-node::after {
+  content: '';
+  position: absolute;
+  left: 17px; top: 20px;
+  width: 27px; height: 1px;
+  background: rgba(212,0,107,0.12);
+  transition: background 0.25s;
+}
+.sm-tl-node.open::after {
+  background: rgba(212,0,107,0.3);
+}
+.sm-tl-trigger {
+  display: flex; align-items: center; gap: 10px;
+  width: 100%;
+  background: rgba(212,0,107,0.04);
+  border: 1px solid rgba(212,0,107,0.12);
+  border-radius: 12px;
+  padding: 12px 18px;
+  cursor: pointer;
+  font-family: inherit; color: inherit; text-align: left;
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.sm-tl-trigger:hover {
+  background: rgba(212,0,107,0.08);
+  border-color: rgba(212,0,107,0.25);
+}
+.sm-tl-node.open .sm-tl-trigger {
+  background: rgba(212,0,107,0.1);
+  border-color: rgba(212,0,107,0.3);
+  border-bottom-left-radius: 0;
+  border-bottom-right-radius: 0;
+  border-bottom-color: transparent;
+}
+.sm-tl-trigger-label {
+  flex: 1; font-size: 13px; font-weight: 400;
+  letter-spacing: 0.03em;
+  color: rgba(212,0,107,0.7);
+  transition: color 0.25s;
+}
+.sm-tl-node.open .sm-tl-trigger-label,
+.sm-tl-trigger:hover .sm-tl-trigger-label {
+  color: rgba(245,220,227,0.95);
+}
+.sm-tl-trigger-arrow {
+  font-size: 10px;
+  color: rgba(212,0,107,0.3);
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), color 0.25s;
+  flex-shrink: 0;
+}
+.sm-tl-node.open .sm-tl-trigger-arrow {
+  transform: rotate(180deg);
+  color: rgba(212,0,107,0.6);
+}
+.sm-tl-panel {
+  overflow: hidden; max-height: 0;
+  transition: max-height 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.sm-tl-node.open .sm-tl-panel { max-height: 200px; }
+.sm-tl-panel-inner {
+  background: rgba(212,0,107,0.06);
+  border: 1px solid rgba(212,0,107,0.3);
+  border-top: none;
+  border-radius: 0 0 12px 12px;
+  padding: 18px 20px;
+  opacity: 0; transform: translateY(-6px);
+  transition: opacity 0.25s ease 0.06s, transform 0.25s ease 0.06s;
+}
+.sm-tl-node.open .sm-tl-panel-inner {
+  opacity: 1; transform: translateY(0);
+}
+.sm-tl-panel-text {
+  font-size: 12.5px; font-weight: 300;
+  letter-spacing: 0.03em; line-height: 1.6;
+  color: rgba(245,220,227,0.75);
+  font-style: italic;
+}
+.sm-tl-trigger:focus-visible {
+  outline: 2px solid var(--magenta);
+  outline-offset: 2px; border-radius: 12px;
 }
 
-blockquote.reflection-quote {
-  margin: 0;
-  padding: 0;
+/* ── REFLECTION (Fireflies) ── */
+.reflection-wrap {
+  padding: 96px 64px 120px;
+  position: relative; overflow: hidden;
+  background: linear-gradient(180deg, var(--bg-alt) 0%, var(--bg) 100%);
+}
+.reflection-fireflies {
+  position: absolute; inset: 0;
+  pointer-events: none; overflow: hidden; z-index: 0;
+}
+.reflection-firefly {
+  position: absolute;
+  border-radius: 50%;
+  background: rgba(212,0,107,0.45);
+  box-shadow: 0 0 6px rgba(212,0,107,0.35), 0 0 18px rgba(212,0,107,0.15);
+  animation: glFireflyFloat linear infinite;
+}
+@keyframes glFireflyFloat {
+  0%   { transform: translateY(0) translateX(0); opacity: 0; }
+  8%   { opacity: 1; }
+  50%  { transform: translateY(-40vh) translateX(30px); }
+  92%  { opacity: 1; }
+  100% { transform: translateY(-80vh) translateX(-20px); opacity: 0; }
+}
+[data-theme="light"] .reflection-firefly {
+  background: rgba(222,28,121,0.3);
+  box-shadow: 0 0 6px rgba(222,28,121,0.25), 0 0 18px rgba(222,28,121,0.1);
+}
+.reflection-inner {
+  max-width: 720px; margin: 0 auto;
+  position: relative; z-index: 1;
+}
+.reflection-label {
+  font-size: 8.5px; font-weight: 500; letter-spacing: 0.34em;
+  text-transform: uppercase; color: var(--magenta); margin-bottom: 24px;
 }
 .reflection-quote {
   font-family: 'Cormorant Garamond', serif;
-  font-size: clamp(28px, 3.6vw, 50px);
-  font-weight: 400;
-  font-style: italic;
-  line-height: 1.45;
-  color: var(--pink);
-  max-width: 760px;
-  margin-bottom: 36px;
+  font-size: clamp(28px, 3.5vw, 48px);
+  font-weight: 400; font-style: italic;
+  line-height: 1.3; color: var(--pink);
+  margin-bottom: 0;
 }
 
-cite.reflection-attr {
-  font-style: normal;
-  display: block;
+/* ── SCROLL REVEAL ANIMATIONS ── */
+.reveal {
+  opacity: 0;
+  transform: translateY(32px);
+  transition: opacity 0.7s cubic-bezier(0.25, 0.46, 0.45, 0.94),
+              transform 0.7s cubic-bezier(0.25, 0.46, 0.45, 0.94);
 }
-.reflection-attr {
-  font-size: 10px;
-  font-weight: 400;
-  letter-spacing: 0.24em;
-  text-transform: uppercase;
-  color: var(--text-dim);
+.reveal.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+.reveal-stagger { transition-delay: 0.12s; }
+.reveal-stagger-2 { transition-delay: 0.24s; }
+.reveal-stagger-3 { transition-delay: 0.36s; }
+
+/* Parallax hero text */
+.hero-title, .hero-desc, .hero-zone {
+  transition: opacity 0.5s ease, transform 0.5s ease;
+}
+
+/* Hover lift on cards */
+.persona-card,
+.phase-item,
+.concept-column,
+.eco-area {
+  transition: transform 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94),
+              box-shadow 0.3s ease,
+              background 0.3s ease,
+              border-color 0.3s ease;
+}
+.persona-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 32px rgba(212,0,107,0.12);
+}
+.phase-item:hover {
+  transform: translateY(-3px);
+  border-color: rgba(212,0,107,0.3);
+}
+.concept-column:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 32px rgba(212,0,107,0.1);
+}
+.eco-area:hover {
+  transform: translateY(-2px);
+  border-color: rgba(212,0,107,0.25);
+}
+
+/* Strategy row hover */
+.strategy-row:not(.header-row) {
+  transition: background 0.2s ease;
+}
+.strategy-row:not(.header-row):hover {
+  background: rgba(212,0,107,0.04);
 }
 
 /* ── FOOTER SPACE ── */
@@ -806,16 +1016,33 @@ cite.reflection-attr {
   border-color: rgba(222, 28, 121, 0.1);
 }
 
-[data-theme="light"] .reflection-section {
-  background: linear-gradient(135deg,
-    rgba(222, 28, 121, 0.04) 0%,
-    rgba(250, 246, 242, 1) 100%
-  );
-  border-top-color: rgba(222, 28, 121, 0.08);
+[data-theme="light"] .reflection-wrap {
+  background: linear-gradient(180deg, #f2ece6 0%, #faf6f2 100%);
 }
-
 [data-theme="light"] .reflection-quote {
   color: #de1c79;
+}
+[data-theme="light"] .sm-tl-trigger {
+  background: rgba(222,28,121,0.03);
+  border-color: rgba(222,28,121,0.12);
+}
+[data-theme="light"] .sm-tl-trigger:hover {
+  background: rgba(222,28,121,0.06);
+  border-color: rgba(222,28,121,0.22);
+}
+[data-theme="light"] .sm-tl-trigger-label {
+  color: rgba(222,28,121,0.6);
+}
+[data-theme="light"] .sm-tl-node.open .sm-tl-trigger-label,
+[data-theme="light"] .sm-tl-trigger:hover .sm-tl-trigger-label {
+  color: #de1c79;
+}
+[data-theme="light"] .sm-tl-panel-inner {
+  background: rgba(222,28,121,0.03);
+  border-color: rgba(222,28,121,0.2);
+}
+[data-theme="light"] .sm-tl-panel-text {
+  color: rgba(44,34,51,0.65);
 }
 
 [data-theme="light"] .section-divider {
@@ -884,6 +1111,7 @@ cite.reflection-attr {
 @media (max-width: 860px) {
   .hero { padding: 0 28px 56px; background-attachment: scroll; }
   .cs-section { padding: 72px 28px; }
+  .reflection-wrap { padding: 72px 32px 96px; }
   .two-col-wide { grid-template-columns: 1fr; gap: 44px; }
   .personas-grid { grid-template-columns: 1fr; }
   .phases-list { grid-template-columns: repeat(4, 1fr); }
@@ -892,6 +1120,7 @@ cite.reflection-attr {
   .strategy-row { grid-template-columns: 1fr 28px 1fr; }
   .strategy-col-head.right, .strategy-desc { display: none; }
   .hero-meta { gap: 28px; }
+  .sm-columns { grid-template-columns: 1fr; gap: 12px 0; }
 }
 
 @media (max-width: 560px) {
@@ -961,7 +1190,15 @@ cite.reflection-attr {
   .concept-column { padding: 24px 18px; }
 
   /* Reflection */
+  .reflection-wrap { padding: 56px 22px 80px; }
   .reflection-quote { font-size: clamp(22px, 5vw, 36px); }
+  .reflection-label { font-size: 10px; }
+
+  /* Skills & Methods */
+  .sm-tl-trigger { padding: 10px 14px; }
+  .sm-tl-trigger-label { font-size: 12px; }
+  .sm-tl-panel-inner { padding: 14px 16px; }
+  .sm-tl-panel-text { font-size: 12px; }
 }
 </style>
 </head>
@@ -993,25 +1230,29 @@ cite.reflection-attr {
      HERO
 ══════════════════════════════════════ -->
 <section class="hero" aria-label="Project overview">
-  <div class="hero-zone">Sense Making · Case Study</div>
-  <h1 class="hero-title">Glidance, finding<br>the missing 98%</h1>
-  <p class="hero-desc">A team consulting project for Glidance — revealing who the BLV mobility ecosystem was built around, and who it quietly leaves out. My focus: researching and building the BLV Ecosystem tool.</p>
+  <div class="hero-zone">Accessibility · UX Research · Navigation Systems</div>
+  <h1 class="hero-title">Glidance<br><span style="font-weight:400;">– finding the missing 98%</span></h1>
+  <p class="hero-desc">A team consulting project for Glidance, revealing who the BLV mobility ecosystem was built around, and who it quietly leaves out. My focus: researching and building the BLV Ecosystem tool.</p>
   <div class="hero-meta">
     <div class="hero-meta-item">
-      <div class="hero-meta-label">Client</div>
-      <div class="hero-meta-value">Glidance</div>
+      <div class="hero-meta-label">Role</div>
+      <div class="hero-meta-value">UX Research · Systems Design</div>
     </div>
     <div class="hero-meta-item">
       <div class="hero-meta-label">Year</div>
       <div class="hero-meta-value">2025</div>
     </div>
     <div class="hero-meta-item">
-      <div class="hero-meta-label">Methods</div>
-      <div class="hero-meta-value">Research · Systems Mapping</div>
-    </div>
-    <div class="hero-meta-item">
       <div class="hero-meta-label">Type</div>
       <div class="hero-meta-value">Framework · Interactive Tool</div>
+    </div>
+    <div class="hero-meta-item">
+      <div class="hero-meta-label">Team</div>
+      <div class="hero-meta-value">Team Project</div>
+    </div>
+    <div class="hero-meta-item">
+      <div class="hero-meta-label">Context</div>
+      <div class="hero-meta-value">Glidance (Client)</div>
     </div>
   </div>
 </section>
@@ -1019,62 +1260,182 @@ cite.reflection-attr {
 <!-- ══════════════════════════════════════
      01 BRIEF
 ══════════════════════════════════════ -->
-<section class="cs-section" aria-label="The brief">
+<section class="cs-section" aria-label="Project overview">
   <div class="section-inner">
-    <div class="two-col-wide">
-      <div>
-        <div class="section-label">01 — The Brief</div>
-        <h2 class="section-heading">A tool company without a map of who needs it.</h2>
-        <p class="brief-text">Glidance makes mobility aids for blind and low-vision individuals. But like most assistive technology companies, their outreach centered on the most visible users — recently diagnosed, tech-ready, independently mobile.</p>
-        <p class="brief-text">Our team of international, intercultural designers was brought in to expand that lens. Across 15 interviews with BLV individuals and caregivers, we surfaced 8 systemic barriers preventing people from finding, trusting, or adopting Glidance's products. The challenge then became: how do you build 8 bridges — strategies that actually meet people inside the real complexity of their lives?</p>
+        <div class="section-label">Project Overview</div>
+        <h2 class="section-heading">A tool company without a map of who needs it</h2>
+        <p class="brief-text">Glidance makes mobility aids for blind and low-vision individuals. But like most assistive technology companies, their outreach centered on the most visible users: recently diagnosed, tech-ready, independently mobile.</p>
+        <p class="brief-text">Our team of international, intercultural designers was brought in to expand that lens. Across 15 interviews with BLV individuals and caregivers, we surfaced 8 systemic barriers preventing people from finding, trusting, or adopting Glidance's products. The challenge then became: how do you build 8 bridges, strategies that actually meet people inside the real complexity of their lives?</p>
         <div class="section-divider"></div>
-        <p class="brief-text" style="font-size:13px; line-height:1.75;">The result: 8 strategies, 11 product and outreach concepts, and an interactive mapping tool to visualize the support ecosystem surrounding every BLV individual — the latter researched and built by me.</p>
-      </div>
-      <div class="brief-meta">
-        <div>
-          <div class="meta-item-label">Institution</div>
-          <div class="meta-item-value">University of North Texas<br>Dept. of Communication Design</div>
-        </div>
-        <div>
-          <div class="meta-item-label">Team</div>
-          <div class="meta-item-value">Masters Candidates<br>in Interaction Design</div>
-        </div>
-        <div>
-          <div class="meta-item-label">My Role</div>
-          <div class="meta-item-value">Research · BLV Ecosystem<br>Tool Design &amp; Build</div>
-        </div>
-        <div>
-          <div class="meta-item-label">Deliverables</div>
-          <div class="meta-item-value">8 Strategies · 11 Concepts<br>BLV Ecosystem Tool</div>
-        </div>
-        <div>
-          <div class="meta-item-label">Presented</div>
-          <div class="meta-item-value">May 6, 2025</div>
-        </div>
-      </div>
-    </div>
+        <p class="brief-text" style="font-size:13px; line-height:1.75;">The result: 8 strategies, 11 product and outreach concepts, and an interactive mapping tool to visualize the support ecosystem surrounding every BLV individual, the latter researched and built by me.</p>
   </div>
 </section>
 
 <!-- ══════════════════════════════════════
-     02 PERSONAS
+     SKILLS & METHODS
+══════════════════════════════════════ -->
+<section class="cs-section alt" aria-label="Skills and methods">
+  <div class="section-inner">
+    <div class="section-label">Skills &amp; Methods</div>
+    <h2 class="section-heading">What I brought to this project</h2>
+    <p class="section-body">This was a team consulting project, but my individual contribution centered on ecosystem research and tool design. Below are the skills I applied and the methods that shaped my process.</p>
+
+    <div class="sm-columns">
+      <div class="sm-timeline">
+        <div class="sm-tl-section">
+          <div class="sm-tl-section-label">Skills</div>
+        </div>
+
+        <div class="sm-tl-node">
+          <button class="sm-tl-trigger" aria-expanded="false">
+            <span class="sm-tl-trigger-label">Ecosystem Research</span>
+            <span class="sm-tl-trigger-arrow">&#9662;</span>
+          </button>
+          <div class="sm-tl-panel" aria-hidden="true">
+            <div class="sm-tl-panel-inner">
+              <p class="sm-tl-panel-text">Mapping the seven support areas surrounding BLV individuals, from healthcare to financial systems, to understand where Glidance fits and where gaps exist.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="sm-tl-node">
+          <button class="sm-tl-trigger" aria-expanded="false">
+            <span class="sm-tl-trigger-label">Systems Thinking</span>
+            <span class="sm-tl-trigger-arrow">&#9662;</span>
+          </button>
+          <div class="sm-tl-panel" aria-hidden="true">
+            <div class="sm-tl-panel-inner">
+              <p class="sm-tl-panel-text">Connecting interview findings to systemic barriers, then translating those barriers into actionable strategic bridges across multiple time horizons.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="sm-tl-node">
+          <button class="sm-tl-trigger" aria-expanded="false">
+            <span class="sm-tl-trigger-label">Interactive Tool Design</span>
+            <span class="sm-tl-trigger-arrow">&#9662;</span>
+          </button>
+          <div class="sm-tl-panel" aria-hidden="true">
+            <div class="sm-tl-panel-inner">
+              <p class="sm-tl-panel-text">Designing and building the BLV Ecosystem tool as a navigable, interactive artifact that makes complex support networks explorable.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="sm-tl-node">
+          <button class="sm-tl-trigger" aria-expanded="false">
+            <span class="sm-tl-trigger-label">Data Synthesis</span>
+            <span class="sm-tl-trigger-arrow">&#9662;</span>
+          </button>
+          <div class="sm-tl-panel" aria-hidden="true">
+            <div class="sm-tl-panel-inner">
+              <p class="sm-tl-panel-text">Distilling 15 interviews into composite personas, phase frameworks, and barrier-to-bridge mappings that the team and client could act on.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="sm-tl-node">
+          <button class="sm-tl-trigger" aria-expanded="false">
+            <span class="sm-tl-trigger-label">Front-End Prototyping</span>
+            <span class="sm-tl-trigger-arrow">&#9662;</span>
+          </button>
+          <div class="sm-tl-panel" aria-hidden="true">
+            <div class="sm-tl-panel-inner">
+              <p class="sm-tl-panel-text">Building the ecosystem tool in HTML, CSS, and JavaScript, creating an interactive deliverable rather than a static slide deck.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="sm-timeline">
+        <div class="sm-tl-section">
+          <div class="sm-tl-section-label">Methods</div>
+        </div>
+
+        <div class="sm-tl-node">
+          <button class="sm-tl-trigger" aria-expanded="false">
+            <span class="sm-tl-trigger-label">Ethnographic Interviews</span>
+            <span class="sm-tl-trigger-arrow">&#9662;</span>
+          </button>
+          <div class="sm-tl-panel" aria-hidden="true">
+            <div class="sm-tl-panel-inner">
+              <p class="sm-tl-panel-text">15 in-depth interviews with BLV individuals and caregivers, surfacing emotional and structural barriers invisible in demographic data.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="sm-tl-node">
+          <button class="sm-tl-trigger" aria-expanded="false">
+            <span class="sm-tl-trigger-label">Composite Personas</span>
+            <span class="sm-tl-trigger-arrow">&#9662;</span>
+          </button>
+          <div class="sm-tl-panel" aria-hidden="true">
+            <div class="sm-tl-panel-inner">
+              <p class="sm-tl-panel-text">Creating four representative profiles anchored in real lived experiences, not archetypes, to ground strategy in specificity.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="sm-tl-node">
+          <button class="sm-tl-trigger" aria-expanded="false">
+            <span class="sm-tl-trigger-label">Barrier-to-Bridge Mapping</span>
+            <span class="sm-tl-trigger-arrow">&#9662;</span>
+          </button>
+          <div class="sm-tl-panel" aria-hidden="true">
+            <div class="sm-tl-panel-inner">
+              <p class="sm-tl-panel-text">Pairing each systemic barrier with a strategic response, ensuring every recommendation traces back to a real problem.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="sm-tl-node">
+          <button class="sm-tl-trigger" aria-expanded="false">
+            <span class="sm-tl-trigger-label">Ecosystem Mapping</span>
+            <span class="sm-tl-trigger-arrow">&#9662;</span>
+          </button>
+          <div class="sm-tl-panel" aria-hidden="true">
+            <div class="sm-tl-panel-inner">
+              <p class="sm-tl-panel-text">Cataloging actors, organizations, and forces across seven support areas to visualize the full landscape surrounding BLV individuals.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="sm-tl-node">
+          <button class="sm-tl-trigger" aria-expanded="false">
+            <span class="sm-tl-trigger-label">Horizon Planning</span>
+            <span class="sm-tl-trigger-arrow">&#9662;</span>
+          </button>
+          <div class="sm-tl-panel" aria-hidden="true">
+            <div class="sm-tl-panel-inner">
+              <p class="sm-tl-panel-text">Organizing 11 concepts across three time horizons (Crawl, Walk, Run) to give Glidance a phased, actionable roadmap.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════
+     PERSONAS
 ══════════════════════════════════════ -->
 <section class="cs-section alt" aria-label="Personas">
   <div class="section-inner">
-    <div class="section-label">02 — Actual Lived Experiences</div>
-    <h2 class="section-heading">Four people the system wasn't built around.</h2>
-    <p class="section-body">From 15 interviews, we developed four composite personas — not archetypes, but anchored in specific lived experiences. Each represents a distinct relationship with vision loss, independence, and the support structures that surround them.</p>
+    <div class="section-label">Actual Lived Experiences</div>
+    <h2 class="section-heading">Four people the system wasn't built around</h2>
+    <p class="section-body">From 15 interviews, we developed four composite personas, not archetypes, but anchored in specific lived experiences. Each represents a distinct relationship with vision loss, independence, and the support structures that surround them.</p>
 
     <div class="personas-grid">
 
       <div class="persona-card">
         <div class="persona-phase">Phase 4 · Depression · Risk</div>
         <div class="persona-name">Howard</div>
-        <div class="persona-condition">56 — Diabetic Retinopathy</div>
+        <div class="persona-condition">56, Diabetic Retinopathy</div>
         <ul class="persona-barriers">
-          <li>Alone — disconnected from family and community</li>
-          <li>Bored — trapped in a care home, unable to go outside</li>
-          <li>Scared — lack of trust in the world, fears independence</li>
+          <li>Alone, disconnected from family and community</li>
+          <li>Bored, trapped in a care home, unable to go outside</li>
+          <li>Scared, lack of trust in the world, fears independence</li>
         </ul>
         <div class="persona-goal">Goal: Restore Howard's independence.</div>
       </div>
@@ -1082,7 +1443,7 @@ cite.reflection-attr {
       <div class="persona-card">
         <div class="persona-phase">Phase 5 · Reaffirmation · Relationship</div>
         <div class="persona-name">Lisa</div>
-        <div class="persona-condition">40+ — Hemianopia (50% bilateral vision loss)</div>
+        <div class="persona-condition">40+, Hemianopia (50% bilateral vision loss)</div>
         <ul class="persona-barriers">
           <li>Relies entirely on her family to get around</li>
           <li>Misses being active and independent</li>
@@ -1094,7 +1455,7 @@ cite.reflection-attr {
       <div class="persona-card">
         <div class="persona-phase">Phase 3 · Withdrawal · Relationship</div>
         <div class="persona-name">Joon</div>
-        <div class="persona-condition">Elder — gradual vision loss</div>
+        <div class="persona-condition">Elder, gradual vision loss</div>
         <ul class="persona-barriers">
           <li>Treated like a child by his own family</li>
           <li>Family unaware that other support options exist</li>
@@ -1106,7 +1467,7 @@ cite.reflection-attr {
       <div class="persona-card">
         <div class="persona-phase">Phase 7 · Self-Acceptance · Stigma</div>
         <div class="persona-name">Khan</div>
-        <div class="persona-condition">Acid attack survivor — partial vision loss</div>
+        <div class="persona-condition">Acid attack survivor, partial vision loss</div>
         <ul class="persona-barriers">
           <li>Vision loss from trauma, not age or progressive condition</li>
           <li>Positive outlook constrained by public perception</li>
@@ -1124,9 +1485,9 @@ cite.reflection-attr {
 ══════════════════════════════════════ -->
 <section class="cs-section" aria-label="Framework phases">
   <div class="section-inner">
-    <div class="section-label">03 — The Framework</div>
-    <h2 class="section-heading">Adjusting to vision loss follows seven phases.</h2>
-    <p class="section-body">Vision loss isn't an event — it's a journey with identifiable phases that BLV individuals and their caregivers move through together. Glidance's opportunity to connect meaningfully looks very different depending on where someone is in that arc.</p>
+    <div class="section-label">The Framework</div>
+    <h2 class="section-heading">Adjusting to vision loss follows seven phases</h2>
+    <p class="section-body">Vision loss isn't an event. It's a journey with identifiable phases that BLV individuals and their caregivers move through together. Glidance's opportunity to connect meaningfully looks very different depending on where someone is in that arc.</p>
     <div class="phases-list">
       <div class="phase-item"><div class="phase-num">01</div><div class="phase-name">Trauma</div></div>
       <div class="phase-item"><div class="phase-num">02</div><div class="phase-name">Denial</div></div>
@@ -1145,9 +1506,9 @@ cite.reflection-attr {
 ══════════════════════════════════════ -->
 <section class="cs-section alt" aria-label="Strategies">
   <div class="section-inner">
-    <div class="section-label">04 — Strategies</div>
-    <h2 class="section-heading">Eight barriers become eight bridges.</h2>
-    <p class="section-body">Each barrier we surfaced maps to a specific strategic bridge — a way for Glidance to show up differently for the people currently outside its reach.</p>
+    <div class="section-label">Strategies</div>
+    <h2 class="section-heading">Eight barriers become eight bridges</h2>
+    <p class="section-body">Each barrier we surfaced maps to a specific strategic bridge, a way for Glidance to show up differently for the people currently outside its reach.</p>
     <div class="strategies-table">
       <div class="strategy-row header-row">
         <div class="strategy-col-head">Barrier</div>
@@ -1212,9 +1573,9 @@ cite.reflection-attr {
 ══════════════════════════════════════ -->
 <section class="cs-section" aria-label="BLV Ecosystem tool">
   <div class="section-inner">
-    <div class="section-label">05 — The BLV Ecosystem</div>
-    <h2 class="section-heading">Seven areas surround every BLV individual.</h2>
-    <p class="section-body">Vision loss is never experienced alone. Seven distinct support areas form the ecosystem that BLV individuals and caregivers move through — and Glidance must understand where it already sits within that system, and where it could. I researched this ecosystem and built the interactive tool below to make it navigable.</p>
+    <div class="section-label">The BLV Ecosystem</div>
+    <h2 class="section-heading">Seven areas surround every BLV individual</h2>
+    <p class="section-body">Vision loss is never experienced alone. Seven distinct support areas form the ecosystem that BLV individuals and caregivers move through, and Glidance must understand where it already sits within that system, and where it could. I researched this ecosystem and built the interactive tool below to make it&nbsp;navigable.</p>
     <div class="ecosystem-areas">
       <div class="eco-area"><div class="eco-area-name">Healthcare Providers</div></div>
       <div class="eco-area"><div class="eco-area-name">Caregiver &amp; Family Support</div></div>
@@ -1224,12 +1585,12 @@ cite.reflection-attr {
       <div class="eco-area"><div class="eco-area-name">Social Networks</div></div>
       <div class="eco-area"><div class="eco-area-name">Financial Support</div></div>
     </div>
-    <p class="section-body" style="margin-bottom: 20px;">The tool below maps these seven areas — and lets you explore which actors, units, and forces occupy each one.</p>
+    <p class="section-body" style="margin-bottom: 20px;">The tool below maps these seven areas and lets you explore which actors, units, and forces occupy each one.</p>
     <p class="mob-tool-link">Open on desktop for full tool functionality</p>
     <div class="artifact-wrapper">
       <iframe src="prototype-glidance-ecosystem.html" title="BLV Ecosystem Tool" loading="lazy"></iframe>
     </div>
-    <div class="artifact-caption">Interactive BLV Ecosystem Tool — Prototype / Artifact</div>
+    <div class="artifact-caption">Interactive BLV Ecosystem Tool, Prototype / Artifact</div>
   </div>
 </section>
 
@@ -1238,16 +1599,16 @@ cite.reflection-attr {
 ══════════════════════════════════════ -->
 <section class="cs-section alt" aria-label="Concepts">
   <div class="section-inner">
-    <div class="section-label">06 — Concepts</div>
-    <h2 class="section-heading">Three horizons, eleven concepts.</h2>
-    <p class="section-body">The 8 strategies informed three time horizons for Glidance — from awareness-building in the near term, through adoption in the mid term, to aspirational product innovation long term. Crawl, Walk, Run.</p>
+    <div class="section-label">Concepts</div>
+    <h2 class="section-heading">Three horizons, eleven concepts</h2>
+    <p class="section-body">The 8 strategies informed three time horizons for Glidance, from awareness-building in the near term, through adoption in the mid term, to aspirational product innovation long term. Crawl, Walk, Run.</p>
     <div class="concepts-grid">
 
       <div class="concept-column">
         <div class="concept-horizon">Horizon 1 · Crawl</div>
         <div class="concept-phase">Awareness</div>
         <div class="concept-timeline">0–3 years</div>
-        <div class="concept-desc">Spread awareness of Glidance to different communities of BLV people and caregivers — building reach before asking for adoption.</div>
+        <div class="concept-desc">Spread awareness of Glidance to different communities of BLV people and caregivers, building reach before asking for adoption.</div>
         <ul class="concept-items">
           <li class="concept-item"><span class="concept-item-num">1.1</span>Provider Partnerships</li>
           <li class="concept-item"><span class="concept-item-num">1.2</span>Vision Loss Campaign</li>
@@ -1273,7 +1634,7 @@ cite.reflection-attr {
         <div class="concept-horizon">Horizon 3 · Run</div>
         <div class="concept-phase">Aspiration</div>
         <div class="concept-timeline">5+ years</div>
-        <div class="concept-desc">Create aspiration by addressing needs that extend beyond Glidance's current product line — positioning the brand as a long-term life partner.</div>
+        <div class="concept-desc">Create aspiration by addressing needs that extend beyond Glidance's current product line, positioning the brand as a long-term life partner.</div>
         <ul class="concept-items">
           <li class="concept-item"><span class="concept-item-num">3.1</span>Hands Free</li>
           <li class="concept-item"><span class="concept-item-num">3.2</span>Fun Ways to Learn</li>
@@ -1286,13 +1647,13 @@ cite.reflection-attr {
 </section>
 
 <!-- ══════════════════════════════════════
-     07 REFLECTION
+     REFLECTION
 ══════════════════════════════════════ -->
-<section class="cs-section reflection-section" aria-label="Reflection">
-  <div class="section-inner">
-    <div class="section-label">07 — What I Wanted to Show</div>
-    <blockquote class="reflection-quote">"That the 'target user' is often just the most visible one — not the most representative."</blockquote>
-    <cite class="reflection-attr">Amber Grey · 2025</cite>
+<section class="reflection-wrap" aria-label="Reflection">
+  <div class="reflection-fireflies" id="reflectionFireflies" aria-hidden="true"></div>
+  <div class="reflection-inner reveal">
+    <p class="reflection-label">Reflection</p>
+    <p class="reflection-quote">The target user is often just the most visible one, not the most representative. This project taught me that the people a system quietly leaves out are the ones who reveal what it actually&nbsp;needs.</p>
   </div>
 </section>
 
@@ -1306,16 +1667,16 @@ cite.reflection-attr {
 function navigateTo(url) {
   document.body.style.transition = 'opacity 0.28s ease-in';
   document.body.style.opacity = '0';
-  const exit = document.getElementById('page-exit');
-  setTimeout(() => { exit.classList.add('active'); }, 200);
-  setTimeout(() => { window.location.href = url; }, 430);
+  var exit = document.getElementById('page-exit');
+  setTimeout(function() { exit.classList.add('active'); }, 200);
+  setTimeout(function() { window.location.href = url; }, 430);
 }
 
 // Theme toggle
 (function() {
-  const html = document.documentElement;
-  const sw = document.getElementById('themeSwitch');
-  const STORAGE_KEY = 'glidance-theme';
+  var html = document.documentElement;
+  var sw = document.getElementById('themeSwitch');
+  var STORAGE_KEY = 'glidance-theme';
 
   function setTheme(theme) {
     html.setAttribute('data-theme', theme);
@@ -1325,7 +1686,6 @@ function navigateTo(url) {
     try { localStorage.setItem(STORAGE_KEY, theme); } catch(e) {}
   }
 
-  // Load saved preference
   var saved = null;
   try { saved = localStorage.getItem(STORAGE_KEY); } catch(e) {}
   setTheme(saved === 'light' ? 'light' : 'dark');
@@ -1336,8 +1696,120 @@ function navigateTo(url) {
   });
 })();
 
-requestAnimationFrame(() => {
-  requestAnimationFrame(() => { document.body.classList.add('visible'); });
+// Skills & Methods accordion
+(function() {
+  var nodes = document.querySelectorAll('.sm-tl-node');
+  nodes.forEach(function(node) {
+    var trigger = node.querySelector('.sm-tl-trigger');
+    var panel = node.querySelector('.sm-tl-panel');
+    trigger.addEventListener('click', function() {
+      var isOpen = node.classList.contains('open');
+      // Close all others
+      nodes.forEach(function(n) {
+        if (n !== node && n.classList.contains('open')) {
+          n.classList.remove('open');
+          n.querySelector('.sm-tl-trigger').setAttribute('aria-expanded', 'false');
+          n.querySelector('.sm-tl-panel').setAttribute('aria-hidden', 'true');
+        }
+      });
+      if (isOpen) {
+        node.classList.remove('open');
+        trigger.setAttribute('aria-expanded', 'false');
+        panel.setAttribute('aria-hidden', 'true');
+      } else {
+        node.classList.add('open');
+        trigger.setAttribute('aria-expanded', 'true');
+        panel.setAttribute('aria-hidden', 'false');
+      }
+    });
+  });
+})();
+
+// Reflection fireflies
+(function() {
+  var c = document.getElementById('reflectionFireflies');
+  if (!c) return;
+  for (var i = 0; i < 22; i++) {
+    var f = document.createElement('div');
+    f.className = 'reflection-firefly';
+    var size = 2 + Math.random() * 3;
+    f.style.width = f.style.height = size + 'px';
+    f.style.left = Math.random() * 100 + '%';
+    f.style.bottom = '-4px';
+    f.style.animationDuration = (14 + Math.random() * 22) + 's';
+    f.style.animationDelay = (Math.random() * 18) + 's';
+    c.appendChild(f);
+  }
+})();
+
+// Scroll reveal
+(function() {
+  // Tag elements for reveal
+  var selectors = [
+    '.section-label', '.section-heading', '.section-body', '.brief-text',
+    '.section-divider', '.personas-grid', '.phases-list', '.phases-note',
+    '.strategies-table', '.ecosystem-areas', '.artifact-wrapper', '.artifact-caption',
+    '.concepts-grid', '.sm-columns', '.hero-meta'
+  ];
+  selectors.forEach(function(sel) {
+    document.querySelectorAll(sel).forEach(function(el) {
+      if (!el.classList.contains('reveal')) el.classList.add('reveal');
+    });
+  });
+
+  var prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if (prefersReduced) {
+    document.querySelectorAll('.reveal').forEach(function(el) {
+      el.classList.add('visible');
+    });
+    return;
+  }
+
+  var observer = new IntersectionObserver(function(entries) {
+    entries.forEach(function(entry) {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('visible');
+        observer.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.12, rootMargin: '0px 0px -40px 0px' });
+
+  document.querySelectorAll('.reveal').forEach(function(el) {
+    observer.observe(el);
+  });
+})();
+
+// Hero parallax on scroll
+(function() {
+  var hero = document.querySelector('.hero');
+  if (!hero || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  var title = hero.querySelector('.hero-title');
+  var desc = hero.querySelector('.hero-desc');
+  var zone = hero.querySelector('.hero-zone');
+
+  var ticking = false;
+  window.addEventListener('scroll', function() {
+    if (!ticking) {
+      requestAnimationFrame(function() {
+        var scrollY = window.pageYOffset;
+        var heroH = hero.offsetHeight;
+        if (scrollY < heroH) {
+          var ratio = scrollY / heroH;
+          var opacity = 1 - ratio * 0.8;
+          var shift = scrollY * 0.15;
+          if (title) { title.style.transform = 'translateY(' + shift + 'px)'; title.style.opacity = opacity; }
+          if (desc)  { desc.style.transform = 'translateY(' + (shift * 0.8) + 'px)'; desc.style.opacity = opacity; }
+          if (zone)  { zone.style.transform = 'translateY(' + (shift * 0.6) + 'px)'; zone.style.opacity = opacity; }
+        }
+        ticking = false;
+      });
+      ticking = true;
+    }
+  }, { passive: true });
+})();
+
+requestAnimationFrame(function() {
+  requestAnimationFrame(function() { document.body.classList.add('visible'); });
 });
 </script>
 

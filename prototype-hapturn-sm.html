@@ -1,0 +1,442 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HapTurn — Skills & Methods Prototype</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400;1,500&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bg:       #060f0e;
+  --cyan:     #5eead4;
+  --teal:     #0d9488;
+  --eyebrow:  rgba(94,234,212,0.72);
+}
+
+html, body {
+  background: var(--bg);
+  font-family: 'DM Sans', -apple-system, sans-serif;
+  color: #e0f2f1;
+  -webkit-font-smoothing: antialiased;
+}
+
+body {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  padding: 48px 24px;
+}
+
+/* ── Two-column wrapper ── */
+.tl-columns {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0 48px;
+  width: 100%;
+  max-width: 960px;
+  align-items: start;
+}
+
+/* ── Timeline container ── */
+.timeline {
+  position: relative;
+  width: 100%;
+}
+
+/* ── Spine ── */
+.timeline::before {
+  content: '';
+  position: absolute;
+  left: 14px;
+  top: 0;
+  bottom: 0;
+  width: 1px;
+  background: linear-gradient(
+    180deg,
+    transparent 0%,
+    rgba(13,148,136,0.2) 4%,
+    rgba(13,148,136,0.2) 96%,
+    transparent 100%
+  );
+}
+
+/* ── Section header ── */
+.tl-section {
+  position: relative;
+  padding-left: 44px;
+  margin-bottom: 8px;
+}
+.tl-section-label {
+  font-size: 9px;
+  font-weight: 500;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  color: var(--eyebrow);
+  padding: 12px 0;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.tl-section-label::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: linear-gradient(90deg, rgba(13,148,136,0.15) 0%, transparent 100%);
+}
+/* Section dot on spine */
+.tl-section::before {
+  content: '';
+  position: absolute;
+  left: 10px;
+  top: 16px;
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: var(--teal);
+  box-shadow: 0 0 12px rgba(13,148,136,0.4);
+  z-index: 2;
+}
+
+/* ── Timeline node ── */
+.tl-node {
+  position: relative;
+  padding-left: 44px;
+  margin-bottom: 4px;
+}
+
+/* Dot on spine */
+.tl-node::before {
+  content: '';
+  position: absolute;
+  left: 12px;
+  top: 18px;
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: rgba(13,148,136,0.35);
+  transition: background 0.25s, box-shadow 0.25s;
+  z-index: 2;
+}
+.tl-node.open::before {
+  background: var(--cyan);
+  box-shadow: 0 0 10px rgba(94,234,212,0.3);
+}
+
+/* Horizontal connector to card */
+.tl-node::after {
+  content: '';
+  position: absolute;
+  left: 17px;
+  top: 20px;
+  width: 27px;
+  height: 1px;
+  background: rgba(13,148,136,0.12);
+  transition: background 0.25s;
+}
+.tl-node.open::after {
+  background: rgba(13,148,136,0.3);
+}
+
+/* ── Trigger button ── */
+.tl-trigger {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  background: rgba(13,148,136,0.04);
+  border: 1px solid rgba(13,148,136,0.12);
+  border-radius: 12px;
+  padding: 12px 18px;
+  cursor: pointer;
+  font-family: inherit;
+  color: inherit;
+  text-align: left;
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.tl-trigger:hover {
+  background: rgba(13,148,136,0.08);
+  border-color: rgba(13,148,136,0.25);
+}
+.tl-node.open .tl-trigger {
+  background: rgba(13,148,136,0.1);
+  border-color: rgba(13,148,136,0.3);
+  border-bottom-left-radius: 0;
+  border-bottom-right-radius: 0;
+  border-bottom-color: transparent;
+}
+
+.tl-trigger-label {
+  flex: 1;
+  font-size: 13px;
+  font-weight: 400;
+  letter-spacing: 0.03em;
+  color: rgba(94,234,212,0.7);
+  transition: color 0.25s;
+}
+.tl-node.open .tl-trigger-label,
+.tl-trigger:hover .tl-trigger-label {
+  color: rgba(204,251,241,0.95);
+}
+
+.tl-trigger-arrow {
+  font-size: 10px;
+  color: rgba(94,234,212,0.3);
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), color 0.25s;
+  flex-shrink: 0;
+}
+.tl-node.open .tl-trigger-arrow {
+  transform: rotate(180deg);
+  color: rgba(94,234,212,0.6);
+}
+
+/* ── Accordion panel ── */
+.tl-panel {
+  overflow: hidden;
+  max-height: 0;
+  transition: max-height 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.tl-node.open .tl-panel {
+  max-height: 200px;
+}
+
+.tl-panel-inner {
+  background: rgba(13,148,136,0.06);
+  border: 1px solid rgba(13,148,136,0.3);
+  border-top: none;
+  border-radius: 0 0 12px 12px;
+  padding: 18px 20px;
+  opacity: 0;
+  transform: translateY(-6px);
+  transition: opacity 0.25s ease 0.06s, transform 0.25s ease 0.06s;
+}
+.tl-node.open .tl-panel-inner {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.tl-panel-text {
+  font-size: 12.5px;
+  font-weight: 300;
+  letter-spacing: 0.03em;
+  line-height: 1.6;
+  color: rgba(94,234,212,0.75);
+  font-style: italic;
+}
+
+/* ── Focus styles ── */
+.tl-trigger:focus-visible {
+  outline: 2px solid var(--cyan);
+  outline-offset: 2px;
+  border-radius: 12px;
+}
+
+/* ── Responsive ── */
+@media (max-width: 720px) {
+  .tl-columns { grid-template-columns: 1fr; gap: 12px 0; }
+}
+@media (max-width: 520px) {
+  body { padding: 32px 16px; }
+  .tl-trigger { padding: 10px 14px; }
+  .tl-trigger-label { font-size: 12px; }
+  .tl-panel-inner { padding: 14px 16px; }
+  .tl-panel-text { font-size: 12px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+  }
+}
+
+@media (prefers-contrast: more) {
+  .tl-trigger {
+    border-width: 2px;
+    border-color: rgba(13,148,136,0.3);
+  }
+  .tl-trigger-label { color: rgba(94,234,212,0.9); }
+}
+</style>
+</head>
+<body>
+
+<div class="tl-columns">
+
+  <!-- Skills timeline -->
+  <div class="timeline">
+    <div class="tl-section">
+      <div class="tl-section-label">Skills</div>
+    </div>
+
+    <div class="tl-node">
+      <button class="tl-trigger" aria-expanded="false">
+        <span class="tl-trigger-label">UX Research</span>
+        <span class="tl-trigger-arrow">&#9662;</span>
+      </button>
+      <div class="tl-panel" aria-hidden="true">
+        <div class="tl-panel-inner">
+          <p class="tl-panel-text">Conducting surveys, ethnographic interviews, and card sorts to understand how ADHD and anxiety affect driving.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="tl-node">
+      <button class="tl-trigger" aria-expanded="false">
+        <span class="tl-trigger-label">Interaction Design</span>
+        <span class="tl-trigger-arrow">&#9662;</span>
+      </button>
+      <div class="tl-panel" aria-hidden="true">
+        <div class="tl-panel-inner">
+          <p class="tl-panel-text">Designing haptic feedback patterns and CarPlay UI for intuitive, in-motion navigation.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="tl-node">
+      <button class="tl-trigger" aria-expanded="false">
+        <span class="tl-trigger-label">Physical Prototyping</span>
+        <span class="tl-trigger-arrow">&#9662;</span>
+      </button>
+      <div class="tl-panel" aria-hidden="true">
+        <div class="tl-panel-inner">
+          <p class="tl-panel-text">Building a working hardware prototype with Arduino, motors, and breadboard circuitry.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="tl-node">
+      <button class="tl-trigger" aria-expanded="false">
+        <span class="tl-trigger-label">Hardware Integration</span>
+        <span class="tl-trigger-arrow">&#9662;</span>
+      </button>
+      <div class="tl-panel" aria-hidden="true">
+        <div class="tl-panel-inner">
+          <p class="tl-panel-text">Connecting software logic to physical components — programming vibration patterns in Arduino IDE.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="tl-node">
+      <button class="tl-trigger" aria-expanded="false">
+        <span class="tl-trigger-label">Data Analysis</span>
+        <span class="tl-trigger-arrow">&#9662;</span>
+      </button>
+      <div class="tl-panel" aria-hidden="true">
+        <div class="tl-panel-inner">
+          <p class="tl-panel-text">Analyzing survey data to surface correlations between stress levels, ADHD status, and missed exits.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Methods timeline -->
+  <div class="timeline">
+    <div class="tl-section">
+      <div class="tl-section-label">Methods</div>
+    </div>
+
+    <div class="tl-node">
+      <button class="tl-trigger" aria-expanded="false">
+        <span class="tl-trigger-label">Surveys</span>
+        <span class="tl-trigger-arrow">&#9662;</span>
+      </button>
+      <div class="tl-panel" aria-hidden="true">
+        <div class="tl-panel-inner">
+          <p class="tl-panel-text">Quantitative research mapping ADHD/anxiety status, missed exit frequency, and stress levels.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="tl-node">
+      <button class="tl-trigger" aria-expanded="false">
+        <span class="tl-trigger-label">Ethnographic Interviews</span>
+        <span class="tl-trigger-arrow">&#9662;</span>
+      </button>
+      <div class="tl-panel" aria-hidden="true">
+        <div class="tl-panel-inner">
+          <p class="tl-panel-text">Five in-depth interviews revealing the emotional and behavioral texture of driving with ADHD.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="tl-node">
+      <button class="tl-trigger" aria-expanded="false">
+        <span class="tl-trigger-label">Impact/Effort Matrix</span>
+        <span class="tl-trigger-arrow">&#9662;</span>
+      </button>
+      <div class="tl-panel" aria-hidden="true">
+        <div class="tl-panel-inner">
+          <p class="tl-panel-text">Prioritizing solutions by feasibility and value — haptic feedback emerged as high-impact, low-effort.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="tl-node">
+      <button class="tl-trigger" aria-expanded="false">
+        <span class="tl-trigger-label">Wizard of Oz Testing</span>
+        <span class="tl-trigger-arrow">&#9662;</span>
+      </button>
+      <div class="tl-panel" aria-hidden="true">
+        <div class="tl-panel-inner">
+          <p class="tl-panel-text">Manually triggering haptic patterns during simulated drives to evaluate timing and feel.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="tl-node">
+      <button class="tl-trigger" aria-expanded="false">
+        <span class="tl-trigger-label">Arduino / Physical Computing</span>
+        <span class="tl-trigger-arrow">&#9662;</span>
+      </button>
+      <div class="tl-panel" aria-hidden="true">
+        <div class="tl-panel-inner">
+          <p class="tl-panel-text">Programming motor outputs and button inputs on a Nano microcontroller to simulate real navigation cues.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+(function () {
+  const nodes = document.querySelectorAll('.tl-node');
+
+  nodes.forEach(node => {
+    const trigger = node.querySelector('.tl-trigger');
+    const panel   = node.querySelector('.tl-panel');
+
+    trigger.addEventListener('click', () => {
+      const isOpen = node.classList.contains('open');
+
+      // Close all others
+      nodes.forEach(n => {
+        if (n !== node && n.classList.contains('open')) {
+          n.classList.remove('open');
+          n.querySelector('.tl-trigger').setAttribute('aria-expanded', 'false');
+          n.querySelector('.tl-panel').setAttribute('aria-hidden', 'true');
+        }
+      });
+
+      // Toggle this one
+      if (isOpen) {
+        node.classList.remove('open');
+        trigger.setAttribute('aria-expanded', 'false');
+        panel.setAttribute('aria-hidden', 'true');
+      } else {
+        node.classList.add('open');
+        trigger.setAttribute('aria-expanded', 'true');
+        panel.setAttribute('aria-hidden', 'false');
+      }
+    });
+  });
+})();
+</script>
+
+</body>
+</html>

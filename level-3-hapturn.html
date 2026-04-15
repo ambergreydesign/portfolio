@@ -14,9 +14,9 @@
 html {
   width: 100%; height: 100%;
   overflow: hidden;
-  background-color: #0b1c26;
+  background-color: #060f0e;
   background-image:
-    linear-gradient(rgba(31, 15, 56, 0.5), rgba(31, 15, 56, 0.5)),
+    linear-gradient(rgba(6, 15, 14, 0.55), rgba(6, 15, 14, 0.55)),
     url('Studio_Edited.webp');
   background-size: cover;
   background-position: center top;
@@ -35,7 +35,7 @@ body.visible { opacity: 1; }
 /* ── PAGE EXIT ── */
 #page-exit {
   position: fixed; inset: 0;
-  background: #0b1c26;
+  background: #060f0e;
   opacity: 0; pointer-events: none;
   transition: opacity 0.28s ease-in;
   z-index: 9999;
@@ -75,7 +75,7 @@ body.visible { opacity: 1; }
   border-radius: 100px;
   padding: 9px 18px 9px 14px;
   cursor: pointer;
-  color: rgba(200, 185, 165, 0.75);
+  color: rgba(224, 242, 241, 0.75);
   font-family: 'DM Sans', sans-serif;
   font-size: 10px;
   font-weight: 400;
@@ -86,7 +86,7 @@ body.visible { opacity: 1; }
 }
 .nav-back:hover {
   background: rgba(255, 255, 255, 0.11);
-  color: rgba(200, 185, 165, 1);
+  color: rgba(224, 242, 241, 1);
   border-color: rgba(255, 255, 255, 0.18);
 }
 .nav-back-arrow {
@@ -156,7 +156,7 @@ body.visible { opacity: 1; }
   font-weight: 500;
   letter-spacing: 0.3em;
   text-transform: uppercase;
-  color: #94d8d4;
+  color: #5eead4;
   white-space: nowrap;
 }
 
@@ -168,7 +168,7 @@ body.visible { opacity: 1; }
   font-size: 13px;
   font-weight: 300;
   letter-spacing: 0.2em;
-  color: rgba(210, 195, 172, 0.18);
+  color: rgba(224, 242, 241, 0.18);
   pointer-events: none;
   z-index: 10;
 }
@@ -178,7 +178,7 @@ body.visible { opacity: 1; }
   position: fixed;
   right: 0; top: 0; bottom: 0;
   width: 380px;
-  background: rgba(23, 18, 35, 0.8);
+  background: rgba(6, 15, 14, 0.88);
   overflow: hidden;
   z-index: 10;
   font-size: clamp(10px, 1.78vh, 16px);
@@ -204,7 +204,7 @@ body.visible { opacity: 1; }
   font-weight: 600;
   font-style: normal;
   line-height: 1.1;
-  color: #a8e6e2;
+  color: #5eead4;
   margin-bottom: 1.25em;
 }
 
@@ -214,7 +214,7 @@ body.visible { opacity: 1; }
   font-weight: 500;
   line-height: 1.95;
   letter-spacing: 0.05em;
-  color: #bca6a1;
+  color: #a8c8c4;
   margin-bottom: 1.75em;
 }
 
@@ -236,14 +236,14 @@ body.visible { opacity: 1; }
   font-weight: 500;
   letter-spacing: 0.06em;
   text-transform: uppercase;
-  color: #75576e;
+  color: #4a7a74;
 }
 .meta-value {
   font-family: 'DM Sans', sans-serif;
   font-size: 1.25em;
   font-weight: 500;
   letter-spacing: 0.06em;
-  color: #cca190;
+  color: #8ac0b8;
   text-align: right;
 }
 
@@ -268,7 +268,7 @@ body.visible { opacity: 1; }
   font-weight: 500;
   letter-spacing: 0.06em;
   text-transform: uppercase;
-  color: #75576e;
+  color: #4a7a74;
   margin-bottom: 0.875em;
 }
 .reflection-quote {
@@ -277,7 +277,7 @@ body.visible { opacity: 1; }
   font-weight: 400;
   font-style: italic;
   line-height: 1.5;
-  color: #a8e6e2;
+  color: #5eead4;
 }
 
 /* ── CASE STUDY ── */
@@ -370,7 +370,7 @@ body.visible { opacity: 1; }
     font-family: 'DM Sans', sans-serif;
     font-size: 1em; font-weight: 500;
     letter-spacing: 0.06em; text-transform: uppercase;
-    color: #75576e; margin-bottom: 0.75em;
+    color: #4a7a74; margin-bottom: 0.75em;
   }
   .meta-table        { grid-column: 2; grid-row: 2 / 4; margin-bottom: 0; gap: 0.6em; }
   .meta-label, .meta-value { font-size: 1em; }
@@ -498,7 +498,7 @@ body.visible .studio-crumb {
   top: -100%;
   left: 16px;
   background: #5eead4;
-  color: #060e0e;
+  color: #060f0e;
   padding: 8px 16px;
   border-radius: 0 0 6px 6px;
   font-size: 13px;
@@ -511,7 +511,7 @@ body.visible .studio-crumb {
 
 /* ── FOCUS STYLES ── */
 :focus-visible {
-  outline: 2px solid #a8e6e2;
+  outline: 2px solid #5eead4;
   outline-offset: 3px;
 }
 
@@ -526,11 +526,11 @@ body.visible .studio-crumb {
 
 /* ── HIGH CONTRAST ── */
 @media (prefers-contrast: more) {
-  .nav-back { border-color: rgba(255, 255, 255, 0.5); color: rgba(200, 185, 165, 1); }
+  .nav-back { border-color: rgba(255, 255, 255, 0.5); color: rgba(224, 242, 241, 1); }
   .case-study-link { color: rgba(94, 234, 212, 0.95); }
-  .meta-label { color: #a8829b; }
+  .meta-label { color: #4a7a74; }
   .artifact-card { border-color: rgba(255, 255, 255, 0.4); }
-  .studio-crumb { color: rgba(210, 195, 172, 0.85); }
+  .studio-crumb { color: rgba(224, 242, 241, 0.85); }
 }
 </style>
 </head>
