@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HapTurn — Skills & Methods Prototype</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400;1,500&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bg:          #060f0e;
+  --text:        #e0f2f1;
+  --cyan:        #5eead4;
+  --teal:        #0d9488;
+  --card-bg:     rgba(13,148,136,0.03);
+  --card-border: rgba(13,148,136,0.12);
+  --eyebrow:     rgba(94,234,212,0.72);
+}
+
+html, body {
+  background: var(--bg);
+  font-family: 'DM Sans', -apple-system, sans-serif;
+  color: var(--text);
+  min-height: 100vh;
+  overflow: hidden;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ── Canvas ── */
+.cloud-wrap {
+  position: relative;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+  cursor: grab;
+}
+.cloud-wrap:active { cursor: grabbing; }
+
+/* Category labels */
+.cloud-category {
+  position: absolute;
+  font-size: 9px;
+  font-weight: 500;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  color: var(--eyebrow);
+  pointer-events: none;
+  z-index: 5;
+  opacity: 0.6;
+}
+.cloud-category.left  { top: 28px; left: 32px; }
+.cloud-category.right { top: 28px; right: 32px; }
+
+/* ── Floating tag ── */
+.tag {
+  position: absolute;
+  font-family: inherit;
+  font-weight: 400;
+  letter-spacing: 0.04em;
+  color: rgba(94,234,212,0.65);
+  background: rgba(13,148,136,0.06);
+  border: 1px solid rgba(13,148,136,0.16);
+  border-radius: 100px;
+  padding: 8px 18px;
+  white-space: nowrap;
+  cursor: grab;
+  user-select: none;
+  transition: color 0.2s, background 0.2s, border-color 0.2s, box-shadow 0.2s;
+  z-index: 2;
+  touch-action: none;
+}
+.tag:active { cursor: grabbing; }
+.tag.skill  { font-size: 13px; }
+.tag.method { font-size: 11.5px; }
+
+.tag:hover, .tag.pinned {
+  color: rgba(204,251,241,0.95);
+  background: rgba(13,148,136,0.18);
+  border-color: rgba(13,148,136,0.5);
+  box-shadow: 0 0 20px rgba(13,148,136,0.15), inset 0 0 12px rgba(13,148,136,0.06);
+  z-index: 10;
+}
+.tag.dragging {
+  z-index: 20;
+  box-shadow: 0 0 28px rgba(13,148,136,0.25);
+}
+
+/* ── Detail popover ── */
+.tag-popover {
+  position: absolute;
+  width: 260px;
+  background: rgba(9,20,19,0.95);
+  border: 1px solid rgba(13,148,136,0.3);
+  border-radius: 12px;
+  padding: 16px 18px;
+  pointer-events: none;
+  opacity: 0;
+  transform: translateY(6px);
+  transition: opacity 0.22s ease, transform 0.22s ease;
+  z-index: 30;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+.tag-popover.visible {
+  opacity: 1;
+  transform: translateY(0);
+  pointer-events: auto;
+}
+.tag-popover-label {
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: rgba(204,251,241,0.95);
+  margin-bottom: 6px;
+}
+.tag-popover-text {
+  font-size: 12.5px;
+  font-weight: 300;
+  letter-spacing: 0.03em;
+  line-height: 1.55;
+  color: rgba(94,234,212,0.78);
+  font-style: italic;
+}
+.tag-popover-type {
+  margin-top: 10px;
+  font-size: 9px;
+  font-weight: 500;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: rgba(94,234,212,0.35);
+}
+
+/* ── Hint ── */
+.hint {
+  position: absolute;
+  bottom: 28px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 11px;
+  font-weight: 300;
+  letter-spacing: 0.06em;
+  color: rgba(94,234,212,0.3);
+  pointer-events: none;
+  z-index: 5;
+  transition: opacity 0.5s;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    transition-duration: 0.01ms !important;
+  }
+}
+
+@media (max-width: 640px) {
+  .tag.skill  { font-size: 12px; padding: 7px 14px; }
+  .tag.method { font-size: 10.5px; padding: 6px 12px; }
+  .tag-popover { width: 220px; padding: 14px 16px; }
+}
+</style>
+</head>
+<body>
+
+<div class="cloud-wrap" id="cloudWrap">
+  <div class="cloud-category left">Skills</div>
+  <div class="cloud-category right">Methods</div>
+  <div class="hint" id="hint">drag to rearrange &middot; click to pin</div>
+</div>
+
+<div class="tag-popover" id="popover">
+  <div class="tag-popover-label" id="popLabel"></div>
+  <p class="tag-popover-text" id="popText"></p>
+  <div class="tag-popover-type" id="popType"></div>
+</div>
+
+<script>
+(function () {
+  const wrap    = document.getElementById('cloudWrap');
+  const popover = document.getElementById('popover');
+  const popLabel = document.getElementById('popLabel');
+  const popText  = document.getElementById('popText');
+  const popType  = document.getElementById('popType');
+  const hint     = document.getElementById('hint');
+
+  const TAGS = [
+    // Skills (placed left-ish)
+    { label: 'UX Research',          type: 'skill',  detail: 'Conducting surveys, ethnographic interviews, and card sorts to understand how ADHD and anxiety affect driving.' },
+    { label: 'Interaction Design',   type: 'skill',  detail: 'Designing haptic feedback patterns and CarPlay UI for intuitive, in-motion navigation.' },
+    { label: 'Physical Prototyping', type: 'skill',  detail: 'Building a working hardware prototype with Arduino, motors, and breadboard circuitry.' },
+    { label: 'Hardware Integration', type: 'skill',  detail: 'Connecting software logic to physical components — programming vibration patterns in Arduino IDE.' },
+    { label: 'Data Analysis',        type: 'skill',  detail: 'Analyzing survey data to surface correlations between stress levels, ADHD status, and missed exits.' },
+    // Methods (placed right-ish)
+    { label: 'Surveys',                    type: 'method', detail: 'Quantitative research mapping ADHD/anxiety status, missed exit frequency, and stress levels.' },
+    { label: 'Ethnographic Interviews',    type: 'method', detail: 'Five in-depth interviews revealing the emotional and behavioral texture of driving with ADHD.' },
+    { label: 'Impact/Effort Matrix',       type: 'method', detail: 'Prioritizing solutions by feasibility and value — haptic feedback emerged as high-impact, low-effort.' },
+    { label: 'Wizard of Oz Testing',       type: 'method', detail: 'Manually triggering haptic patterns during simulated drives to evaluate timing and feel.' },
+    { label: 'Arduino / Physical Computing', type: 'method', detail: 'Programming motor outputs and button inputs on a Nano microcontroller to simulate real navigation cues.' },
+  ];
+
+  // ── Physics state ──
+  const bodies = [];
+  const DAMPING  = 0.94;
+  const BOUNCE   = 0.5;
+  const REPULSE  = 800;
+  const GRAVITY  = 8;
+
+  let W = wrap.clientWidth;
+  let H = wrap.clientHeight;
+  let pinnedTag = null;
+  let dragBody  = null;
+  let dragOffX  = 0, dragOffY = 0;
+  let animId    = null;
+  let interacted = false;
+
+  function rand(min, max) { return min + Math.random() * (max - min); }
+
+  // Create DOM + physics body for each tag
+  TAGS.forEach((t, i) => {
+    const el = document.createElement('button');
+    el.className = 'tag ' + t.type;
+    el.textContent = t.label;
+    el.setAttribute('data-detail', t.detail);
+    el.setAttribute('data-type', t.type);
+    wrap.appendChild(el);
+
+    // Measure
+    const rect = el.getBoundingClientRect();
+    const w = rect.width;
+    const h = rect.height;
+
+    // Initial position: skills left half, methods right half
+    let cx, cy;
+    if (t.type === 'skill') {
+      cx = rand(W * 0.08, W * 0.42 - w);
+      cy = rand(H * 0.12, H * 0.82 - h);
+    } else {
+      cx = rand(W * 0.55, W * 0.92 - w);
+      cy = rand(H * 0.12, H * 0.82 - h);
+    }
+
+    const body = {
+      el, w, h,
+      x: cx, y: cy,
+      vx: rand(-0.3, 0.3),
+      vy: rand(-0.3, 0.3),
+      data: t
+    };
+    bodies.push(body);
+    el.style.left = cx + 'px';
+    el.style.top  = cy + 'px';
+  });
+
+  // ── Physics loop ──
+  function step() {
+    for (let i = 0; i < bodies.length; i++) {
+      const a = bodies[i];
+      if (a === dragBody) continue;
+
+      // Repulsion between bodies
+      for (let j = i + 1; j < bodies.length; j++) {
+        const b = bodies[j];
+        if (b === dragBody) continue;
+
+        const acx = a.x + a.w / 2, acy = a.y + a.h / 2;
+        const bcx = b.x + b.w / 2, bcy = b.y + b.h / 2;
+        let dx = acx - bcx;
+        let dy = acy - bcy;
+        const dist = Math.sqrt(dx * dx + dy * dy) || 1;
+        const minDist = (a.w + b.w) / 2 + 12;
+
+        if (dist < minDist) {
+          const force = REPULSE / (dist * dist);
+          const fx = (dx / dist) * force;
+          const fy = (dy / dist) * force;
+          a.vx += fx; a.vy += fy;
+          b.vx -= fx; b.vy -= fy;
+        }
+      }
+
+      // Gentle gravity toward center region
+      const acx = a.x + a.w / 2;
+      const acy = a.y + a.h / 2;
+      const targetX = a.data.type === 'skill' ? W * 0.28 : W * 0.72;
+      const targetY = H * 0.5;
+      a.vx += (targetX - acx) * 0.0003 * GRAVITY;
+      a.vy += (targetY - acy) * 0.0003 * GRAVITY;
+
+      // Damping
+      a.vx *= DAMPING;
+      a.vy *= DAMPING;
+
+      // Integrate
+      a.x += a.vx;
+      a.y += a.vy;
+
+      // Boundary bounce
+      if (a.x < 8)          { a.x = 8;          a.vx *= -BOUNCE; }
+      if (a.x + a.w > W - 8) { a.x = W - a.w - 8; a.vx *= -BOUNCE; }
+      if (a.y < 8)          { a.y = 8;          a.vy *= -BOUNCE; }
+      if (a.y + a.h > H - 8) { a.y = H - a.h - 8; a.vy *= -BOUNCE; }
+
+      a.el.style.left = a.x + 'px';
+      a.el.style.top  = a.y + 'px';
+    }
+
+    // Reposition popover if pinned
+    if (pinnedTag) positionPopover(pinnedTag);
+
+    animId = requestAnimationFrame(step);
+  }
+  animId = requestAnimationFrame(step);
+
+  // ── Popover positioning ──
+  function positionPopover(body) {
+    const cx = body.x + body.w / 2;
+    const cy = body.y;
+    let px = cx - 130;
+    let py = cy - popover.offsetHeight - 10;
+
+    // Flip below if near top
+    if (py < 10) py = body.y + body.h + 10;
+    // Keep in bounds
+    if (px < 10) px = 10;
+    if (px + 260 > W - 10) px = W - 270;
+
+    popover.style.left = px + 'px';
+    popover.style.top  = py + 'px';
+  }
+
+  function showPopover(body) {
+    popLabel.textContent = body.data.label;
+    popText.textContent  = body.data.detail;
+    popType.textContent  = body.data.type;
+    positionPopover(body);
+    popover.classList.add('visible');
+  }
+
+  function hidePopover() {
+    popover.classList.remove('visible');
+  }
+
+  // ── Drag handling ──
+  function startDrag(body, clientX, clientY) {
+    dragBody = body;
+    body.el.classList.add('dragging');
+    body.vx = 0;
+    body.vy = 0;
+    const rect = body.el.getBoundingClientRect();
+    dragOffX = clientX - rect.left;
+    dragOffY = clientY - rect.top;
+
+    if (!interacted) {
+      interacted = true;
+      hint.style.opacity = '0';
+    }
+  }
+
+  function moveDrag(clientX, clientY) {
+    if (!dragBody) return;
+    const wrapRect = wrap.getBoundingClientRect();
+    dragBody.x = clientX - wrapRect.left - dragOffX;
+    dragBody.y = clientY - wrapRect.top  - dragOffY;
+    dragBody.el.style.left = dragBody.x + 'px';
+    dragBody.el.style.top  = dragBody.y + 'px';
+    if (pinnedTag === dragBody) positionPopover(dragBody);
+  }
+
+  function endDrag(wasDrag) {
+    if (!dragBody) return;
+    dragBody.el.classList.remove('dragging');
+
+    // If it was a click (not a real drag), toggle pin
+    if (!wasDrag) {
+      if (pinnedTag === dragBody) {
+        pinnedTag.el.classList.remove('pinned');
+        pinnedTag = null;
+        hidePopover();
+      } else {
+        if (pinnedTag) pinnedTag.el.classList.remove('pinned');
+        pinnedTag = dragBody;
+        dragBody.el.classList.add('pinned');
+        showPopover(dragBody);
+      }
+    }
+
+    dragBody = null;
+  }
+
+  // ── Mouse events ──
+  let mouseDownPos = null;
+  let didDrag = false;
+
+  wrap.addEventListener('mousedown', e => {
+    const tag = e.target.closest('.tag');
+    if (!tag) return;
+    e.preventDefault();
+    const body = bodies.find(b => b.el === tag);
+    if (!body) return;
+    mouseDownPos = { x: e.clientX, y: e.clientY };
+    didDrag = false;
+    startDrag(body, e.clientX, e.clientY);
+  });
+
+  window.addEventListener('mousemove', e => {
+    if (!dragBody) return;
+    if (mouseDownPos) {
+      const dx = e.clientX - mouseDownPos.x;
+      const dy = e.clientY - mouseDownPos.y;
+      if (Math.abs(dx) > 4 || Math.abs(dy) > 4) didDrag = true;
+    }
+    moveDrag(e.clientX, e.clientY);
+  });
+
+  window.addEventListener('mouseup', () => {
+    endDrag(didDrag);
+    mouseDownPos = null;
+  });
+
+  // ── Touch events ──
+  let touchStartPos = null;
+  let touchDidDrag  = false;
+
+  wrap.addEventListener('touchstart', e => {
+    const tag = e.target.closest('.tag');
+    if (!tag) return;
+    const body = bodies.find(b => b.el === tag);
+    if (!body) return;
+    const t = e.touches[0];
+    touchStartPos = { x: t.clientX, y: t.clientY };
+    touchDidDrag  = false;
+    startDrag(body, t.clientX, t.clientY);
+  }, { passive: true });
+
+  wrap.addEventListener('touchmove', e => {
+    if (!dragBody) return;
+    e.preventDefault();
+    const t = e.touches[0];
+    if (touchStartPos) {
+      const dx = t.clientX - touchStartPos.x;
+      const dy = t.clientY - touchStartPos.y;
+      if (Math.abs(dx) > 6 || Math.abs(dy) > 6) touchDidDrag = true;
+    }
+    moveDrag(t.clientX, t.clientY);
+  }, { passive: false });
+
+  wrap.addEventListener('touchend', () => {
+    endDrag(touchDidDrag);
+    touchStartPos = null;
+  });
+
+  // ── Hover popover (non-pinned) ──
+  let hoverBody = null;
+  wrap.addEventListener('mouseover', e => {
+    const tag = e.target.closest('.tag');
+    if (!tag || dragBody) return;
+    const body = bodies.find(b => b.el === tag);
+    if (body && body !== pinnedTag) {
+      hoverBody = body;
+      showPopover(body);
+    }
+  });
+  wrap.addEventListener('mouseout', e => {
+    const tag = e.target.closest('.tag');
+    if (!tag) return;
+    if (hoverBody && hoverBody !== pinnedTag) {
+      hoverBody = null;
+      if (pinnedTag) showPopover(pinnedTag);
+      else hidePopover();
+    }
+  });
+
+  // ── Click on empty space to unpin ──
+  wrap.addEventListener('click', e => {
+    if (!e.target.closest('.tag') && pinnedTag) {
+      pinnedTag.el.classList.remove('pinned');
+      pinnedTag = null;
+      hidePopover();
+    }
+  });
+
+  // ── Resize ──
+  window.addEventListener('resize', () => {
+    W = wrap.clientWidth;
+    H = wrap.clientHeight;
+  });
+})();
+</script>
+
+</body>
+</html>

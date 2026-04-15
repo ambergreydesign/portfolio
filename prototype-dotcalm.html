@@ -116,7 +116,7 @@ html, body {
 }
 
 .panel-label {
-  position: absolute; top: 22px;
+  position: absolute; top: 32px;
   font-size: 8px; font-weight: 600; letter-spacing: 0.3em; text-transform: uppercase;
 }
 .panel-left .panel-label { color: rgba(122,171,222,0.5); }
@@ -159,7 +159,7 @@ html, body {
 #wearable-wrap {
   display: flex; flex-direction: column;
   align-items: center; gap: 0;
-  padding-top: 52px; /* clears panel-label; aligns HR with phone top on right */
+  padding-top: 60px; /* clears panel-label + mode toggle; aligns HR with phone top on right */
   position: relative; z-index: 1;
   width: 100%;
 }
@@ -392,7 +392,7 @@ html, body {
 
 /* Wearable status text — pinned near bottom of panel */
 #wearable-status {
-  position: absolute; bottom: 24px;
+  position: absolute; bottom: 16px;
   left: 50%; transform: translateX(-50%);
   width: 260px;
   font-size: 12px; font-weight: 400; letter-spacing: 0.04em;
@@ -485,7 +485,7 @@ html, body {
   position: relative; z-index: 1;
   display: flex; flex-direction: column;
   align-items: center;
-  padding-top: 52px; /* matches wearable-wrap so phone top aligns with HR */
+  padding-top: 60px; /* matches wearable-wrap so phone top aligns with HR */
 }
 
 /* Phone frame */
@@ -543,7 +543,7 @@ html, body {
 
 /* Caregiver status */
 #caregiver-status {
-  position: absolute; bottom: 24px;
+  position: absolute; bottom: 16px;
   left: 50%; transform: translateX(-50%);
   width: 260px;
   font-size: 12px; font-weight: 400; letter-spacing: 0.04em;
@@ -558,7 +558,7 @@ html, body {
 ═══════════════════════════ */
 #controls {
   flex-shrink: 0;
-  padding: 16px 48px 20px;
+  padding: 12px 48px 16px;
   display: flex; flex-direction: column; align-items: center; gap: 16px;
   border-top: 1px solid var(--border);
   background: linear-gradient(to top, rgba(7,8,15,0.8) 0%, transparent 100%);

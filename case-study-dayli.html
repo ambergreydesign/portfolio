@@ -214,10 +214,9 @@ body.light-mode .section-intro { color: #3D2A5C; }
 body.light-mode .dev-system-intro { color: #4A3668 !important; }
 
 /* Reflection */
-body.light-mode .reflection-wrap { background: linear-gradient(180deg, var(--bg-alt), var(--bg)); }
-body.light-mode .reflection-wrap::before { background: radial-gradient(ellipse 60% 50% at 50% 60%, rgba(123,31,199,0.04) 0%, transparent 65%); }
+body.light-mode .reflection-wrap { background: linear-gradient(180deg, #F3EEF8 0%, #FAF8FD 100%); }
 body.light-mode .reflection-label { color: #7B1FC7; }
-body.light-mode .reflection-quote { color: #1a0f2e; }
+body.light-mode .reflection-quote { color: #461F65; }
 
 /* Light mode focus override */
 body.light-mode :focus-visible { outline-color: #7B1FC7; }
@@ -735,23 +734,39 @@ body.visible { opacity: 1; }
    REFLECTION
 ══════════════════════════════════ */
 .reflection-wrap {
-  padding: 96px 72px 120px; position: relative; overflow: hidden;
+  padding: 96px 64px 120px; position: relative; overflow: hidden;
   background: linear-gradient(180deg, var(--bg-alt) 0%, var(--bg) 100%);
 }
-.reflection-wrap::before {
-  content: ''; position: absolute; inset: 0; pointer-events: none;
-  background: radial-gradient(ellipse 60% 50% at 50% 60%, rgba(146,48,227,0.10) 0%, transparent 65%);
+.reflection-fireflies {
+  position: absolute; inset: 0;
+  pointer-events: none; overflow: hidden; z-index: 0;
 }
-.reflection-inner { max-width: 1040px; margin: 0 auto; position: relative; z-index: 1; }
+.reflection-firefly {
+  position: absolute; border-radius: 50%;
+  background: rgba(196,181,253,0.5);
+  box-shadow: 0 0 8px rgba(196,181,253,0.45), 0 0 24px rgba(146,48,227,0.2), 0 0 48px rgba(146,48,227,0.08);
+  animation: dayliFireflyFloat linear infinite;
+}
+@keyframes dayliFireflyFloat {
+  0%   { transform: translateY(0) translateX(0); opacity: 0; }
+  8%   { opacity: 1; }
+  50%  { transform: translateY(-40vh) translateX(30px); }
+  92%  { opacity: 1; }
+  100% { transform: translateY(-80vh) translateX(-20px); opacity: 0; }
+}
+body.light-mode .reflection-firefly {
+  background: rgba(123,31,199,0.4);
+  box-shadow: 0 0 8px rgba(123,31,199,0.35), 0 0 24px rgba(123,31,199,0.15), 0 0 48px rgba(123,31,199,0.06);
+}
+.reflection-inner { max-width: 720px; margin: 0 auto; position: relative; z-index: 1; }
 .reflection-label {
-  font-size: 9px; font-weight: 500; letter-spacing: 0.34em; text-transform: uppercase;
+  font-size: 8.5px; font-weight: 500; letter-spacing: 0.34em; text-transform: uppercase;
   color: rgba(196,181,253,0.72); margin-bottom: 24px;
 }
 .reflection-quote {
   font-family: 'Cormorant Garamond', serif;
-  font-size: clamp(26px, 3.5vw, 46px); font-weight: 400; font-style: italic;
-  line-height: 1.3; color: var(--lavender); max-width: 800px;
-  text-wrap: balance;
+  font-size: clamp(28px, 3.5vw, 48px); font-weight: 400; font-style: italic;
+  line-height: 1.3; color: var(--lavender); margin-bottom: 0;
 }
 
 /* ══════════════════════════════════
@@ -961,7 +976,7 @@ body.visible { opacity: 1; }
 @media (max-width: 860px) {
   .hero { padding: 0 36px 60px; background-attachment: scroll; }
   .cs-section { padding: 72px 36px; }
-  .reflection-wrap { padding: 80px 36px; }
+  .reflection-wrap { padding: 72px 32px 96px; }
   .hero-title { font-size: 54px; }
   .stream-grid { grid-template-columns: 1fr; gap: 16px; }
   .gpt-block { grid-template-columns: 1fr; gap: 40px; }
@@ -974,7 +989,7 @@ body.visible { opacity: 1; }
 @media (max-width: 560px) {
   .hero { padding: 0 22px 48px; }
   .cs-section { padding: 56px 22px; }
-  .reflection-wrap { padding: 64px 22px; }
+  .reflection-wrap { padding: 56px 22px 80px; }
   .hero-meta { gap: 20px; flex-wrap: wrap; }
   .hero-meta-value { font-size: 12px; }
   .nav-back { top: 16px; left: 16px; }
@@ -1144,10 +1159,7 @@ noscript .reveal { opacity: 1; transform: none; }
   <div class="hero-grid" aria-hidden="true"></div>
   <div class="hero-fade" aria-hidden="true"></div>
   <div class="hero-content">
-    <div class="wip-banner" style="margin-bottom:20px;">
-      <div class="wip-dot" aria-hidden="true"></div>
-      <span class="wip-text">Case Study in Progress</span>
-    </div>
+    <p class="hero-eyebrow">UX Design · AI Systems · Dev Ops</p>
     <h1 class="hero-title">Dayli AI |<br>Daily Living Labs</h1>
     <p class="hero-subtitle">The gap between a problem and its solution is almost always information.</p>
     <div class="hero-meta">
@@ -1156,16 +1168,20 @@ noscript .reveal { opacity: 1; transform: none; }
         <span class="hero-meta-value">UX Design · AI Systems · Dev Ops</span>
       </div>
       <div class="hero-meta-item">
-        <span class="hero-meta-label">Context</span>
-        <span class="hero-meta-value">Dayli AI · Daily Living Labs</span>
-      </div>
-      <div class="hero-meta-item">
         <span class="hero-meta-label">Year</span>
         <span class="hero-meta-value">2026</span>
       </div>
       <div class="hero-meta-item">
-        <span class="hero-meta-label">What I Did</span>
-        <span class="hero-meta-value">Research · Interaction Design · Prototyping · AI Agent Design · Dev System Architecture</span>
+        <span class="hero-meta-label">Type</span>
+        <span class="hero-meta-value">AI Platform · Research System</span>
+      </div>
+      <div class="hero-meta-item">
+        <span class="hero-meta-label">Team</span>
+        <span class="hero-meta-value">Solo</span>
+      </div>
+      <div class="hero-meta-item">
+        <span class="hero-meta-label">Context</span>
+        <span class="hero-meta-value">Dayli AI · Daily Living Labs</span>
       </div>
     </div>
   </div>
@@ -1181,7 +1197,7 @@ noscript .reveal { opacity: 1; transform: none; }
       <div class="section-label">The Platform</div>
       <h2 class="section-heading">From Ideas to Independence.</h2>
       <p class="section-body" style="margin-bottom: 40px;">
-        Daily Living Labs is an early-stage community and research platform focused on the full spectrum of daily living — from small daily friction to life-altering accessibility challenges. Dayli AI is the personalized intelligence layer on top of it.
+        Daily Living Labs is an early-stage community and research platform focused on the full spectrum of daily living, from small daily friction to life-altering accessibility challenges. Dayli AI is the personalized intelligence layer on top of it.
       </p>
     </div>
     <div class="mission-grid reveal">
@@ -1189,7 +1205,7 @@ noscript .reveal { opacity: 1; transform: none; }
         <div class="mission-card-eyebrow">Community Platform</div>
         <div class="mission-card-title">Daily Living Labs</div>
         <div class="mission-card-tagline">"From Ideas to Independence"</div>
-        <p class="mission-card-body">A community that helps families and caregivers locate what already works — and build what doesn't yet exist — to make daily life easier and more independent. Partners with researchers, universities, and innovators to bridge the gap between problems and solutions.</p>
+        <p class="mission-card-body">A community that helps families and caregivers locate what already works, and build what doesn't yet exist, to make daily life easier and more independent. Partners with researchers, universities, and innovators to bridge the gap between problems and solutions.</p>
         <a class="mission-card-link" href="https://dailylivinglabs.com" target="_blank" rel="noopener">
           dailylivinglabs.com →
         </a>
@@ -1198,7 +1214,7 @@ noscript .reveal { opacity: 1; transform: none; }
         <div class="mission-card-eyebrow">AI Layer</div>
         <div class="mission-card-title">Dayli AI</div>
         <div class="mission-card-tagline">"Personalized Solutions for Daily Living"</div>
-        <p class="mission-card-body">The AI-powered product built on top of Daily Living Labs — designed to surface relevant solutions based on a person's specific context and situation. Not a search engine. Not a chatbot. A system that learns what someone actually needs and connects them to it.</p>
+        <p class="mission-card-body">The AI-powered product built on top of Daily Living Labs, designed to surface relevant solutions based on a person's specific context and situation. Not a search engine. Not a chatbot. A system that learns what someone actually needs and connects them to it.</p>
         <a class="mission-card-link" href="https://dayliai.org" target="_blank" rel="noopener">
           dayliai.org →
         </a>
@@ -1208,7 +1224,7 @@ noscript .reveal { opacity: 1; transform: none; }
 </section>
 
 <!-- ══════════════════════════════════
-     THE HEART OF IT — RACHEL'S STORY
+     THE HEART OF IT
 ══════════════════════════════════ -->
 <section class="cs-section heart-section" aria-label="The Heart of It">
   <div class="section-inner">
@@ -1228,17 +1244,17 @@ noscript .reveal { opacity: 1; transform: none; }
           One day, another parent told her about a parent who had gotten so frustrated that they designed a better connector and started 3D printing it. They sell it on Etsy. Rachel ordered it. <strong>She never had to worry about feeding the bed again.</strong>
         </p>
         <p>
-          But here's what stayed with me: Rachel had no idea this existed. She wasn't looking for a solution — she had already accepted the inconvenience. She only found it because she happened to talk to the right person, who happened to know the right person.
+          But here's what stayed with me: Rachel had no idea this existed. She wasn't looking for a solution. She had already accepted the inconvenience. She only found it because she happened to talk to the right person, who happened to know the right person.
         </p>
         <p>
-          <strong>Thousands of parents are still feeding the bed right now</strong> — not because the solution doesn't exist, but because they haven't met the right person yet.
+          <strong>Thousands of parents are still feeding the bed right now</strong>, not because the solution doesn't exist, but because they haven't met the right person yet.
         </p>
       </div>
       <div class="narrative-callout">
         <div class="narrative-callout-label">Why Dayli Exists</div>
         <div class="narrative-callout-body">
-          <p>Rachel's story isn't exceptional — it's the rule. Most people navigating disability, caregiving, or daily living challenges adapt rather than advocate. They absorb the friction. <em>They just deal with it.</em></p>
-          <p>The connection that changed Rachel's life was accidental. Dayli makes it intentional. It connects people like Rachel to innovators like the Etsy parent — at scale, without needing to know the right person first.</p>
+          <p>Rachel's story isn't exceptional. It's the rule. Most people navigating disability, caregiving, or daily living challenges adapt rather than advocate. They absorb the friction. <em>They just deal with it.</em></p>
+          <p>The connection that changed Rachel's life was accidental. Dayli makes it intentional. It connects people like Rachel to innovators like the Etsy parent, at scale, without needing to know the right person first.</p>
           <p>My work is about making that system real: designing how people enter it, how the community is structured, and how the platform learns enough about someone's context to surface what's actually relevant to them.</p>
         </div>
       </div>
@@ -1257,7 +1273,7 @@ noscript .reveal { opacity: 1; transform: none; }
       <div class="section-label">What I Built</div>
       <h2 class="section-heading">The Full Picture</h2>
       <p class="streams-intro">
-        From AI agents to landing pages, from development infrastructure to design systems — everything built for the Daily Living Labs ecosystem.
+        From AI agents to landing pages, from development infrastructure to design systems: everything built for the Daily Living Labs ecosystem.
       </p>
     </div>
 
@@ -1278,7 +1294,7 @@ noscript .reveal { opacity: 1; transform: none; }
       <a class="stream-card" href="https://dailylivinglabs.com" target="_blank" rel="noopener" aria-label="Daily Living Labs Landing - Visit site" style="text-decoration:none; cursor:pointer;">
         <div class="stream-num">Product</div>
         <h3 class="stream-title">Daily Living Labs Landing</h3>
-        <p class="stream-desc">Community-facing landing page with ADL carousel, onboarding flow, and solution discovery — built on Vite + Tailwind.</p>
+        <p class="stream-desc">Community-facing landing page with ADL carousel, onboarding flow, and solution discovery. Built on Vite + Tailwind.</p>
         <div class="stream-footer">
           <span class="stream-status active">Live</span>
           <span class="stream-link">dailylivinglabs.com <span class="stream-link-arrow" aria-hidden="true">→</span></span>
@@ -1289,7 +1305,7 @@ noscript .reveal { opacity: 1; transform: none; }
       <a class="stream-card" href="https://dailylivinglabs.com/contribute" target="_blank" rel="noopener" aria-label="Socratic Dialogue Agent - Try it live" style="text-decoration:none; cursor:pointer;">
         <div class="stream-num">AI Agent</div>
         <h3 class="stream-title">Socratic Dialogue Agent</h3>
-        <p class="stream-desc">Conversational AI that gathers user needs through empathetic follow-up questions — replacing forms with understanding.</p>
+        <p class="stream-desc">Conversational AI that gathers user needs through empathetic follow-up questions, replacing forms with understanding.</p>
         <div class="stream-footer">
           <span class="stream-status active">Active</span>
           <span class="stream-link">Try it <span class="stream-link-arrow" aria-hidden="true">→</span></span>
@@ -1300,7 +1316,7 @@ noscript .reveal { opacity: 1; transform: none; }
       <a class="stream-card" href="https://chatgpt.com/g/g-69adfac177608191b031e67343d2004a-dayli-research-analyst" target="_blank" rel="noopener" aria-label="Research Analyst GPT - Open tool" style="text-decoration:none; cursor:pointer;">
         <div class="stream-num">AI Tool</div>
         <h3 class="stream-title">Research Analyst GPT</h3>
-        <p class="stream-desc">AI system that surfaces relevant research insights based on user situation — contextual intelligence for the team.</p>
+        <p class="stream-desc">AI system that surfaces relevant research insights based on user situation, contextual intelligence for the team.</p>
         <div class="stream-footer">
           <span class="stream-status active">Public</span>
           <span class="stream-link">Open GPT <span class="stream-link-arrow" aria-hidden="true">→</span></span>
@@ -1311,7 +1327,7 @@ noscript .reveal { opacity: 1; transform: none; }
       <div class="stream-card">
         <div class="stream-num">AI Tool</div>
         <h3 class="stream-title">Dayli Dev GPT</h3>
-        <p class="stream-desc">Internal GPT with full migration context — architecture decisions, known issues, and environment quirks. The team's single source of truth.</p>
+        <p class="stream-desc">Internal GPT with full migration context: architecture decisions, known issues, and environment quirks. The team's single source of truth.</p>
         <div class="stream-footer">
           <span class="stream-status">Internal</span>
         </div>
@@ -1321,7 +1337,7 @@ noscript .reveal { opacity: 1; transform: none; }
       <a class="stream-card" href="prototype-dayli-avatar.html" target="_blank" rel="noopener" aria-label="Dayli Avatar - View prototype" style="text-decoration:none; cursor:pointer;">
         <div class="stream-num">Brand</div>
         <h3 class="stream-title">Dayli Avatar</h3>
-        <p class="stream-desc">Animated brand character with smile eyes, blinking, mouse tracking, and personality states — the friendly face of Dayli AI.</p>
+        <p class="stream-desc">Animated brand character with smile eyes, blinking, mouse tracking, and personality states. The friendly face of Dayli AI.</p>
         <div class="stream-footer">
           <span class="stream-status active">Prototype</span>
           <span class="stream-link">View <span class="stream-link-arrow" aria-hidden="true">→</span></span>
@@ -1368,17 +1384,17 @@ noscript .reveal { opacity: 1; transform: none; }
         <div class="tool-label">Team Tool · Public</div>
         <h2 class="tool-heading">Dayli Research Analyst</h2>
         <p class="tool-body">
-          A GPT configured to synthesize, organize, and surface research in context. Built for the Dayli team, but it works for anyone — <em>because good research synthesis isn't domain-specific.</em>
+          A GPT configured to synthesize, organize, and surface research in context. Built for the Dayli team, but it works for anyone. <em>Good research synthesis isn't domain-specific.</em>
         </p>
         <p class="tool-body">
           It holds context across conversations, connects disparate inputs into coherent insight, and keeps the team from missing something important while also keeping cognitive load manageable.
         </p>
         <p class="tool-body">
-          <strong>It doesn't just work for Dayli.</strong> Paste a transcript from any meeting — a team standup, a planning session, a family discussion — and ask it to organize the key decisions, open questions, and action items.
+          <strong>It doesn't just work for Dayli.</strong> Paste a transcript from any meeting — a team standup, a planning session, a family discussion, and ask it to organize the key decisions, open questions, and action items.
         </p>
         <div class="try-this">
           <div class="try-this-label">Try This →</div>
-          <p class="try-this-text">Grab a transcript from any recent meeting — a standup, a planning call, even a messy brainstorm. Paste it in and ask:<br><br><em>"What were the key decisions, open questions, and next steps from this conversation?"</em><br><br>It'll hand you back a clean, organized brief in seconds. That's the whole idea behind it.</p>
+          <p class="try-this-text">Grab a transcript from any recent meeting: a standup, a planning call, even a messy brainstorm. Paste it in and ask:<br><br><em>"What were the key decisions, open questions, and next steps from this&nbsp;conversation?"</em><br><br>It'll hand you back a clean, organized brief in seconds. That's the whole idea behind it.</p>
         </div>
       </div>
 
@@ -1423,24 +1439,24 @@ noscript .reveal { opacity: 1; transform: none; }
             <div class="chat-msg-bubble">That was it. Back up. Thanks.</div>
           </div>
         </div>
-        <div class="chat-demo-note">Illustrative scenario — not real credentials or sensitive data</div>
+        <div class="chat-demo-note">Illustrative scenario: not real credentials or sensitive data</div>
       </div>
 
       <div>
         <div class="tool-label">Team Tool · Internal</div>
         <h2 class="tool-heading">Dayli Dev</h2>
         <p class="tool-body">
-          A GPT configured with the full context of the platform migration — architecture decisions, known issues, environment quirks, and the reasoning behind technical choices. Built so the team can move forward without waiting.
+          A GPT configured with the full context of the platform migration: architecture decisions, known issues, environment quirks, and the reasoning behind technical choices. Built so the team can move forward without&nbsp;waiting.
         </p>
         <p class="tool-body">
-          <em>Nine weeks into a migration, with work distributed across contributors who haven't all had time to hand off what they know</em> — Dayli Dev is the single source of truth that exists precisely because a complete handoff hasn't happened yet.
+          <em>Nine weeks into a migration, with work distributed across contributors who haven't all had time to hand off what they know</em>, Dayli Dev is the single source of truth that exists precisely because a complete handoff hasn't happened yet.
         </p>
         <p class="tool-body">
           It's also built for the future. When this project eventually hands off to the next team, they start informed, not from zero.
         </p>
         <div class="try-this">
           <div class="try-this-label">Why It's Not Public</div>
-          <p class="try-this-text">Dayli Dev holds detailed migration context, technical architecture, and environment-specific information. Sharing it publicly would expose sensitive system details — so the demo above illustrates its value without showing the real thing.</p>
+          <p class="try-this-text">Dayli Dev holds detailed migration context, technical architecture, and environment-specific information. Sharing it publicly would expose sensitive system details, so the demo above illustrates its value without showing the real thing.</p>
         </div>
       </div>
 
@@ -1459,17 +1475,17 @@ noscript .reveal { opacity: 1; transform: none; }
         <div class="tool-label">Core Interaction · AI Agent</div>
         <h2 class="tool-heading">The Socratic Agent</h2>
         <p class="tool-body">
-          Instead of asking users to fill out forms or search databases, Dayli uses a Socratic dialogue model — warm, conversational prompts that naturally gather the information needed to surface relevant solutions.
+          Instead of asking users to fill out forms or search databases, Dayli uses a Socratic dialogue model: warm, conversational prompts that naturally gather the information needed to surface relevant solutions.
         </p>
         <p class="tool-body">
           The agent collects context through empathetic follow-up questions: what's difficult, what they've tried, what their situation looks like. No clinical intake forms. No keyword search. Just a conversation that leads to understanding.
         </p>
         <p class="tool-body">
-          Behind the dialogue, the system maps responses to ADL categories (Bathing, Dressing, Mobility, Toileting, Transferring, Eating) and matches against community-sourced solutions — connecting people to answers that came from lived experience.
+          Behind the dialogue, the system maps responses to ADL categories (Bathing, Dressing, Mobility, Toileting, Transferring, Eating) and matches against community-sourced solutions, connecting people to answers that came from lived experience.
         </p>
         <div class="try-this">
           <div class="try-this-label">Two Layers</div>
-          <p class="try-this-text">A structured diagnostic questionnaire captures baseline context (who, what, how much help). Then the Socratic agent refines understanding through open conversation — the combination of structure and warmth is what makes it work.</p>
+          <p class="try-this-text">A structured diagnostic questionnaire captures baseline context (who, what, how much help). Then the Socratic agent refines understanding through open conversation. The combination of structure and warmth is what makes it work.</p>
         </div>
       </div>
 
@@ -1500,7 +1516,7 @@ noscript .reveal { opacity: 1; transform: none; }
             <div class="chat-msg-bubble">That makes sense. I've found 3 solutions from people in similar situations: a wall-mounted showerhead holder, a long-handle bath sponge, and a shower bench that frees up both hands. Want to explore any of these?</div>
           </div>
         </div>
-        <div class="chat-demo-note">Illustrative dialogue — the agent gathers context through conversation, not forms</div>
+        <div class="chat-demo-note">Illustrative dialogue: the agent gathers context through conversation, not forms</div>
       </div>
 
     </div>
@@ -1511,18 +1527,33 @@ noscript .reveal { opacity: 1; transform: none; }
      REFLECTION
 ══════════════════════════════════ -->
 <section class="reflection-wrap" aria-label="Reflection">
+  <div class="reflection-fireflies" id="reflectionFireflies" aria-hidden="true"></div>
   <div class="reflection-inner reveal">
-    <div class="reflection-label">What I Wanted to Show</div>
-    <p class="reflection-quote">
-      Most people don't need to think outside the box.<br>
-      They just need to know the box exists.
-    </p>
+    <p class="reflection-label">Reflection</p>
+    <p class="reflection-quote">Most people don't need to think outside the box. They just need to know the box&nbsp;exists.</p>
   </div>
 </section>
 </main>
 
 <script>
 'use strict';
+
+// Reflection fireflies
+(function() {
+  var c = document.getElementById('reflectionFireflies');
+  if (!c) return;
+  for (var i = 0; i < 18; i++) {
+    var f = document.createElement('div');
+    f.className = 'reflection-firefly';
+    var size = 1.5 + Math.random() * 2.5;
+    f.style.width = f.style.height = size + 'px';
+    f.style.left = Math.random() * 100 + '%';
+    f.style.bottom = '-4px';
+    f.style.animationDuration = (14 + Math.random() * 22) + 's';
+    f.style.animationDelay = (Math.random() * 18) + 's';
+    c.appendChild(f);
+  }
+})();
 
 /* ── PAGE TRANSITIONS ── */
 function navigateTo(url) {

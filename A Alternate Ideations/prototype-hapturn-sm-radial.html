@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HapTurn — Skills & Methods Prototype</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400;1,500&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bg:       #060f0e;
+  --cyan:     #5eead4;
+  --teal:     #0d9488;
+  --eyebrow:  rgba(94,234,212,0.72);
+}
+
+html, body {
+  background: var(--bg);
+  font-family: 'DM Sans', -apple-system, sans-serif;
+  color: #e0f2f1;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  -webkit-font-smoothing: antialiased;
+  overflow: hidden;
+}
+
+/* ── Orbital container ── */
+.orbit-wrap {
+  position: relative;
+  width: 680px;
+  height: 680px;
+}
+
+/* ── Orbit rings ── */
+.orbit-ring {
+  position: absolute;
+  border: 1px solid rgba(13,148,136,0.1);
+  border-radius: 50%;
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+}
+.orbit-ring.r1 { width: 260px; height: 260px; }
+.orbit-ring.r2 { width: 420px; height: 420px; }
+.orbit-ring.r3 { width: 580px; height: 580px; }
+
+/* Dashed ring variant */
+.orbit-ring.r2 {
+  border-style: dashed;
+  border-color: rgba(13,148,136,0.07);
+}
+
+/* ── Center node ── */
+.orbit-center {
+  position: absolute;
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 10;
+  text-align: center;
+  pointer-events: none;
+}
+.orbit-center-dot {
+  width: 10px; height: 10px;
+  background: var(--teal);
+  border-radius: 50%;
+  margin: 0 auto 10px;
+  box-shadow: 0 0 20px rgba(13,148,136,0.4), 0 0 60px rgba(13,148,136,0.15);
+}
+.orbit-center-label {
+  font-size: 9px;
+  font-weight: 500;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  color: var(--eyebrow);
+  white-space: nowrap;
+}
+
+/* ── Category arcs (visual labels) ── */
+.orbit-cat {
+  position: absolute;
+  font-size: 8px;
+  font-weight: 500;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: rgba(94,234,212,0.3);
+  pointer-events: none;
+  z-index: 1;
+}
+.orbit-cat.skills  { top: 50px; left: 50%; transform: translateX(-50%); }
+.orbit-cat.methods { bottom: 50px; left: 50%; transform: translateX(-50%); }
+
+/* ── Satellite node ── */
+.sat {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  z-index: 5;
+  cursor: pointer;
+  transition: z-index 0s;
+}
+
+/* Connector line from node to orbit center */
+.sat-line {
+  position: absolute;
+  top: 50%; left: 50%;
+  transform-origin: 0 0;
+  height: 1px;
+  background: rgba(13,148,136,0.08);
+  pointer-events: none;
+  transition: background 0.3s;
+}
+.sat:hover .sat-line,
+.sat.active .sat-line {
+  background: rgba(13,148,136,0.25);
+}
+
+/* The pill */
+.sat-pill {
+  position: relative;
+  font-family: inherit;
+  font-weight: 400;
+  letter-spacing: 0.04em;
+  color: rgba(94,234,212,0.6);
+  background: rgba(13,148,136,0.06);
+  border: 1px solid rgba(13,148,136,0.16);
+  border-radius: 100px;
+  padding: 7px 16px;
+  white-space: nowrap;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  cursor: pointer;
+}
+.sat.skill .sat-pill  { font-size: 12px; }
+.sat.method .sat-pill { font-size: 11px; }
+
+.sat:hover .sat-pill,
+.sat.active .sat-pill {
+  color: rgba(204,251,241,0.95);
+  background: rgba(13,148,136,0.18);
+  border-color: rgba(13,148,136,0.5);
+  box-shadow: 0 0 20px rgba(13,148,136,0.15), inset 0 0 12px rgba(13,148,136,0.06);
+}
+
+/* Pull toward center on active */
+.sat.active {
+  z-index: 15;
+}
+
+/* ── Detail card (appears on hover/click) ── */
+.sat-detail {
+  position: absolute;
+  width: 240px;
+  background: rgba(9,20,19,0.95);
+  border: 1px solid rgba(13,148,136,0.25);
+  border-radius: 12px;
+  padding: 16px 18px;
+  opacity: 0;
+  pointer-events: none;
+  transform: scale(0.95) translateY(4px);
+  transition: opacity 0.25s ease, transform 0.25s ease;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  z-index: 20;
+  left: 50%;
+  margin-left: -120px;
+  top: calc(100% + 12px);
+}
+.sat.active .sat-detail {
+  opacity: 1;
+  pointer-events: auto;
+  transform: scale(1) translateY(0);
+}
+.sat-detail-label {
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: rgba(204,251,241,0.95);
+  margin-bottom: 6px;
+}
+.sat-detail-text {
+  font-size: 12px;
+  font-weight: 300;
+  letter-spacing: 0.03em;
+  line-height: 1.55;
+  color: rgba(94,234,212,0.78);
+  font-style: italic;
+}
+.sat-detail-type {
+  margin-top: 10px;
+  font-size: 8px;
+  font-weight: 500;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: rgba(94,234,212,0.3);
+}
+
+/* ── Hint ── */
+.hint {
+  position: fixed;
+  bottom: 28px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 11px;
+  font-weight: 300;
+  letter-spacing: 0.06em;
+  color: rgba(94,234,212,0.25);
+  pointer-events: none;
+}
+
+/* ── Responsive ── */
+@media (max-width: 720px) {
+  .orbit-wrap { width: 100vw; height: 100vw; max-width: 480px; max-height: 480px; }
+  .orbit-ring.r1 { width: 180px; height: 180px; }
+  .orbit-ring.r2 { width: 300px; height: 300px; }
+  .orbit-ring.r3 { width: 420px; height: 420px; }
+  .sat-pill { font-size: 10px !important; padding: 6px 12px; }
+  .sat-detail { width: 200px; margin-left: -100px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+  }
+}
+</style>
+</head>
+<body>
+
+<div class="orbit-wrap" id="orbitWrap">
+  <!-- Rings -->
+  <div class="orbit-ring r1"></div>
+  <div class="orbit-ring r2"></div>
+  <div class="orbit-ring r3"></div>
+
+  <!-- Center -->
+  <div class="orbit-center">
+    <div class="orbit-center-dot"></div>
+    <div class="orbit-center-label">HapTurn</div>
+  </div>
+
+  <!-- Category labels -->
+  <div class="orbit-cat skills">Skills</div>
+  <div class="orbit-cat methods">Methods</div>
+</div>
+
+<div class="hint">click a node to expand</div>
+
+<script>
+(function () {
+  const wrap = document.getElementById('orbitWrap');
+  let activeNode = null;
+
+  const SKILLS = [
+    { label: 'UX Research',          detail: 'Conducting surveys, ethnographic interviews, and card sorts to understand how ADHD and anxiety affect driving.' },
+    { label: 'Interaction Design',   detail: 'Designing haptic feedback patterns and CarPlay UI for intuitive, in-motion navigation.' },
+    { label: 'Physical Prototyping', detail: 'Building a working hardware prototype with Arduino, motors, and breadboard circuitry.' },
+    { label: 'Hardware Integration', detail: 'Connecting software logic to physical components — programming vibration patterns in Arduino IDE.' },
+    { label: 'Data Analysis',        detail: 'Analyzing survey data to surface correlations between stress levels, ADHD status, and missed exits.' },
+  ];
+
+  const METHODS = [
+    { label: 'Surveys',                      detail: 'Quantitative research mapping ADHD/anxiety status, missed exit frequency, and stress levels.' },
+    { label: 'Ethnographic Interviews',      detail: 'Five in-depth interviews revealing the emotional and behavioral texture of driving with ADHD.' },
+    { label: 'Impact/Effort Matrix',         detail: 'Prioritizing solutions by feasibility and value — haptic feedback emerged as high-impact, low-effort.' },
+    { label: 'Wizard of Oz Testing',         detail: 'Manually triggering haptic patterns during simulated drives to evaluate timing and feel.' },
+    { label: 'Arduino / Physical Computing', detail: 'Programming motor outputs and button inputs on a Nano microcontroller to simulate real navigation cues.' },
+  ];
+
+  // Place nodes around the orbit
+  // Skills on top half (ring 2), Methods on bottom half (ring 3)
+  function placeNodes(items, type, ring, startAngle, sweep) {
+    const count = items.length;
+    items.forEach((item, i) => {
+      const angle = startAngle + (sweep / (count - 1)) * i;
+      const rad   = (angle * Math.PI) / 180;
+
+      // Ring radius in px (half of ring element size)
+      const radius = ring === 1 ? 130 : ring === 2 ? 210 : 290;
+
+      const cx = Math.cos(rad) * radius;
+      const cy = Math.sin(rad) * radius;
+
+      const sat = document.createElement('div');
+      sat.className = 'sat ' + type;
+      sat.style.left = 'calc(50% + ' + cx + 'px)';
+      sat.style.top  = 'calc(50% + ' + cy + 'px)';
+
+      // Connector line
+      const line = document.createElement('div');
+      const lineLen = Math.sqrt(cx * cx + cy * cy);
+      const lineAngle = Math.atan2(cy, cx) * (180 / Math.PI);
+      line.className = 'sat-line';
+      line.style.width = lineLen + 'px';
+      line.style.transform = 'rotate(' + (lineAngle + 180) + 'deg)';
+      sat.appendChild(line);
+
+      // Pill
+      const pill = document.createElement('div');
+      pill.className = 'sat-pill';
+      pill.textContent = item.label;
+      sat.appendChild(pill);
+
+      // Detail card
+      const det = document.createElement('div');
+      det.className = 'sat-detail';
+      det.innerHTML =
+        '<div class="sat-detail-label">' + item.label + '</div>' +
+        '<p class="sat-detail-text">' + item.detail + '</p>' +
+        '<div class="sat-detail-type">' + type + '</div>';
+      sat.appendChild(det);
+
+      // Click to toggle
+      sat.addEventListener('click', e => {
+        e.stopPropagation();
+        if (activeNode === sat) {
+          sat.classList.remove('active');
+          activeNode = null;
+        } else {
+          if (activeNode) activeNode.classList.remove('active');
+          sat.classList.add('active');
+          activeNode = sat;
+        }
+      });
+
+      wrap.appendChild(sat);
+    });
+  }
+
+  // Skills: upper arc from ~200° to ~340° (left-top to right-top)
+  placeNodes(SKILLS, 'skill', 2, 220, 100);
+
+  // Methods: lower arc from ~20° to ~160° (right-bottom to left-bottom)
+  placeNodes(METHODS, 'method', 3, 40, 100);
+
+  // Click empty space to deselect
+  document.addEventListener('click', () => {
+    if (activeNode) {
+      activeNode.classList.remove('active');
+      activeNode = null;
+    }
+  });
+})();
+</script>
+
+</body>
+</html>
