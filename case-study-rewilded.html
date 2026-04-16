@@ -1250,11 +1250,11 @@ body.visible { opacity: 1; }
 <script>
 (function() {
   var routes = {
-    signs:      { url: 'level-3-signs.html',      label: 'SIGNS Framework' },
-    zoo:        { url: 'level-3-zoo.html',         label: 'Tracing Invisible Systems' },
-    dissonance: { url: 'level-3-dissonance.html',  label: 'Dissonance Loop' },
-    rewilded:      { url: 'level-3-rewilded.html',    label: 'GWI Visualizer' },
-    'future-zoo':  { url: 'level-3-future-zoo.html',  label: 'The Future Zoo' }
+    signs:      { url: 'signs.html',      label: 'SIGNS Framework' },
+    zoo:        { url: 'zoo-economy.html',         label: 'Tracing Invisible Systems' },
+    dissonance: { url: 'dissonance.html',  label: 'Dissonance Loop' },
+    rewilded:      { url: 'gwi.html',    label: 'GWI Visualizer' },
+    'future-zoo':  { url: 'future-zoo.html',  label: 'The Future Zoo' }
   };
   var from = new URLSearchParams(window.location.search).get('from');
   var route = routes[from] || routes.zoo;

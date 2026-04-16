@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Psilocybin as System — Amber Grey</title>
+<title>The Future Zoo — Amber Grey</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,600;1,400;1,500&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
@@ -14,9 +14,9 @@
 html {
   width: 100%; height: 100%;
   overflow: hidden;
-  background-color: #0b1c26;
+  background-color: #080e06;
   background-image:
-    linear-gradient(rgba(31, 15, 56, 0.5), rgba(31, 15, 56, 0.5)),
+    linear-gradient(rgba(8, 14, 6, 0.6), rgba(8, 14, 6, 0.6)),
     url('Studio_Edited.webp');
   background-size: cover;
   background-position: center top;
@@ -35,7 +35,7 @@ body.visible { opacity: 1; }
 /* ── PAGE EXIT ── */
 #page-exit {
   position: fixed; inset: 0;
-  background: #0b1c26;
+  background: #080e06;
   opacity: 0; pointer-events: none;
   transition: opacity 0.28s ease-in;
   z-index: 9999;
@@ -75,7 +75,7 @@ body.visible { opacity: 1; }
   border-radius: 100px;
   padding: 9px 18px 9px 14px;
   cursor: pointer;
-  color: rgba(200, 185, 165, 0.75);
+  color: rgba(224, 242, 225, 0.75);
   font-family: 'DM Sans', sans-serif;
   font-size: 10px;
   font-weight: 400;
@@ -86,7 +86,7 @@ body.visible { opacity: 1; }
 }
 .nav-back:hover {
   background: rgba(255, 255, 255, 0.11);
-  color: rgba(200, 185, 165, 1);
+  color: rgba(224, 242, 225, 1);
   border-color: rgba(255, 255, 255, 0.18);
 }
 .nav-back-arrow {
@@ -140,7 +140,7 @@ body.visible { opacity: 1; }
   font-weight: 500;
   letter-spacing: 0.3em;
   text-transform: uppercase;
-  color: #c4a8ff;
+  color: #eaaffc;
   white-space: nowrap;
 }
 
@@ -152,7 +152,7 @@ body.visible { opacity: 1; }
   font-size: 13px;
   font-weight: 300;
   letter-spacing: 0.2em;
-  color: rgba(210, 195, 172, 0.18);
+  color: rgba(224, 242, 225, 0.18);
   pointer-events: none;
   z-index: 10;
 }
@@ -162,7 +162,7 @@ body.visible { opacity: 1; }
   position: fixed;
   right: 0; top: 0; bottom: 0;
   width: 380px;
-  background: rgba(23, 18, 35, 0.8);
+  background: rgba(10, 18, 8, 0.88);
   overflow: hidden;
   z-index: 10;
   font-size: clamp(10px, 1.78vh, 16px);
@@ -178,7 +178,7 @@ body.visible { opacity: 1; }
   font-weight: 500;
   letter-spacing: 0.3em;
   text-transform: uppercase;
-  color: #b088d4;
+  color: #bf55e0;
   margin-bottom: 1.5em;
 }
 
@@ -188,7 +188,7 @@ body.visible { opacity: 1; }
   font-weight: 600;
   font-style: normal;
   line-height: 1.1;
-  color: #c4a8ff;
+  color: #eaaffc;
   margin-bottom: 1.25em;
 }
 
@@ -198,7 +198,7 @@ body.visible { opacity: 1; }
   font-weight: 500;
   line-height: 1.95;
   letter-spacing: 0.05em;
-  color: #a090b8;
+  color: #b8c8b0;
   margin-bottom: 1.75em;
 }
 
@@ -220,28 +220,28 @@ body.visible { opacity: 1; }
   font-weight: 500;
   letter-spacing: 0.06em;
   text-transform: uppercase;
-  color: #6b5580;
+  color: #7a5a90;
 }
 .meta-value {
   font-family: 'DM Sans', sans-serif;
   font-size: 1.25em;
   font-weight: 500;
   letter-spacing: 0.06em;
-  color: #b8a0cc;
+  color: #c0b0d0;
   text-align: right;
 }
 
-/* mobile-only tool link — hidden on desktop */
+/* mobile-only tool disclaimer — hidden on desktop */
 .mob-tool-link { display: none; }
 
-/* hidden on desktop, shown in break grid */
+/* hidden on desktop, shown in mobile stack */
 .details-label { display: none; }
 
 /* ── DIVIDER ── */
 .meta-divider {
   width: 100%;
   height: 1px;
-  background: rgba(155, 109, 255, 0.15);
+  background: rgba(191, 85, 224, 0.18);
   margin-bottom: 0.625em;
 }
 
@@ -252,7 +252,7 @@ body.visible { opacity: 1; }
   font-weight: 500;
   letter-spacing: 0.06em;
   text-transform: uppercase;
-  color: #6b5580;
+  color: #7a5a90;
   margin-bottom: 0.875em;
 }
 .reflection-quote {
@@ -261,7 +261,7 @@ body.visible { opacity: 1; }
   font-weight: 400;
   font-style: italic;
   line-height: 1.5;
-  color: #c4a8ff;
+  color: #eaaffc;
 }
 
 /* ── CASE STUDY ── */
@@ -275,13 +275,13 @@ body.visible { opacity: 1; }
   font-weight: 500;
   letter-spacing: 0.3em;
   text-transform: uppercase;
-  color: rgba(136, 129, 153, 0.6);
+  color: rgba(191, 85, 224, 0.5);
   background: none; border: none;
   cursor: pointer; padding: 0;
   transition: color 0.25s ease;
 }
 .case-study-link:hover {
-  color: rgba(200, 185, 165, 0.9);
+  color: rgba(224, 242, 225, 0.9);
 }
 .case-study-arrow {
   width: 2.5em; height: 1px;
@@ -354,23 +354,17 @@ body.visible { opacity: 1; }
     font-family: 'DM Sans', sans-serif;
     font-size: 1em; font-weight: 500;
     letter-spacing: 0.06em; text-transform: uppercase;
-    color: #6b5580; margin-bottom: 0.75em;
+    color: #7a5a90; margin-bottom: 0.75em;
   }
   .meta-table        { grid-column: 2; grid-row: 2 / 4; margin-bottom: 0; gap: 0.6em; }
   .meta-label, .meta-value { font-size: 1em; }
 
   .reflection-label  { grid-column: 3; grid-row: 1; margin-bottom: 0.75em; font-size: 1em; }
   .reflection-quote  { grid-column: 3; grid-row: 2; font-size: 1.25em; }
-  .case-study-link   { grid-column: 3; grid-row: 3; margin-top: auto; align-self: end; font-size: 1.1em; }
 }
 
-/* ── MOBILE (≤520px) ── */
+/* ══ MOBILE (≤520px) — single column stack ══════════════════ */
 @media (max-width: 520px) {
-
-  /* Touch targets — min 44px */
-  .nav-back { min-height: 44px; min-width: 44px; }
-  .case-study-link { min-height: 44px; }
-  .studio-crumb { min-height: 44px; min-width: 44px; }
 
   .left-area {
     padding: 56px 20px 20px;
@@ -386,7 +380,7 @@ body.visible { opacity: 1; }
     font-weight: 400;
     font-style: italic;
     letter-spacing: 0.03em;
-    color: rgba(160,144,184,0.6);
+    color: rgba(191,85,224,0.6);
   }
 
   .artifact-card {
@@ -406,7 +400,7 @@ body.visible { opacity: 1; }
 
   .zone-badge, .project-title, .project-desc,
   .meta-divider, .details-label, .meta-table,
-  .reflection-label, .reflection-quote, .case-study-link {
+  .reflection-label, .reflection-quote {
     grid-column: unset;
     grid-row: unset;
     margin: 0;
@@ -419,7 +413,6 @@ body.visible { opacity: 1; }
     text-overflow: ellipsis;
     line-height: 1.15;
   }
-  .project-title br { display: none; }
 
   .project-desc  { font-size: 1em; line-height: 1.75; }
 
@@ -438,13 +431,39 @@ body.visible { opacity: 1; }
 
   .reflection-quote { font-size: 1.1em; }
 
-  .case-study-link {
-    margin-top: 8px;
-    font-size: 1em;
-    align-self: flex-start;
-  }
-
   .nav-back { top: 16px; left: 16px; }
+}
+
+/* ── SKIP LINK ── */
+.skip-link {
+  position: absolute;
+  top: -100%;
+  left: 16px;
+  background: #bf55e0;
+  color: #080e06;
+  padding: 10px 18px;
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 500;
+  z-index: 9999;
+  text-decoration: none;
+  transition: top 0.2s ease;
+}
+.skip-link:focus { top: 16px; }
+
+/* ── FOCUS STYLES ── */
+:focus-visible {
+  outline: 2px solid #bf55e0;
+  outline-offset: 3px;
+}
+
+/* ── REDUCED MOTION ── */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
 }
 
 /* ── STUDIO CRUMB ── */
@@ -471,12 +490,12 @@ body.visible .studio-crumb {
   opacity: 1;
   transform: translateX(-50%) translateY(0);
 }
-@keyframes mushroomFloat {
+@keyframes bookFloat {
   0%, 100% { transform: translateY(0) rotate(0deg); }
-  50%       { transform: translateY(-3px) rotate(-1deg); }
+  50%       { transform: translateY(-3px) rotate(0.5deg); }
 }
-.crumb-mushroom {
-  animation: mushroomFloat 4.5s ease-in-out infinite;
+.crumb-book {
+  animation: bookFloat 4s ease-in-out infinite;
 }
 .crumb-text {
   font-family: 'DM Sans', sans-serif;
@@ -486,97 +505,61 @@ body.visible .studio-crumb {
   text-transform: uppercase;
 }
 
-/* ── SKIP LINK ── */
-.skip-link {
-  position: absolute;
-  top: -100%;
-  left: 16px;
-  background: #9b6dff;
-  color: #fff;
-  padding: 10px 18px;
-  border-radius: 6px;
-  font-size: 13px;
-  font-weight: 500;
-  z-index: 9999;
-  text-decoration: none;
-  transition: top 0.2s ease;
-}
-.skip-link:focus { top: 16px; }
-
-/* ── FOCUS STYLES ── */
-:focus-visible {
-  outline: 2px solid #9b6dff;
-  outline-offset: 3px;
-}
-
-/* ── REDUCED MOTION ── */
-@media (prefers-reduced-motion: reduce) {
-  *, *::before, *::after {
-    animation-duration: 0.01ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: 0.01ms !important;
-    scroll-behavior: auto !important;
-  }
-}
-
 /* ── HIGH CONTRAST ── */
 @media (prefers-contrast: more) {
-  .nav-back { border-color: rgba(255, 255, 255, 0.5); color: rgba(200, 185, 165, 1); }
+  .nav-back { border-color: rgba(255, 255, 255, 0.5); color: rgba(224, 242, 225, 1); }
   .case-study-link { filter: brightness(1.5); }
   .meta-label { filter: brightness(1.3); }
   .artifact-card { border-color: rgba(255, 255, 255, 0.4); }
-  .studio-crumb { color: rgba(210, 195, 172, 0.85); }
+  .studio-crumb { color: rgba(224, 242, 225, 0.85); }
 }
 </style>
 </head>
 <body>
 
-<a class="skip-link" href="#main-content">Skip to main content</a>
+<a href="#main-content" class="skip-link">Skip to content</a>
 <div id="page-exit" aria-hidden="true"></div>
 
 <div class="wordmark" aria-hidden="true">Amber Grey</div>
-<nav aria-label="Back navigation">
-<button class="nav-back" aria-label="Back to Experiments" onclick="navigateTo('level-2-experiments.html')">
+<nav aria-label="Page navigation">
+<button class="nav-back" aria-label="Back to Experiments" onclick="navigateTo('experiments.html')">
   <span class="nav-back-arrow" aria-hidden="true"></span>
   Experiments
 </button>
 </nav>
 
-<main id="main-content">
 <!-- Left canvas -->
+<main id="main-content">
 <div id="left-canvas">
   <div class="left-area">
     <div class="card-section">
-      <p class="mob-tool-link">Open on desktop for full tool functionality</p>
       <div class="artifact-card">
-        <iframe src="prototype-psilocybin-synthesis.html" title="Psilocybin Synthesis Table" loading="lazy"></iframe>
+        <iframe src="A Tools Folder/future-zoo.html" title="The Future Zoo — Interactive Ideation" loading="lazy"></iframe>
       </div>
-      <div class="artifact-label">Prototype / Artifact</div>
+      <div class="artifact-label">Prototype / Ideation</div>
     </div>
-    <div class="studio-crumb" onclick="navigateTo('studio-portfolio.html')" role="link" tabindex="0" aria-label="Go to Studio" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();this.click()}">
-  <svg class="crumb-mushroom" width="24" height="36" viewBox="0 0 24 36" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-    <ellipse cx="12" cy="12" rx="11" ry="10" stroke="currentColor" stroke-width="0.75"/>
-    <path d="M9 22 L9 33" stroke="currentColor" stroke-width="0.75" stroke-linecap="round"/>
-    <path d="M15 22 L15 33" stroke="currentColor" stroke-width="0.75" stroke-linecap="round"/>
-    <path d="M9 33 C9 35 15 35 15 33" stroke="currentColor" stroke-width="0.75"/>
-    <path d="M9 22 C9 20 15 20 15 22" stroke="currentColor" stroke-width="0.5" opacity="0.4"/>
-    <circle cx="8" cy="8" r="1.5" stroke="currentColor" stroke-width="0.4" opacity="0.35"/>
-    <circle cx="14" cy="6" r="2" stroke="currentColor" stroke-width="0.4" opacity="0.35"/>
-    <circle cx="11" cy="13" r="1.2" stroke="currentColor" stroke-width="0.4" opacity="0.3"/>
-    <circle cx="16" cy="11" r="1" stroke="currentColor" stroke-width="0.4" opacity="0.25"/>
+    <div class="studio-crumb" role="button" tabindex="0" aria-label="Go to Studio portfolio" onclick="navigateTo('studio-portfolio.html')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();navigateTo('studio-portfolio.html')}">
+  <svg class="crumb-book" width="34" height="26" viewBox="0 0 34 26" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+    <path d="M17 4 C13 3 7 2 2 4 L2 24 C7 22 13 23 17 24Z" stroke="currentColor" stroke-width="0.75"/>
+    <path d="M17 4 C21 3 27 2 32 4 L32 24 C27 22 21 23 17 24Z" stroke="currentColor" stroke-width="0.75"/>
+    <path d="M17 4 L17 24" stroke="currentColor" stroke-width="0.5" opacity="0.45"/>
+    <path d="M5 9 L13 9" stroke="currentColor" stroke-width="0.4" stroke-linecap="round" opacity="0.45"/>
+    <path d="M5 13 L13 13" stroke="currentColor" stroke-width="0.4" stroke-linecap="round" opacity="0.38"/>
+    <path d="M5 17 L11 17" stroke="currentColor" stroke-width="0.4" stroke-linecap="round" opacity="0.3"/>
+    <path d="M21 9 L29 9" stroke="currentColor" stroke-width="0.4" stroke-linecap="round" opacity="0.45"/>
+    <path d="M21 13 L29 13" stroke="currentColor" stroke-width="0.4" stroke-linecap="round" opacity="0.38"/>
+    <path d="M21 17 L27 17" stroke="currentColor" stroke-width="0.4" stroke-linecap="round" opacity="0.3"/>
   </svg>
   <span class="crumb-text">Studio</span>
 </div>
   </div>
 </div>
 
-</main>
-
 <!-- Right panel -->
-<aside class="info-panel" aria-label="Project details">
+<div class="info-panel">
   <div class="zone-badge">Experiments</div>
-  <h1 class="project-title">Psilocybin<br>as System</h1>
-  <p class="project-desc">A speculative interface mapping internal, non-linear experience into a structured, navigable system, making the deeply subjective legible through interaction.</p>
+  <h1 class="project-title">The Future<br>Zoo</h1>
+  <p class="project-desc">A cinematic ideation exploring what reverence-centered zoo design could look like in 50 or 100 years.</p>
 
   <div class="meta-divider"></div>
   <div class="details-label">Details</div>
@@ -584,11 +567,11 @@ body.visible .studio-crumb {
   <div class="meta-table">
     <div class="meta-row">
       <span class="meta-label">Type</span>
-      <span class="meta-value">Prototype</span>
+      <span class="meta-value">Ideation / Narrative</span>
     </div>
     <div class="meta-row">
       <span class="meta-label">Year</span>
-      <span class="meta-value">2022</span>
+      <span class="meta-value">2025</span>
     </div>
     <div class="meta-row">
       <span class="meta-label">Methods</span>
@@ -596,18 +579,19 @@ body.visible .studio-crumb {
     </div>
     <div class="meta-row">
       <span class="meta-label">Context</span>
-      <span class="meta-value">Cognitive Systems</span>
+      <span class="meta-value">Future Zoo Design</span>
     </div>
   </div>
 
   <div class="reflection-label">What I Wanted to Show</div>
-  <p class="reflection-quote">Even the most abstract experiences can be explored through structure, revealing patterns that are otherwise invisible.</p>
+  <p class="reflection-quote">A zoo worth visiting is one worth slowing&nbsp;down&nbsp;for.</p>
 
-  <button class="case-study-link" aria-label="View case study" onclick="navigateTo('case-study-psilocybin.html')">
+  <button class="case-study-link" aria-label="View case study" onclick="navigateTo('case-study-rewilded.html?from=future-zoo')">
     Case Study
     <span class="case-study-arrow" aria-hidden="true"></span>
   </button>
-</aside>
+</div>
+</main>
 
 <script>
 'use strict';

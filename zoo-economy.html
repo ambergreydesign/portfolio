@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Transparency Matrix — Amber Grey</title>
+<title>Tracing the Zoo Economy — Amber Grey</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,600;1,400;1,500&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
@@ -14,9 +14,9 @@
 html {
   width: 100%; height: 100%;
   overflow: hidden;
-  background-color: #0b1c26;
+  background-color: #080e06;
   background-image:
-    linear-gradient(rgba(31, 15, 56, 0.5), rgba(31, 15, 56, 0.5)),
+    linear-gradient(rgba(8, 14, 6, 0.6), rgba(8, 14, 6, 0.6)),
     url('Studio_Edited.webp');
   background-size: cover;
   background-position: center top;
@@ -35,19 +35,14 @@ body.visible { opacity: 1; }
 /* ── PAGE EXIT ── */
 #page-exit {
   position: fixed; inset: 0;
-  background: #0b1c26;
+  background: #080e06;
   opacity: 0; pointer-events: none;
   transition: opacity 0.28s ease-in;
   z-index: 9999;
 }
 #page-exit.active { opacity: 1; }
 
-/* ── LEFT CANVAS ──
-   Fixed 1020×900 design canvas, scaled by JS to fit
-   the space to the left of the right panel.
-   transform-origin: top left so JS translate+scale
-   positions it correctly.
-────────────────── */
+/* ── LEFT CANVAS ── */
 #left-canvas {
   position: absolute;
   left: 0; top: 0;
@@ -80,7 +75,7 @@ body.visible { opacity: 1; }
   border-radius: 100px;
   padding: 9px 18px 9px 14px;
   cursor: pointer;
-  color: rgba(200, 185, 165, 0.75);
+  color: rgba(224, 242, 225, 0.75);
   font-family: 'DM Sans', sans-serif;
   font-size: 10px;
   font-weight: 400;
@@ -91,7 +86,7 @@ body.visible { opacity: 1; }
 }
 .nav-back:hover {
   background: rgba(255, 255, 255, 0.11);
-  color: rgba(200, 185, 165, 1);
+  color: rgba(224, 242, 225, 1);
   border-color: rgba(255, 255, 255, 0.18);
 }
 .nav-back-arrow {
@@ -118,36 +113,25 @@ body.visible { opacity: 1; }
   width: 100%;
 }
 
-/* ── FROSTED CARD ── */
+/* ── ARTIFACT CARD ── */
 .artifact-card {
   width: 100%;
   max-width: 822px;
   height: 659px;
   margin-bottom: 33px;
-  background: linear-gradient(
-    to bottom,
-    rgba(200, 195, 222, 0.03) 0%,
-    rgba(210, 205, 228, 0.16) 30%,
-    rgba(215, 210, 232, 0.26) 100%
-  );
-  backdrop-filter: blur(32px) saturate(1.3) brightness(1.08);
-  -webkit-backdrop-filter: blur(32px) saturate(1.3) brightness(1.08);
   border-radius: 14px;
   border: 1px solid rgba(255, 255, 255, 0.18);
+  overflow: hidden;
+  position: relative;
 }
 
-/* ── CAROUSEL DOTS ── */
-.carousel-dots {
-  display: flex;
-  gap: 8px;
-  margin-bottom: 18px;
+.artifact-card iframe {
+  width: 100%;
+  height: 100%;
+  border: none;
+  display: block;
+  border-radius: 13px;
 }
-.dot {
-  width: 10px; height: 10px;
-  border-radius: 50%;
-  background: rgba(222, 199, 248, 0.28);
-}
-.dot.active { background: rgba(222, 199, 248, 0.75); }
 
 /* ── ARTIFACT LABEL ── */
 .artifact-label {
@@ -156,7 +140,7 @@ body.visible { opacity: 1; }
   font-weight: 500;
   letter-spacing: 0.3em;
   text-transform: uppercase;
-  color: #dec7f8;
+  color: #eaaffc;
   white-space: nowrap;
 }
 
@@ -168,29 +152,24 @@ body.visible { opacity: 1; }
   font-size: 13px;
   font-weight: 300;
   letter-spacing: 0.2em;
-  color: rgba(210, 195, 172, 0.18);
+  color: rgba(224, 242, 225, 0.18);
   pointer-events: none;
   z-index: 10;
 }
 
-/* ── RIGHT PANEL ──
-   font-size on .info-panel is the single scaling knob.
-   All children use em so everything scales together.
-   1.78vh × 900px viewport = 16px (design size).
-────────────────── */
+/* ── RIGHT PANEL ── */
 .info-panel {
   position: fixed;
   right: 0; top: 0; bottom: 0;
   width: 380px;
-  background: rgba(23, 18, 35, 0.8);
+  background: rgba(10, 18, 8, 0.88);
   overflow: hidden;
   z-index: 10;
-  /* uniform scaling knob */
   font-size: clamp(10px, 1.78vh, 16px);
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
-  padding: 5em 2.625em 1.75em 4.6875em;
+  padding: 2em 1.5em 1.75em 2em;
 }
 
 .zone-badge {
@@ -199,7 +178,7 @@ body.visible { opacity: 1; }
   font-weight: 500;
   letter-spacing: 0.3em;
   text-transform: uppercase;
-  color: #dca25b;
+  color: #bf55e0;
   margin-bottom: 1.5em;
 }
 
@@ -209,8 +188,8 @@ body.visible { opacity: 1; }
   font-weight: 600;
   font-style: normal;
   line-height: 1.1;
-  color: #eac6ce;
-  margin-bottom: 2.25em;
+  color: #eaaffc;
+  margin-bottom: 1.25em;
 }
 
 .project-desc {
@@ -219,8 +198,8 @@ body.visible { opacity: 1; }
   font-weight: 500;
   line-height: 1.95;
   letter-spacing: 0.05em;
-  color: #bca6a1;
-  margin-bottom: 2.6875em;
+  color: #b8c8b0;
+  margin-bottom: 1.75em;
 }
 
 /* ── META TABLE ── */
@@ -228,7 +207,7 @@ body.visible { opacity: 1; }
   display: flex;
   flex-direction: column;
   gap: 0.75em;
-  margin-bottom: 4.3125em;
+  margin-bottom: 2.5em;
 }
 .meta-row {
   display: flex;
@@ -241,25 +220,35 @@ body.visible { opacity: 1; }
   font-weight: 500;
   letter-spacing: 0.06em;
   text-transform: uppercase;
-  color: #75576e;
+  color: #7a5a90;
 }
 .meta-value {
   font-family: 'DM Sans', sans-serif;
   font-size: 1.25em;
   font-weight: 500;
   letter-spacing: 0.06em;
-  color: #cca190;
+  color: #c0b0d0;
   text-align: right;
 }
 
-/* hidden on desktop, shown in break grid */
+/* mobile-only tool disclaimer — hidden on desktop */
+.mob-tool-link { display: none; }
+
+/* mobile placeholder image — hidden on desktop, shown instead of iframe */
+.mob-placeholder { display: none; }
+.mob-placeholder img {
+  width: 100%; height: 100%;
+  object-fit: cover; border-radius: 13px;
+}
+
+/* hidden on desktop, shown in mobile stack */
 .details-label { display: none; }
 
 /* ── DIVIDER ── */
 .meta-divider {
   width: 100%;
   height: 1px;
-  background: rgba(180, 150, 160, 0.2);
+  background: rgba(191, 85, 224, 0.18);
   margin-bottom: 0.625em;
 }
 
@@ -270,7 +259,7 @@ body.visible { opacity: 1; }
   font-weight: 500;
   letter-spacing: 0.06em;
   text-transform: uppercase;
-  color: #75576e;
+  color: #7a5a90;
   margin-bottom: 0.875em;
 }
 .reflection-quote {
@@ -279,10 +268,10 @@ body.visible { opacity: 1; }
   font-weight: 400;
   font-style: italic;
   line-height: 1.5;
-  color: #eac6ce;
+  color: #eaaffc;
 }
 
-/* ── CASE STUDY — pinned to bottom ── */
+/* ── CASE STUDY ── */
 .case-study-link {
   margin-top: auto;
   display: inline-flex;
@@ -293,9 +282,13 @@ body.visible { opacity: 1; }
   font-weight: 500;
   letter-spacing: 0.3em;
   text-transform: uppercase;
-  color: rgba(136, 129, 153, 0.44);
+  color: rgba(191, 85, 224, 0.5);
   background: none; border: none;
-  cursor: default; padding: 0;
+  cursor: pointer; padding: 0;
+  transition: color 0.25s ease;
+}
+.case-study-link:hover {
+  color: rgba(224, 242, 225, 0.9);
 }
 .case-study-arrow {
   width: 2.5em; height: 1px;
@@ -312,13 +305,9 @@ body.visible { opacity: 1; }
   transform: rotate(45deg);
 }
 
-/* ─────────────────────────────────────────
-   MOBILE  (≤ 768px)
-   Reflows to single column, no scaling.
-───────────────────────────────────────── */
+/* ── MOBILE ≤ 1000px ── */
 @media (max-width: 1000px) {
   html { overflow-y: auto; background-attachment: fixed; }
-
   body { overflow: visible; height: auto; }
 
   #left-canvas {
@@ -332,7 +321,6 @@ body.visible { opacity: 1; }
     height: 100svh;
     min-height: unset;
     padding: 72px 24px 32px;
-    justify-content: center;
     justify-content: center;
   }
 
@@ -348,7 +336,6 @@ body.visible { opacity: 1; }
 
   .artifact-label { font-size: 13px; letter-spacing: 0.28em; }
 
-  /* Right panel: unstick, horizontal 3-column grid */
   .info-panel {
     position: static;
     width: 100%;
@@ -363,12 +350,10 @@ body.visible { opacity: 1; }
     align-items: start;
   }
 
-  /* Column 1: badge → title → desc */
   .zone-badge        { grid-column: 1; grid-row: 1; margin-bottom: 0.75em; }
   .project-title     { grid-column: 1; grid-row: 2; font-size: 2em; margin-bottom: 0.75em; }
   .project-desc      { grid-column: 1; grid-row: 3; font-size: 1em; line-height: 1.8; margin-bottom: 0; }
 
-  /* Column 2: details label → meta table */
   .meta-divider      { display: none; }
   .details-label     {
     display: block;
@@ -376,15 +361,131 @@ body.visible { opacity: 1; }
     font-family: 'DM Sans', sans-serif;
     font-size: 1em; font-weight: 500;
     letter-spacing: 0.06em; text-transform: uppercase;
-    color: #75576e; margin-bottom: 0.75em;
+    color: #7a5a90; margin-bottom: 0.75em;
   }
   .meta-table        { grid-column: 2; grid-row: 2 / 4; margin-bottom: 0; gap: 0.6em; }
   .meta-label, .meta-value { font-size: 1em; }
 
-  /* Column 3: reflection → quote → case study */
   .reflection-label  { grid-column: 3; grid-row: 1; margin-bottom: 0.75em; font-size: 1em; }
   .reflection-quote  { grid-column: 3; grid-row: 2; font-size: 1.25em; }
-  .case-study-link   { grid-column: 3; grid-row: 3; margin-top: auto; align-self: end; font-size: 1.1em; }
+}
+
+/* ══ MOBILE (≤520px) — single column stack ══════════════════ */
+@media (max-width: 520px) {
+
+  .left-area {
+    padding: 56px 20px 20px;
+    height: auto;
+    min-height: 100svh;
+  }
+
+  /* Hide iframe, show placeholder image on mobile */
+  .artifact-card iframe { display: none; }
+  .mob-placeholder { display: block; width: 100%; height: 100%; }
+  .mob-tool-link {
+    display: block;
+    margin-bottom: 10px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 11px;
+    font-weight: 400;
+    font-style: italic;
+    letter-spacing: 0.03em;
+    color: rgba(191,85,224,0.6);
+  }
+
+  .artifact-card {
+    max-width: calc(100vw - 40px);
+    width: 100%;
+    aspect-ratio: 822 / 659;
+    height: auto;
+    max-height: 60svh;
+  }
+
+  /* Info panel: flex column, no grid */
+  .info-panel {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    padding: 32px 20px 44px;
+    font-size: 12px;
+  }
+
+  /* Reset all grid placements */
+  .zone-badge, .project-title, .project-desc,
+  .meta-divider, .details-label, .meta-table,
+  .reflection-label, .reflection-quote {
+    grid-column: unset;
+    grid-row: unset;
+    margin: 0;
+  }
+
+  /* Title: one line — scale to fit, no forced break */
+  .project-title {
+    font-size: clamp(1em, 3.8vw, 1.4em);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    line-height: 1.15;
+  }
+
+  .project-desc  { font-size: 1em; line-height: 1.75; }
+
+  .meta-divider  { display: none; }
+  .details-label { display: block; }
+
+  /* Meta rows: label left, value right */
+  .meta-table { gap: 0.5em; width: 100%; }
+  .meta-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    width: 100%;
+    gap: 0.75em;
+  }
+  .meta-value { text-align: right; flex-shrink: 0; }
+
+  .reflection-quote { font-size: 1.1em; }
+
+  .nav-back { top: 16px; left: 16px; }
+}
+
+/* ── STUDIO CRUMB ── */
+.studio-crumb {
+  position: absolute;
+  bottom: 4px;
+  left: 50%;
+  transform: translateX(-50%) translateY(8px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+  color: rgba(210,195,172,0.55);
+  transition: color 0.3s ease,
+              opacity 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94) 0.12s,
+              transform 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94) 0.12s;
+  user-select: none;
+  opacity: 0;
+  z-index: 5;
+}
+.studio-crumb:hover { color: rgba(210,195,172,0.9); }
+body.visible .studio-crumb {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}
+@keyframes bookFloat {
+  0%, 100% { transform: translateY(0) rotate(0deg); }
+  50%       { transform: translateY(-3px) rotate(0.5deg); }
+}
+.crumb-book {
+  animation: bookFloat 4s ease-in-out infinite;
+}
+.crumb-text {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 7px;
+  font-weight: 300;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
 }
 
 /* ── SKIP LINK ── */
@@ -397,7 +498,7 @@ body.visible { opacity: 1; }
   overflow: hidden;
   font-family: 'DM Sans', sans-serif;
   font-size: 12px;
-  color: #eac6ce;
+  color: #eaaffc;
   background: rgba(11, 28, 38, 0.95);
   padding: 10px 18px;
   border-radius: 6px;
@@ -414,7 +515,7 @@ body.visible { opacity: 1; }
 
 /* ── FOCUS STYLES ── */
 :focus-visible {
-  outline: 2px solid #eac6ce;
+  outline: 2px solid #eaaffc;
   outline-offset: 3px;
 }
 
@@ -426,40 +527,67 @@ body.visible { opacity: 1; }
     transition-duration: 0.01ms !important;
   }
 }
+
+/* ── HIGH CONTRAST ── */
+@media (prefers-contrast: more) {
+  .nav-back { border-color: rgba(255, 255, 255, 0.5); color: rgba(224, 242, 225, 1); }
+  .case-study-link { filter: brightness(1.5); }
+  .meta-label { filter: brightness(1.3); }
+  .artifact-card { border-color: rgba(255, 255, 255, 0.4); }
+  .studio-crumb { color: rgba(224, 242, 225, 0.85); }
+}
 </style>
 </head>
 <body>
+
 <a href="#main-content" class="skip-link">Skip to content</a>
 
 <div id="page-exit" aria-hidden="true"></div>
 
 <div class="wordmark" aria-hidden="true">Amber Grey</div>
-<button class="nav-back" onclick="navigateTo('level-2-perspective.html')">
+<nav aria-label="Page navigation">
+<button class="nav-back" aria-label="Back to Sense Making" onclick="navigateTo('sensemaking.html')">
   <span class="nav-back-arrow" aria-hidden="true"></span>
-  Perspectives
+  Sense Making
 </button>
+</nav>
 
-<!-- Left canvas: scales to fit space beside the fixed right panel -->
+<!-- Left canvas -->
 <div id="left-canvas">
   <div class="left-area">
     <div class="card-section">
-      <div class="artifact-card"></div>
-      <div class="carousel-dots">
-        <span class="dot active"></span>
-        <span class="dot"></span>
-        <span class="dot"></span>
+      <p class="mob-tool-link">Open on desktop for full interactive experience</p>
+      <div class="artifact-card">
+        <iframe src="A Tools Folder/zoo-economy.html" title="Zoo Economy Interactive Map" loading="lazy"></iframe>
+        <div class="mob-placeholder">
+          <img src="A Tools Folder/zoo-assets/default.webp" alt="Tracing the Zoo Economy — Interactive funding map showing conservation spending flows">
+        </div>
       </div>
-      <div class="artifact-label">Prototype / Artifact</div>
+      <div class="artifact-label">Prototype / Interactive System</div>
     </div>
+    <div class="studio-crumb" role="button" tabindex="0" aria-label="Go to Studio portfolio" onclick="navigateTo('studio-portfolio.html')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();navigateTo('studio-portfolio.html')}">
+  <svg class="crumb-book" aria-hidden="true" width="34" height="26" viewBox="0 0 34 26" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M17 4 C13 3 7 2 2 4 L2 24 C7 22 13 23 17 24Z" stroke="currentColor" stroke-width="0.75"/>
+    <path d="M17 4 C21 3 27 2 32 4 L32 24 C27 22 21 23 17 24Z" stroke="currentColor" stroke-width="0.75"/>
+    <path d="M17 4 L17 24" stroke="currentColor" stroke-width="0.5" opacity="0.45"/>
+    <path d="M5 9 L13 9" stroke="currentColor" stroke-width="0.4" stroke-linecap="round" opacity="0.45"/>
+    <path d="M5 13 L13 13" stroke="currentColor" stroke-width="0.4" stroke-linecap="round" opacity="0.38"/>
+    <path d="M5 17 L11 17" stroke="currentColor" stroke-width="0.4" stroke-linecap="round" opacity="0.3"/>
+    <path d="M21 9 L29 9" stroke="currentColor" stroke-width="0.4" stroke-linecap="round" opacity="0.45"/>
+    <path d="M21 13 L29 13" stroke="currentColor" stroke-width="0.4" stroke-linecap="round" opacity="0.38"/>
+    <path d="M21 17 L27 17" stroke="currentColor" stroke-width="0.4" stroke-linecap="round" opacity="0.3"/>
+  </svg>
+  <span class="crumb-text">Studio</span>
+</div>
   </div>
 </div>
 
 <!-- Right panel -->
 <main id="main-content">
 <div class="info-panel">
-  <div class="zone-badge">Perspectives</div>
-  <h1 class="project-title">What gets shown,<br>what gets hidden</h1>
-  <p class="project-desc">A framework for mapping transparency decisions — where visibility is a choice, not a default</p>
+  <div class="zone-badge">Sense Making</div>
+  <h1 class="project-title">Tracing the <br>zoo economy</h1>
+  <p class="project-desc">Revealing the gap between institutional narratives and actual conservation giving.</p>
 
   <div class="meta-divider"></div>
   <div class="details-label">Details</div>
@@ -467,51 +595,51 @@ body.visible { opacity: 1; }
   <div class="meta-table">
     <div class="meta-row">
       <span class="meta-label">Type</span>
-      <span class="meta-value">Framework</span>
+      <span class="meta-value">Interactive System</span>
     </div>
     <div class="meta-row">
       <span class="meta-label">Year</span>
-      <span class="meta-value">2024</span>
+      <span class="meta-value">2025</span>
     </div>
     <div class="meta-row">
       <span class="meta-label">Methods</span>
-      <span class="meta-value">Research, Design</span>
+      <span class="meta-value">Systems Mapping</span>
+    </div>
+    <div class="meta-row">
+      <span class="meta-label">Context</span>
+      <span class="meta-value">Dallas Zoo · Rewilded</span>
     </div>
   </div>
 
   <div class="reflection-label">What I Wanted to Show</div>
-  <p class="reflection-quote">That transparency is always a negotiation, never a given.</p>
+  <p class="reflection-quote">Conservation funding is easier to announce than to trace.</p>
 
-  <div class="case-study-link">
+  <button class="case-study-link" aria-label="View case study" onclick="navigateTo('case-study-rewilded.html?from=zoo')">
     Case Study
     <span class="case-study-arrow" aria-hidden="true"></span>
-  </div>
+  </button>
 </div>
 </main>
 
 <script>
 'use strict';
 
-const LEFT_W   = 1020; // designed width of left canvas
-const DESIGN_H = 900;  // designed height
-const PANEL_W  = 380;  // right panel width
+const LEFT_W    = 1020;
+const DESIGN_H  = 900;
+const PANEL_W   = 380;
 const MOBILE_BP = 1000;
 
 function fitToViewport() {
   if (window.innerWidth <= MOBILE_BP) return;
-  const availW = window.innerWidth - PANEL_W;
-  const scale  = Math.min(availW / LEFT_W, window.innerHeight / DESIGN_H);
-
-  // Left canvas: centered in available space
+  const availW  = window.innerWidth - PANEL_W;
+  const scale   = Math.min(availW / LEFT_W, window.innerHeight / DESIGN_H);
   const offsetX = Math.max(0, (availW - LEFT_W * scale) / 2);
   const offsetY = Math.max(0, (window.innerHeight - DESIGN_H * scale) / 2);
   document.getElementById('left-canvas').style.transform =
     `translate(${offsetX}px, ${offsetY}px) scale(${scale})`;
-
 }
 
 fitToViewport();
-
 window.addEventListener('resize', fitToViewport);
 
 function navigateTo(url) {
@@ -524,6 +652,12 @@ function navigateTo(url) {
   if (panel) {
     panel.style.transition = 'opacity 0.28s ease-in';
     panel.style.opacity = '0';
+  }
+  const crumb = document.querySelector('.studio-crumb');
+  if (crumb) {
+    crumb.style.transition = 'opacity 0.2s ease-in, transform 0.2s ease-in';
+    crumb.style.opacity = '0';
+    crumb.style.transform = 'translateX(-50%) translateY(-6px)';
   }
   const exit = document.getElementById('page-exit');
   setTimeout(() => { exit.classList.add('active'); }, 200);

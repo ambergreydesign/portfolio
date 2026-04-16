@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Rewilded — Amber Grey</title>
+<title>HapTurn — Amber Grey</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,600;1,400;1,500&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
@@ -14,9 +14,9 @@
 html {
   width: 100%; height: 100%;
   overflow: hidden;
-  background-color: #0b1c26;
+  background-color: #060f0e;
   background-image:
-    linear-gradient(rgba(31, 15, 56, 0.5), rgba(31, 15, 56, 0.5)),
+    linear-gradient(rgba(6, 15, 14, 0.55), rgba(6, 15, 14, 0.55)),
     url('Studio_Edited.webp');
   background-size: cover;
   background-position: center top;
@@ -35,7 +35,7 @@ body.visible { opacity: 1; }
 /* ── PAGE EXIT ── */
 #page-exit {
   position: fixed; inset: 0;
-  background: #0b1c26;
+  background: #060f0e;
   opacity: 0; pointer-events: none;
   transition: opacity 0.28s ease-in;
   z-index: 9999;
@@ -75,7 +75,7 @@ body.visible { opacity: 1; }
   border-radius: 100px;
   padding: 9px 18px 9px 14px;
   cursor: pointer;
-  color: rgba(200, 185, 165, 0.75);
+  color: rgba(224, 242, 241, 0.75);
   font-family: 'DM Sans', sans-serif;
   font-size: 10px;
   font-weight: 400;
@@ -86,7 +86,7 @@ body.visible { opacity: 1; }
 }
 .nav-back:hover {
   background: rgba(255, 255, 255, 0.11);
-  color: rgba(200, 185, 165, 1);
+  color: rgba(224, 242, 241, 1);
   border-color: rgba(255, 255, 255, 0.18);
 }
 .nav-back-arrow {
@@ -133,6 +133,22 @@ body.visible { opacity: 1; }
   border-radius: 13px;
 }
 
+/* Placeholder shown when no iframe src is set */
+.artifact-placeholder {
+  width: 100%; height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  background: linear-gradient(160deg, rgba(31,15,56,0.6), rgba(11,28,38,0.8));
+  color: rgba(200,185,165,0.35);
+  font-family: 'DM Sans', sans-serif;
+  font-size: 11px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+}
+
 /* ── ARTIFACT LABEL ── */
 .artifact-label {
   font-family: 'DM Sans', sans-serif;
@@ -140,7 +156,7 @@ body.visible { opacity: 1; }
   font-weight: 500;
   letter-spacing: 0.3em;
   text-transform: uppercase;
-  color: #9ec48a;
+  color: #5eead4;
   white-space: nowrap;
 }
 
@@ -152,7 +168,7 @@ body.visible { opacity: 1; }
   font-size: 13px;
   font-weight: 300;
   letter-spacing: 0.2em;
-  color: rgba(210, 195, 172, 0.18);
+  color: rgba(224, 242, 241, 0.18);
   pointer-events: none;
   z-index: 10;
 }
@@ -162,7 +178,7 @@ body.visible { opacity: 1; }
   position: fixed;
   right: 0; top: 0; bottom: 0;
   width: 380px;
-  background: rgba(23, 18, 35, 0.8);
+  background: rgba(6, 15, 14, 0.88);
   overflow: hidden;
   z-index: 10;
   font-size: clamp(10px, 1.78vh, 16px);
@@ -178,7 +194,7 @@ body.visible { opacity: 1; }
   font-weight: 500;
   letter-spacing: 0.3em;
   text-transform: uppercase;
-  color: #b8a0d8;
+  color: #5eead4;
   margin-bottom: 1.5em;
 }
 
@@ -188,7 +204,7 @@ body.visible { opacity: 1; }
   font-weight: 600;
   font-style: normal;
   line-height: 1.1;
-  color: #c2dba8;
+  color: #5eead4;
   margin-bottom: 1.25em;
 }
 
@@ -198,7 +214,7 @@ body.visible { opacity: 1; }
   font-weight: 500;
   line-height: 1.95;
   letter-spacing: 0.05em;
-  color: #bca6a1;
+  color: #a8c8c4;
   margin-bottom: 1.75em;
 }
 
@@ -220,14 +236,14 @@ body.visible { opacity: 1; }
   font-weight: 500;
   letter-spacing: 0.06em;
   text-transform: uppercase;
-  color: #75576e;
+  color: #4a7a74;
 }
 .meta-value {
   font-family: 'DM Sans', sans-serif;
   font-size: 1.25em;
   font-weight: 500;
   letter-spacing: 0.06em;
-  color: #cca190;
+  color: #8ac0b8;
   text-align: right;
 }
 
@@ -241,7 +257,7 @@ body.visible { opacity: 1; }
 .meta-divider {
   width: 100%;
   height: 1px;
-  background: rgba(160, 195, 130, 0.15);
+  background: rgba(94, 234, 212, 0.15);
   margin-bottom: 0.625em;
 }
 
@@ -252,7 +268,7 @@ body.visible { opacity: 1; }
   font-weight: 500;
   letter-spacing: 0.06em;
   text-transform: uppercase;
-  color: #75576e;
+  color: #4a7a74;
   margin-bottom: 0.875em;
 }
 .reflection-quote {
@@ -261,7 +277,7 @@ body.visible { opacity: 1; }
   font-weight: 400;
   font-style: italic;
   line-height: 1.5;
-  color: #c2dba8;
+  color: #5eead4;
 }
 
 /* ── CASE STUDY ── */
@@ -275,13 +291,13 @@ body.visible { opacity: 1; }
   font-weight: 500;
   letter-spacing: 0.3em;
   text-transform: uppercase;
-  color: rgba(140, 190, 115, 0.5);
+  color: rgba(94, 234, 212, 0.45);
   background: none; border: none;
   cursor: pointer; padding: 0;
   transition: color 0.25s ease;
 }
 .case-study-link:hover {
-  color: rgba(180, 225, 155, 0.9);
+  color: rgba(94, 234, 212, 0.9);
 }
 .case-study-arrow {
   width: 2.5em; height: 1px;
@@ -354,7 +370,7 @@ body.visible { opacity: 1; }
     font-family: 'DM Sans', sans-serif;
     font-size: 1em; font-weight: 500;
     letter-spacing: 0.06em; text-transform: uppercase;
-    color: #75576e; margin-bottom: 0.75em;
+    color: #4a7a74; margin-bottom: 0.75em;
   }
   .meta-table        { grid-column: 2; grid-row: 2 / 4; margin-bottom: 0; gap: 0.6em; }
   .meta-label, .meta-value { font-size: 1em; }
@@ -380,7 +396,7 @@ body.visible { opacity: 1; }
     font-weight: 400;
     font-style: italic;
     letter-spacing: 0.03em;
-    color: rgba(140,190,115,0.5);
+    color: rgba(94,234,212,0.45);
   }
 
   .artifact-card {
@@ -413,6 +429,7 @@ body.visible { opacity: 1; }
     text-overflow: ellipsis;
     line-height: 1.15;
   }
+  .project-title br { display: none; }
 
   .project-desc  { font-size: 1em; line-height: 1.75; }
   .meta-divider  { display: none; }
@@ -429,46 +446,6 @@ body.visible { opacity: 1; }
   .meta-value { text-align: right; flex-shrink: 0; }
   .reflection-quote { font-size: 1.1em; }
   .nav-back { top: 16px; left: 16px; }
-}
-
-/* ── SKIP LINK ── */
-.skip-link {
-  position: absolute;
-  left: -9999px;
-  top: auto;
-  width: 1px;
-  height: 1px;
-  overflow: hidden;
-  font-family: 'DM Sans', sans-serif;
-  font-size: 12px;
-  color: #c2dba8;
-  background: rgba(11, 28, 38, 0.95);
-  padding: 10px 18px;
-  border-radius: 6px;
-  z-index: 200;
-  text-decoration: none;
-}
-.skip-link:focus {
-  position: fixed;
-  left: 16px;
-  top: 16px;
-  width: auto;
-  height: auto;
-}
-
-/* ── FOCUS STYLES ── */
-:focus-visible {
-  outline: 2px solid #9ec48a;
-  outline-offset: 3px;
-}
-
-/* ── REDUCED MOTION ── */
-@media (prefers-reduced-motion: reduce) {
-  *, *::before, *::after {
-    animation-duration: 0.01ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: 0.01ms !important;
-  }
 }
 
 /* ── STUDIO CRUMB ── */
@@ -495,14 +472,17 @@ body.visible .studio-crumb {
   opacity: 1;
   transform: translateX(-50%) translateY(0);
 }
-@keyframes featherSway {
-  0%, 100% { transform: rotate(-4deg); }
-  50%       { transform: rotate(4deg); }
+@keyframes flameFlicker {
+  0%, 100% { transform: scaleX(1)    skewX(0deg);  }
+  20%       { transform: scaleX(0.88) skewX(-4deg); }
+  40%       { transform: scaleX(1.08) skewX(3deg);  }
+  65%       { transform: scaleX(0.92) skewX(-2deg); }
+  80%       { transform: scaleX(1.04) skewX(2deg);  }
 }
-.crumb-feather {
+.crumb-flame {
   transform-box: fill-box;
   transform-origin: 50% 100%;
-  animation: featherSway 5s ease-in-out infinite;
+  animation: flameFlicker 1.8s ease-in-out infinite;
 }
 .crumb-text {
   font-family: 'DM Sans', sans-serif;
@@ -512,26 +492,58 @@ body.visible .studio-crumb {
   text-transform: uppercase;
 }
 
+/* ── SKIP LINK ── */
+.skip-link {
+  position: absolute;
+  top: -100%;
+  left: 16px;
+  background: #5eead4;
+  color: #060f0e;
+  padding: 8px 16px;
+  border-radius: 0 0 6px 6px;
+  font-size: 13px;
+  font-weight: 500;
+  z-index: 10000;
+  text-decoration: none;
+  transition: top 0.2s;
+}
+.skip-link:focus { top: 0; }
+
+/* ── FOCUS STYLES ── */
+:focus-visible {
+  outline: 2px solid #5eead4;
+  outline-offset: 3px;
+}
+
+/* ── REDUCED MOTION ── */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
 /* ── HIGH CONTRAST ── */
 @media (prefers-contrast: more) {
-  .nav-back { border-color: rgba(255, 255, 255, 0.5); color: rgba(200, 185, 165, 1); }
-  .case-study-link { filter: brightness(1.5); }
-  .meta-label { filter: brightness(1.3); }
+  .nav-back { border-color: rgba(255, 255, 255, 0.5); color: rgba(224, 242, 241, 1); }
+  .case-study-link { color: rgba(94, 234, 212, 0.95); }
+  .meta-label { color: #4a7a74; }
   .artifact-card { border-color: rgba(255, 255, 255, 0.4); }
-  .studio-crumb { color: rgba(210, 195, 172, 0.85); }
+  .studio-crumb { color: rgba(224, 242, 241, 0.85); }
 }
 </style>
 </head>
 <body>
 
-<a href="#main-content" class="skip-link">Skip to content</a>
+<a href="#main-content" class="skip-link">Skip to main content</a>
 <div id="page-exit" aria-hidden="true"></div>
 
 <div class="wordmark" aria-hidden="true">Amber Grey</div>
 <nav aria-label="Page navigation">
-<button class="nav-back" aria-label="Back to Sense Making" onclick="navigateTo('level-2-sensemaking.html')">
+<button class="nav-back" aria-label="Back to Interactions" onclick="navigateTo('interactions.html')">
   <span class="nav-back-arrow" aria-hidden="true"></span>
-  Sense Making
+  Interactions
 </button>
 </nav>
 
@@ -539,32 +551,20 @@ body.visible .studio-crumb {
 <div id="left-canvas">
   <div class="left-area">
     <div class="card-section">
-      <p class="mob-tool-link">Open on desktop for full tool experience</p>
+      <p class="mob-tool-link">Open on desktop for full prototype experience</p>
       <div class="artifact-card">
-        <iframe src="prototype-gwi-visualizer.html" title="GWI Greenwashing Index" loading="lazy"></iframe>
+        <iframe src="prototype-hapturn.html" title="HapTurn Haptic Navigation Prototype" loading="lazy"></iframe>
       </div>
-      <div class="artifact-label">GWI Visualizer / Research Tool</div>
+      <div class="artifact-label">Prototype / Haptic Navigation</div>
     </div>
     <div class="studio-crumb" role="button" tabindex="0" aria-label="Go to Studio portfolio" onclick="navigateTo('studio-portfolio.html')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();navigateTo('studio-portfolio.html')}">
-  <svg class="crumb-feather" width="24" height="56" viewBox="0 0 24 56" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-    <path d="M10 56 C10.5 50 11 45 11 40" stroke="currentColor" stroke-width="0.85" stroke-linecap="round"/>
-    <path d="M11 40 C11.5 28 12 16 11 4" stroke="currentColor" stroke-width="0.55" stroke-linecap="round"/>
-    <path d="M11 37 C8 35 5 34 2 34" stroke="currentColor" stroke-width="0.5" stroke-linecap="round"/>
-    <path d="M11.5 33 C8 31 4 29 1 30" stroke="currentColor" stroke-width="0.5" stroke-linecap="round"/>
-    <path d="M11.5 29 C7 27 3 25 1 25.5" stroke="currentColor" stroke-width="0.5" stroke-linecap="round"/>
-    <path d="M11.5 25 C7 23 4 21 2 21.5" stroke="currentColor" stroke-width="0.5" stroke-linecap="round"/>
-    <path d="M12 21 C8 19 5 17 3 17.5" stroke="currentColor" stroke-width="0.45" stroke-linecap="round"/>
-    <path d="M12 17 C9 15 7 13 5 13.5" stroke="currentColor" stroke-width="0.4" stroke-linecap="round"/>
-    <path d="M11.5 13 C9.5 11 8 10 6.5 10" stroke="currentColor" stroke-width="0.35" stroke-linecap="round"/>
-    <path d="M11 9 C10 8 9 7 8 7" stroke="currentColor" stroke-width="0.3" stroke-linecap="round"/>
-    <path d="M11 37 C14 35 17 34 20 34.5" stroke="currentColor" stroke-width="0.5" stroke-linecap="round"/>
-    <path d="M11.5 33 C15 31 18 29 22 29.5" stroke="currentColor" stroke-width="0.5" stroke-linecap="round"/>
-    <path d="M11.5 29 C15.5 27 19 25 22 25.5" stroke="currentColor" stroke-width="0.5" stroke-linecap="round"/>
-    <path d="M11.5 25 C15 23 18 21 21 21.5" stroke="currentColor" stroke-width="0.5" stroke-linecap="round"/>
-    <path d="M12 21 C15 19 17 17 19 17.5" stroke="currentColor" stroke-width="0.45" stroke-linecap="round"/>
-    <path d="M12 17 C14 15 16 13 18 13.5" stroke="currentColor" stroke-width="0.4" stroke-linecap="round"/>
-    <path d="M11.5 13 C13.5 11 15 10 16.5 10" stroke="currentColor" stroke-width="0.35" stroke-linecap="round"/>
-    <path d="M11 9 C12 8 13 7 14 7" stroke="currentColor" stroke-width="0.3" stroke-linecap="round"/>
+  <svg width="16" height="46" viewBox="0 0 16 46" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+    <path class="crumb-flame" d="M8 1 C6 4 5 7 6 9 C6.5 10.5 7 11 8 11 C9 11 9.5 10.5 10 9 C11 7 10 4 8 1Z" stroke="currentColor" stroke-width="0.75"/>
+    <line x1="8" y1="11" x2="8" y2="14" stroke="currentColor" stroke-width="0.6" stroke-linecap="round"/>
+    <rect x="4" y="14" width="8" height="27" rx="1" stroke="currentColor" stroke-width="0.75"/>
+    <path d="M4 19 C3 21 3 23 4 24" stroke="currentColor" stroke-width="0.4" stroke-linecap="round" opacity="0.4"/>
+    <path d="M2 41 L14 41" stroke="currentColor" stroke-width="0.5" stroke-linecap="round" opacity="0.45"/>
+    <path d="M1 44 L15 44" stroke="currentColor" stroke-width="0.45" stroke-linecap="round" opacity="0.35"/>
   </svg>
   <span class="crumb-text">Studio</span>
 </div>
@@ -574,9 +574,9 @@ body.visible .studio-crumb {
 <!-- Right panel -->
 <main id="main-content">
 <div class="info-panel">
-  <div class="zone-badge">Sense Making</div>
-  <h1 class="project-title">What the<br>gaps show</h1>
-  <p class="project-desc">An interactive tool mapping the gap between what zoos claim and what they fund, built from IRS 990 data across 114 AZA-accredited institutions.</p>
+  <div class="zone-badge">Interactions</div>
+  <h1 class="project-title">Turn signals<br>you feel</h1>
+  <p class="project-desc">A haptic navigation prototype that translates directional cues into motor patterns on a steering wheel, so attention stays on the road.</p>
 
   <div class="meta-divider"></div>
   <div class="details-label">Details</div>
@@ -584,7 +584,7 @@ body.visible .studio-crumb {
   <div class="meta-table">
     <div class="meta-row">
       <span class="meta-label">Type</span>
-      <span class="meta-value">Research GPT</span>
+      <span class="meta-value">Prototype</span>
     </div>
     <div class="meta-row">
       <span class="meta-label">Year</span>
@@ -592,18 +592,18 @@ body.visible .studio-crumb {
     </div>
     <div class="meta-row">
       <span class="meta-label">Methods</span>
-      <span class="meta-value">Data Analysis</span>
+      <span class="meta-value">Interaction Design</span>
     </div>
     <div class="meta-row">
-      <span class="meta-label">Data</span>
-      <span class="meta-value">IRS 990 · ProPublica</span>
+      <span class="meta-label">Context</span>
+      <span class="meta-value">HapTurn · Navigation</span>
     </div>
   </div>
 
   <div class="reflection-label">What I Wanted to Show</div>
-  <p class="reflection-quote">The gap between what's said and what's done is&nbsp;measurable.</p>
+  <p class="reflection-quote">Attention follows sensation. Feeling frees attention for what matters.</p>
 
-  <button class="case-study-link" aria-label="View case study" onclick="navigateTo('case-study-rewilded.html?from=rewilded')">
+  <button class="case-study-link" aria-label="View case study for HapTurn" onclick="navigateTo('case-study-hapturn.html')">
     Case Study
     <span class="case-study-arrow" aria-hidden="true"></span>
   </button>

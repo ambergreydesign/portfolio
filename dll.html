@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Tracing the Zoo Economy — Amber Grey</title>
+<title>Daily Living Labs — Amber Grey</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,600;1,400;1,500&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
@@ -14,9 +14,9 @@
 html {
   width: 100%; height: 100%;
   overflow: hidden;
-  background-color: #080e06;
+  background-color: #0b1c26;
   background-image:
-    linear-gradient(rgba(8, 14, 6, 0.6), rgba(8, 14, 6, 0.6)),
+    linear-gradient(rgba(31, 15, 56, 0.5), rgba(31, 15, 56, 0.5)),
     url('Studio_Edited.webp');
   background-size: cover;
   background-position: center top;
@@ -35,7 +35,7 @@ body.visible { opacity: 1; }
 /* ── PAGE EXIT ── */
 #page-exit {
   position: fixed; inset: 0;
-  background: #080e06;
+  background: #0b1c26;
   opacity: 0; pointer-events: none;
   transition: opacity 0.28s ease-in;
   z-index: 9999;
@@ -75,7 +75,7 @@ body.visible { opacity: 1; }
   border-radius: 100px;
   padding: 9px 18px 9px 14px;
   cursor: pointer;
-  color: rgba(224, 242, 225, 0.75);
+  color: rgba(200, 185, 165, 0.75);
   font-family: 'DM Sans', sans-serif;
   font-size: 10px;
   font-weight: 400;
@@ -86,7 +86,7 @@ body.visible { opacity: 1; }
 }
 .nav-back:hover {
   background: rgba(255, 255, 255, 0.11);
-  color: rgba(224, 242, 225, 1);
+  color: rgba(200, 185, 165, 1);
   border-color: rgba(255, 255, 255, 0.18);
 }
 .nav-back-arrow {
@@ -140,7 +140,7 @@ body.visible { opacity: 1; }
   font-weight: 500;
   letter-spacing: 0.3em;
   text-transform: uppercase;
-  color: #eaaffc;
+  color: #dec7f8;
   white-space: nowrap;
 }
 
@@ -152,7 +152,7 @@ body.visible { opacity: 1; }
   font-size: 13px;
   font-weight: 300;
   letter-spacing: 0.2em;
-  color: rgba(224, 242, 225, 0.18);
+  color: rgba(210, 195, 172, 0.18);
   pointer-events: none;
   z-index: 10;
 }
@@ -162,7 +162,7 @@ body.visible { opacity: 1; }
   position: fixed;
   right: 0; top: 0; bottom: 0;
   width: 380px;
-  background: rgba(10, 18, 8, 0.88);
+  background: rgba(23, 18, 35, 0.8);
   overflow: hidden;
   z-index: 10;
   font-size: clamp(10px, 1.78vh, 16px);
@@ -178,7 +178,7 @@ body.visible { opacity: 1; }
   font-weight: 500;
   letter-spacing: 0.3em;
   text-transform: uppercase;
-  color: #bf55e0;
+  color: #dca25b;
   margin-bottom: 1.5em;
 }
 
@@ -188,7 +188,7 @@ body.visible { opacity: 1; }
   font-weight: 600;
   font-style: normal;
   line-height: 1.1;
-  color: #eaaffc;
+  color: #eac6ce;
   margin-bottom: 1.25em;
 }
 
@@ -198,7 +198,7 @@ body.visible { opacity: 1; }
   font-weight: 500;
   line-height: 1.95;
   letter-spacing: 0.05em;
-  color: #b8c8b0;
+  color: #bca6a1;
   margin-bottom: 1.75em;
 }
 
@@ -220,26 +220,19 @@ body.visible { opacity: 1; }
   font-weight: 500;
   letter-spacing: 0.06em;
   text-transform: uppercase;
-  color: #7a5a90;
+  color: #75576e;
 }
 .meta-value {
   font-family: 'DM Sans', sans-serif;
   font-size: 1.25em;
   font-weight: 500;
   letter-spacing: 0.06em;
-  color: #c0b0d0;
+  color: #cca190;
   text-align: right;
 }
 
 /* mobile-only tool disclaimer — hidden on desktop */
 .mob-tool-link { display: none; }
-
-/* mobile placeholder image — hidden on desktop, shown instead of iframe */
-.mob-placeholder { display: none; }
-.mob-placeholder img {
-  width: 100%; height: 100%;
-  object-fit: cover; border-radius: 13px;
-}
 
 /* hidden on desktop, shown in mobile stack */
 .details-label { display: none; }
@@ -248,7 +241,7 @@ body.visible { opacity: 1; }
 .meta-divider {
   width: 100%;
   height: 1px;
-  background: rgba(191, 85, 224, 0.18);
+  background: rgba(180, 150, 160, 0.2);
   margin-bottom: 0.625em;
 }
 
@@ -259,7 +252,7 @@ body.visible { opacity: 1; }
   font-weight: 500;
   letter-spacing: 0.06em;
   text-transform: uppercase;
-  color: #7a5a90;
+  color: #75576e;
   margin-bottom: 0.875em;
 }
 .reflection-quote {
@@ -268,7 +261,7 @@ body.visible { opacity: 1; }
   font-weight: 400;
   font-style: italic;
   line-height: 1.5;
-  color: #eaaffc;
+  color: #eac6ce;
 }
 
 /* ── CASE STUDY ── */
@@ -282,13 +275,13 @@ body.visible { opacity: 1; }
   font-weight: 500;
   letter-spacing: 0.3em;
   text-transform: uppercase;
-  color: rgba(191, 85, 224, 0.5);
+  color: rgba(136, 129, 153, 0.6);
   background: none; border: none;
   cursor: pointer; padding: 0;
   transition: color 0.25s ease;
 }
 .case-study-link:hover {
-  color: rgba(224, 242, 225, 0.9);
+  color: rgba(200, 185, 165, 0.9);
 }
 .case-study-arrow {
   width: 2.5em; height: 1px;
@@ -361,13 +354,14 @@ body.visible { opacity: 1; }
     font-family: 'DM Sans', sans-serif;
     font-size: 1em; font-weight: 500;
     letter-spacing: 0.06em; text-transform: uppercase;
-    color: #7a5a90; margin-bottom: 0.75em;
+    color: #75576e; margin-bottom: 0.75em;
   }
   .meta-table        { grid-column: 2; grid-row: 2 / 4; margin-bottom: 0; gap: 0.6em; }
   .meta-label, .meta-value { font-size: 1em; }
 
   .reflection-label  { grid-column: 3; grid-row: 1; margin-bottom: 0.75em; font-size: 1em; }
   .reflection-quote  { grid-column: 3; grid-row: 2; font-size: 1.25em; }
+  .case-study-link   { grid-column: 3; grid-row: 3; margin-top: auto; align-self: end; font-size: 1.1em; }
 }
 
 /* ══ MOBILE (≤520px) — single column stack ══════════════════ */
@@ -379,9 +373,6 @@ body.visible { opacity: 1; }
     min-height: 100svh;
   }
 
-  /* Hide iframe, show placeholder image on mobile */
-  .artifact-card iframe { display: none; }
-  .mob-placeholder { display: block; width: 100%; height: 100%; }
   .mob-tool-link {
     display: block;
     margin-bottom: 10px;
@@ -390,18 +381,16 @@ body.visible { opacity: 1; }
     font-weight: 400;
     font-style: italic;
     letter-spacing: 0.03em;
-    color: rgba(191,85,224,0.6);
+    color: rgba(204,161,144,0.6);
   }
 
   .artifact-card {
     max-width: calc(100vw - 40px);
     width: 100%;
-    aspect-ratio: 822 / 659;
-    height: auto;
-    max-height: 60svh;
+    aspect-ratio: unset;
+    height: 68svh;
   }
 
-  /* Info panel: flex column, no grid */
   .info-panel {
     display: flex;
     flex-direction: column;
@@ -410,16 +399,14 @@ body.visible { opacity: 1; }
     font-size: 12px;
   }
 
-  /* Reset all grid placements */
   .zone-badge, .project-title, .project-desc,
   .meta-divider, .details-label, .meta-table,
-  .reflection-label, .reflection-quote {
+  .reflection-label, .reflection-quote, .case-study-link {
     grid-column: unset;
     grid-row: unset;
     margin: 0;
   }
 
-  /* Title: one line — scale to fit, no forced break */
   .project-title {
     font-size: clamp(1em, 3.8vw, 1.4em);
     white-space: nowrap;
@@ -429,11 +416,9 @@ body.visible { opacity: 1; }
   }
 
   .project-desc  { font-size: 1em; line-height: 1.75; }
-
   .meta-divider  { display: none; }
   .details-label { display: block; }
 
-  /* Meta rows: label left, value right */
   .meta-table { gap: 0.5em; width: 100%; }
   .meta-row {
     display: flex;
@@ -443,9 +428,7 @@ body.visible { opacity: 1; }
     gap: 0.75em;
   }
   .meta-value { text-align: right; flex-shrink: 0; }
-
   .reflection-quote { font-size: 1.1em; }
-
   .nav-back { top: 16px; left: 16px; }
 }
 
@@ -473,12 +456,14 @@ body.visible .studio-crumb {
   opacity: 1;
   transform: translateX(-50%) translateY(0);
 }
-@keyframes bookFloat {
-  0%, 100% { transform: translateY(0) rotate(0deg); }
-  50%       { transform: translateY(-3px) rotate(0.5deg); }
+@keyframes plantSway {
+  0%, 100% { transform: rotate(-3deg); }
+  50%       { transform: rotate(3deg); }
 }
-.crumb-book {
-  animation: bookFloat 4s ease-in-out infinite;
+.crumb-plant {
+  transform-box: fill-box;
+  transform-origin: 50% 100%;
+  animation: plantSway 6s ease-in-out infinite;
 }
 .crumb-text {
   font-family: 'DM Sans', sans-serif;
@@ -498,7 +483,7 @@ body.visible .studio-crumb {
   overflow: hidden;
   font-family: 'DM Sans', sans-serif;
   font-size: 12px;
-  color: #eaaffc;
+  color: #eac6ce;
   background: rgba(11, 28, 38, 0.95);
   padding: 10px 18px;
   border-radius: 6px;
@@ -515,7 +500,7 @@ body.visible .studio-crumb {
 
 /* ── FOCUS STYLES ── */
 :focus-visible {
-  outline: 2px solid #eaaffc;
+  outline: 2px solid #eac6ce;
   outline-offset: 3px;
 }
 
@@ -530,25 +515,24 @@ body.visible .studio-crumb {
 
 /* ── HIGH CONTRAST ── */
 @media (prefers-contrast: more) {
-  .nav-back { border-color: rgba(255, 255, 255, 0.5); color: rgba(224, 242, 225, 1); }
+  .nav-back { border-color: rgba(255, 255, 255, 0.5); color: rgba(200, 185, 165, 1); }
   .case-study-link { filter: brightness(1.5); }
   .meta-label { filter: brightness(1.3); }
   .artifact-card { border-color: rgba(255, 255, 255, 0.4); }
-  .studio-crumb { color: rgba(224, 242, 225, 0.85); }
+  .studio-crumb { color: rgba(210, 195, 172, 0.85); }
 }
 </style>
 </head>
 <body>
-
 <a href="#main-content" class="skip-link">Skip to content</a>
 
 <div id="page-exit" aria-hidden="true"></div>
 
 <div class="wordmark" aria-hidden="true">Amber Grey</div>
 <nav aria-label="Page navigation">
-<button class="nav-back" aria-label="Back to Sense Making" onclick="navigateTo('level-2-sensemaking.html')">
+<button class="nav-back" aria-label="Back to Systems" onclick="navigateTo('systems.html')">
   <span class="nav-back-arrow" aria-hidden="true"></span>
-  Sense Making
+  Systems
 </button>
 </nav>
 
@@ -556,26 +540,20 @@ body.visible .studio-crumb {
 <div id="left-canvas">
   <div class="left-area">
     <div class="card-section">
-      <p class="mob-tool-link">Open on desktop for full interactive experience</p>
+      <p class="mob-tool-link">Open on desktop to explore the full landing page</p>
       <div class="artifact-card">
-        <iframe src="A Tools Folder/zoo-economy.html" title="Zoo Economy Interactive Map" loading="lazy"></iframe>
-        <div class="mob-placeholder">
-          <img src="A Tools Folder/zoo-assets/default.webp" alt="Tracing the Zoo Economy — Interactive funding map showing conservation spending flows">
-        </div>
+        <iframe src="prototype-daily-living-labs.html" title="Daily Living Labs" loading="lazy"></iframe>
       </div>
-      <div class="artifact-label">Prototype / Interactive System</div>
+      <div class="artifact-label">Landing · Web Design</div>
     </div>
     <div class="studio-crumb" role="button" tabindex="0" aria-label="Go to Studio portfolio" onclick="navigateTo('studio-portfolio.html')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();navigateTo('studio-portfolio.html')}">
-  <svg class="crumb-book" aria-hidden="true" width="34" height="26" viewBox="0 0 34 26" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <path d="M17 4 C13 3 7 2 2 4 L2 24 C7 22 13 23 17 24Z" stroke="currentColor" stroke-width="0.75"/>
-    <path d="M17 4 C21 3 27 2 32 4 L32 24 C27 22 21 23 17 24Z" stroke="currentColor" stroke-width="0.75"/>
-    <path d="M17 4 L17 24" stroke="currentColor" stroke-width="0.5" opacity="0.45"/>
-    <path d="M5 9 L13 9" stroke="currentColor" stroke-width="0.4" stroke-linecap="round" opacity="0.45"/>
-    <path d="M5 13 L13 13" stroke="currentColor" stroke-width="0.4" stroke-linecap="round" opacity="0.38"/>
-    <path d="M5 17 L11 17" stroke="currentColor" stroke-width="0.4" stroke-linecap="round" opacity="0.3"/>
-    <path d="M21 9 L29 9" stroke="currentColor" stroke-width="0.4" stroke-linecap="round" opacity="0.45"/>
-    <path d="M21 13 L29 13" stroke="currentColor" stroke-width="0.4" stroke-linecap="round" opacity="0.38"/>
-    <path d="M21 17 L27 17" stroke="currentColor" stroke-width="0.4" stroke-linecap="round" opacity="0.3"/>
+  <svg class="crumb-plant" width="30" aria-hidden="true" height="48" viewBox="0 0 30 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M8 47 L22 47 L24 37 L6 37Z" stroke="currentColor" stroke-width="0.75" stroke-linejoin="round"/>
+    <path d="M5 37 L25 37" stroke="currentColor" stroke-width="0.75" stroke-linecap="round"/>
+    <path d="M15 37 L15 28" stroke="currentColor" stroke-width="0.7" stroke-linecap="round"/>
+    <path d="M15 31 C9 28 5 22 7 16 C8 12 12 11 14 14 C15 16 15 24 15 31" stroke="currentColor" stroke-width="0.65" stroke-linecap="round"/>
+    <path d="M15 28 C21 25 25 19 23 13 C22 9 18 8 16 11 C15 13 15 21 15 28" stroke="currentColor" stroke-width="0.65" stroke-linecap="round"/>
+    <path d="M15 28 C12 23 12 17 15 14 C18 17 18 23 15 28" stroke="currentColor" stroke-width="0.6" stroke-linecap="round"/>
   </svg>
   <span class="crumb-text">Studio</span>
 </div>
@@ -585,9 +563,9 @@ body.visible .studio-crumb {
 <!-- Right panel -->
 <main id="main-content">
 <div class="info-panel">
-  <div class="zone-badge">Sense Making</div>
-  <h1 class="project-title">Tracing the <br>zoo economy</h1>
-  <p class="project-desc">Revealing the gap between institutional narratives and actual conservation giving.</p>
+  <div class="zone-badge">Systems</div>
+  <h1 class="project-title">A front door<br>for daily<br>independence</h1>
+  <p class="project-desc">A landing page designed to speak directly to the people who haven't asked for help yet — but need it most.</p>
 
   <div class="meta-divider"></div>
   <div class="details-label">Details</div>
@@ -595,26 +573,26 @@ body.visible .studio-crumb {
   <div class="meta-table">
     <div class="meta-row">
       <span class="meta-label">Type</span>
-      <span class="meta-value">Interactive System</span>
+      <span class="meta-value">Web Design</span>
     </div>
     <div class="meta-row">
       <span class="meta-label">Year</span>
-      <span class="meta-value">2025</span>
+      <span class="meta-value">2026</span>
     </div>
     <div class="meta-row">
       <span class="meta-label">Methods</span>
-      <span class="meta-value">Systems Mapping</span>
+      <span class="meta-value">Interaction Design</span>
     </div>
     <div class="meta-row">
       <span class="meta-label">Context</span>
-      <span class="meta-value">Dallas Zoo · Rewilded</span>
+      <span class="meta-value">Daily Living Labs</span>
     </div>
   </div>
 
   <div class="reflection-label">What I Wanted to Show</div>
-  <p class="reflection-quote">Conservation funding is easier to announce than to trace.</p>
+  <p class="reflection-quote">Most community platforms lead with features. This one leads with the moment you realize you're not alone.</p>
 
-  <button class="case-study-link" aria-label="View case study" onclick="navigateTo('case-study-rewilded.html?from=zoo')">
+  <button class="case-study-link" aria-label="View case study" onclick="navigateTo('case-study-dayli.html?from=dll')">
     Case Study
     <span class="case-study-arrow" aria-hidden="true"></span>
   </button>

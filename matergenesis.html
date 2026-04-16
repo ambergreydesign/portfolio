@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Portfolio Playground System — Amber Grey</title>
+<title>MaterGenesis — Amber Grey</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,600;1,400;1,500&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
@@ -14,9 +14,9 @@
 html {
   width: 100%; height: 100%;
   overflow: hidden;
-  background-color: #050a10;
+  background-color: #0b1c26;
   background-image:
-    linear-gradient(rgba(5, 10, 16, 0.55), rgba(5, 10, 16, 0.55)),
+    linear-gradient(rgba(31, 15, 56, 0.5), rgba(31, 15, 56, 0.5)),
     url('Studio_Edited.webp');
   background-size: cover;
   background-position: center top;
@@ -35,7 +35,7 @@ body.visible { opacity: 1; }
 /* ── PAGE EXIT ── */
 #page-exit {
   position: fixed; inset: 0;
-  background: #050a10;
+  background: #0b1c26;
   opacity: 0; pointer-events: none;
   transition: opacity 0.28s ease-in;
   z-index: 9999;
@@ -75,7 +75,7 @@ body.visible { opacity: 1; }
   border-radius: 100px;
   padding: 9px 18px 9px 14px;
   cursor: pointer;
-  color: rgba(224, 212, 192, 0.75);
+  color: rgba(200, 185, 165, 0.75);
   font-family: 'DM Sans', sans-serif;
   font-size: 10px;
   font-weight: 400;
@@ -86,7 +86,7 @@ body.visible { opacity: 1; }
 }
 .nav-back:hover {
   background: rgba(255, 255, 255, 0.11);
-  color: rgba(224, 212, 192, 1);
+  color: rgba(200, 185, 165, 1);
   border-color: rgba(255, 255, 255, 0.18);
 }
 .nav-back-arrow {
@@ -124,7 +124,6 @@ body.visible { opacity: 1; }
   overflow: hidden;
   position: relative;
 }
-
 .artifact-card iframe {
   width: 100%;
   height: 100%;
@@ -140,7 +139,7 @@ body.visible { opacity: 1; }
   font-weight: 500;
   letter-spacing: 0.3em;
   text-transform: uppercase;
-  color: #c8b898;
+  color: #dca25b;
   white-space: nowrap;
 }
 
@@ -152,7 +151,7 @@ body.visible { opacity: 1; }
   font-size: 13px;
   font-weight: 300;
   letter-spacing: 0.2em;
-  color: rgba(224, 212, 192, 0.18);
+  color: rgba(210, 195, 172, 0.18);
   pointer-events: none;
   z-index: 10;
 }
@@ -162,7 +161,7 @@ body.visible { opacity: 1; }
   position: fixed;
   right: 0; top: 0; bottom: 0;
   width: 380px;
-  background: rgba(5, 10, 16, 0.9);
+  background: rgba(23, 18, 35, 0.8);
   overflow: hidden;
   z-index: 10;
   font-size: clamp(10px, 1.78vh, 16px);
@@ -178,7 +177,7 @@ body.visible { opacity: 1; }
   font-weight: 500;
   letter-spacing: 0.3em;
   text-transform: uppercase;
-  color: #5a8a62;
+  color: #dca25b;
   margin-bottom: 1.5em;
 }
 
@@ -186,9 +185,8 @@ body.visible { opacity: 1; }
   font-family: 'Cormorant Garamond', serif;
   font-size: 3em;
   font-weight: 600;
-  font-style: normal;
   line-height: 1.1;
-  color: #c8b898;
+  color: #eac6ce;
   margin-bottom: 1.25em;
 }
 
@@ -198,7 +196,7 @@ body.visible { opacity: 1; }
   font-weight: 500;
   line-height: 1.95;
   letter-spacing: 0.05em;
-  color: #a0aa90;
+  color: #bca6a1;
   margin-bottom: 1.75em;
 }
 
@@ -220,28 +218,24 @@ body.visible { opacity: 1; }
   font-weight: 500;
   letter-spacing: 0.06em;
   text-transform: uppercase;
-  color: #4a6a50;
+  color: #75576e;
 }
 .meta-value {
   font-family: 'DM Sans', sans-serif;
   font-size: 1.25em;
   font-weight: 500;
   letter-spacing: 0.06em;
-  color: #8aaa78;
+  color: #cca190;
   text-align: right;
 }
 
-/* mobile-only tool disclaimer — hidden on desktop */
 .mob-tool-link { display: none; }
-
-/* hidden on desktop, shown in mobile stack */
-.details-label { display: none; }
+.details-label  { display: none; }
 
 /* ── DIVIDER ── */
 .meta-divider {
-  width: 100%;
-  height: 1px;
-  background: rgba(90, 138, 98, 0.2);
+  width: 100%; height: 1px;
+  background: rgba(180, 150, 160, 0.2);
   margin-bottom: 0.625em;
 }
 
@@ -252,7 +246,7 @@ body.visible { opacity: 1; }
   font-weight: 500;
   letter-spacing: 0.06em;
   text-transform: uppercase;
-  color: #4a6a50;
+  color: #75576e;
   margin-bottom: 0.875em;
 }
 .reflection-quote {
@@ -261,7 +255,39 @@ body.visible { opacity: 1; }
   font-weight: 400;
   font-style: italic;
   line-height: 1.5;
-  color: #c8b898;
+  color: #eac6ce;
+}
+
+/* ── CASE STUDY ── */
+.case-study-link {
+  margin-top: auto;
+  display: inline-flex;
+  align-items: center;
+  gap: 1.125em;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 1.5em;
+  font-weight: 500;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: rgba(136, 129, 153, 0.6);
+  background: none; border: none;
+  cursor: pointer; padding: 0;
+  transition: color 0.25s ease;
+}
+.case-study-link:hover { color: rgba(200, 185, 165, 0.9); }
+.case-study-arrow {
+  width: 2.5em; height: 1px;
+  background: currentColor;
+  position: relative; flex-shrink: 0;
+}
+.case-study-arrow::after {
+  content: '';
+  position: absolute;
+  right: 0; top: -3.5px;
+  width: 7px; height: 7px;
+  border-right: 1px solid currentColor;
+  border-top: 1px solid currentColor;
+  transform: rotate(45deg);
 }
 
 /* ── MOBILE ≤ 1000px ── */
@@ -309,18 +335,18 @@ body.visible { opacity: 1; }
     align-items: start;
   }
 
-  .zone-badge        { grid-column: 1; grid-row: 1; margin-bottom: 0.75em; }
-  .project-title     { grid-column: 1; grid-row: 2; font-size: 2em; margin-bottom: 0.75em; }
-  .project-desc      { grid-column: 1; grid-row: 3; font-size: 1em; line-height: 1.8; margin-bottom: 0; }
+  .zone-badge    { grid-column: 1; grid-row: 1; margin-bottom: 0.75em; }
+  .project-title { grid-column: 1; grid-row: 2; font-size: 2em; margin-bottom: 0.75em; }
+  .project-desc  { grid-column: 1; grid-row: 3; font-size: 1em; line-height: 1.8; margin-bottom: 0; }
 
-  .meta-divider      { display: none; }
-  .details-label     {
+  .meta-divider  { display: none; }
+  .details-label {
     display: block;
     grid-column: 2; grid-row: 1;
     font-family: 'DM Sans', sans-serif;
     font-size: 1em; font-weight: 500;
     letter-spacing: 0.06em; text-transform: uppercase;
-    color: #4a6a50; margin-bottom: 0.75em;
+    color: #75576e; margin-bottom: 0.75em;
   }
   .meta-table        { grid-column: 2; grid-row: 2 / 4; margin-bottom: 0; gap: 0.6em; }
   .meta-label, .meta-value { font-size: 1em; }
@@ -329,84 +355,52 @@ body.visible { opacity: 1; }
   .reflection-quote  { grid-column: 3; grid-row: 2; font-size: 1.25em; }
 }
 
-/* ══ MOBILE (≤520px) — single column stack ══════════════════ */
+/* ── MOBILE ≤ 520px — single column ── */
 @media (max-width: 520px) {
-
-  .left-area {
-    padding: 56px 20px 20px;
-    height: auto;
-    min-height: 100svh;
-  }
+  .left-area { padding: 56px 20px 20px; height: auto; min-height: 100svh; }
 
   .mob-tool-link {
-    display: block;
-    margin-bottom: 10px;
+    display: block; margin-bottom: 10px;
     font-family: 'DM Sans', sans-serif;
-    font-size: 11px;
-    font-weight: 400;
-    font-style: italic;
-    letter-spacing: 0.03em;
-    color: rgba(90,138,98,0.6);
+    font-size: 11px; font-weight: 400;
+    font-style: italic; letter-spacing: 0.03em;
+    color: rgba(204,161,144,0.6);
   }
-
   .artifact-card {
     max-width: calc(100vw - 40px);
-    width: 100%;
-    aspect-ratio: unset;
-    height: 68svh;
+    width: 100%; aspect-ratio: unset; height: 68svh;
   }
-
   .info-panel {
-    display: flex;
-    flex-direction: column;
-    gap: 14px;
-    padding: 32px 20px 44px;
-    font-size: 12px;
+    display: flex; flex-direction: column;
+    gap: 14px; padding: 32px 20px 44px; font-size: 12px;
   }
-
   .zone-badge, .project-title, .project-desc,
   .meta-divider, .details-label, .meta-table,
   .reflection-label, .reflection-quote {
-    grid-column: unset;
-    grid-row: unset;
-    margin: 0;
+    grid-column: unset; grid-row: unset; margin: 0;
   }
-
   .project-title {
     font-size: clamp(1em, 3.8vw, 1.4em);
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    line-height: 1.15;
+    white-space: nowrap; overflow: hidden;
+    text-overflow: ellipsis; line-height: 1.15;
   }
-
   .project-desc  { font-size: 1em; line-height: 1.75; }
   .meta-divider  { display: none; }
   .details-label { display: block; }
-
-  .meta-table { gap: 0.5em; width: 100%; }
-  .meta-row {
-    display: flex;
-    justify-content: space-between;
-    align-items: baseline;
-    width: 100%;
-    gap: 0.75em;
-  }
-  .meta-value { text-align: right; flex-shrink: 0; }
+  .meta-table    { gap: 0.5em; width: 100%; }
+  .meta-row      { display: flex; justify-content: space-between; align-items: baseline; width: 100%; gap: 0.75em; }
+  .meta-value    { text-align: right; flex-shrink: 0; }
   .reflection-quote { font-size: 1.1em; }
-  .nav-back { top: 16px; left: 16px; }
+  .nav-back      { top: 16px; left: 16px; }
 }
 
 /* ── STUDIO CRUMB ── */
 .studio-crumb {
   position: absolute;
-  bottom: 4px;
-  left: 50%;
+  bottom: 4px; left: 50%;
   transform: translateX(-50%) translateY(8px);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 10px;
+  display: flex; flex-direction: column;
+  align-items: center; gap: 10px;
   cursor: pointer;
   color: rgba(210,195,172,0.55);
   transition: color 0.3s ease,
@@ -421,21 +415,15 @@ body.visible .studio-crumb {
   opacity: 1;
   transform: translateX(-50%) translateY(0);
 }
-@keyframes plantSway {
-  0%, 100% { transform: rotate(-3deg); }
-  50%       { transform: rotate(3deg); }
+@keyframes bookFloat {
+  0%, 100% { transform: translateY(0) rotate(0deg); }
+  50%       { transform: translateY(-3px) rotate(0.5deg); }
 }
-.crumb-plant {
-  transform-box: fill-box;
-  transform-origin: 50% 100%;
-  animation: plantSway 6s ease-in-out infinite;
-}
+.crumb-book { animation: bookFloat 4s ease-in-out infinite; }
 .crumb-text {
   font-family: 'DM Sans', sans-serif;
-  font-size: 7px;
-  font-weight: 300;
-  letter-spacing: 0.3em;
-  text-transform: uppercase;
+  font-size: 7px; font-weight: 300;
+  letter-spacing: 0.3em; text-transform: uppercase;
 }
 
 /* ── SKIP LINK ── */
@@ -448,7 +436,7 @@ body.visible .studio-crumb {
   overflow: hidden;
   font-family: 'DM Sans', sans-serif;
   font-size: 12px;
-  color: #c8b898;
+  color: #eac6ce;
   background: rgba(11, 28, 38, 0.95);
   padding: 10px 18px;
   border-radius: 6px;
@@ -465,7 +453,7 @@ body.visible .studio-crumb {
 
 /* ── FOCUS STYLES ── */
 :focus-visible {
-  outline: 2px solid #c8b898;
+  outline: 2px solid #eac6ce;
   outline-offset: 3px;
 }
 
@@ -480,24 +468,24 @@ body.visible .studio-crumb {
 
 /* ── HIGH CONTRAST ── */
 @media (prefers-contrast: more) {
-  .nav-back { border-color: rgba(255, 255, 255, 0.5); color: rgba(224, 212, 192, 1); }
+  .nav-back { border-color: rgba(255, 255, 255, 0.5); color: rgba(200, 185, 165, 1); }
   .case-study-link { filter: brightness(1.5); }
   .meta-label { filter: brightness(1.3); }
   .artifact-card { border-color: rgba(255, 255, 255, 0.4); }
-  .studio-crumb { color: rgba(224, 212, 192, 0.85); }
+  .studio-crumb { color: rgba(210, 195, 172, 0.85); }
 }
 </style>
 </head>
 <body>
-
 <a href="#main-content" class="skip-link">Skip to content</a>
+
 <div id="page-exit" aria-hidden="true"></div>
 
 <div class="wordmark" aria-hidden="true">Amber Grey</div>
 <nav aria-label="Page navigation">
-<button class="nav-back" aria-label="Back to Systems" onclick="navigateTo('level-2-systems.html')">
+<button class="nav-back" aria-label="Back to Experiments" onclick="navigateTo('experiments.html')">
   <span class="nav-back-arrow" aria-hidden="true"></span>
-  Systems
+  Experiments
 </button>
 </nav>
 
@@ -505,32 +493,36 @@ body.visible .studio-crumb {
 <div id="left-canvas">
   <div class="left-area">
     <div class="card-section">
-      <p class="mob-tool-link">Open on desktop for full tool functionality</p>
+      <p class="mob-tool-link">Open on desktop for the full gallery experience</p>
       <div class="artifact-card">
-        <iframe src="prototype-landscape-playground.html" title="Portfolio Playground System" loading="lazy"></iframe>
+        <iframe src="prototype-matergenesis-gallery.html" title="MaterGenesis — Image Gallery" loading="lazy"></iframe>
       </div>
-      <div class="artifact-label">Portfolio Playground System</div>
+      <div class="artifact-label">Image Gallery / Concept Map Explorer</div>
     </div>
+
     <div class="studio-crumb" role="button" tabindex="0" aria-label="Go to Studio portfolio" onclick="navigateTo('studio-portfolio.html')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();navigateTo('studio-portfolio.html')}">
-  <svg class="crumb-plant" width="30" aria-hidden="true" height="48" viewBox="0 0 30 48" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <path d="M8 47 L22 47 L24 37 L6 37Z" stroke="currentColor" stroke-width="0.75" stroke-linejoin="round"/>
-    <path d="M5 37 L25 37" stroke="currentColor" stroke-width="0.75" stroke-linecap="round"/>
-    <path d="M15 37 L15 28" stroke="currentColor" stroke-width="0.7" stroke-linecap="round"/>
-    <path d="M15 31 C9 28 5 22 7 16 C8 12 12 11 14 14 C15 16 15 24 15 31" stroke="currentColor" stroke-width="0.65" stroke-linecap="round"/>
-    <path d="M15 28 C21 25 25 19 23 13 C22 9 18 8 16 11 C15 13 15 21 15 28" stroke="currentColor" stroke-width="0.65" stroke-linecap="round"/>
-    <path d="M15 28 C12 23 12 17 15 14 C18 17 18 23 15 28" stroke="currentColor" stroke-width="0.6" stroke-linecap="round"/>
-  </svg>
-  <span class="crumb-text">Studio</span>
-</div>
+      <svg class="crumb-book" width="34" aria-hidden="true" height="26" viewBox="0 0 34 26" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M17 4 C13 3 7 2 2 4 L2 24 C7 22 13 23 17 24Z" stroke="currentColor" stroke-width="0.75"/>
+        <path d="M17 4 C21 3 27 2 32 4 L32 24 C27 22 21 23 17 24Z" stroke="currentColor" stroke-width="0.75"/>
+        <path d="M17 4 L17 24" stroke="currentColor" stroke-width="0.5" opacity="0.45"/>
+        <path d="M5 9 L13 9" stroke="currentColor" stroke-width="0.4" stroke-linecap="round" opacity="0.45"/>
+        <path d="M5 13 L13 13" stroke="currentColor" stroke-width="0.4" stroke-linecap="round" opacity="0.38"/>
+        <path d="M5 17 L11 17" stroke="currentColor" stroke-width="0.4" stroke-linecap="round" opacity="0.3"/>
+        <path d="M21 9 L29 9" stroke="currentColor" stroke-width="0.4" stroke-linecap="round" opacity="0.45"/>
+        <path d="M21 13 L29 13" stroke="currentColor" stroke-width="0.4" stroke-linecap="round" opacity="0.38"/>
+        <path d="M21 17 L27 17" stroke="currentColor" stroke-width="0.4" stroke-linecap="round" opacity="0.3"/>
+      </svg>
+      <span class="crumb-text">Studio</span>
+    </div>
   </div>
 </div>
 
 <!-- Right panel -->
 <main id="main-content">
 <div class="info-panel">
-  <div class="zone-badge">Systems</div>
-  <h1 class="project-title">A living system<br>for showing work</h1>
-  <p class="project-desc">62 hand-built pages, zero frameworks, five navigable zones. It's a portfolio that works like the design thinking it contains.</p>
+  <div class="zone-badge">Experiments</div>
+  <h1 class="project-title">MaterGenesis</h1>
+  <p class="project-desc">A generative system that translates abstract concepts into visual worlds through structured AI collaboration.</p>
 
   <div class="meta-divider"></div>
   <div class="details-label">Details</div>
@@ -538,24 +530,29 @@ body.visible .studio-crumb {
   <div class="meta-table">
     <div class="meta-row">
       <span class="meta-label">Type</span>
-      <span class="meta-value">Portfolio System</span>
+      <span class="meta-value">Prototype</span>
     </div>
     <div class="meta-row">
       <span class="meta-label">Year</span>
-      <span class="meta-value">2026</span>
+      <span class="meta-value">2023</span>
     </div>
     <div class="meta-row">
       <span class="meta-label">Methods</span>
-      <span class="meta-value">Narrative Interaction</span>
+      <span class="meta-value">Prompt Engineering</span>
     </div>
     <div class="meta-row">
-      <span class="meta-label">Stack</span>
-      <span class="meta-value">HTML, CSS, Vanilla JS</span>
+      <span class="meta-label">Context</span>
+      <span class="meta-value">Worldbuilding</span>
     </div>
   </div>
 
   <div class="reflection-label">What I Wanted to Show</div>
-  <p class="reflection-quote">I designed this portfolio the same way I design systems, as something to experience, not just&nbsp;view.</p>
+  <p class="reflection-quote">Structured inputs can produce coherent worlds, revealing how systems shape what we imagine and what&nbsp;we&nbsp;create.</p>
+
+  <button class="case-study-link" aria-label="View case study" onclick="navigateTo('case-study-matergenesis.html')">
+    Case Study
+    <span class="case-study-arrow" aria-hidden="true"></span>
+  </button>
 </div>
 </main>
 
@@ -602,10 +599,9 @@ function navigateTo(url) {
   setTimeout(() => { window.location.href = url; }, 430);
 }
 
-requestAnimationFrame(() => {
+document.addEventListener('DOMContentLoaded', () => {
   requestAnimationFrame(() => { document.body.classList.add('visible'); });
 });
 </script>
-
 </body>
 </html>

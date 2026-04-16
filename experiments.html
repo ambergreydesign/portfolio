@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Sense Making — Studio</title>
+<title>Experiments — Studio</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400&family=DM+Sans:wght@300;400&display=swap" rel="stylesheet">
@@ -277,12 +277,12 @@ body.visible .studio-crumb {
   transform: translateY(0);
 }
 
-@keyframes bookFloat {
-  0%, 100% { transform: translateY(0) rotate(0deg); }
-  50%       { transform: translateY(-3px) rotate(0.5deg); }
+@keyframes pencilBob {
+  0%, 100% { transform: translateY(0); }
+  50%       { transform: translateY(-4px); }
 }
-.crumb-book {
-  animation: bookFloat 4s ease-in-out infinite;
+.crumb-pencil {
+  animation: pencilBob 3s ease-in-out infinite;
 }
 .crumb-text {
   font-family: 'DM Sans', sans-serif;
@@ -292,9 +292,7 @@ body.visible .studio-crumb {
   text-transform: uppercase;
 }
 
-/* ══ MOBILE ══════════════════════════════════════════════════ */
 @media (max-width: 768px) {
-  /* Allow page to scroll naturally */
   html { overflow-y: auto; }
   body {
     overflow: visible;
@@ -303,31 +301,19 @@ body.visible .studio-crumb {
     display: block;
     padding: 72px 20px 52px;
   }
-
-  /* Kill JS scaling — use native responsive layout */
   #content-wrap {
     width: 100%;
     transform: none !important;
     gap: 16px;
   }
-
-  /* Card: tighter padding */
-  .glass-card { padding: 30px 22px 26px; }
-
-  /* Typography */
+  .glass-card    { padding: 30px 22px 26px; }
   .zone-title    { font-size: 28px; margin-bottom: 22px; }
   .project-name  { font-size: 19px; }
   .project-tagline { font-size: 11px; }
-
-  /* List items: slightly tighter */
   .project-item  { padding: 16px 0; gap: 14px; }
-
-  /* Fixed chrome */
-  .back-link { top: 16px; left: 16px; }
-  .wordmark  { display: none; }
-
-  /* Studio crumb: simplify on mobile */
-  .studio-crumb { margin-top: 4px; }
+  .back-link     { top: 16px; left: 16px; }
+  .wordmark      { display: none; }
+  .studio-crumb  { margin-top: 4px; }
 }
 
 /* ── SKIP LINK ── */
@@ -387,47 +373,48 @@ body.visible .studio-crumb {
 <div id="content-wrap">
 <div class="glass-card">
   <div class="card-inner">
-  <div class="zone-eyebrow">Sense Making</div>
-  <h1 class="zone-title">From data to patterns</h1>
+  <div class="zone-eyebrow">Experiments</div>
+  <h1 class="zone-title">Creating to understand</h1>
   <div class="section-rule" aria-hidden="true"></div>
   <ul class="project-list">
-    <li class="project-item" role="button" tabindex="0" onclick="navigateTo('level-3-blv.html')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();navigateTo('level-3-blv.html')}">
+    <li class="project-item" role="button" tabindex="0" onclick="navigateTo('psilocybin.html')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();navigateTo('psilocybin.html')}">
       <div class="project-text">
         <div class="project-header">
-          <span class="project-name">Making the Invisible Visible</span>
-          <span class="project-tag">Framework</span>
+          <span class="project-name">Modeling Transformation</span>
+          <span class="project-tag">Speculative</span>
         </div>
-        <span class="project-tagline">Revealing who systems are built to miss</span>
+        <span class="project-tagline">Mapping altered creative states into navigable structure</span>
       </div>
       <span class="project-arrow" aria-hidden="true">→</span>
     </li>
-    <li class="project-item" role="button" tabindex="0" onclick="navigateTo('level-3-zoo.html')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();navigateTo('level-3-zoo.html')}">
+    <li class="project-item" role="button" tabindex="0" onclick="navigateTo('matergenesis.html')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();navigateTo('matergenesis.html')}">
       <div class="project-text">
         <div class="project-header">
-          <span class="project-name">Tracing Invisible Systems</span>
-          <span class="project-tag">Prototype</span>
+          <span class="project-name">Generating Worlds</span>
+          <span class="project-tag">Worldbuilding</span>
         </div>
-        <span class="project-tagline">Making hidden structures legible through interaction</span>
+        <span class="project-tagline">Exploring how systems can produce cohesive, multi-domain realities</span>
       </div>
       <span class="project-arrow" aria-hidden="true">→</span>
     </li>
-    <li class="project-item" role="button" tabindex="0" onclick="navigateTo('level-3-signs.html')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();navigateTo('level-3-signs.html')}">
+    <li class="project-item" role="button" tabindex="0" onclick="navigateTo('future-zoo.html')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();navigateTo('future-zoo.html')}">
       <div class="project-text">
         <div class="project-header">
-          <span class="project-name">SIGNS Framework</span>
-          <span class="project-tag">Framework Prototype</span>
+          <span class="project-name">The Future Zoo</span>
+          <span class="project-tag">Speculative Ideation</span>
         </div>
-        <span class="project-tagline">An interactive framework for transforming experience signals</span>
+        <span class="project-tagline">What reverence-centered zoo design could look like in 100 years</span>
       </div>
       <span class="project-arrow" aria-hidden="true">→</span>
     </li>
-    <li class="project-item" role="button" tabindex="0" onclick="navigateTo('level-3-rewilded.html')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();navigateTo('level-3-rewilded.html')}">
+
+    <li class="project-item" role="button" tabindex="0" onclick="navigateTo('plug.html')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();navigateTo('plug.html')}">
       <div class="project-text">
         <div class="project-header">
-          <span class="project-name">Revealing Hidden Misalignment</span>
-          <span class="project-tag">Diagnostic System</span>
+          <span class="project-name">Plug Redesign</span>
+          <span class="project-tag">Inclusive Design</span>
         </div>
-        <span class="project-tagline">Making the gap between story and reality visible</span>
+        <span class="project-tagline">Designing orientation through touch for plugging in without sight</span>
       </div>
       <span class="project-arrow" aria-hidden="true">→</span>
     </li>
@@ -436,16 +423,11 @@ body.visible .studio-crumb {
 </div>
 
 <button class="studio-crumb" tabindex="0" aria-label="Go to Studio portfolio" onclick="navigateTo('studio-portfolio.html')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();navigateTo('studio-portfolio.html')}">
-  <svg class="crumb-book" aria-hidden="true" width="34" height="26" viewBox="0 0 34 26" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <path d="M17 4 C13 3 7 2 2 4 L2 24 C7 22 13 23 17 24Z" stroke="currentColor" stroke-width="0.75"/>
-    <path d="M17 4 C21 3 27 2 32 4 L32 24 C27 22 21 23 17 24Z" stroke="currentColor" stroke-width="0.75"/>
-    <path d="M17 4 L17 24" stroke="currentColor" stroke-width="0.5" opacity="0.45"/>
-    <path d="M5 9 L13 9" stroke="currentColor" stroke-width="0.4" stroke-linecap="round" opacity="0.45"/>
-    <path d="M5 13 L13 13" stroke="currentColor" stroke-width="0.4" stroke-linecap="round" opacity="0.38"/>
-    <path d="M5 17 L11 17" stroke="currentColor" stroke-width="0.4" stroke-linecap="round" opacity="0.3"/>
-    <path d="M21 9 L29 9" stroke="currentColor" stroke-width="0.4" stroke-linecap="round" opacity="0.45"/>
-    <path d="M21 13 L29 13" stroke="currentColor" stroke-width="0.4" stroke-linecap="round" opacity="0.38"/>
-    <path d="M21 17 L27 17" stroke="currentColor" stroke-width="0.4" stroke-linecap="round" opacity="0.3"/>
+  <svg class="crumb-pencil" aria-hidden="true" width="10" height="48" viewBox="0 0 10 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <rect x="2" y="1" width="6" height="5" rx="1" stroke="currentColor" stroke-width="0.75"/>
+    <rect x="2" y="6" width="6" height="32" stroke="currentColor" stroke-width="0.75"/>
+    <path d="M2 38 L5 47 L8 38" stroke="currentColor" stroke-width="0.75" stroke-linejoin="round"/>
+    <line x1="2" y1="36" x2="8" y2="36" stroke="currentColor" stroke-width="0.4" opacity="0.5"/>
   </svg>
   <span class="crumb-text">Studio</span>
 </button>

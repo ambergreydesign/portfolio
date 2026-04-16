@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Daily Living Labs — Amber Grey</title>
+<title>Rewilded — Amber Grey</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,600;1,400;1,500&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
@@ -140,7 +140,7 @@ body.visible { opacity: 1; }
   font-weight: 500;
   letter-spacing: 0.3em;
   text-transform: uppercase;
-  color: #dec7f8;
+  color: #9ec48a;
   white-space: nowrap;
 }
 
@@ -178,7 +178,7 @@ body.visible { opacity: 1; }
   font-weight: 500;
   letter-spacing: 0.3em;
   text-transform: uppercase;
-  color: #dca25b;
+  color: #b8a0d8;
   margin-bottom: 1.5em;
 }
 
@@ -188,7 +188,7 @@ body.visible { opacity: 1; }
   font-weight: 600;
   font-style: normal;
   line-height: 1.1;
-  color: #eac6ce;
+  color: #c2dba8;
   margin-bottom: 1.25em;
 }
 
@@ -241,7 +241,7 @@ body.visible { opacity: 1; }
 .meta-divider {
   width: 100%;
   height: 1px;
-  background: rgba(180, 150, 160, 0.2);
+  background: rgba(160, 195, 130, 0.15);
   margin-bottom: 0.625em;
 }
 
@@ -261,7 +261,7 @@ body.visible { opacity: 1; }
   font-weight: 400;
   font-style: italic;
   line-height: 1.5;
-  color: #eac6ce;
+  color: #c2dba8;
 }
 
 /* ── CASE STUDY ── */
@@ -275,13 +275,13 @@ body.visible { opacity: 1; }
   font-weight: 500;
   letter-spacing: 0.3em;
   text-transform: uppercase;
-  color: rgba(136, 129, 153, 0.6);
+  color: rgba(140, 190, 115, 0.5);
   background: none; border: none;
   cursor: pointer; padding: 0;
   transition: color 0.25s ease;
 }
 .case-study-link:hover {
-  color: rgba(200, 185, 165, 0.9);
+  color: rgba(180, 225, 155, 0.9);
 }
 .case-study-arrow {
   width: 2.5em; height: 1px;
@@ -361,7 +361,6 @@ body.visible { opacity: 1; }
 
   .reflection-label  { grid-column: 3; grid-row: 1; margin-bottom: 0.75em; font-size: 1em; }
   .reflection-quote  { grid-column: 3; grid-row: 2; font-size: 1.25em; }
-  .case-study-link   { grid-column: 3; grid-row: 3; margin-top: auto; align-self: end; font-size: 1.1em; }
 }
 
 /* ══ MOBILE (≤520px) — single column stack ══════════════════ */
@@ -381,7 +380,7 @@ body.visible { opacity: 1; }
     font-weight: 400;
     font-style: italic;
     letter-spacing: 0.03em;
-    color: rgba(204,161,144,0.6);
+    color: rgba(140,190,115,0.5);
   }
 
   .artifact-card {
@@ -401,7 +400,7 @@ body.visible { opacity: 1; }
 
   .zone-badge, .project-title, .project-desc,
   .meta-divider, .details-label, .meta-table,
-  .reflection-label, .reflection-quote, .case-study-link {
+  .reflection-label, .reflection-quote {
     grid-column: unset;
     grid-row: unset;
     margin: 0;
@@ -432,6 +431,46 @@ body.visible { opacity: 1; }
   .nav-back { top: 16px; left: 16px; }
 }
 
+/* ── SKIP LINK ── */
+.skip-link {
+  position: absolute;
+  left: -9999px;
+  top: auto;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 12px;
+  color: #c2dba8;
+  background: rgba(11, 28, 38, 0.95);
+  padding: 10px 18px;
+  border-radius: 6px;
+  z-index: 200;
+  text-decoration: none;
+}
+.skip-link:focus {
+  position: fixed;
+  left: 16px;
+  top: 16px;
+  width: auto;
+  height: auto;
+}
+
+/* ── FOCUS STYLES ── */
+:focus-visible {
+  outline: 2px solid #9ec48a;
+  outline-offset: 3px;
+}
+
+/* ── REDUCED MOTION ── */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
 /* ── STUDIO CRUMB ── */
 .studio-crumb {
   position: absolute;
@@ -456,14 +495,14 @@ body.visible .studio-crumb {
   opacity: 1;
   transform: translateX(-50%) translateY(0);
 }
-@keyframes plantSway {
-  0%, 100% { transform: rotate(-3deg); }
-  50%       { transform: rotate(3deg); }
+@keyframes featherSway {
+  0%, 100% { transform: rotate(-4deg); }
+  50%       { transform: rotate(4deg); }
 }
-.crumb-plant {
+.crumb-feather {
   transform-box: fill-box;
   transform-origin: 50% 100%;
-  animation: plantSway 6s ease-in-out infinite;
+  animation: featherSway 5s ease-in-out infinite;
 }
 .crumb-text {
   font-family: 'DM Sans', sans-serif;
@@ -471,46 +510,6 @@ body.visible .studio-crumb {
   font-weight: 300;
   letter-spacing: 0.3em;
   text-transform: uppercase;
-}
-
-/* ── SKIP LINK ── */
-.skip-link {
-  position: absolute;
-  left: -9999px;
-  top: auto;
-  width: 1px;
-  height: 1px;
-  overflow: hidden;
-  font-family: 'DM Sans', sans-serif;
-  font-size: 12px;
-  color: #eac6ce;
-  background: rgba(11, 28, 38, 0.95);
-  padding: 10px 18px;
-  border-radius: 6px;
-  z-index: 200;
-  text-decoration: none;
-}
-.skip-link:focus {
-  position: fixed;
-  left: 16px;
-  top: 16px;
-  width: auto;
-  height: auto;
-}
-
-/* ── FOCUS STYLES ── */
-:focus-visible {
-  outline: 2px solid #eac6ce;
-  outline-offset: 3px;
-}
-
-/* ── REDUCED MOTION ── */
-@media (prefers-reduced-motion: reduce) {
-  *, *::before, *::after {
-    animation-duration: 0.01ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: 0.01ms !important;
-  }
 }
 
 /* ── HIGH CONTRAST ── */
@@ -524,15 +523,15 @@ body.visible .studio-crumb {
 </style>
 </head>
 <body>
-<a href="#main-content" class="skip-link">Skip to content</a>
 
+<a href="#main-content" class="skip-link">Skip to content</a>
 <div id="page-exit" aria-hidden="true"></div>
 
 <div class="wordmark" aria-hidden="true">Amber Grey</div>
 <nav aria-label="Page navigation">
-<button class="nav-back" aria-label="Back to Systems" onclick="navigateTo('level-2-systems.html')">
+<button class="nav-back" aria-label="Back to Sense Making" onclick="navigateTo('sensemaking.html')">
   <span class="nav-back-arrow" aria-hidden="true"></span>
-  Systems
+  Sense Making
 </button>
 </nav>
 
@@ -540,20 +539,32 @@ body.visible .studio-crumb {
 <div id="left-canvas">
   <div class="left-area">
     <div class="card-section">
-      <p class="mob-tool-link">Open on desktop to explore the full landing page</p>
+      <p class="mob-tool-link">Open on desktop for full tool experience</p>
       <div class="artifact-card">
-        <iframe src="prototype-daily-living-labs.html" title="Daily Living Labs" loading="lazy"></iframe>
+        <iframe src="prototype-gwi-visualizer.html" title="GWI Greenwashing Index" loading="lazy"></iframe>
       </div>
-      <div class="artifact-label">Landing · Web Design</div>
+      <div class="artifact-label">GWI Visualizer / Research Tool</div>
     </div>
     <div class="studio-crumb" role="button" tabindex="0" aria-label="Go to Studio portfolio" onclick="navigateTo('studio-portfolio.html')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();navigateTo('studio-portfolio.html')}">
-  <svg class="crumb-plant" width="30" aria-hidden="true" height="48" viewBox="0 0 30 48" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <path d="M8 47 L22 47 L24 37 L6 37Z" stroke="currentColor" stroke-width="0.75" stroke-linejoin="round"/>
-    <path d="M5 37 L25 37" stroke="currentColor" stroke-width="0.75" stroke-linecap="round"/>
-    <path d="M15 37 L15 28" stroke="currentColor" stroke-width="0.7" stroke-linecap="round"/>
-    <path d="M15 31 C9 28 5 22 7 16 C8 12 12 11 14 14 C15 16 15 24 15 31" stroke="currentColor" stroke-width="0.65" stroke-linecap="round"/>
-    <path d="M15 28 C21 25 25 19 23 13 C22 9 18 8 16 11 C15 13 15 21 15 28" stroke="currentColor" stroke-width="0.65" stroke-linecap="round"/>
-    <path d="M15 28 C12 23 12 17 15 14 C18 17 18 23 15 28" stroke="currentColor" stroke-width="0.6" stroke-linecap="round"/>
+  <svg class="crumb-feather" width="24" height="56" viewBox="0 0 24 56" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+    <path d="M10 56 C10.5 50 11 45 11 40" stroke="currentColor" stroke-width="0.85" stroke-linecap="round"/>
+    <path d="M11 40 C11.5 28 12 16 11 4" stroke="currentColor" stroke-width="0.55" stroke-linecap="round"/>
+    <path d="M11 37 C8 35 5 34 2 34" stroke="currentColor" stroke-width="0.5" stroke-linecap="round"/>
+    <path d="M11.5 33 C8 31 4 29 1 30" stroke="currentColor" stroke-width="0.5" stroke-linecap="round"/>
+    <path d="M11.5 29 C7 27 3 25 1 25.5" stroke="currentColor" stroke-width="0.5" stroke-linecap="round"/>
+    <path d="M11.5 25 C7 23 4 21 2 21.5" stroke="currentColor" stroke-width="0.5" stroke-linecap="round"/>
+    <path d="M12 21 C8 19 5 17 3 17.5" stroke="currentColor" stroke-width="0.45" stroke-linecap="round"/>
+    <path d="M12 17 C9 15 7 13 5 13.5" stroke="currentColor" stroke-width="0.4" stroke-linecap="round"/>
+    <path d="M11.5 13 C9.5 11 8 10 6.5 10" stroke="currentColor" stroke-width="0.35" stroke-linecap="round"/>
+    <path d="M11 9 C10 8 9 7 8 7" stroke="currentColor" stroke-width="0.3" stroke-linecap="round"/>
+    <path d="M11 37 C14 35 17 34 20 34.5" stroke="currentColor" stroke-width="0.5" stroke-linecap="round"/>
+    <path d="M11.5 33 C15 31 18 29 22 29.5" stroke="currentColor" stroke-width="0.5" stroke-linecap="round"/>
+    <path d="M11.5 29 C15.5 27 19 25 22 25.5" stroke="currentColor" stroke-width="0.5" stroke-linecap="round"/>
+    <path d="M11.5 25 C15 23 18 21 21 21.5" stroke="currentColor" stroke-width="0.5" stroke-linecap="round"/>
+    <path d="M12 21 C15 19 17 17 19 17.5" stroke="currentColor" stroke-width="0.45" stroke-linecap="round"/>
+    <path d="M12 17 C14 15 16 13 18 13.5" stroke="currentColor" stroke-width="0.4" stroke-linecap="round"/>
+    <path d="M11.5 13 C13.5 11 15 10 16.5 10" stroke="currentColor" stroke-width="0.35" stroke-linecap="round"/>
+    <path d="M11 9 C12 8 13 7 14 7" stroke="currentColor" stroke-width="0.3" stroke-linecap="round"/>
   </svg>
   <span class="crumb-text">Studio</span>
 </div>
@@ -563,9 +574,9 @@ body.visible .studio-crumb {
 <!-- Right panel -->
 <main id="main-content">
 <div class="info-panel">
-  <div class="zone-badge">Systems</div>
-  <h1 class="project-title">A front door<br>for daily<br>independence</h1>
-  <p class="project-desc">A landing page designed to speak directly to the people who haven't asked for help yet — but need it most.</p>
+  <div class="zone-badge">Sense Making</div>
+  <h1 class="project-title">What the<br>gaps show</h1>
+  <p class="project-desc">An interactive tool mapping the gap between what zoos claim and what they fund, built from IRS 990 data across 114 AZA-accredited institutions.</p>
 
   <div class="meta-divider"></div>
   <div class="details-label">Details</div>
@@ -573,7 +584,7 @@ body.visible .studio-crumb {
   <div class="meta-table">
     <div class="meta-row">
       <span class="meta-label">Type</span>
-      <span class="meta-value">Web Design</span>
+      <span class="meta-value">Research GPT</span>
     </div>
     <div class="meta-row">
       <span class="meta-label">Year</span>
@@ -581,18 +592,18 @@ body.visible .studio-crumb {
     </div>
     <div class="meta-row">
       <span class="meta-label">Methods</span>
-      <span class="meta-value">Interaction Design</span>
+      <span class="meta-value">Data Analysis</span>
     </div>
     <div class="meta-row">
-      <span class="meta-label">Context</span>
-      <span class="meta-value">Daily Living Labs</span>
+      <span class="meta-label">Data</span>
+      <span class="meta-value">IRS 990 · ProPublica</span>
     </div>
   </div>
 
   <div class="reflection-label">What I Wanted to Show</div>
-  <p class="reflection-quote">Most community platforms lead with features. This one leads with the moment you realize you're not alone.</p>
+  <p class="reflection-quote">The gap between what's said and what's done is&nbsp;measurable.</p>
 
-  <button class="case-study-link" aria-label="View case study" onclick="navigateTo('case-study-dayli.html?from=dll')">
+  <button class="case-study-link" aria-label="View case study" onclick="navigateTo('case-study-rewilded.html?from=rewilded')">
     Case Study
     <span class="case-study-arrow" aria-hidden="true"></span>
   </button>
