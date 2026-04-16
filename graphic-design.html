@@ -864,6 +864,7 @@ requestAnimationFrame(() => {
   });
 });
 
+window.addEventListener("pageshow",function(e){if(e.persisted){var x=document.getElementById("page-exit");if(x)x.classList.remove("active");document.body.classList.add("visible");document.querySelectorAll("[style]").forEach(function(el){el.style.opacity="";el.style.transform="";})}});
 </script>
 </body>
 </html>
