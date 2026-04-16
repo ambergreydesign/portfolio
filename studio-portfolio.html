@@ -796,33 +796,19 @@ h2.l3-title, .l3-title { font-size: 22px; font-weight: normal; color: rgba(228,2
   /* Hide inline desktop panels */
   #l2-overlay, #l3-overlay { display: none !important; }
 
-  /* Wordmark stays, letter/hints hide on mobile */
-  #studio-letter, #letter-card, .zone-hint { display: none !important; }
+  /* Hints hide on mobile, letter icon stays */
+  .zone-hint { display: none !important; }
+  #studio-letter { bottom: 16px; right: 16px; }
+  #studio-letter svg { width: 34px; height: 34px; }
+  #letter-card { bottom: 48px; right: 12px; width: 270px; padding: 22px 18px 18px; }
+  .wordmark { font-size: 28px; bottom: 16px; left: 16px; }
 
   /* ── Pan hint (fades after first swipe) ──────────────────── */
   @keyframes hintDrift {
     0%, 100% { transform: translateX(-50%); }
     50%      { transform: translateX(-42%); }
   }
-  #mob-pan-hint {
-    position: fixed;
-    bottom: 44px;
-    left: 50%;
-    transform: translateX(-50%);
-    font-family: 'Georgia', serif;
-    font-style: italic;
-    font-size: 10px;
-    letter-spacing: 0.2em;
-    color: rgba(200, 185, 165, 0.42);
-    pointer-events: none;
-    z-index: 50;
-    white-space: nowrap;
-    opacity: 0;
-    transition: opacity 0.7s ease;
-    animation: hintDrift 2.8s ease-in-out infinite;
-  }
-  #mob-pan-hint.visible { opacity: 1; }
-  #mob-pan-hint.gone { opacity: 0; animation: none; }
+  #mob-pan-hint { display: none !important; }
 
   /* ── Desktop nudge ───────────────────────────────────────── */
   #mob-desktop-note {
