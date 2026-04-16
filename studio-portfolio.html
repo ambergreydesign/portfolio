@@ -809,7 +809,6 @@ h2.l3-title, .l3-title { font-size: 22px; font-weight: normal; color: rgba(228,2
   }
   .zone-hint-pill { padding: 6px 12px; }
   .zone-hint-desc { font-size: 11px; }
-  .zone-hint-arrow { display: none; }
 
   /* ── Pan hint (fades after first swipe) ──────────────────── */
   @keyframes hintDrift {
@@ -1782,7 +1781,7 @@ function setContra(i) {
       // On mobile, hints are absolute inside #scene
       // Use percentage positions based on viewBox 1440×900
       const sceneW = scene.offsetWidth;
-      const sceneH = scene.offsetHeight;
+      const scale = sceneW / 1440;
       document.querySelectorAll('.zone-hint').forEach((hint, i) => {
         const zoneKey = hint.dataset.hintZone;
         const pos = HINT_POSITIONS[zoneKey];
@@ -1790,6 +1789,15 @@ function setContra(i) {
         hint.style.left = (pos.vx / 1440 * 100) + '%';
         hint.style.top  = (pos.vy / 900 * 100) + '%';
         hint.style.transitionDelay = (i * 0.12) + 's';
+
+        // Position arrow using viewBox offsets scaled to mobile scene
+        const arrow = hint.querySelector('.zone-hint-arrow');
+        if (arrow) {
+          const ox = parseFloat(arrow.dataset.offsetX) || 0;
+          const oy = parseFloat(arrow.dataset.offsetY) || 0;
+          arrow.style.left = (ox * scale) + 'px';
+          arrow.style.top  = (oy * scale) + 'px';
+        }
       });
       return;
     }
