@@ -190,6 +190,12 @@ html, body { width: 100%; height: 100%; background: var(--bg); font-family: 'DM 
 /* ═══════════════════════════
    MODE 2: 3D DESIGN ANATOMY
 ═══════════════════════════ */
+/* ═══════════════════════════
+   MODE 0: WALKTHROUGH
+═══════════════════════════ */
+#walkthrough-view { padding: 60px 0 0 0; }
+#walkthrough-view iframe { display: block; width: 100%; height: 100%; }
+
 #anatomy-view { padding-top: 70px; gap: 16px; }
 .anatomy-stage { margin-top: 32px; }
 .anatomy-toggle {
@@ -657,11 +663,19 @@ html, body { width: 100%; height: 100%; background: var(--bg); font-family: 'DM 
 <div class="wordmark">Amber Grey</div>
 
 <div id="mode-selector">
+  <button class="mode-btn" data-mode="walkthrough">Walkthrough</button>
   <button class="mode-btn active" data-mode="challenge">Orientation Challenge</button>
   <button class="mode-btn" data-mode="anatomy">Design Anatomy</button>
 </div>
 
 <div id="app">
+
+<!-- ═══════════════════════════════
+     MODE 0: WALKTHROUGH
+═══════════════════════════════ -->
+<div id="walkthrough-view" class="mode-view">
+  <iframe id="walkthrough-iframe" src="about:blank" style="width:100%;height:100%;border:none;display:block;"></iframe>
+</div>
 
 <!-- ═══════════════════════════════
      MODE 1: ORIENTATION CHALLENGE
@@ -851,6 +865,13 @@ if (window.self !== window.top) { document.body.classList.add('embedded'); docum
 function setMode(m) {
   document.querySelectorAll('.mode-btn').forEach(b => b.classList.toggle('active', b.dataset.mode === m));
   document.querySelectorAll('.mode-view').forEach(v => v.classList.toggle('active', v.id === m + '-view'));
+  // lazy-load walkthrough iframe on first switch
+  if (m === 'walkthrough') {
+    const wf = document.getElementById('walkthrough-iframe');
+    if (wf && wf.src.indexOf('prototype-plug-redesign') === -1) {
+      wf.src = 'prototype-plug-redesign.html';
+    }
+  }
 }
 document.querySelectorAll('.mode-btn').forEach(b => b.addEventListener('click', () => setMode(b.dataset.mode)));
 

@@ -46,7 +46,7 @@ body {
   position: fixed; inset: 0;
   background: #0b1c26;
   opacity: 0; pointer-events: none;
-  transition: opacity 0.28s ease-in;
+  transition: opacity 0.45s ease;
   z-index: 9999;
 }
 #page-exit.active { opacity: 1; }
@@ -160,20 +160,19 @@ body.visible .card-inner {
 .zone-title {
   font-family: 'Cormorant Garamond', serif;
   font-size: 36px;
-  font-weight: 400;
-  font-style: normal;
-  color: rgba(228,218,200,0.92);
+  font-weight: 700;
+  font-style: italic;
+  color: #c5abdd;
   letter-spacing: 0.01em;
   line-height: 1.15;
   margin-bottom: 32px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid rgba(197,171,221,0.25);
 }
 
 /* ── DIVIDER ── */
 .section-rule {
-  width: 100%;
-  height: 1px;
-  background: rgba(180,160,130,0.15);
-  margin-bottom: 0;
+  display: none;
 }
 
 /* ── PROJECT LIST ── */
@@ -466,19 +465,19 @@ window.addEventListener('resize', fitContent);
 function navigateTo(url) {
   const card = document.querySelector('.glass-card');
   if (card) {
-    card.style.transition = 'opacity 0.28s ease-in, transform 0.28s ease-in';
+    card.style.transition = 'opacity 0.35s ease, transform 0.35s ease';
     card.style.opacity = '0';
     card.style.transform = 'translateY(-10px)';
   }
   const crumb = document.querySelector('.studio-crumb');
   if (crumb) {
-    crumb.style.transition = 'opacity 0.2s ease-in, transform 0.2s ease-in';
+    crumb.style.transition = 'opacity 0.25s ease, transform 0.25s ease';
     crumb.style.opacity = '0';
     crumb.style.transform = 'translateY(-6px)';
   }
   const exit = document.getElementById('page-exit');
-  setTimeout(() => { exit.classList.add('active'); }, 200);
-  setTimeout(() => { window.location.href = url; }, 430);
+  setTimeout(() => { exit.classList.add('active'); }, 250);
+  setTimeout(() => { window.location.href = url; }, 600);
 }
 requestAnimationFrame(() => {
   requestAnimationFrame(() => {

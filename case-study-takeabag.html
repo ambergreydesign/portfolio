@@ -18,8 +18,9 @@
   --bg-alt:      #091413;
   --text:        rgba(198, 228, 224, 0.90);
   --text-muted:  rgba(59, 168, 160, 0.75);
-  --accent-bright: #8ad4cc;
+  --accent-bright: #e6a050;
   --amber:       #c8a050;
+  --amber-bright: #e6be64;
   --border:      rgba(255, 255, 255, 0.055);
 }
 
@@ -183,7 +184,7 @@ body.visible { opacity: 1; }
 }
 .hero-eyebrow {
   font-size: 9px; font-weight: 500; letter-spacing: 0.34em; text-transform: uppercase;
-  color: rgba(105,210,200,0.88); margin-bottom: 20px; position: relative; z-index: 1;
+  color: rgba(105,210,200,0.55); margin-bottom: 20px; position: relative; z-index: 1;
 }
 .hero h1 {
   font-family: 'Cormorant Garamond', serif;
@@ -225,7 +226,7 @@ body.visible { opacity: 1; }
   font-size: clamp(15px, 1.5vw, 18px); font-weight: 300; line-height: 1.9;
   color: rgba(198,228,224,0.72); max-width: 700px; margin-bottom: 52px;
 }
-.overview-intro em { color: rgba(155,235,225,0.9); font-style: italic; }
+.overview-intro em { color: rgba(230,200,130,0.9); font-style: italic; }
 
 /* ── SKILLS & METHODS TIMELINE ── */
 .proj-meta-outer {
@@ -259,7 +260,7 @@ body.visible { opacity: 1; }
   width: 5px; height: 5px; border-radius: 50%;
   background: rgba(59,168,160,0.35); transition: background 0.25s, box-shadow 0.25s; z-index: 2;
 }
-.sm-tl-node.open::before { background: var(--accent-bright); box-shadow: 0 0 10px rgba(59,168,160,0.3); }
+.sm-tl-node.open::before { background: var(--accent-bright); box-shadow: 0 0 10px rgba(200,160,80,0.3); }
 .sm-tl-node::after {
   content: ''; position: absolute; left: 17px; top: 20px;
   width: 27px; height: 1px; background: rgba(59,168,160,0.12); transition: background 0.25s;
@@ -313,11 +314,11 @@ body.visible { opacity: 1; }
 .thesis-quote {
   font-family: 'Cormorant Garamond', serif;
   font-size: clamp(22px, 2.8vw, 34px); font-weight: 400; font-style: italic;
-  color: rgba(155,235,225,0.88); line-height: 1.45; margin-bottom: 12px;
+  color: rgba(230,200,130,0.88); line-height: 1.45; margin-bottom: 12px;
 }
 .thesis-attr {
   font-size: 10px; font-weight: 400; letter-spacing: 0.2em; text-transform: uppercase;
-  color: rgba(90,170,160,0.68);
+  color: rgba(180,150,80,0.68);
 }
 
 /* ── BODY TEXT ── */
@@ -325,7 +326,7 @@ body.visible { opacity: 1; }
   font-size: clamp(14px, 1.4vw, 16px); font-weight: 300; line-height: 1.9;
   color: rgba(198,228,224,0.72); margin-bottom: 24px; max-width: 700px;
 }
-.body-text strong { color: rgba(155,235,225,0.88); font-weight: 500; }
+.body-text strong { color: rgba(230,190,100,0.88); font-weight: 500; }
 .body-text em { color: rgba(198,228,224,0.8); font-style: italic; }
 
 /* ── STAT ROW ── */
@@ -371,7 +372,7 @@ body.visible { opacity: 1; }
   transform: translateY(-3px);
 }
 .framework-card:hover .framework-arrow { color: rgba(200,160,80,0.95); }
-.framework-card:hover .framework-label { color: rgba(155,235,225,1); }
+.framework-card:hover .framework-label { color: rgba(240,210,140,1); }
 .framework-card:hover .framework-desc  { color: rgba(160,200,195,0.82); }
 .framework-arrow {
   font-size: 10px; font-weight: 500; letter-spacing: 0.16em; text-transform: uppercase;
@@ -380,7 +381,7 @@ body.visible { opacity: 1; }
 }
 .framework-label {
   font-family: 'Cormorant Garamond', serif;
-  font-size: 22px; font-weight: 600; color: rgba(155,235,225,0.85);
+  font-size: 22px; font-weight: 600; color: rgba(230,200,130,0.85);
   margin-bottom: 8px; line-height: 1.1;
   transition: color 0.25s ease;
 }
@@ -416,7 +417,7 @@ body.visible { opacity: 1; }
 }
 .pillar-title {
   font-family: 'Cormorant Garamond', serif;
-  font-size: 22px; font-weight: 600; color: rgba(155,235,225,0.85);
+  font-size: 22px; font-weight: 600; color: rgba(230,200,130,0.85);
   margin-bottom: 10px; line-height: 1.1;
 }
 .pillar-desc {
@@ -481,7 +482,7 @@ body.visible { opacity: 1; }
 .pain-name {
   font-family: 'Cormorant Garamond', serif;
   font-size: 19px; font-weight: 600;
-  color: rgba(155,235,225,0.82); line-height: 1.1;
+  color: rgba(230,200,130,0.82); line-height: 1.1;
 }
 .pain-desc {
   font-size: 11px; font-weight: 300; line-height: 1.65;
@@ -523,7 +524,7 @@ body.visible { opacity: 1; }
   transform: translateY(-3px);
 }
 .persona-card:hover .persona-badge { color: rgba(200,160,80,0.9); }
-.persona-card:hover .persona-name  { color: rgba(155,235,225,1); }
+.persona-card:hover .persona-name  { color: rgba(240,210,140,1); }
 .persona-card:hover .persona-desc  { color: rgba(160,200,195,0.82); }
 .persona-badge {
   font-size: 9px; font-weight: 500; letter-spacing: 0.2em; text-transform: uppercase;
@@ -532,7 +533,7 @@ body.visible { opacity: 1; }
 }
 .persona-name {
   font-family: 'Cormorant Garamond', serif;
-  font-size: 26px; font-weight: 600; color: rgba(155,235,225,0.85);
+  font-size: 26px; font-weight: 600; color: rgba(230,200,130,0.85);
   margin-bottom: 10px; line-height: 1.1;
   transition: color 0.25s ease;
 }
@@ -557,12 +558,12 @@ body.visible { opacity: 1; }
   border-color: rgba(59,168,160,0.24);
   transform: translateY(-3px);
 }
-.wil-card:hover .wil-number { color: rgba(59,168,160,0.45); }
+.wil-card:hover .wil-number { color: rgba(200,160,80,0.45); }
 .wil-card:hover .wil-title  { color: rgba(59,168,160,0.9); }
 .wil-card:hover .wil-body   { color: rgba(198,228,224,0.82); }
 .wil-number {
   font-family: 'Cormorant Garamond', serif;
-  font-size: 32px; font-weight: 600; color: rgba(59,168,160,0.28);
+  font-size: 32px; font-weight: 600; color: rgba(200,160,80,0.28);
   margin-bottom: 12px;
   transition: color 0.25s ease;
 }
@@ -752,8 +753,9 @@ body.visible { opacity: 1; }
   --bg-alt:        #ebf2f1;
   --text:          #1a2e2c;
   --text-muted:    rgba(42, 138, 130, 0.7);
-  --accent-bright: #1a6e68;
+  --accent-bright: #8a6820;
   --amber:         #a07830;
+  --amber-bright:  #6e5a1a;
   --border:        rgba(0, 0, 0, 0.07);
 }
 
@@ -998,7 +1000,7 @@ body.visible { opacity: 1; }
 [data-theme="light"] .snav-dot::after {
   background: rgba(245, 250, 249, 0.92);
   border-color: rgba(42, 138, 130, 0.18);
-  color: rgba(26, 110, 104, 0.82);
+  color: rgba(110, 90, 30, 0.82);
 }
 
 

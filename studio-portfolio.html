@@ -19,10 +19,37 @@
 .skip-intro #vignette,
 .skip-intro #overlay,
 .skip-intro .wordmark,
-.skip-intro .sig,
+.skip-intro #studio-letter,
 .skip-intro #motes { opacity: 1; animation: none; }
 @keyframes sigDraw { from { stroke-dashoffset: 600; } to { stroke-dashoffset: 0; } }
 @keyframes sigFill { from { fill-opacity: 0; } to { fill-opacity: 1; } }
+
+/* ── INTRO FIREFLIES ── */
+@keyframes fireflyGlow {
+  0%   { opacity: 0; transform: scale(0.3); }
+  20%  { opacity: 0.9; transform: scale(1); }
+  50%  { opacity: 0.5; transform: scale(0.7); }
+  70%  { opacity: 1; transform: scale(1.1); }
+  100% { opacity: 0; transform: scale(0.2); }
+}
+@keyframes fireflyDrift {
+  0%   { translate: 0 0; }
+  30%  { translate: 6px -10px; }
+  60%  { translate: -4px -18px; }
+  100% { translate: 2px -28px; }
+}
+.intro-sparkle {
+  position: absolute;
+  border-radius: 50%;
+  pointer-events: none;
+  background: radial-gradient(circle, #fff 0%, rgba(224,212,192,0.9) 20%, rgba(224,212,192,0.5) 45%, transparent 70%);
+  box-shadow: 0 0 8px 3px rgba(224,212,192,0.6), 0 0 20px 8px rgba(224,212,192,0.25), 0 0 40px 14px rgba(224,212,192,0.08);
+}
+.intro-sparkle.gold {
+  background: radial-gradient(circle, rgba(255,235,180,1) 0%, rgba(205,175,110,0.9) 20%, rgba(190,155,90,0.5) 45%, transparent 70%);
+  box-shadow: 0 0 8px 3px rgba(205,175,110,0.65), 0 0 22px 9px rgba(190,155,90,0.3), 0 0 44px 16px rgba(190,155,90,0.1);
+}
+.skip-intro .intro-sparkle { display: none; }
 
 /* ── WELCOME OVERLAY ── */
 #welcome-intro {
@@ -62,7 +89,7 @@
   stroke-width: 0.8;
   stroke-dasharray: 600;
   stroke-dashoffset: 600;
-  animation: sigDraw 2s ease-out 1.5s forwards, sigFill 0.6s ease-in 3s forwards;
+  animation: sigDraw 2.5s ease-in-out 1.8s forwards, sigFill 1.2s ease-in-out 3.2s forwards;
 }
 
 html, body {
@@ -177,16 +204,25 @@ html, body {
 }
 #page-exit.active { opacity: 1; }
 
+#page-enter {
+  position: fixed; inset: 0;
+  background: #0b1c26;
+  opacity: 1; pointer-events: none;
+  transition: opacity 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  z-index: 9998;
+}
+#page-enter.gone { opacity: 0; pointer-events: none; }
+
 /* ── WORDMARK / SIG ── */
 .wordmark {
   position: fixed;
-  top: 22px; left: 28px;
-  font-size: 10px;
-  letter-spacing: 0.2em;
-  color: rgba(210,195,172,0.82);
+  bottom: 28px; left: 32px;
+  font-size: clamp(36px, 5vw, 64px);
+  letter-spacing: 0.12em;
+  color: rgba(220,215,210,0.22);
   pointer-events: none;
-  z-index: 10;
-  text-shadow: 0 1px 6px rgba(0,0,0,0.6);
+  z-index: 1;
+  text-shadow: none;
   opacity: 0;
   animation: introFadeUp 1s ease-out 4.5s forwards;
 }
@@ -197,16 +233,307 @@ html, body {
   color: inherit;
   margin: 0;
 }
-.sig {
+/* ── LETTER ICON ── */
+#studio-letter {
   position: fixed;
-  bottom: 18px; right: 22px;
-  font-size: 9px;
-  letter-spacing: 0.16em;
-  color: rgba(200,185,165,0.82);
-  pointer-events: none;
+  bottom: 28px; right: 32px;
   z-index: 10;
+  background: none;
+  border: none;
+  padding: 6px;
+  cursor: pointer;
   opacity: 0;
   animation: introFade 1s ease-out 5s forwards;
+  transition: opacity 0.3s ease;
+  outline: none;
+}
+#studio-letter svg {
+  width: 44px; height: 44px;
+  stroke: rgba(200,185,165,0.82);
+  fill: none;
+  stroke-width: 1.2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  transition: stroke 0.3s ease;
+}
+#studio-letter:hover svg { stroke: rgba(224,212,192,0.95); }
+#studio-letter:focus-visible { outline: 2px solid rgba(190,155,90,0.6); outline-offset: 4px; }
+
+/* Arrival shimmer — one flash then still */
+@keyframes arrivalShimmer {
+  0%   { opacity: 0; filter: drop-shadow(0 0 0px rgba(220,200,160,0)); }
+  40%  { opacity: 1; filter: drop-shadow(0 0 0px rgba(220,200,160,0)); }
+  60%  { opacity: 1; filter: drop-shadow(0 0 18px rgba(220,200,160,0.7)); }
+  80%  { opacity: 0.85; filter: drop-shadow(0 0 4px rgba(220,200,160,0.15)); }
+  100% { opacity: 0.85; filter: drop-shadow(0 0 0px rgba(220,200,160,0)); }
+}
+#studio-letter svg {
+  animation: arrivalShimmer 2.5s ease-out 5s both;
+}
+.skip-intro #studio-letter svg {
+  animation: none;
+  opacity: 0.85;
+}
+#studio-letter:hover svg {
+  filter: drop-shadow(0 0 10px rgba(220,200,160,0.45));
+  opacity: 1;
+  transition: filter 0.3s ease, opacity 0.3s ease;
+}
+#studio-letter:hover svg {
+  filter: drop-shadow(0 0 14px rgba(220,200,160,0.6));
+}
+
+/* Fireflies around letter icon */
+@keyframes firefly1 {
+  0%   { transform: translate(0,0); opacity: 0; }
+  15%  { opacity: 0.9; }
+  50%  { transform: translate(-14px,-18px); opacity: 0.3; }
+  85%  { opacity: 0.8; }
+  100% { transform: translate(8px,-6px); opacity: 0; }
+}
+@keyframes firefly2 {
+  0%   { transform: translate(0,0); opacity: 0; }
+  20%  { opacity: 0.7; }
+  60%  { transform: translate(16px,-12px); opacity: 0.2; }
+  80%  { opacity: 0.6; }
+  100% { transform: translate(-6px,10px); opacity: 0; }
+}
+@keyframes firefly3 {
+  0%   { transform: translate(0,0); opacity: 0; }
+  25%  { opacity: 0.8; }
+  55%  { transform: translate(-10px,14px); opacity: 0.15; }
+  75%  { opacity: 0.7; }
+  100% { transform: translate(12px,-8px); opacity: 0; }
+}
+#studio-letter::before,
+#studio-letter::after {
+  content: '';
+  position: absolute;
+  border-radius: 50%;
+  pointer-events: none;
+}
+#studio-letter::before {
+  width: 3px; height: 3px;
+  background: rgba(255,245,210,0.9);
+  box-shadow: 0 0 6px rgba(255,245,210,0.8), 0 0 12px rgba(245,225,180,0.4);
+  top: 4px; right: 2px;
+  animation: firefly1 3.4s ease-in-out infinite;
+}
+#studio-letter::after {
+  width: 2.5px; height: 2.5px;
+  background: rgba(255,245,210,0.7);
+  box-shadow: 0 0 5px rgba(255,245,210,0.6), 0 0 10px rgba(245,225,180,0.3);
+  bottom: 6px; left: 0;
+  animation: firefly2 4.1s ease-in-out infinite 0.8s;
+}
+.letter-firefly {
+  position: absolute;
+  width: 2px; height: 2px;
+  border-radius: 50%;
+  background: rgba(255,245,210,0.8);
+  box-shadow: 0 0 5px rgba(255,245,210,0.7), 0 0 10px rgba(245,225,180,0.3);
+  pointer-events: none;
+  top: 50%; left: -4px;
+  animation: firefly3 3.8s ease-in-out infinite 1.5s;
+}
+
+/* ── LETTER CARD ── */
+#letter-card {
+  position: fixed;
+  bottom: 56px; right: 18px;
+  width: 300px;
+  padding: 28px 26px 22px;
+  background: rgba(8,18,26,0.92);
+  border: none;
+  z-index: 11;
+  opacity: 0;
+  transform: translateY(10px) rotate(0.5deg);
+  pointer-events: none;
+  transition: opacity 0.35s ease, transform 0.35s cubic-bezier(0.25,0.46,0.45,0.94);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+  box-shadow:
+    0 8px 32px rgba(0,0,0,0.5),
+    0 0 1px rgba(190,155,90,0.15);
+  /* Torn paper edges using clip-path */
+  clip-path: polygon(
+    2% 0%, 5% 0.5%, 8% 0%, 12% 0.8%, 16% 0%, 20% 0.4%, 25% 0%, 30% 0.6%, 35% 0%, 40% 0.3%, 45% 0%, 50% 0.7%, 55% 0%, 60% 0.4%, 65% 0%, 70% 0.5%, 75% 0%, 80% 0.3%, 85% 0%, 90% 0.6%, 95% 0%, 98% 0.4%, 100% 0%,
+    100% 3%, 99.5% 6%, 100% 10%, 99.3% 14%, 100% 18%, 99.6% 22%, 100% 27%, 99.4% 32%, 100% 38%, 99.7% 43%, 100% 48%, 99.3% 54%, 100% 60%, 99.5% 65%, 100% 70%, 99.6% 76%, 100% 82%, 99.4% 87%, 100% 92%, 99.7% 96%, 100% 100%,
+    97% 100%, 94% 99.4%, 90% 100%, 86% 99.6%, 82% 100%, 77% 99.3%, 72% 100%, 67% 99.5%, 62% 100%, 57% 99.7%, 52% 100%, 47% 99.4%, 42% 100%, 37% 99.6%, 32% 100%, 27% 99.3%, 22% 100%, 17% 99.5%, 12% 100%, 7% 99.6%, 3% 100%, 0% 100%,
+    0% 97%, 0.6% 93%, 0% 89%, 0.4% 84%, 0% 79%, 0.7% 74%, 0% 69%, 0.3% 64%, 0% 58%, 0.5% 52%, 0% 46%, 0.6% 40%, 0% 34%, 0.4% 28%, 0% 22%, 0.7% 16%, 0% 10%, 0.5% 5%, 0% 2%
+  );
+}
+#letter-card.open {
+  opacity: 1;
+  transform: translateY(0) rotate(0.5deg);
+  pointer-events: auto;
+}
+.letter-close {
+  position: absolute;
+  top: 8px; right: 10px;
+  background: none; border: none;
+  color: rgba(200,185,165,0.5);
+  font-size: 18px;
+  font-family: 'Georgia', serif;
+  cursor: pointer;
+  padding: 4px 6px;
+  line-height: 1;
+  transition: color 0.2s ease;
+}
+.letter-close:hover { color: rgba(224,212,192,0.9); }
+.letter-close:focus { outline: none; }
+.letter-greeting {
+  font-family: 'Georgia', serif;
+  font-size: 13px;
+  letter-spacing: 0.04em;
+  color: rgba(235,225,210,1);
+  margin-bottom: 12px;
+}
+.letter-body {
+  font-family: 'Georgia', serif;
+  font-size: 10.5px;
+  line-height: 1.7;
+  letter-spacing: 0.015em;
+  color: rgba(220,208,190,0.88);
+  margin-bottom: 12px;
+}
+.letter-signature {
+  display: block;
+  width: 90px;
+  height: auto;
+  margin-top: 10px;
+  margin-bottom: 4px;
+  opacity: 0.85;
+  filter: brightness(1.3);
+}
+.letter-email {
+  display: block;
+  font-family: 'Georgia', serif;
+  font-size: 9px;
+  letter-spacing: 0.08em;
+  color: rgba(220,208,190,0.7);
+  text-decoration: none;
+  border-bottom: 1px solid rgba(200,185,165,0.2);
+  transition: color 0.2s ease, border-color 0.2s ease;
+  margin-bottom: 14px;
+  width: fit-content;
+}
+.letter-email:hover {
+  color: rgba(224,212,192,0.9);
+  border-color: rgba(200,185,165,0.5);
+}
+.letter-divider {
+  height: 1px;
+  background: rgba(190,155,90,0.15);
+  margin-bottom: 14px;
+}
+
+/* ── HINT TOGGLE (matches case study lightswitch) ── */
+.hint-toggle {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.hint-switch {
+  width: 32px; height: 18px;
+  border-radius: 9px;
+  background: rgba(255,255,255,0.15);
+  border: 1px solid rgba(255,255,255,0.5);
+  cursor: pointer;
+  position: relative;
+  transition: background 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+  padding: 0;
+  box-shadow: 0 0 6px rgba(255,255,255,0.15);
+}
+.hint-switch:focus-visible { outline: 2px solid rgba(255,255,255,0.7); outline-offset: 2px; }
+.hint-knob {
+  position: absolute;
+  top: 2px; left: 2px;
+  width: 12px; height: 12px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.8);
+  transition: transform 0.25s ease, background 0.25s ease, box-shadow 0.25s ease;
+  box-shadow: 0 0 4px rgba(255,255,255,0.3);
+}
+.hint-switch[aria-checked="true"] {
+  background: rgba(255,255,255,0.25);
+  border-color: rgba(255,255,255,0.7);
+  box-shadow: 0 0 10px rgba(255,255,255,0.25);
+}
+.hint-switch[aria-checked="true"] .hint-knob {
+  transform: translateX(14px);
+  background: rgba(255,255,255,1);
+  box-shadow: 0 0 8px rgba(255,255,255,0.6);
+}
+.hint-label {
+  font-family: 'Georgia', serif;
+  font-size: 9px;
+  letter-spacing: 0.14em;
+  color: rgba(255,255,255,0.8);
+  text-transform: uppercase;
+}
+
+/* ── ZONE HINTS ── */
+.zone-hint {
+  position: fixed;
+  pointer-events: none;
+  z-index: 8;
+  opacity: 0;
+  transition: opacity 0.5s ease;
+}
+.hints-on .zone-hint {
+  opacity: 1;
+}
+.zone-hint-pill {
+  background: rgba(158,117,125,0.6);
+  border-radius: 18px;
+  padding: 8px 18px;
+  white-space: nowrap;
+}
+.zone-hint-desc {
+  font-family: 'Georgia', serif;
+  font-size: 13px;
+  letter-spacing: 0.32em;
+  color: rgba(255,255,255,1);
+  line-height: 1;
+  font-weight: bold;
+}
+.zone-hint-arrow {
+  position: absolute;
+  fill: rgba(201,191,173,1);
+}
+/* ── Arrow directional animations ── */
+.zone-hint-arrow { --rot: 0deg; transform-origin: center; }
+@keyframes arrowDriftDown {
+  0%, 100% { transform: rotate(var(--rot)) translateY(0); }
+  50% { transform: rotate(var(--rot)) translateY(5px); }
+}
+@keyframes arrowDriftUp {
+  0%, 100% { transform: rotate(var(--rot)) translateY(0); }
+  50% { transform: rotate(var(--rot)) translateY(-5px); }
+}
+@keyframes arrowDriftRight {
+  0%, 100% { transform: rotate(var(--rot)) translateX(0); }
+  50% { transform: rotate(var(--rot)) translateX(5px); }
+}
+@keyframes arrowDriftLeft {
+  0%, 100% { transform: rotate(var(--rot)) translateX(0); }
+  50% { transform: rotate(var(--rot)) translateX(-5px); }
+}
+.zone-hint-arrow.drift-down { animation: arrowDriftDown 2s ease-in-out infinite; }
+.zone-hint-arrow.drift-up   { animation: arrowDriftUp 2s ease-in-out infinite; }
+.zone-hint-arrow.drift-right { animation: arrowDriftRight 2s ease-in-out infinite; }
+.zone-hint-arrow.drift-left  { animation: arrowDriftLeft 2s ease-in-out infinite; }
+
+/* ── ENHANCED SPARKLES IN HINT MODE ── */
+.hints-on .sparkle-dot {
+  filter: drop-shadow(0 0 4px rgba(255,245,220,1)) drop-shadow(0 0 8px rgba(245,225,180,0.8)) !important;
+  opacity: 1 !important;
+}
+.hints-on .zone-lbl {
+  fill: rgba(224,212,192,0.92) !important;
+  filter: drop-shadow(0 1px 4px rgba(0,0,0,0.7)) drop-shadow(0 0 12px rgba(0,0,0,0.4));
+  transition: fill 0.6s ease, filter 0.6s ease;
 }
 
 /* ── MOTES ── */
@@ -469,8 +796,8 @@ h2.l3-title, .l3-title { font-size: 22px; font-weight: normal; color: rgba(228,2
   /* Hide inline desktop panels */
   #l2-overlay, #l3-overlay { display: none !important; }
 
-  /* Wordmark stays, sig hides */
-  .sig { display: none; }
+  /* Wordmark stays, letter/hints hide on mobile */
+  #studio-letter, #letter-card, .zone-hint { display: none !important; }
 
   /* ── Pan hint (fades after first swipe) ──────────────────── */
   @keyframes hintDrift {
@@ -574,10 +901,15 @@ button.l3-close:focus {
     transition-duration: 0.01ms !important;
   }
   #welcome-intro { display: none !important; }
-  #studio-photo, #vignette, #overlay, .wordmark, .sig, #motes { opacity: 1 !important; }
+  #studio-photo, #vignette, #overlay, .wordmark, #studio-letter, #motes { opacity: 1 !important; }
   .mote { display: none; }
   .sparkle-dot { display: none; }
+  .intro-sparkle { display: none; }
   #mob-pan-hint { animation: none; opacity: 1; }
+  #studio-letter.first-visit { animation: none; }
+  .zone-hint { transform: none; }
+  .zone-hint-arrow { animation: none !important; }
+  .zone-hint { transition: none; }
 }
 
 /* ── ZOOM FIX ── */
@@ -637,7 +969,7 @@ html { touch-action: manipulation; }
     <g class="zone-group" data-zone="perspective" id="zg-perspective" role="link" tabindex="0" aria-label="Perspectives — explore perspective-driven design work">
       <rect class="zone-wash zone-rim" x="640" y="0"   width="195" height="160" rx="3"/>
       <rect class="zone-hit"           x="640" y="0"   width="195" height="160"/>
-      <text class="zone-lbl" x="728" y="197" text-anchor="middle" aria-hidden="true">Perspectives</text>
+      <text class="zone-lbl" x="728" y="169" text-anchor="middle" aria-hidden="true">Perspectives</text>
     </g>
 
     <!-- ══ ZONE 2: Experiments ══ -->
@@ -658,7 +990,7 @@ html { touch-action: manipulation; }
     <g class="zone-group" data-zone="sensemaking" id="zg-sensemaking" role="link" tabindex="0" aria-label="Sense Making — explore sensemaking design work">
       <rect class="zone-wash zone-rim" x="247" y="524" width="228" height="110" rx="3"/>
       <rect class="zone-hit"           x="247" y="524" width="228" height="110"/>
-      <text class="zone-lbl" x="295" y="540" text-anchor="middle" aria-hidden="true">Sense Making</text>
+      <text class="zone-lbl" x="295" y="532" text-anchor="middle" aria-hidden="true">Sense Making</text>
     </g>
 
     <!-- ══ ZONE 5: Interactions ══ -->
@@ -682,10 +1014,80 @@ html { touch-action: manipulation; }
   <svg class="welcome-sig" viewBox="0 0 260 50" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
     <text x="10" y="38">— Amber Grey</text>
   </svg>
+  <div id="intro-sparkles" aria-hidden="true"></div>
 </div>
+<script>
+(function(){
+  if(document.documentElement.classList.contains('skip-intro')) return;
+  if(window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  var c=document.getElementById('intro-sparkles');
+  if(!c) return;
+  c.style.cssText='position:absolute;inset:0;pointer-events:none;overflow:hidden;';
+  for(var i=0;i<50;i++){
+    var s=document.createElement('div');
+    var sz=4+Math.random()*7;
+    var gold=Math.random()>0.55;
+    s.className='intro-sparkle'+(gold?' gold':'');
+    var dur=1.4+Math.random()*2;
+    var delay=Math.random()*4.2;
+    var x=5+Math.random()*90;
+    var y=5+Math.random()*90;
+    var floatDur=dur*1.5;
+    s.style.cssText='left:'+x+'%;top:'+y+'%;width:'+sz+'px;height:'+sz+'px;'
+      +'animation:fireflyGlow '+dur+'s ease-in-out '+delay+'s both, fireflyDrift '+floatDur+'s ease-out '+delay+'s both;';
+    c.appendChild(s);
+  }
+})();
+</script>
 
 <div id="page-exit" aria-hidden="true"></div>
-<div class="sig">Portfolio · 2025</div>
+<div id="page-enter" aria-hidden="true"></div>
+<!-- ── LETTER ICON ── -->
+<button id="studio-letter" aria-label="About this portfolio" aria-expanded="false">
+  <span class="letter-firefly" aria-hidden="true"></span>
+  <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+    <rect x="2" y="5" width="20" height="14" rx="1.5"/>
+    <path d="M2 6.5l10 7 10-7"/>
+  </svg>
+</button>
+
+<!-- ── LETTER CARD ── -->
+<div id="letter-card" role="dialog" aria-label="About Amber Grey" aria-hidden="true">
+  <button class="letter-close" aria-label="Close">&times;</button>
+  <div class="letter-greeting">Hello, and welcome.</div>
+  <div class="letter-body">I am so happy you are here – I'm Amber.<br><br>This is my studio space. I tend to it like a living system, where each object holds a different way of thinking.<br><br>I spend a lot of time observing how people move through the world, where things break down, and what helps them find their way again. Most of my work begins with curiosity.<br><br>Everything here opens into something I've explored, tested, or tried to understand a little more&nbsp;deeply.<br><br>Feel free to wander. Hover to discover, or toggle hints below if you'd like a&nbsp;guide. &#9829;</div>
+  <img class="letter-signature" src="A%20Images/Amber%20Grey_Signature2.png" alt="Amber Grey">
+  <a href="mailto:amber@amber.design" class="letter-email">Email &#8599;</a>
+  <div class="letter-divider"></div>
+  <div class="hint-toggle">
+    <button class="hint-switch" role="switch" aria-checked="false" aria-label="Toggle exploration hints" tabindex="0">
+      <div class="hint-knob"></div>
+    </button>
+    <span class="hint-label">Hints</span>
+  </div>
+</div>
+
+<!-- ── ZONE HINTS ── -->
+<div class="zone-hint" data-hint-zone="perspective">
+  <div class="zone-hint-pill"><span class="zone-hint-desc">learn about me</span></div>
+  <svg class="zone-hint-arrow drift-down" width="14" height="36" viewBox="0 0 14 36" data-offset-x="175" data-offset-y="39"><path d="M3.5 36C9.33 29.83 17.5 15.1 3.5 5.5L3.5 13.5 0 0 11 0 6 3.5C12.5 9.17 21.1 23.6 3.5 36Z"/></svg>
+</div>
+<div class="zone-hint" data-hint-zone="experiments">
+  <div class="zone-hint-pill"><span class="zone-hint-desc">things I've tried</span></div>
+  <svg class="zone-hint-arrow drift-down" width="15" height="46" viewBox="0 0 15 46" data-offset-x="105" data-offset-y="-50"><path d="M11.5 0C8.5 7.17 3.4 24.9 7 38.5L0 36 11.5 46 14.5 36 11.5 38.5C9 38 5.5 29.6 11.5 0Z"/></svg>
+</div>
+<div class="zone-hint" data-hint-zone="systems">
+  <div class="zone-hint-pill"><span class="zone-hint-desc">making connections</span></div>
+  <svg class="zone-hint-arrow drift-down" width="14" height="36" viewBox="0 0 14 36" data-offset-x="24" data-offset-y="-33" style="--rot:164deg;"><path d="M3.5 36C9.33 29.83 17.5 15.1 3.5 5.5L3.5 13.5 0 0 11 0 6 3.5C12.5 9.17 21.1 23.6 3.5 36Z"/></svg>
+</div>
+<div class="zone-hint" data-hint-zone="sensemaking">
+  <div class="zone-hint-pill"><span class="zone-hint-desc">finding patterns</span></div>
+  <svg class="zone-hint-arrow drift-down" width="13" height="36" viewBox="0 0 13 36" data-offset-x="154" data-offset-y="-45" style="--rot:15deg;"><path d="M3.27 0C8.71 6.17 16.34 20.9 3.27 30.5L3.27 22.5 0 36 10.27 36 5.6 32.5C11.67 26.83 19.7 12.4 3.27 0Z"/></svg>
+</div>
+<div class="zone-hint" data-hint-zone="interaction">
+  <div class="zone-hint-pill"><span class="zone-hint-desc">testing ideas</span></div>
+  <svg class="zone-hint-arrow drift-up" width="12" height="46" viewBox="0 0 12 46" data-offset-x="81" data-offset-y="-50" style="--rot:0deg;"><path d="M9.52 0C7.03 7.17 2.81 24.9 5.79 38.5L0 36 9.52 46 12 36 9.52 38.5C7.45 38 4.55 29.6 9.52 0Z"/></svg>
+</div>
 
 <!-- Mobile-only UI -->
 <div id="mob-pan-hint" role="status" aria-live="polite">swipe to explore</div>
@@ -1298,6 +1700,125 @@ function setContra(i) {
   window.addEventListener('resize', resize);
 })();
 
+// ── LETTER + HINTS ───────────────────────────────────────────
+(function() {
+  const letterBtn  = document.getElementById('studio-letter');
+  const letterCard = document.getElementById('letter-card');
+  const closeBtn   = letterCard.querySelector('.letter-close');
+  const hintSwitch = letterCard.querySelector('.hint-switch');
+  let cardOpen = false;
+
+  // First-visit pulse
+  if (!sessionStorage.getItem('introSeen')) {
+    letterBtn.classList.add('first-visit');
+  }
+
+  function openCard() {
+    cardOpen = true;
+    letterCard.classList.add('open');
+    letterCard.setAttribute('aria-hidden', 'false');
+    letterBtn.setAttribute('aria-expanded', 'true');
+    // Focus the close button for keyboard users
+    setTimeout(() => closeBtn.focus(), 360);
+  }
+
+  function closeCard() {
+    cardOpen = false;
+    letterCard.classList.remove('open');
+    letterCard.setAttribute('aria-hidden', 'true');
+    letterBtn.setAttribute('aria-expanded', 'false');
+    letterBtn.focus();
+  }
+
+  letterBtn.addEventListener('click', () => {
+    letterBtn.classList.remove('first-visit');
+    if (cardOpen) closeCard(); else openCard();
+  });
+
+  closeBtn.addEventListener('click', closeCard);
+
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Escape' && cardOpen) closeCard();
+  });
+
+  // Hint toggle
+  hintSwitch.addEventListener('click', () => {
+    const on = hintSwitch.getAttribute('aria-checked') === 'true';
+    hintSwitch.setAttribute('aria-checked', String(!on));
+    document.body.classList.toggle('hints-on', !on);
+    if (!on) positionHints();
+  });
+  hintSwitch.addEventListener('keydown', e => {
+    if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); hintSwitch.click(); }
+  });
+
+  // Position zone hints relative to SVG zones
+  const HINT_ZONES = {
+    perspective:  'zg-perspective',
+    experiments:  'zg-experiments',
+    systems:      'zg-systems',
+    sensemaking:  'zg-sensemaking',
+    interaction:  'zg-interaction'
+  };
+  // Pill positions from Figma (in 1440×900 SVG viewBox coords)
+  // These place each pill near its zone label, matching the mockup layout
+  const HINT_POSITIONS = {
+    perspective:  { vx: 637, vy: 78 },
+    experiments:  { vx: 598, vy: 356 },
+    systems:      { vx: 1000, vy: 310 },
+    sensemaking:  { vx: 232, vy: 579 },
+    interaction:  { vx: 1095, vy: 765 }
+  };
+
+  // Convert SVG viewBox coords to screen coords
+  function viewBoxToScreen(vx, vy) {
+    const svg = document.getElementById('overlay');
+    const svgRect = svg.getBoundingClientRect();
+    // viewBox is 1440×900, preserveAspectRatio="xMidYMid slice"
+    const vbW = 1440, vbH = 900;
+    const scaleX = svgRect.width / vbW;
+    const scaleY = svgRect.height / vbH;
+    const scale = Math.max(scaleX, scaleY); // slice = max
+    const renderedW = vbW * scale;
+    const renderedH = vbH * scale;
+    const offsetX = svgRect.left + (svgRect.width - renderedW) / 2;
+    const offsetY = svgRect.top + (svgRect.height - renderedH) / 2;
+    return {
+      x: offsetX + vx * scale,
+      y: offsetY + vy * scale
+    };
+  }
+
+  function positionHints() {
+    const svg = document.getElementById('overlay');
+    const svgRect = svg.getBoundingClientRect();
+    const scale = Math.max(svgRect.width / 1440, svgRect.height / 900);
+
+    document.querySelectorAll('.zone-hint').forEach((hint, i) => {
+      const zoneKey = hint.dataset.hintZone;
+      const pos = HINT_POSITIONS[zoneKey];
+      if (!pos) return;
+      const screen = viewBoxToScreen(pos.vx, pos.vy);
+      hint.style.left = screen.x + 'px';
+      hint.style.top  = screen.y + 'px';
+      hint.style.transitionDelay = (i * 0.12) + 's';
+
+      // Position arrow using viewBox offsets scaled to screen
+      const arrow = hint.querySelector('.zone-hint-arrow');
+      if (arrow) {
+        const ox = parseFloat(arrow.dataset.offsetX) || 0;
+        const oy = parseFloat(arrow.dataset.offsetY) || 0;
+        arrow.style.left = (ox * scale) + 'px';
+        arrow.style.top  = (oy * scale) + 'px';
+      }
+    });
+  }
+
+  window.addEventListener('resize', () => {
+    if (document.body.classList.contains('hints-on')) positionHints();
+  });
+})();
+
 // ── GLITTER SPARKLES ──────────────────────────────────────────
 (function() {
   const NS = 'http://www.w3.org/2000/svg';
@@ -1339,6 +1860,15 @@ function setContra(i) {
     }
   });
 })();
+
+/* ── PAGE-ENTER FADE ── */
+requestAnimationFrame(() => {
+  requestAnimationFrame(() => {
+    setTimeout(() => {
+      document.getElementById('page-enter').classList.add('gone');
+    }, 80);
+  });
+});
 </script>
 </body>
 </html>
