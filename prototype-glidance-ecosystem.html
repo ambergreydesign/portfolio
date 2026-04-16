@@ -100,10 +100,10 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);line-
 
 /* ── COL 2: Wheel ── */
 .col-wheel{
-  display:flex;align-items:center;justify-content:center;
-  padding:1.25rem;position:relative;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  padding:1.25rem 1.25rem .75rem;gap:.6rem;
 }
-#wheelWrap{position:relative;width:100%;max-height:100%;aspect-ratio:1;align-self:center}
+#wheelWrap{position:relative;width:100%;max-width:480px;max-height:calc(100% - 2.5rem);aspect-ratio:1;align-self:center}
 #wheelSvg{width:100%;height:100%}
 .wheel-avatar{
   position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);
@@ -123,14 +123,11 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);line-
   transform:translate(-50%,-120%);
 }
 
-/* legend — compact pill, bottom-right of wheel column */
+/* legend — inline strip below wheel */
 .wheel-legend{
-  position:absolute;bottom:.75rem;right:.75rem;
-  display:flex;flex-direction:row;align-items:center;gap:.65rem;
-  background:rgba(248,247,252,0.92);
-  border:1px solid var(--border);
-  border-radius:8px;padding:.3rem .6rem;
-  backdrop-filter:blur(4px);
+  display:flex;flex-direction:row;align-items:center;justify-content:center;
+  gap:1rem;flex-wrap:wrap;flex-shrink:0;
+  padding:.25rem .5rem;
 }
 .leg-item{display:flex;align-items:center;gap:.3rem;font-size:.6rem;color:var(--muted);white-space:nowrap}
 .leg-swatch{width:14px;height:7px;border-radius:2px;flex-shrink:0}
@@ -213,18 +210,102 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);line-
 .c-name{font-size:.85rem;font-weight:700;margin-bottom:.1rem}
 .c-area{font-size:.7rem;color:var(--muted)}
 
+/* ══ CONCEPT DEEP DIVE ══ */
+.deep-dive{border-top:1px solid var(--border);padding:2.5rem 0 3rem}
+.deep-dive-inner{
+  background:var(--surface);border-radius:18px;
+  border:1px solid var(--border);
+  overflow:hidden;
+}
+.dd-header{
+  display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:1rem;
+  padding:1.75rem 2rem 1.5rem;
+  border-bottom:1px solid var(--border);
+  background:linear-gradient(135deg,#F8F5FF 0%,#FFF 60%);
+}
+.dd-header-left{}
+.dd-week{font-size:.68rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:.3rem}
+.dd-title{font-size:2rem;font-weight:900;color:#6B2D8B;line-height:1.1;margin-bottom:.5rem}
+.dd-tagline{font-size:.95rem;color:var(--muted);line-height:1.55;max-width:480px}
+.dd-meta{display:flex;align-items:center;gap:.75rem;flex-wrap:wrap;margin-top:.1rem}
+.dd-badge{
+  display:inline-flex;align-items:center;gap:.4rem;
+  font-size:.72rem;font-weight:700;padding:.35rem .8rem;border-radius:20px;
+}
+.dd-badge.risk{background:#FFF0F5;color:#E31B6D;border:1.5px solid #F9C0D5}
+.dd-badge.phase{background:#F0EDF8;color:#6B2D8B;border:1.5px solid #D9CFF0}
+
+.dd-story{
+  display:grid;grid-template-columns:repeat(3,1fr);gap:0;
+  align-items:stretch;
+  border-bottom:1px solid var(--border);
+}
+.dd-story-card{
+  padding:1.5rem 1.5rem 1.25rem;
+  border-right:1px solid var(--border);
+  display:flex;flex-direction:column;gap:.85rem;
+  height:100%;
+}
+.dd-story-card:last-child{border-right:none}
+/* image fixed height so caption always aligns at same row */
+.dd-story-img{height:200px;}
+.dd-story-img{
+  width:100%;border-radius:10px;overflow:hidden;
+  background:#F0EDF8;flex-shrink:0;
+}
+.dd-story-img img{
+  width:100%;height:100%;object-fit:cover;display:block;
+  transition:transform .4s ease;
+}
+.dd-story-card:hover .dd-story-img img{transform:scale(1.04)}
+.dd-story-caption{
+  flex:1;
+  background:#6B2D8B;color:white;
+  border-radius:8px;padding:.65rem .85rem;
+  font-size:.78rem;line-height:1.5;font-weight:500;
+}
+.dd-story-step{
+  font-size:.6rem;font-weight:800;letter-spacing:.1em;text-transform:uppercase;
+  color:#6B2D8B;margin-bottom:.25rem;opacity:.7;
+}
+
+.dd-bottom{display:grid;grid-template-columns:1fr 1fr;gap:0}
+.dd-strategy{
+  padding:1.5rem 2rem;
+  border-right:1px solid var(--border);
+}
+.dd-strategy h4{
+  font-size:.7rem;font-weight:800;letter-spacing:.1em;text-transform:uppercase;
+  color:#6B2D8B;margin-bottom:.6rem;display:flex;align-items:center;gap:.5rem;
+}
+.dd-strategy p{font-size:.85rem;color:var(--muted);line-height:1.65}
+
+.dd-considerations{padding:1.5rem 2rem}
+.dd-considerations h4{
+  font-size:.7rem;font-weight:800;letter-spacing:.1em;text-transform:uppercase;
+  color:var(--navy);margin-bottom:.75rem;
+}
+.dd-considerations ul{list-style:none;display:flex;flex-direction:column;gap:.6rem}
+.dd-considerations li{
+  font-size:.82rem;color:var(--text);line-height:1.55;
+  padding-left:1rem;position:relative;
+}
+.dd-considerations li::before{
+  content:'';position:absolute;left:0;top:.55em;
+  width:5px;height:5px;border-radius:50%;background:#6B2D8B;
+}
+.dd-considerations li strong{color:var(--navy)}
+
 /* scroll fade */
 .fade{opacity:0;transform:translateY(18px);transition:opacity .55s,transform .55s}
 .fade.in{opacity:1;transform:none}
 
-/* responsive */
-@media(max-width:1000px){
-  .tool-grid{grid-template-columns:220px 1fr 260px}
-}
-@media(max-width:780px){
-  .tool-grid{grid-template-columns:1fr}
-  .col-personas{border-right:none;border-bottom:1px solid var(--border)}
-  .col-narrative{border-left:none;border-top:1px solid var(--border)}
+/* outer tool clips, inner scales */
+.tool{overflow:hidden;width:100%}
+#toolInner{width:860px;transform-origin:top left;}
+
+/* responsive — tool scales down, never stacks */
+@media(max-width:960px){
   .ale-grid{grid-template-columns:repeat(2,1fr)}
   .ale-expand.open{grid-template-columns:1fr}
 }
@@ -234,6 +315,7 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);line-
 
 <!-- ══ TOOL ══ -->
 <div class="tool" id="tool">
+  <div id="toolInner">
   <div class="tool-grid">
 
     <!-- COL 1: Persona selector -->
@@ -252,9 +334,9 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);line-
         <div class="w-tip" id="wheelTip"></div>
       </div>
       <div class="wheel-legend">
-        <div class="leg-item"><div class="leg-swatch strong"></div><span>Strong — regularly uses</span></div>
-        <div class="leg-item"><div class="leg-swatch weak"></div><span>Weak — limited connection</span></div>
-        <div class="leg-item"><div class="leg-swatch none"></div><span>None — disconnected</span></div>
+        <div class="leg-item"><div class="leg-swatch strong"></div><span>Strong – regularly connected</span></div>
+        <div class="leg-item"><div class="leg-swatch weak"></div><span>Weak – indirect connection</span></div>
+        <div class="leg-item"><div class="leg-swatch none"></div><span>None – currently disconnected</span></div>
       </div>
     </div>
 
@@ -264,11 +346,13 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);line-
         <p class="empty">Select a persona to see their ecosystem story.</p>
       </div>
       <div class="res-drawer" id="resDrawer">
-        <p class="drawer-hint">Click a wheel segment to explore its resources.</p>
+        <p class="drawer-hint">Click a wheel segment to explore its&nbsp;resources.</p>
       </div>
     </div>
 
   </div>
+  </div><!-- /toolInner -->
+
 </div>
 
 <!-- ══ ALEs ══ -->
@@ -297,6 +381,85 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);line-
       <p class="section-sub" style="margin-bottom:1.25rem">Each concept addresses a specific gap — together forming a strategy to reach the missing 98%.</p>
     </div>
     <div class="concepts-grid fade" id="conceptsGrid"></div>
+  </div>
+</div>
+
+<!-- ══ CONCEPT DEEP DIVE ══ -->
+<div class="deep-dive">
+  <div class="wrap">
+    <div class="fade">
+      <div class="eyebrow">Concept Spotlight</div>
+      <h2 class="section-title">A Closer Look</h2>
+      <p class="section-sub" style="margin-bottom:1.5rem">Concept 2.4 illustrates how a single physical feature can build confidence, enable independence, and connect directly to the ecosystem.</p>
+    </div>
+    <div class="deep-dive-inner fade">
+
+      <!-- Header -->
+      <div class="dd-header">
+        <div class="dd-header-left">
+          <div class="dd-week">Week 3–5 · Adoption Phase</div>
+          <div class="dd-title">2.4 Confident Climbing</div>
+          <div class="dd-tagline">Jasper navigates his first set of stairs with the rail pop-out hook — a moment that turns anxiety into capability.</div>
+        </div>
+        <div class="dd-meta">
+          <span class="dd-badge risk">⚠ Risk</span>
+          <span class="dd-badge phase">◎ Phase 07 — Self-Acceptance</span>
+        </div>
+      </div>
+
+      <!-- Story panels -->
+      <div class="dd-story">
+        <div class="dd-story-card">
+          <div class="dd-story-img">
+            <img src="jasper-1.jpg" alt="Jasper standing at the bottom of a staircase with his Glide device, looking nervous" loading="lazy">
+          </div>
+          <div class="dd-story-caption">
+            <div class="dd-story-step">Step 1</div>
+            Jasper is nervous to try his Glide on the stairs for the first time.
+          </div>
+        </div>
+        <div class="dd-story-card">
+          <div class="dd-story-img">
+            <img src="jasper-2.jpg" alt="Jasper's mother demonstrating how to pop out the stair assist hook on the Glide device" loading="lazy">
+          </div>
+          <div class="dd-story-caption">
+            <div class="dd-story-step">Step 2</div>
+            His mother shows him how to pop out the stair assist hook that will connect to the safety rail.
+          </div>
+        </div>
+        <div class="dd-story-card">
+          <div class="dd-story-img">
+            <img src="jasper-3.jpg" alt="Jasper confidently climbing the stairs using the Glide hook attached to the handrail" loading="lazy">
+          </div>
+          <div class="dd-story-caption">
+            <div class="dd-story-step">Step 3</div>
+            Jasper uses the hook to navigate up the stairs and maintain his balance with&nbsp;confidence.
+          </div>
+        </div>
+      </div>
+
+      <!-- Strategy + Considerations -->
+      <div class="dd-bottom">
+        <div class="dd-strategy">
+          <h4>
+            <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M7 1L1 5v8h4V9h4v4h4V5L7 1z" fill="#6B2D8B" opacity=".7"/></svg>
+            Strategies Used to Inform This&nbsp;Concept
+          </h4>
+          <p>Many BLV individuals need a simple, safe way to navigate stairs — one that helps them build confidence with every step. This concept emerged directly from ALE research showing that stairs were a key anxiety point during the adoption phase of new assistive technology.</p>
+        </div>
+        <div class="dd-considerations">
+          <h4>Considerations</h4>
+          <ul>
+            <li>The <strong>stair-assist mechanism</strong> is designed to support a wide range of users, including children, elderly individuals, and those with <strong>dexterity challenges</strong>.</li>
+            <li>The <strong>rail pop-out hook</strong> is compatible with most standard stair rail designs (round and square rails) found in both residential and public spaces.</li>
+            <li>The <strong>pop-out hook</strong> requires minimal hand strength and offers tactile feedback when engaged correctly.</li>
+            <li>The hook clicks back into the <strong>Glide stem</strong> when not in use, preserving the device's overall portability.</li>
+            <li>A clear and <strong>accessible guide</strong> is provided for users and caregivers — including video demos and tactile diagrams.</li>
+          </ul>
+        </div>
+      </div>
+
+    </div><!-- /deep-dive-inner -->
   </div>
 </div>
 
@@ -545,7 +708,7 @@ function onAreaClick(i,area,persona){
   tip.style.opacity='0';
   activeArea=activeArea===i?null:i;
   const drawer=document.getElementById('resDrawer');
-  if(activeArea===null){ drawer.innerHTML='<p class="drawer-hint">Click a wheel segment to explore its resources.</p>'; return; }
+  if(activeArea===null){ drawer.innerHTML='<p class="drawer-hint">Click a wheel segment to explore its&nbsp;resources.</p>'; return; }
   const conn=persona?persona.connections[area.id]:null;
   let html=`<h5 style="color:${area.color}">${area.short}</h5><div class="res-tags">`;
   area.resources.forEach(r=>{
@@ -636,9 +799,9 @@ function showDefaultNarrative(){
     </div>
     <div class="conn-group" style="margin-top:1rem">
       <div class="conn-label">What is an ALE?</div>
-      <p style="font-size:.8rem;color:var(--muted);line-height:1.6;margin-top:.35rem">Adult Lived Experience — research participants with real vision loss journeys. Their stories are mapped here with names changed to protect their identity.</p>
+      <p style="font-size:.8rem;color:var(--muted);line-height:1.6;margin-top:.35rem">Adult Lived Experience — research participants with real vision loss journeys. Their stories are mapped here with names changed to protect their&nbsp;identity.</p>
     </div>`;
-  document.getElementById('resDrawer').innerHTML='<p class="drawer-hint">Click a wheel segment to explore its resources.</p>';
+  document.getElementById('resDrawer').innerHTML='<p class="drawer-hint">Click a wheel segment to explore its&nbsp;resources.</p>';
 }
 
 function selectPersona(id){
@@ -649,7 +812,7 @@ function selectPersona(id){
     activePersona=null;
     drawWheel(null,true);
     showDefaultNarrative();
-    document.getElementById('resDrawer').innerHTML='<p class="drawer-hint">Click a wheel segment to explore its resources.</p>';
+    document.getElementById('resDrawer').innerHTML='<p class="drawer-hint">Click a wheel segment to explore its&nbsp;resources.</p>';
     return;
   }
 
@@ -683,7 +846,7 @@ function selectPersona(id){
       <div class="conn-label">No Current Connection</div>
       <div class="chips">${none.map(a=>`<span class="chip none">${a.short}</span>`).join('')}</div>
     </div>`:''}`;
-  document.getElementById('resDrawer').innerHTML='<p class="drawer-hint">Click a wheel segment to explore its resources.</p>';
+  document.getElementById('resDrawer').innerHTML='<p class="drawer-hint">Click a wheel segment to explore its&nbsp;resources.</p>';
 }
 
 // ──────────────────────────────────────
@@ -804,6 +967,28 @@ buildPersonaList();
 buildAles();
 buildConcepts();
 selectPersona('overview');
+
+// ──────────────────────────────────────
+// SCALE TOOL TO FIT CONTAINER
+// ──────────────────────────────────────
+function scaleToolToFit(){
+  const tool  = document.getElementById('tool');
+  const inner = document.getElementById('toolInner');
+  const NATURAL_W = 860;
+  // use the parent container's width — tool itself is overflow:hidden so may not reflect available space
+  const containerW = (tool.parentElement || document.body).clientWidth;
+  const scale = Math.min(1, containerW / NATURAL_W);
+  if(scale < 1){
+    inner.style.transform = `scale(${scale})`;
+    // shrink outer height to match scaled content so nothing below is pushed down
+    tool.style.height = Math.round(inner.scrollHeight * scale) + 'px';
+  } else {
+    inner.style.transform = '';
+    tool.style.height = '';
+  }
+}
+window.addEventListener('resize', scaleToolToFit);
+scaleToolToFit();
 </script>
 </body>
 </html>

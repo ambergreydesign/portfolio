@@ -1,0 +1,248 @@
+{
+  "json": {
+    "id": "PZllZVfHWM",
+    "name": "BLV test",
+    "createdAt": "2026-04-16T20:52:07.614Z",
+    "updatedAt": "2026-04-16T20:52:07.614Z",
+    "lastSavedAt": "2026-04-16T21:21:43.287Z",
+    "config": {
+      "backgroundGradient": {
+        "start": {
+          "x": 0,
+          "y": 0
+        },
+        "end": {
+          "x": 1,
+          "y": 1
+        },
+        "stops": [
+          {
+            "color": "#3F37C9",
+            "at": 0
+          },
+          {
+            "color": "#8C87DF",
+            "at": 1
+          }
+        ]
+      },
+      "backgroundPaddingRatio": 10.923,
+      "insetPadding": {
+        "bottom": 0,
+        "left": 0,
+        "right": 0,
+        "top": 0
+      },
+      "insetColor": "#000000",
+      "insetAlpha": 0.5,
+      "motionBlurAmount": 1,
+      "motionBlurCursorAmount": 1,
+      "motionBlurScreenMoveAmount": 1,
+      "motionBlurScreenZoomAmount": 1,
+      "cursorSize": 1.5,
+      "cursorSet": {
+        "id": "macos-tahoe",
+        "variants": {}
+      },
+      "cursorRotateOnXMovementRatio": 0.5,
+      "cursorBaseRotation": 0,
+      "useDefaultCursorIfAppCursorHasLowResolution": true,
+      "alwaysUseDefaultCursor": false,
+      "hideNotMovingCursorAfterMs": null,
+      "loopCursorPositionBeforeEndMs": null,
+      "removeCurshorShakeTreshold": 500,
+      "optimizeOriginalCursorTypes": true,
+      "clickEffect": null,
+      "clickSoundEffect": null,
+      "backgroundColor": "#b80a5e",
+      "backgroundImage": null,
+      "backgroundType": "color",
+      "backgroundSystemName": "macOS/tahoe-light.jpg",
+      "backgroundBlur": 0,
+      "hideCursor": false,
+      "mouseMovementSpring": {
+        "stiffness": 470,
+        "damping": 70,
+        "mass": 3
+      },
+      "screenMovementSpring": {
+        "mass": 2.25,
+        "stiffness": 200,
+        "damping": 40
+      },
+      "mouseClickSpring": {
+        "stiffness": 700,
+        "damping": 30,
+        "mass": 1
+      },
+      "defaultOutputAspectRatio": null,
+      "windowBorderRadius": 22,
+      "alwaysKeepZoomedIn": false,
+      "shadowIntensity": 0.75,
+      "shadowAngle": 90,
+      "shadowDistance": 25,
+      "shadowBlur": 20,
+      "shadowIsDirectional": false,
+      "disableMouseMovementSpring": false,
+      "hideCamera": false,
+      "mirrorCamera": false,
+      "cameraRoundness": 0.25,
+      "cameraSize": 0.35,
+      "cameraPosition": "bottom-right",
+      "cameraPositionPoint": {
+        "x": 1,
+        "y": 1
+      },
+      "cameraScaleDuringZoom": 0.7,
+      "cameraAspectRatio": "original",
+      "stopCursorMovementInLastPartMs": 0,
+      "showShortcuts": false,
+      "hiddenShortcuts": {},
+      "showShortcutsWithSingleLetters": false,
+      "showTranscript": true,
+      "transcriptSizeRatio": 1,
+      "shortcutsSizeRatio": 1,
+      "audioVolume": 1,
+      "muteMicrophone": false,
+      "muteSystemAudio": false,
+      "muteExternalDeviceAudio": false,
+      "improveMicrophoneAudio": false,
+      "backgroundAudioFileName": null,
+      "muteBackgroundAudio": false,
+      "backgroundAudioVolume": 0.05,
+      "clickSoundEffectVolume": 0.25,
+      "microphoneInStereoMode": false,
+      "deviceFrameKey": null,
+      "defaultLayout": {
+        "type": "both",
+        "cameraSize": 0.35,
+        "cameraPositionPoint": {
+          "x": 1,
+          "y": 1
+        }
+      },
+      "enableDeviceMockup": true,
+      "adjustDeviceFrameToRecordingSize": true,
+      "recordingRange": [
+        0,
+        78302.89000004996
+      ],
+      "recordingCrop": {
+        "x": 0,
+        "y": 0,
+        "width": 1,
+        "height": 1
+      }
+    },
+    "meta": {
+      "recordingFlags": []
+    },
+    "scenes": [
+      {
+        "id": "plZmS5fztL",
+        "name": "Default",
+        "zoomRanges": [
+          {
+            "id": "I6ebqpfPmZ",
+            "zoom": 2,
+            "type": "follow-click-groups",
+            "snapToEdgesRatio": 0.25,
+            "manualTargetPoint": {
+              "x": 0.5,
+              "y": 0.5
+            },
+            "glideDirection": null,
+            "glideSpeed": 0.5,
+            "isDisabled": false,
+            "startTime": 2078,
+            "endTime": 3146.8413928304703,
+            "isSystem": false,
+            "hasInstantAnimation": false
+          },
+          {
+            "id": "Xjs5yJ7Dns",
+            "zoom": 2.056,
+            "type": "follow-click-groups",
+            "snapToEdgesRatio": 0.25,
+            "manualTargetPoint": {
+              "x": 0.5,
+              "y": 0.5
+            },
+            "glideDirection": null,
+            "glideSpeed": 0.5,
+            "isDisabled": false,
+            "startTime": 12494.751008064517,
+            "endTime": 14026.19808467742,
+            "isSystem": false,
+            "hasInstantAnimation": false
+          },
+          {
+            "id": "k2d1o1Y5qH",
+            "zoom": 2,
+            "type": "manual",
+            "snapToEdgesRatio": 0.25,
+            "manualTargetPoint": {
+              "x": 0.5,
+              "y": 0.5
+            },
+            "glideDirection": null,
+            "glideSpeed": 0.5,
+            "isDisabled": false,
+            "startTime": 22976.985635080644,
+            "endTime": 24434.128780241932,
+            "isSystem": false,
+            "hasInstantAnimation": false
+          },
+          {
+            "id": "UhYQG20Kt4",
+            "zoom": 2,
+            "type": "follow-click-groups",
+            "snapToEdgesRatio": 0.25,
+            "manualTargetPoint": {
+              "x": 0.5,
+              "y": 0.5
+            },
+            "glideDirection": null,
+            "glideSpeed": 0.5,
+            "isDisabled": false,
+            "startTime": 42239.72026209677,
+            "endTime": 43678.2144657258,
+            "isSystem": false,
+            "hasInstantAnimation": false
+          }
+        ],
+        "type": "recording",
+        "sessionIndex": 0,
+        "slices": [
+          {
+            "id": "zp4oJ7bBBu",
+            "timeScale": 1,
+            "sourceStartMs": 3570.236650485437,
+            "sourceEndMs": 56574.92677784211,
+            "volume": 1,
+            "systemAudioVolume": 1,
+            "hideCursor": false,
+            "disableSmoothMouseMovement": false,
+            "externalDeviceAudioVolume": 1
+          }
+        ],
+        "layouts": [],
+        "masks": [],
+        "resolvedTypingSpeedIncreaseSuggestions": []
+      }
+    ]
+  },
+  "meta": {
+    "values": {
+      "createdAt": [
+        "Date"
+      ],
+      "updatedAt": [
+        "Date"
+      ],
+      "lastSavedAt": [
+        "Date"
+      ]
+    }
+  }
+}
