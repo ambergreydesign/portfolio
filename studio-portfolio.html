@@ -796,12 +796,20 @@ h2.l3-title, .l3-title { font-size: 22px; font-weight: normal; color: rgba(228,2
   /* Hide inline desktop panels */
   #l2-overlay, #l3-overlay { display: none !important; }
 
-  /* Hints hide on mobile, letter icon stays */
-  .zone-hint { display: none !important; }
+  /* Letter icon + card on mobile */
   #studio-letter { bottom: 16px; right: 16px; }
   #studio-letter svg { width: 34px; height: 34px; }
   #letter-card { bottom: 48px; right: 12px; width: 270px; padding: 22px 18px 18px; }
   .wordmark { font-size: 28px; bottom: 16px; left: 16px; }
+
+  /* Hints on mobile: absolute inside scene so they pan with photo */
+  .zone-hint {
+    position: absolute !important;
+    z-index: 8;
+  }
+  .zone-hint-pill { padding: 6px 12px; }
+  .zone-hint-desc { font-size: 11px; }
+  .zone-hint-arrow { display: none; }
 
   /* ── Pan hint (fades after first swipe) ──────────────────── */
   @keyframes hintDrift {
@@ -810,20 +818,7 @@ h2.l3-title, .l3-title { font-size: 22px; font-weight: normal; color: rgba(228,2
   }
   #mob-pan-hint { display: none !important; }
 
-  /* ── Desktop nudge ───────────────────────────────────────── */
-  #mob-desktop-note {
-    position: fixed;
-    bottom: 16px;
-    left: 50%;
-    transform: translateX(-50%);
-    font-family: 'Georgia', serif;
-    font-size: 9px;
-    letter-spacing: 0.16em;
-    color: rgba(200, 185, 165, 0.18);
-    pointer-events: none;
-    z-index: 50;
-    white-space: nowrap;
-  }
+  #mob-desktop-note { display: none !important; }
 }
 
 /* ── GLITTER SPARKLES ── */
@@ -912,6 +907,9 @@ html { touch-action: manipulation; }
   .zone-lbl {
     fill: rgba(218, 206, 186, 0.85) !important;
   }
+  .hints-on .zone-lbl {
+    fill: rgba(224, 212, 192, 1) !important;
+  }
 
   /* ── Focus visible on zones (mobile keyboard/switch) ── */
   .zone-group:focus-visible .zone-lbl {
@@ -991,6 +989,28 @@ html { touch-action: manipulation; }
   <!-- Floating motes -->
   <div id="motes"></div>
 
+  <!-- ── ZONE HINTS ── -->
+  <div class="zone-hint" data-hint-zone="perspective">
+    <div class="zone-hint-pill"><span class="zone-hint-desc">learn about me</span></div>
+    <svg class="zone-hint-arrow drift-down" width="14" height="36" viewBox="0 0 14 36" data-offset-x="175" data-offset-y="39"><path d="M3.5 36C9.33 29.83 17.5 15.1 3.5 5.5L3.5 13.5 0 0 11 0 6 3.5C12.5 9.17 21.1 23.6 3.5 36Z"/></svg>
+  </div>
+  <div class="zone-hint" data-hint-zone="experiments">
+    <div class="zone-hint-pill"><span class="zone-hint-desc">things I've tried</span></div>
+    <svg class="zone-hint-arrow drift-down" width="15" height="46" viewBox="0 0 15 46" data-offset-x="105" data-offset-y="-50"><path d="M11.5 0C8.5 7.17 3.4 24.9 7 38.5L0 36 11.5 46 14.5 36 11.5 38.5C9 38 5.5 29.6 11.5 0Z"/></svg>
+  </div>
+  <div class="zone-hint" data-hint-zone="systems">
+    <div class="zone-hint-pill"><span class="zone-hint-desc">making connections</span></div>
+    <svg class="zone-hint-arrow drift-down" width="14" height="36" viewBox="0 0 14 36" data-offset-x="24" data-offset-y="-33" style="--rot:164deg;"><path d="M3.5 36C9.33 29.83 17.5 15.1 3.5 5.5L3.5 13.5 0 0 11 0 6 3.5C12.5 9.17 21.1 23.6 3.5 36Z"/></svg>
+  </div>
+  <div class="zone-hint" data-hint-zone="sensemaking">
+    <div class="zone-hint-pill"><span class="zone-hint-desc">finding patterns</span></div>
+    <svg class="zone-hint-arrow drift-down" width="13" height="36" viewBox="0 0 13 36" data-offset-x="154" data-offset-y="-45" style="--rot:15deg;"><path d="M3.27 0C8.71 6.17 16.34 20.9 3.27 30.5L3.27 22.5 0 36 10.27 36 5.6 32.5C11.67 26.83 19.7 12.4 3.27 0Z"/></svg>
+  </div>
+  <div class="zone-hint" data-hint-zone="interaction">
+    <div class="zone-hint-pill"><span class="zone-hint-desc">testing ideas</span></div>
+    <svg class="zone-hint-arrow drift-up" width="12" height="46" viewBox="0 0 12 46" data-offset-x="81" data-offset-y="-50" style="--rot:0deg;"><path d="M9.52 0C7.03 7.17 2.81 24.9 5.79 38.5L0 36 9.52 46 12 36 9.52 38.5C7.45 38 4.55 29.6 9.52 0Z"/></svg>
+  </div>
+
 </div><!-- #scene -->
 </main>
 
@@ -1053,31 +1073,9 @@ html { touch-action: manipulation; }
   </div>
 </div>
 
-<!-- ── ZONE HINTS ── -->
-<div class="zone-hint" data-hint-zone="perspective">
-  <div class="zone-hint-pill"><span class="zone-hint-desc">learn about me</span></div>
-  <svg class="zone-hint-arrow drift-down" width="14" height="36" viewBox="0 0 14 36" data-offset-x="175" data-offset-y="39"><path d="M3.5 36C9.33 29.83 17.5 15.1 3.5 5.5L3.5 13.5 0 0 11 0 6 3.5C12.5 9.17 21.1 23.6 3.5 36Z"/></svg>
-</div>
-<div class="zone-hint" data-hint-zone="experiments">
-  <div class="zone-hint-pill"><span class="zone-hint-desc">things I've tried</span></div>
-  <svg class="zone-hint-arrow drift-down" width="15" height="46" viewBox="0 0 15 46" data-offset-x="105" data-offset-y="-50"><path d="M11.5 0C8.5 7.17 3.4 24.9 7 38.5L0 36 11.5 46 14.5 36 11.5 38.5C9 38 5.5 29.6 11.5 0Z"/></svg>
-</div>
-<div class="zone-hint" data-hint-zone="systems">
-  <div class="zone-hint-pill"><span class="zone-hint-desc">making connections</span></div>
-  <svg class="zone-hint-arrow drift-down" width="14" height="36" viewBox="0 0 14 36" data-offset-x="24" data-offset-y="-33" style="--rot:164deg;"><path d="M3.5 36C9.33 29.83 17.5 15.1 3.5 5.5L3.5 13.5 0 0 11 0 6 3.5C12.5 9.17 21.1 23.6 3.5 36Z"/></svg>
-</div>
-<div class="zone-hint" data-hint-zone="sensemaking">
-  <div class="zone-hint-pill"><span class="zone-hint-desc">finding patterns</span></div>
-  <svg class="zone-hint-arrow drift-down" width="13" height="36" viewBox="0 0 13 36" data-offset-x="154" data-offset-y="-45" style="--rot:15deg;"><path d="M3.27 0C8.71 6.17 16.34 20.9 3.27 30.5L3.27 22.5 0 36 10.27 36 5.6 32.5C11.67 26.83 19.7 12.4 3.27 0Z"/></svg>
-</div>
-<div class="zone-hint" data-hint-zone="interaction">
-  <div class="zone-hint-pill"><span class="zone-hint-desc">testing ideas</span></div>
-  <svg class="zone-hint-arrow drift-up" width="12" height="46" viewBox="0 0 12 46" data-offset-x="81" data-offset-y="-50" style="--rot:0deg;"><path d="M9.52 0C7.03 7.17 2.81 24.9 5.79 38.5L0 36 9.52 46 12 36 9.52 38.5C7.45 38 4.55 29.6 9.52 0Z"/></svg>
-</div>
 
 <!-- Mobile-only UI -->
 <div id="mob-pan-hint" role="status" aria-live="polite">swipe to explore</div>
-<div id="mob-desktop-note" role="note">best experienced on desktop</div>
 
 <!-- ══ LEVEL 2 ══ -->
 <div id="l2-overlay" role="dialog" aria-label="Project list" aria-hidden="true">
@@ -1776,7 +1774,27 @@ function setContra(i) {
   }
 
   function positionHints() {
+    const isMobile = window.innerWidth <= 768;
     const svg = document.getElementById('overlay');
+    const scene = document.getElementById('scene');
+
+    if (isMobile) {
+      // On mobile, hints are absolute inside #scene
+      // Use percentage positions based on viewBox 1440×900
+      const sceneW = scene.offsetWidth;
+      const sceneH = scene.offsetHeight;
+      document.querySelectorAll('.zone-hint').forEach((hint, i) => {
+        const zoneKey = hint.dataset.hintZone;
+        const pos = HINT_POSITIONS[zoneKey];
+        if (!pos) return;
+        hint.style.left = (pos.vx / 1440 * 100) + '%';
+        hint.style.top  = (pos.vy / 900 * 100) + '%';
+        hint.style.transitionDelay = (i * 0.12) + 's';
+      });
+      return;
+    }
+
+    // Desktop: fixed positioning using viewBox-to-screen mapping
     const svgRect = svg.getBoundingClientRect();
     const scale = Math.max(svgRect.width / 1440, svgRect.height / 900);
 
