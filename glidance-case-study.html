@@ -1779,35 +1779,6 @@ function navigateTo(url) {
   });
 })();
 
-// Hero parallax on scroll
-(function() {
-  var hero = document.querySelector('.hero');
-  if (!hero || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-  var title = hero.querySelector('.hero-title');
-  var desc = hero.querySelector('.hero-desc');
-  var zone = hero.querySelector('.hero-zone');
-
-  var ticking = false;
-  window.addEventListener('scroll', function() {
-    if (!ticking) {
-      requestAnimationFrame(function() {
-        var scrollY = window.pageYOffset;
-        var heroH = hero.offsetHeight;
-        if (scrollY < heroH) {
-          var ratio = scrollY / heroH;
-          var opacity = 1 - ratio * 0.8;
-          var shift = scrollY * 0.15;
-          if (title) { title.style.transform = 'translateY(' + shift + 'px)'; title.style.opacity = opacity; }
-          if (desc)  { desc.style.transform = 'translateY(' + (shift * 0.8) + 'px)'; desc.style.opacity = opacity; }
-          if (zone)  { zone.style.transform = 'translateY(' + (shift * 0.6) + 'px)'; zone.style.opacity = opacity; }
-        }
-        ticking = false;
-      });
-      ticking = true;
-    }
-  }, { passive: true });
-})();
-
 requestAnimationFrame(function() {
   requestAnimationFrame(function() { document.body.classList.add('visible'); });
 });
