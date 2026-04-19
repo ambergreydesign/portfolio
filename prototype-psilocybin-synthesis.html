@@ -379,6 +379,172 @@ html, body {
   .artwork-tray { grid-template-columns: repeat(4, 1fr); gap: 4px; }
 }
 
+/* ── VIEW CONTAINERS ── */
+.view-container { display: none; width: 100%; height: 100%; }
+.view-container.active { display: flex; }
+#canvasView.active { display: flex; flex: 1; }
+#galleryView.active { display: flex; flex-direction: column; flex: 1; overflow-y: auto; }
+
+/* ── STATUS TOGGLE ── */
+.status-toggle {
+  display: flex; gap: 2px; padding: 3px;
+  background: rgba(155,109,255,0.05);
+  border: 1px solid var(--accent-border);
+  border-radius: 100px;
+}
+.toggle-btn {
+  border: none; background: transparent;
+  padding: 4px 14px; border-radius: 100px;
+  font-family: inherit;
+  font-size: 9px; font-weight: 500; letter-spacing: 0.18em;
+  text-transform: uppercase; color: var(--text-dim);
+  cursor: pointer; transition: all 0.2s;
+}
+.toggle-btn:hover { color: var(--text-muted); }
+.toggle-btn.active {
+  background: var(--accent-soft);
+  color: var(--accent-bright);
+  box-shadow: 0 0 8px rgba(155,109,255,0.15);
+}
+
+/* ── SAVE SECTION ── */
+.save-section { padding: 20px 0; border-top: 1px solid var(--border); }
+.save-input {
+  width: 100%;
+  background: rgba(255,255,255,0.03);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 10px 12px;
+  font-family: inherit;
+  font-size: 11px; font-weight: 300;
+  color: var(--text);
+  outline: none;
+  transition: border-color 0.2s;
+  margin-bottom: 10px;
+}
+.save-input:focus { border-color: var(--accent-border); }
+.save-input::placeholder { color: var(--text-dim); }
+.save-help {
+  font-size: 10px; font-weight: 300; line-height: 1.5;
+  color: var(--text-dim);
+  margin-bottom: 12px;
+}
+
+/* ── GALLERY VIEW ── */
+#galleryView { padding-top: 38px; }
+.gallery-header {
+  padding: 48px 40px 24px;
+  border-bottom: 1px solid var(--border);
+}
+.gallery-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 38px; font-weight: 600; line-height: 1.1;
+  color: var(--accent-bright); margin-bottom: 10px;
+}
+.gallery-subtitle {
+  font-size: 12px; font-weight: 300; color: var(--text-muted);
+  line-height: 1.6; max-width: 580px;
+}
+.gallery-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+  gap: 24px;
+  padding: 40px;
+}
+.gallery-card {
+  display: flex; flex-direction: column; gap: 12px;
+  cursor: pointer;
+  border-radius: 12px;
+  padding: 14px;
+  border: 1px solid var(--border);
+  background: var(--bg-panel);
+  transition: all 0.25s ease;
+}
+.gallery-card:hover {
+  border-color: var(--accent-border);
+  box-shadow: 0 0 24px rgba(155,109,255,0.08);
+  transform: translateY(-2px);
+}
+.gallery-thumb {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 1;
+  background: #ffffff;
+  border-radius: 6px;
+  overflow: hidden;
+  box-shadow: inset 0 0 0 1px rgba(0,0,0,0.04);
+}
+.mini-piece { position: absolute; }
+.mini-piece img {
+  width: 100%; height: 100%; object-fit: contain;
+  display: block; pointer-events: none;
+}
+.gallery-card-meta {
+  display: flex; justify-content: space-between; align-items: center;
+  font-size: 10px; letter-spacing: 0.06em;
+}
+.gallery-card-name {
+  color: var(--accent-bright); font-weight: 500;
+  font-family: 'Cormorant Garamond', serif;
+  font-style: italic;
+  font-size: 14px;
+  letter-spacing: 0.02em;
+}
+.gallery-card-date { color: var(--text-dim); }
+.gallery-remix-hint {
+  font-size: 8px; letter-spacing: 0.2em; text-transform: uppercase;
+  color: var(--text-dim); text-align: center;
+  padding-top: 4px; opacity: 0;
+  transition: opacity 0.25s;
+}
+.gallery-card:hover .gallery-remix-hint { opacity: 1; color: var(--accent); }
+.gallery-empty {
+  grid-column: 1 / -1;
+  text-align: center;
+  padding: 80px 40px;
+  font-size: 12px; font-weight: 300;
+  color: var(--text-dim);
+  line-height: 1.7;
+}
+.gallery-empty em {
+  display: block; margin-bottom: 8px;
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 20px; font-style: italic;
+  color: var(--text-muted);
+}
+
+/* ── TOAST ── */
+.toast {
+  position: fixed; bottom: 28px; left: 50%;
+  transform: translateX(-50%) translateY(20px);
+  padding: 12px 20px;
+  background: rgba(20, 14, 32, 0.96);
+  backdrop-filter: blur(14px);
+  border: 1px solid var(--accent-border);
+  border-radius: 100px;
+  font-size: 11px; font-weight: 400; letter-spacing: 0.04em;
+  color: var(--text);
+  opacity: 0; pointer-events: none;
+  transition: all 0.3s ease;
+  z-index: 1000;
+  max-width: 90vw;
+  text-align: center;
+}
+.toast.show {
+  opacity: 1; pointer-events: auto;
+  transform: translateX(-50%) translateY(0);
+}
+
+@media (max-width: 768px) {
+  .status-toggle { padding: 2px; }
+  .toggle-btn { padding: 3px 10px; font-size: 8px; letter-spacing: 0.14em; }
+  .gallery-header { padding: 32px 16px 20px; }
+  .gallery-title { font-size: 28px; }
+  .gallery-grid { padding: 20px 16px; gap: 14px; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); }
+  .status-left .status-label { display: none; }
+  .status-left .status-sep { display: none; }
+}
+
 /* ── FOCUS STYLES ── */
 :focus-visible {
   outline: 2px solid var(--accent);
@@ -410,13 +576,20 @@ html, body {
     <span class="status-sep">/</span>
     <span class="status-label">Psilocybin as System</span>
   </div>
+  <div class="status-toggle" role="tablist" aria-label="Switch between canvas and gallery">
+    <button class="toggle-btn active" id="toggleCanvas" data-view="canvas" role="tab" aria-selected="true" onclick="switchView('canvas')">Canvas</button>
+    <button class="toggle-btn" id="toggleGallery" data-view="gallery" role="tab" aria-selected="false" onclick="switchView('gallery')">Fridge</button>
+  </div>
   <div class="status-right">
-    <span class="count" id="placedCount">0</span> placed
+    <span id="statusCount"><span class="count" id="placedCount">0</span> placed</span>
+    <span id="fridgeCount" style="display:none;"><span class="count" id="fridgeCountNum">0</span> in fridge</span>
   </div>
 </div>
 
 
 <main id="shell" role="main">
+
+<div id="canvasView" class="view-container active">
 
   <!-- LEFT: CANVAS -->
   <div id="canvasPanel">
@@ -467,14 +640,40 @@ html, body {
       </div>
     </div>
 
-
+    <div class="save-section" id="saveSection" style="display:none;">
+      <div class="controls-label">Save to Fridge</div>
+      <input type="text" class="save-input" id="nicknameInput" placeholder="First name (optional)" maxlength="30" autocomplete="given-name">
+      <div class="save-help">Your composition joins the shared gallery once approved.</div>
+      <div class="action-row">
+        <button class="action-btn warm" id="saveBtn" onclick="saveToFridge()">Save to Fridge</button>
+      </div>
+    </div>
 
   </aside>
+</div>
+
+<!-- GALLERY VIEW -->
+<div id="galleryView" class="view-container">
+  <div class="gallery-header">
+    <h2 class="gallery-title">The Fridge</h2>
+    <p class="gallery-subtitle">Compositions saved by visitors — each a re-arrangement of marks made during the ceremony. Click any piece to load it onto the canvas and remix it into something new.</p>
+  </div>
+  <div class="gallery-grid" id="galleryGrid">
+    <div class="gallery-empty">Loading&hellip;</div>
+  </div>
+</div>
+
 </main>
+
+<div id="toast" class="toast" role="status" aria-live="polite"></div>
 
 
 <script>
 'use strict';
+
+// ── SUPABASE CONFIG ──────────────────────────────────────
+const SUPABASE_URL = 'https://xpmkdzajrskmztxndrog.supabase.co';
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhwbWtkemFqcnNrbXp0eG5kcm9nIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzY2MjcwMjMsImV4cCI6MjA5MjIwMzAyM30.Wg8T-KtQmtcXZBlTtZJEzJM-2N6hmQ6-WW4cYeRc0T4';
 
 // ── IMAGE DATA ──────────────────────────────────────────
 const artworks = [
@@ -780,6 +979,13 @@ function resetCanvas() {
 
 function updateCount() {
   document.getElementById('placedCount').textContent = placedPieces.length;
+  updateSaveSection();
+}
+
+function updateSaveSection() {
+  const section = document.getElementById('saveSection');
+  if (!section) return;
+  section.style.display = placedPieces.length > 0 ? 'block' : 'none';
 }
 
 // ── CLICK OUTSIDE TO DESELECT ───────────────────────────
@@ -797,6 +1003,287 @@ function navigateTo(url) {
   document.body.style.opacity = '0';
   document.body.style.transition = 'opacity 0.3s ease';
   setTimeout(() => { window.location.href = url; }, 320);
+}
+
+// ── VIEW TOGGLE (CANVAS / GALLERY) ──────────────────────
+let galleryLoaded = false;
+function switchView(view) {
+  const canvasView = document.getElementById('canvasView');
+  const galleryView = document.getElementById('galleryView');
+  const toggleCanvas = document.getElementById('toggleCanvas');
+  const toggleGallery = document.getElementById('toggleGallery');
+  const statusCount = document.getElementById('statusCount');
+  const fridgeCount = document.getElementById('fridgeCount');
+
+  if (view === 'canvas') {
+    canvasView.classList.add('active');
+    galleryView.classList.remove('active');
+    toggleCanvas.classList.add('active');
+    toggleGallery.classList.remove('active');
+    toggleCanvas.setAttribute('aria-selected', 'true');
+    toggleGallery.setAttribute('aria-selected', 'false');
+    statusCount.style.display = '';
+    fridgeCount.style.display = 'none';
+  } else {
+    canvasView.classList.remove('active');
+    galleryView.classList.add('active');
+    toggleGallery.classList.add('active');
+    toggleCanvas.classList.remove('active');
+    toggleGallery.setAttribute('aria-selected', 'true');
+    toggleCanvas.setAttribute('aria-selected', 'false');
+    statusCount.style.display = 'none';
+    fridgeCount.style.display = '';
+    loadGallery();
+  }
+}
+
+// ── TOAST ───────────────────────────────────────────────
+let toastTimeout;
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(toastTimeout);
+  toastTimeout = setTimeout(() => t.classList.remove('show'), 4000);
+}
+
+// ── SAVE TO FRIDGE ──────────────────────────────────────
+// Positions/sizes saved as fractions of canvas width so compositions
+// render correctly at any canvas size (desktop / mobile / thumbnail).
+function serializePieces() {
+  const cw = canvas.offsetWidth || 580;
+  return placedPieces.map(p => ({
+    id: p.id,
+    x: (parseFloat(p.el.style.left) || 0) / cw,
+    y: (parseFloat(p.el.style.top) || 0) / cw,
+    w: 160 / cw,
+    opacity: p.opacity,
+    scale: p.scale,
+    rotation: p.rotation,
+    z: parseInt(p.el.style.zIndex) || 1,
+  }));
+}
+
+// Handle both new (fractional) and legacy (raw px) saved states.
+function unpackPiece(s, refW) {
+  const isFrac = Math.abs(s.x) <= 1.5 && Math.abs(s.y) <= 1.5 && (!s.w || s.w <= 1.5);
+  const xFrac = isFrac ? s.x : s.x / 580;
+  const yFrac = isFrac ? s.y : s.y / 580;
+  const wFrac = s.w != null ? (isFrac ? s.w : s.w / 580) : (160 / 580);
+  return {
+    x: xFrac * refW,
+    y: yFrac * refW,
+    size: wFrac * refW,
+    xFrac, yFrac, wFrac,
+  };
+}
+
+async function saveToFridge() {
+  if (placedPieces.length === 0) {
+    showToast('Place some pieces on the canvas first.');
+    return;
+  }
+  const input = document.getElementById('nicknameInput');
+  const btn = document.getElementById('saveBtn');
+  const nickname = input.value.trim() || null;
+  const state = serializePieces();
+
+  const originalText = btn.textContent;
+  btn.disabled = true;
+  btn.textContent = 'Saving…';
+  btn.style.opacity = '0.6';
+
+  try {
+    const res = await fetch(`${SUPABASE_URL}/rest/v1/compositions`, {
+      method: 'POST',
+      headers: {
+        'apikey': SUPABASE_ANON_KEY,
+        'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
+        'Content-Type': 'application/json',
+        'Prefer': 'return=minimal',
+      },
+      body: JSON.stringify({ nickname, state, approved: false }),
+    });
+    if (!res.ok) {
+      const errText = await res.text();
+      throw new Error(errText || 'Save failed');
+    }
+    showToast('Saved. It will appear in the fridge once approved.');
+    input.value = '';
+    galleryLoaded = false; // force refresh next time
+  } catch (e) {
+    console.error('Save failed:', e);
+    showToast('Could not save. Check your connection and try again.');
+  } finally {
+    btn.disabled = false;
+    btn.textContent = originalText;
+    btn.style.opacity = '';
+  }
+}
+
+// ── LOAD & RENDER GALLERY ───────────────────────────────
+async function loadGallery() {
+  const grid = document.getElementById('galleryGrid');
+  grid.innerHTML = '<div class="gallery-empty">Loading&hellip;</div>';
+
+  try {
+    const res = await fetch(
+      `${SUPABASE_URL}/rest/v1/compositions?select=*&approved=eq.true&order=created_at.desc&limit=60`,
+      {
+        headers: {
+          'apikey': SUPABASE_ANON_KEY,
+          'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
+        },
+      }
+    );
+    if (!res.ok) throw new Error('Fetch failed');
+    const data = await res.json();
+    galleryLoaded = true;
+    renderGallery(data);
+  } catch (e) {
+    console.error('Gallery load failed:', e);
+    grid.innerHTML = '<div class="gallery-empty"><em>Could not load the fridge.</em>Check your connection and try again.</div>';
+  }
+}
+
+function renderGallery(compositions) {
+  const grid = document.getElementById('galleryGrid');
+  const countEl = document.getElementById('fridgeCountNum');
+  if (countEl) countEl.textContent = compositions.length;
+
+  if (!compositions || compositions.length === 0) {
+    grid.innerHTML = '<div class="gallery-empty"><em>The fridge is empty.</em>Make something on the canvas and be the first to save.</div>';
+    return;
+  }
+
+  grid.innerHTML = '';
+  compositions.forEach(c => {
+    const card = document.createElement('div');
+    card.className = 'gallery-card';
+    card.setAttribute('role', 'button');
+    card.setAttribute('tabindex', '0');
+    card.setAttribute('aria-label', `Remix composition${c.nickname ? ' by ' + c.nickname : ''}`);
+    card.addEventListener('click', () => remixComposition(c));
+    card.addEventListener('keydown', e => {
+      if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); remixComposition(c); }
+    });
+
+    const thumb = document.createElement('div');
+    thumb.className = 'gallery-thumb';
+    renderGalleryThumb(c.state || [], thumb);
+
+    const meta = document.createElement('div');
+    meta.className = 'gallery-card-meta';
+    const name = document.createElement('span');
+    name.className = 'gallery-card-name';
+    name.textContent = c.nickname ? c.nickname : 'anonymous';
+    const date = document.createElement('span');
+    date.className = 'gallery-card-date';
+    date.textContent = formatRelativeDate(c.created_at);
+    meta.appendChild(name);
+    meta.appendChild(date);
+
+    const hint = document.createElement('div');
+    hint.className = 'gallery-remix-hint';
+    hint.textContent = 'Click to remix';
+
+    card.appendChild(thumb);
+    card.appendChild(meta);
+    card.appendChild(hint);
+    grid.appendChild(card);
+  });
+}
+
+function renderGalleryThumb(state, container) {
+  state.forEach(p => {
+    const art = artworks.find(a => a.id === p.id);
+    if (!art) return;
+    const u = unpackPiece(p, 1); // fractions (0-1)
+    const el = document.createElement('div');
+    el.className = 'mini-piece';
+    el.style.left = (u.xFrac * 100) + '%';
+    el.style.top = (u.yFrac * 100) + '%';
+    el.style.width = (u.wFrac * 100) + '%';
+    el.style.height = (u.wFrac * 100) + '%';
+    el.style.opacity = (p.opacity || 100) / 100;
+    el.style.transform = `scale(${(p.scale || 100) / 100}) rotate(${p.rotation || 0}deg)`;
+    el.style.zIndex = p.z || 1;
+    const img = document.createElement('img');
+    img.src = art.src;
+    img.alt = '';
+    img.loading = 'lazy';
+    el.appendChild(img);
+    container.appendChild(el);
+  });
+}
+
+function formatRelativeDate(iso) {
+  if (!iso) return '';
+  const d = new Date(iso);
+  const now = new Date();
+  const diffMs = now - d;
+  const diffMin = diffMs / (1000 * 60);
+  const diffHr = diffMin / 60;
+  const diffDay = diffHr / 24;
+  if (diffMin < 1) return 'just now';
+  if (diffMin < 60) return Math.floor(diffMin) + 'm ago';
+  if (diffHr < 24) return Math.floor(diffHr) + 'h ago';
+  if (diffDay < 7) return Math.floor(diffDay) + 'd ago';
+  return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+}
+
+// ── REMIX (load a saved composition into canvas) ────────
+function remixComposition(c) {
+  // Clear current canvas silently (no undo snapshot)
+  placedPieces.forEach(p => p.el.remove());
+  placedPieces = [];
+  selectedPiece = null;
+  zCounter = 1;
+  controlsSection.style.display = 'none';
+  document.querySelectorAll('.tray-thumb').forEach(t => { t.classList.remove('placed'); t.classList.remove('active'); });
+
+  // Rebuild from saved state — scale fractions to current canvas size
+  const state = c.state || [];
+  const cw = canvas.offsetWidth || 580;
+  state.forEach(s => {
+    const art = artworks.find(a => a.id === s.id);
+    if (!art) return;
+    const u = unpackPiece(s, cw);
+    const piece = document.createElement('div');
+    piece.className = 'artwork-piece' + (art.contain ? ' contain' : '');
+    piece.dataset.id = art.id;
+    const z = s.z || zCounter;
+    piece.style.cssText = `left:${u.x}px; top:${u.y}px; width:${u.size}px; height:${u.size}px; z-index:${z};`;
+    piece.style.opacity = (s.opacity || 100) / 100;
+    piece.style.transform = `scale(${(s.scale || 100) / 100}) rotate(${s.rotation || 0}deg)`;
+    piece.innerHTML = `<img src="${art.src}" alt="${art.label}" draggable="false">`;
+    attachDrag(piece, art);
+    canvas.appendChild(piece);
+    placedPieces.push({
+      id: art.id,
+      el: piece,
+      opacity: s.opacity || 100,
+      scale: s.scale || 100,
+      rotation: s.rotation || 0,
+      label: art.label,
+      desc: art.desc,
+      src: art.src,
+    });
+    const thumb = tray.querySelector(`[data-id="${art.id}"]`);
+    if (thumb) thumb.classList.add('placed');
+    zCounter = Math.max(zCounter, z + 1);
+  });
+
+  updateCount();
+  if (placedPieces.length > 0) document.getElementById('emptyState').classList.add('hidden');
+  else document.getElementById('emptyState').classList.remove('hidden');
+
+  // Reset undo stacks so remix doesn't show the old state
+  undoStack.length = 0;
+  redoStack.length = 0;
+
+  switchView('canvas');
+  showToast(c.nickname ? `Loaded ${c.nickname}'s composition. Remix away.` : 'Composition loaded. Remix away.');
 }
 </script>
 </body>
