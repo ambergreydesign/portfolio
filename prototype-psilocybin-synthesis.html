@@ -384,6 +384,7 @@ html, body {
 .view-container.active { display: flex; }
 #canvasView.active { display: flex; flex: 1; }
 #galleryView.active { display: flex; flex-direction: column; flex: 1; overflow-y: auto; }
+#originView.active { display: flex; flex: 1; overflow-y: auto; }
 
 /* ── STATUS TOGGLE ── */
 .status-toggle {
@@ -513,6 +514,58 @@ html, body {
   color: var(--text-muted);
 }
 
+/* ── ORIGIN VIEW ── */
+#originView { padding-top: 38px; }
+.origin-inner {
+  max-width: 900px; margin: 0 auto;
+  padding: 48px 40px 60px;
+  display: flex; flex-direction: column; gap: 32px;
+  width: 100%;
+}
+.origin-header { text-align: center; }
+.origin-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 40px; font-weight: 600; line-height: 1.1;
+  color: var(--accent-bright); margin-bottom: 12px;
+}
+.origin-subtitle {
+  font-size: 13px; font-weight: 300; color: var(--text-muted);
+  line-height: 1.7; max-width: 560px; margin: 0 auto;
+}
+.origin-figure {
+  display: flex; flex-direction: column; align-items: center; gap: 14px;
+  margin: 0;
+}
+.origin-image {
+  max-width: 100%; max-height: 70vh;
+  width: auto; height: auto;
+  border-radius: 10px;
+  background: rgba(255,255,255,0.02);
+  box-shadow:
+    0 30px 80px rgba(0,0,0,0.5),
+    0 0 0 1px rgba(255,255,255,0.04),
+    0 0 60px rgba(155,109,255,0.06);
+  animation: originFadeIn 0.9s ease;
+}
+@keyframes originFadeIn {
+  from { opacity: 0; transform: translateY(12px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.origin-caption {
+  font-family: 'Cormorant Garamond', serif;
+  font-style: italic;
+  font-size: 14px; font-weight: 400;
+  color: var(--text-dim);
+  letter-spacing: 0.04em;
+}
+
+@media (max-width: 768px) {
+  .origin-inner { padding: 32px 16px 40px; gap: 24px; }
+  .origin-title { font-size: 28px; }
+  .origin-subtitle { font-size: 12px; }
+  .origin-image { max-height: 60vh; }
+}
+
 /* ── TOAST ── */
 .toast {
   position: fixed; bottom: 28px; left: 50%;
@@ -537,12 +590,18 @@ html, body {
 
 @media (max-width: 768px) {
   .status-toggle { padding: 2px; }
-  .toggle-btn { padding: 3px 10px; font-size: 8px; letter-spacing: 0.14em; }
+  .toggle-btn { padding: 3px 9px; font-size: 8px; letter-spacing: 0.12em; }
   .gallery-header { padding: 32px 16px 20px; }
   .gallery-title { font-size: 28px; }
   .gallery-grid { padding: 20px 16px; gap: 14px; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); }
   .status-left .status-label { display: none; }
   .status-left .status-sep { display: none; }
+}
+@media (max-width: 480px) {
+  .status-left .status-brand { display: none; }
+  .status-right { display: none; }
+  #statusBar { justify-content: center; }
+  .toggle-btn { padding: 3px 8px; letter-spacing: 0.08em; }
 }
 
 /* ── FOCUS STYLES ── */
@@ -576,12 +635,14 @@ html, body {
     <span class="status-sep">/</span>
     <span class="status-label">Psilocybin as System</span>
   </div>
-  <div class="status-toggle" role="tablist" aria-label="Switch between canvas and gallery">
+  <div class="status-toggle" role="tablist" aria-label="Switch between canvas, origin, and fridge">
     <button class="toggle-btn active" id="toggleCanvas" data-view="canvas" role="tab" aria-selected="true" onclick="switchView('canvas')">Canvas</button>
+    <button class="toggle-btn" id="toggleOrigin" data-view="origin" role="tab" aria-selected="false" onclick="switchView('origin')">Origin</button>
     <button class="toggle-btn" id="toggleGallery" data-view="gallery" role="tab" aria-selected="false" onclick="switchView('gallery')">Fridge</button>
   </div>
   <div class="status-right">
     <span id="statusCount"><span class="count" id="placedCount">0</span> placed</span>
+    <span id="originLabel" style="display:none;">the source</span>
     <span id="fridgeCount" style="display:none;"><span class="count" id="fridgeCountNum">0</span> in fridge</span>
   </div>
 </div>
@@ -652,6 +713,20 @@ html, body {
   </aside>
 </div>
 
+<!-- ORIGIN VIEW -->
+<div id="originView" class="view-container">
+  <div class="origin-inner">
+    <div class="origin-header">
+      <h2 class="origin-title">The Original</h2>
+      <p class="origin-subtitle">The 16 pieces you've been arranging come from this. Made during the ceremony, synthesized afterward — many voices, one image.</p>
+    </div>
+    <figure class="origin-figure">
+      <img src="A Images/psilocybin original art.png" alt="The original psilocybin-inspired painting — a synthesis of participant artworks from the ceremony" class="origin-image">
+      <figcaption class="origin-caption">Psilocybin as System &middot; The Synthesized Painting</figcaption>
+    </figure>
+  </div>
+</div>
+
 <!-- GALLERY VIEW -->
 <div id="galleryView" class="view-container">
   <div class="gallery-header">
@@ -677,22 +752,22 @@ const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBh
 
 // ── IMAGE DATA ──────────────────────────────────────────
 const artworks = [
-  { id: 'a1',  src: 'A Images/Psilocybin Art/Psilocybin Art-01.webp', label: 'Piece I',     desc: 'One of the first marks made during the ceremony. Fluid, exploratory — the hand finding its rhythm before the mind could intervene.' },
-  { id: 'a2',  src: 'A Images/Psilocybin Art/Psilocybin Art-02.webp', label: 'Piece II',    desc: 'A shift in pressure and palette. Something deeper surfacing — color choices becoming more instinctive, less deliberate.' },
-  { id: 'a3',  src: 'A Images/Psilocybin Art/Psilocybin Art-03.webp', label: 'Piece III',   desc: 'Layers begin to accumulate. The marks are no longer isolated gestures — they\'re responding to what came before.' },
-  { id: 'a4',  src: 'A Images/Psilocybin Art/Psilocybin Art-04.webp', label: 'Piece IV',    desc: 'A moment of expansion. The composition breaks free from the center, reaching toward edges — boundaries dissolving.', contain: true },
-  { id: 'a5',  src: 'A Images/Psilocybin Art/Psilocybin Art-05.webp', label: 'Piece V',     desc: 'Structure re-emerges from within the flow. Pattern and chaos finding a temporary equilibrium.' },
-  { id: 'a6',  src: 'A Images/Psilocybin Art/Psilocybin Art-06.webp', label: 'Piece VI',    desc: 'The palette softens. Something integrative happening — the peak passing, awareness widening to include the whole field.' },
-  { id: 'a7',  src: 'A Images/Psilocybin Art/Psilocybin Art-07.webp', label: 'Piece VII',   desc: 'Textural density increases. Multiple layers of experience compressed into a single visual moment.' },
-  { id: 'a8',  src: 'A Images/Psilocybin Art/Psilocybin Art-08.webp', label: 'Piece VIII',  desc: 'A return to simplicity after complexity. The marks carry weight — each one chosen rather than searched for.' },
-  { id: 'a9',  src: 'A Images/Psilocybin Art/Psilocybin Art-09.webp', label: 'Piece IX',    desc: 'Integration visible in the composition. What was fragmented earlier now reads as connected — the system finding coherence.' },
-  { id: 'a10', src: 'A Images/Psilocybin Art/Psilocybin Art-10.webp', label: 'Piece X',     desc: 'The final expression. A quiet resolution — not closure, but a resting point. The creative energy held, not spent.' },
-  { id: 'a11', src: 'A Images/Psilocybin Art/Psilocybin Art-11.webp', label: 'Piece XI',    desc: 'A gesture that carries the weight of everything before it. The line knows where it wants to go.' },
-  { id: 'a12', src: 'A Images/Psilocybin Art/Psilocybin Art-12.webp', label: 'Piece XII',   desc: 'Soft, peripheral. This piece lives at the edge of attention — present but not demanding.' },
-  { id: 'a13', src: 'A Images/Psilocybin Art/Psilocybin Art-13.webp', label: 'Piece XIII',  desc: 'Something recursive happening here. The form references itself — a loop of perception captured in mark-making.' },
-  { id: 'a15', src: 'A Images/Psilocybin Art/Psilocybin Art-15.webp', label: 'Piece XV',    desc: 'Organic movement. The forms suggest growth, cellular logic — the body drawing what the mind couldn\'t articulate.' },
-  { id: 'a16', src: 'A Images/Psilocybin Art/Psilocybin Art-16.webp', label: 'Piece XVI',   desc: 'A quiet piece. Restraint after intensity — the creative system cooling, settling into new equilibrium.' },
-  { id: 'a17', src: 'A Images/Psilocybin Art/Psilocybin Art-17.webp', label: 'Piece XVII',  desc: 'The last piece in the collection. Not an ending — a pause. The system still humming, just below the surface.' },
+  { id: 'a1',  src: 'A Images/Psilocybin Art/New Art/psilocybin-new-art-20.png', label: 'Piece I',    desc: 'One of the first marks made during the ceremony. Fluid, exploratory — the hand finding its rhythm before the mind could intervene.' },
+  { id: 'a2',  src: 'A Images/Psilocybin Art/New Art/psilocybin-new-art-21.png', label: 'Piece II',   desc: 'A shift in pressure and palette. Something deeper surfacing — choices becoming more instinctive, less deliberate.' },
+  { id: 'a3',  src: 'A Images/Psilocybin Art/New Art/psilocybin-new-art-22.png', label: 'Piece III',  desc: 'Layers begin to accumulate. The marks are no longer isolated gestures — they\'re responding to what came before.' },
+  { id: 'a4',  src: 'A Images/Psilocybin Art/New Art/psilocybin-new-art-23.png', label: 'Piece IV',   desc: 'A moment of expansion. The composition breaks free from the center, reaching toward edges — boundaries dissolving.' },
+  { id: 'a5',  src: 'A Images/Psilocybin Art/New Art/psilocybin-new-art-24.png', label: 'Piece V',    desc: 'Structure re-emerges from within the flow. Pattern and chaos finding a temporary equilibrium.' },
+  { id: 'a6',  src: 'A Images/Psilocybin Art/New Art/psilocybin-new-art-25.png', label: 'Piece VI',   desc: 'Something integrative happening — the peak passing, awareness widening to include the whole field.' },
+  { id: 'a7',  src: 'A Images/Psilocybin Art/New Art/psilocybin-new-art-27.png', label: 'Piece VII',  desc: 'Textural density increases. Multiple layers of experience compressed into a single visual moment.' },
+  { id: 'a8',  src: 'A Images/Psilocybin Art/New Art/psilocybin-new-art-28.png', label: 'Piece VIII', desc: 'A return to simplicity after complexity. The marks carry weight — each one chosen rather than searched for.' },
+  { id: 'a9',  src: 'A Images/Psilocybin Art/New Art/psilocybin-new-art-29.png', label: 'Piece IX',   desc: 'Integration visible in the composition. What was fragmented earlier now reads as connected — the system finding coherence.' },
+  { id: 'a10', src: 'A Images/Psilocybin Art/New Art/psilocybin-new-art-30.png', label: 'Piece X',    desc: 'A quiet resolution — not closure, but a resting point. The creative energy held, not spent.' },
+  { id: 'a11', src: 'A Images/Psilocybin Art/New Art/psilocybin-new-art-31.png', label: 'Piece XI',   desc: 'A gesture that carries the weight of everything before it. The line knows where it wants to go.' },
+  { id: 'a12', src: 'A Images/Psilocybin Art/New Art/psilocybin-new-art-32.png', label: 'Piece XII',  desc: 'Soft, peripheral. This piece lives at the edge of attention — present but not demanding.' },
+  { id: 'a13', src: 'A Images/Psilocybin Art/New Art/psilocybin-new-art-33.png', label: 'Piece XIII', desc: 'Something recursive. The form references itself — a loop of perception captured in mark-making.' },
+  { id: 'a14', src: 'A Images/Psilocybin Art/New Art/psilocybin-new-art-34.png', label: 'Piece XIV',  desc: 'Organic movement. The forms suggest growth, cellular logic — the body drawing what the mind couldn\'t articulate.' },
+  { id: 'a15', src: 'A Images/Psilocybin Art/New Art/psilocybin-new-art-35.png', label: 'Piece XV',   desc: 'Restraint after intensity — the creative system cooling, settling into new equilibrium.' },
+  { id: 'a16', src: 'A Images/Psilocybin Art/New Art/psilocybin-new-art-36.png', label: 'Piece XVI',  desc: 'Not an ending — a pause. The system still humming, just below the surface.' },
 ];
 
 const canvas = document.getElementById('canvasArea');
@@ -1005,36 +1080,34 @@ function navigateTo(url) {
   setTimeout(() => { window.location.href = url; }, 320);
 }
 
-// ── VIEW TOGGLE (CANVAS / GALLERY) ──────────────────────
+// ── VIEW TOGGLE (CANVAS / ORIGIN / FRIDGE) ──────────────
 let galleryLoaded = false;
 function switchView(view) {
-  const canvasView = document.getElementById('canvasView');
-  const galleryView = document.getElementById('galleryView');
-  const toggleCanvas = document.getElementById('toggleCanvas');
-  const toggleGallery = document.getElementById('toggleGallery');
-  const statusCount = document.getElementById('statusCount');
-  const fridgeCount = document.getElementById('fridgeCount');
+  const views = {
+    canvas:  document.getElementById('canvasView'),
+    origin:  document.getElementById('originView'),
+    gallery: document.getElementById('galleryView'),
+  };
+  const toggles = {
+    canvas:  document.getElementById('toggleCanvas'),
+    origin:  document.getElementById('toggleOrigin'),
+    gallery: document.getElementById('toggleGallery'),
+  };
+  const counters = {
+    canvas:  document.getElementById('statusCount'),
+    origin:  document.getElementById('originLabel'),
+    gallery: document.getElementById('fridgeCount'),
+  };
 
-  if (view === 'canvas') {
-    canvasView.classList.add('active');
-    galleryView.classList.remove('active');
-    toggleCanvas.classList.add('active');
-    toggleGallery.classList.remove('active');
-    toggleCanvas.setAttribute('aria-selected', 'true');
-    toggleGallery.setAttribute('aria-selected', 'false');
-    statusCount.style.display = '';
-    fridgeCount.style.display = 'none';
-  } else {
-    canvasView.classList.remove('active');
-    galleryView.classList.add('active');
-    toggleGallery.classList.add('active');
-    toggleCanvas.classList.remove('active');
-    toggleGallery.setAttribute('aria-selected', 'true');
-    toggleCanvas.setAttribute('aria-selected', 'false');
-    statusCount.style.display = 'none';
-    fridgeCount.style.display = '';
-    loadGallery();
-  }
+  Object.keys(views).forEach(k => {
+    const isActive = k === view;
+    views[k].classList.toggle('active', isActive);
+    toggles[k].classList.toggle('active', isActive);
+    toggles[k].setAttribute('aria-selected', isActive ? 'true' : 'false');
+    counters[k].style.display = isActive ? '' : 'none';
+  });
+
+  if (view === 'gallery') loadGallery();
 }
 
 // ── TOAST ───────────────────────────────────────────────
