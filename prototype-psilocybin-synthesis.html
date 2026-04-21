@@ -321,27 +321,33 @@ html, body {
 
   .view-container { height: auto; }
 
-  /* Two-row grid on mobile: canvas + tray on row 1, controls spanning row 2 */
+  /* Three-row grid on mobile: header, canvas+tray, controls */
   #canvasView.active {
     display: grid;
-    grid-template-columns: minmax(140px, 44%) 1fr;
+    grid-template-columns: 1fr 1fr;
     grid-template-areas:
-      "canvas tray"
+      "header   header"
+      "canvas   tray"
       "controls controls";
     gap: 12px;
     flex: none;
     height: auto;
     padding: 50px 12px 24px;
+    align-items: start;
   }
 
   /* rightPanel's children become grid items of #canvasView */
   #rightPanel {
     display: contents;
   }
+  .panel-header {
+    grid-area: header;
+    display: flex; flex-direction: column;
+  }
   .tray-group {
     grid-area: tray;
     min-width: 0;
-    display: flex; flex-direction: column;
+    display: flex; flex-direction: column; justify-content: flex-start;
   }
   .controls-group {
     grid-area: controls;
@@ -368,9 +374,9 @@ html, body {
   }
   .canvas-label { position: relative; bottom: auto; margin-top: 8px; }
 
-  .panel-title { font-size: 18px; line-height: 1.15; }
-  .panel-subtitle { font-size: 10.5px; margin-bottom: 12px; line-height: 1.5; }
-  .tray-label { margin-bottom: 8px; }
+  .panel-title { font-size: 22px; line-height: 1.15; margin-bottom: 4px; }
+  .panel-subtitle { font-size: 11px; margin-bottom: 14px; line-height: 1.5; }
+  .tray-label { margin-bottom: 0; }
 
   .artwork-tray {
     grid-template-columns: repeat(4, 1fr);
@@ -386,8 +392,7 @@ html, body {
   /* Ambient toning */
   .ambient-orb { display: none; }
 
-  /* Touch targets — min 44px */
-  .tray-thumb { min-height: 44px; }
+  /* Touch targets — min 44px for actions; tray thumbs stay square */
   .action-btn { min-height: 44px; padding: 12px 0; }
   .control-slider { height: 6px; }
   .control-slider::-webkit-slider-thumb { width: 24px; height: 24px; }
@@ -687,11 +692,12 @@ html, body {
 
   <!-- RIGHT: PANEL -->
   <aside id="rightPanel" aria-label="Artwork controls">
-    <div class="tray-group">
+    <div class="panel-header">
       <h2 class="panel-title">The Synthesis Table</h2>
       <div class="panel-subtitle">Each piece below was created by non-artists during a psilocybin ritual. Click to add to the canvas, rotate, blend, stack, and scale to create something new.</div>
-
       <h3 class="tray-label">Ceremony Artworks</h3>
+    </div>
+    <div class="tray-group">
       <div class="artwork-tray" id="artworkTray" role="grid" aria-label="Ceremony artworks — click to place on canvas"></div>
     </div>
 
