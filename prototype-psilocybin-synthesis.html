@@ -310,8 +310,8 @@ html, body {
 #rightPanel::-webkit-scrollbar-track { background: transparent; }
 #rightPanel::-webkit-scrollbar-thumb { background: rgba(155,109,255,0.15); border-radius: 2px; }
 
-/* ── MOBILE ── */
-@media (max-width: 768px) {
+/* ── MOBILE / TABLET / SMALL LAPTOP ── */
+@media (max-width: 1024px) {
   html, body { overflow: auto; overflow-x: hidden; height: auto; min-height: 100%; }
 
   #shell {
@@ -402,7 +402,7 @@ html, body {
 /* ── VIEW CONTAINERS ── */
 .view-container { display: none; width: 100%; height: 100%; }
 .view-container.active { display: flex; }
-@media (min-width: 769px) {
+@media (min-width: 1025px) {
   #canvasView.active { display: flex; flex: 1; }
 }
 #galleryView.active { display: flex; flex-direction: column; flex: 1; overflow-y: auto; }
