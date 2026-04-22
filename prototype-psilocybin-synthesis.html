@@ -119,9 +119,9 @@ html, body {
 /* ── LEFT PANEL: CANVAS ── */
 #canvasPanel {
   flex: 1; position: relative;
-  padding: 38px 0 0 0;
+  padding: 58px 0 24px 0;
   overflow: hidden;
-  display: flex; align-items: center; justify-content: center;
+  display: flex; align-items: flex-start; justify-content: center;
 }
 #canvasArea {
   position: relative;
@@ -701,7 +701,7 @@ html, body {
     </div>
 
     <div class="controls-group">
-    <div class="controls-section" id="controlsSection" style="display:none;">
+    <div class="controls-section" id="controlsSection">
       <div class="controls-label">Selected Artwork</div>
       <div class="control-row">
         <span class="control-name">Opacity</span>
@@ -731,7 +731,7 @@ html, body {
       </div>
     </div>
 
-    <div class="save-section" id="saveSection" style="display:none;">
+    <div class="save-section" id="saveSection">
       <div class="controls-label">Save to Fridge</div>
       <input type="text" class="save-input" id="nicknameInput" placeholder="First name (optional)" maxlength="30" autocomplete="given-name">
       <div class="save-help">Your composition joins the shared gallery once approved.</div>
@@ -876,7 +876,6 @@ function restoreState(snapshot) {
   });
 
   selectedPiece = null;
-  controlsSection.style.display = 'none';
   document.querySelectorAll('.artwork-piece.selected').forEach(el => el.classList.remove('selected'));
   document.querySelectorAll('.tray-thumb.active').forEach(el => el.classList.remove('active'));
   updateCount();
@@ -1011,7 +1010,6 @@ function selectPiece(id) {
   if (thumb) thumb.classList.add('active');
 
   // Update controls
-  controlsSection.style.display = 'block';
   document.getElementById('opacitySlider').value = data.opacity;
   document.getElementById('opacityValue').textContent = data.opacity + '%';
   document.getElementById('scaleSlider').value = data.scale;
@@ -1067,7 +1065,6 @@ function removeSelected() {
   const thumb = tray.querySelector(`[data-id="${id}"]`);
   if (thumb) { thumb.classList.remove('placed'); thumb.classList.remove('active'); }
   selectedPiece = null;
-  controlsSection.style.display = 'none';
   updateCount();
   if (placedPieces.length === 0) document.getElementById('emptyState').classList.remove('hidden');
 }
@@ -1077,7 +1074,6 @@ function resetCanvas() {
   placedPieces = [];
   selectedPiece = null;
   zCounter = 1;
-  controlsSection.style.display = 'none';
   document.querySelectorAll('.tray-thumb').forEach(t => { t.classList.remove('placed'); t.classList.remove('active'); });
   document.getElementById('emptyState').classList.remove('hidden');
   updateCount();
@@ -1085,13 +1081,6 @@ function resetCanvas() {
 
 function updateCount() {
   document.getElementById('placedCount').textContent = placedPieces.length;
-  updateSaveSection();
-}
-
-function updateSaveSection() {
-  const section = document.getElementById('saveSection');
-  if (!section) return;
-  section.style.display = placedPieces.length > 0 ? 'block' : 'none';
 }
 
 // ── CLICK OUTSIDE TO DESELECT ───────────────────────────
@@ -1100,7 +1089,6 @@ canvas.addEventListener('mousedown', e => {
     document.querySelectorAll('.artwork-piece.selected').forEach(el => el.classList.remove('selected'));
     document.querySelectorAll('.tray-thumb.active').forEach(el => el.classList.remove('active'));
     selectedPiece = null;
-    controlsSection.style.display = 'none';
     }
 });
 
@@ -1343,7 +1331,6 @@ function remixComposition(c) {
   placedPieces = [];
   selectedPiece = null;
   zCounter = 1;
-  controlsSection.style.display = 'none';
   document.querySelectorAll('.tray-thumb').forEach(t => { t.classList.remove('placed'); t.classList.remove('active'); });
 
   // Rebuild from saved state — scale fractions to current canvas size
