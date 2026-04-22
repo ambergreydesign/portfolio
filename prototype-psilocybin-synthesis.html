@@ -28,7 +28,7 @@
 }
 
 html, body {
-  width: 100%; height: 100%; overflow: hidden;
+  width: 100%; min-height: 100vh;
   background: var(--bg); color: var(--text);
   font-family: 'DM Sans', sans-serif;
   -webkit-font-smoothing: antialiased;
@@ -62,7 +62,7 @@ html, body {
 
 /* ── LAYOUT ── */
 #shell {
-  display: flex; width: 100%; height: 100%;
+  display: flex; width: 100%; min-height: 100vh;
   position: relative; z-index: 1;
 }
 
@@ -163,7 +163,6 @@ html, body {
   padding: 50px 24px 24px;
   border-left: 1px solid var(--border);
   background: var(--bg-panel);
-  overflow-y: auto;
   display: flex; flex-direction: column; gap: 0;
 }
 
@@ -405,7 +404,7 @@ html, body {
 }
 
 /* ── VIEW CONTAINERS ── */
-.view-container { display: none; width: 100%; height: 100%; }
+.view-container { display: none; width: 100%; min-height: 100vh; }
 .view-container.active { display: flex; }
 @media (min-width: 769px) {
   #canvasView.active { display: flex; flex: 1; }
