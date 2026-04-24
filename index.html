@@ -193,10 +193,14 @@ html, body {
 .zone-group:hover .zone-lbl,
 .zone-group.active .zone-lbl   { fill: rgba(218,206,186,0.88); }
 
-/* The Shelf zone — no label; reveal via custom open-book cursor */
-.library-zone .zone-hit {
-  cursor: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32"><g fill="%23F5E4C8" stroke="%230B1C26" stroke-width="0.9" stroke-linejoin="round"><path d="M3 8 Q 9 6 16 8 L 16 24 Q 9 22 3 24 Z"/><path d="M16 8 Q 23 6 29 8 L 29 24 Q 23 22 16 24 Z"/><line x1="6" y1="12" x2="13" y2="13" stroke-width="0.6" opacity="0.6"/><line x1="6" y1="15" x2="13" y2="16" stroke-width="0.6" opacity="0.6"/><line x1="6" y1="18" x2="13" y2="19" stroke-width="0.6" opacity="0.6"/><line x1="19" y1="13" x2="26" y2="12" stroke-width="0.6" opacity="0.6"/><line x1="19" y1="16" x2="26" y2="15" stroke-width="0.6" opacity="0.6"/><line x1="19" y1="19" x2="26" y2="18" stroke-width="0.6" opacity="0.6"/></g></svg>') 16 16, pointer;
+/* The Shelf zone — no label; reveal via custom open-book cursor.
+   The book wins over the firefly cursor: none rule (line ~1036) so
+   visitors see the book even with the firefly trail active. */
+:root {
+  --cursor-book: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32"><g fill="%23F5E4C8" stroke="%230B1C26" stroke-width="0.9" stroke-linejoin="round"><path d="M3 8 Q 9 6 16 8 L 16 24 Q 9 22 3 24 Z"/><path d="M16 8 Q 23 6 29 8 L 29 24 Q 23 22 16 24 Z"/><line x1="6" y1="12" x2="13" y2="13" stroke-width="0.6" opacity="0.6"/><line x1="6" y1="15" x2="13" y2="16" stroke-width="0.6" opacity="0.6"/><line x1="6" y1="18" x2="13" y2="19" stroke-width="0.6" opacity="0.6"/><line x1="19" y1="13" x2="26" y2="12" stroke-width="0.6" opacity="0.6"/><line x1="19" y1="16" x2="26" y2="15" stroke-width="0.6" opacity="0.6"/><line x1="19" y1="19" x2="26" y2="18" stroke-width="0.6" opacity="0.6"/></g></svg>') 16 16, pointer;
 }
+.library-zone .zone-hit { cursor: var(--cursor-book); }
+html.firefly-on .library-zone .zone-hit { cursor: var(--cursor-book) !important; }
 
 
 /* ── PAGE TRANSITION ── */
