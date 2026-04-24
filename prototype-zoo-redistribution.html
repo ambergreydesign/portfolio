@@ -1,0 +1,1895 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Redistributing the AZA — A Thought Experiment</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400;1,500&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html, body {
+  width: 100%;
+  min-height: 100%;
+  background: #080e06;
+  font-family: 'DM Sans', sans-serif;
+  color: rgba(224, 242, 225, 0.78);
+  overflow-x: hidden;
+}
+
+body {
+  padding: 32px 40px 80px;
+  background-image:
+    radial-gradient(ellipse 90% 70% at 50% 25%, rgba(20, 34, 22, 0.8) 0%, rgba(8, 14, 6, 1) 75%);
+}
+
+a { color: inherit; }
+
+/* ── HEADER ── */
+.page-header {
+  max-width: 1400px;
+  margin: 0 auto 28px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+.eyebrow {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 10px;
+  font-weight: 400;
+  letter-spacing: 0.32em;
+  text-transform: uppercase;
+  color: rgba(224, 242, 225, 0.45);
+}
+.page-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(32px, 4.2vw, 56px);
+  font-weight: 600;
+  line-height: 1.05;
+  color: #eaf3dd;
+  letter-spacing: -0.005em;
+  max-width: 900px;
+}
+.page-lede {
+  font-family: 'DM Sans', sans-serif;
+  font-size: clamp(13px, 1.1vw, 15px);
+  font-weight: 400;
+  line-height: 1.7;
+  color: rgba(224, 242, 225, 0.62);
+  max-width: 740px;
+}
+
+/* ── PLAN TOGGLE ── */
+.plan-toggle {
+  display: inline-flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  padding: 6px;
+  border: 1px solid rgba(224, 242, 225, 0.1);
+  border-radius: 100px;
+  background: rgba(14, 24, 14, 0.55);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  margin-top: 8px;
+  width: fit-content;
+}
+.plan-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 10px 18px;
+  border-radius: 100px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: rgba(224, 242, 225, 0.58);
+  transition: all 0.25s ease;
+  white-space: nowrap;
+}
+.plan-btn:hover { color: rgba(224, 242, 225, 0.9); }
+.plan-btn.active {
+  background: rgba(234, 198, 206, 0.16);
+  color: #eac6ce;
+  border: 1px solid rgba(234, 198, 206, 0.32);
+  padding: 9px 17px;
+}
+
+/* ── LAYOUT ── */
+.layout {
+  max-width: 1400px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 360px;
+  gap: 28px;
+  align-items: stretch;
+}
+
+/* ── MAP ── */
+.map-card {
+  position: relative;
+  border: 1px solid rgba(224, 242, 225, 0.1);
+  border-radius: 18px;
+  background: rgba(10, 18, 10, 0.55);
+  padding: 22px 24px 20px;
+  overflow: hidden;
+  min-height: 620px;
+}
+.map-title {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.26em;
+  text-transform: uppercase;
+  color: rgba(234, 198, 206, 0.7);
+  margin-bottom: 12px;
+}
+.map-subtitle {
+  font-family: 'Cormorant Garamond', serif;
+  font-style: italic;
+  font-size: 16px;
+  color: rgba(224, 242, 225, 0.55);
+  margin-bottom: 16px;
+  line-height: 1.45;
+}
+
+.map-svg {
+  width: 100%;
+  height: auto;
+  display: block;
+  user-select: none;
+}
+
+/* ── CLIMATE BAND LEGEND ── */
+.climate-legend {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 10px 16px;
+  margin-top: 20px;
+  padding-top: 18px;
+  border-top: 1px solid rgba(224, 242, 225, 0.08);
+}
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 11px;
+  font-weight: 400;
+  letter-spacing: 0.06em;
+  color: rgba(224, 242, 225, 0.58);
+}
+.legend-swatch {
+  width: 14px;
+  height: 14px;
+  border-radius: 3px;
+  flex-shrink: 0;
+  opacity: 0.75;
+}
+
+/* ── ZOO DOTS ── */
+.zoo-dot {
+  cursor: pointer;
+  transition: transform 0.2s ease, filter 0.2s ease;
+  transform-origin: center;
+  transform-box: fill-box;
+}
+.zoo-dot:hover { transform: scale(1.25); filter: brightness(1.3); }
+.zoo-dot.selected { transform: scale(1.35); filter: brightness(1.4) drop-shadow(0 0 6px rgba(234, 198, 206, 0.8)); }
+
+.zoo-label {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 9px;
+  fill: rgba(224, 242, 225, 0.58);
+  pointer-events: none;
+  letter-spacing: 0.02em;
+  font-weight: 400;
+  text-shadow: 0 0 4px #080e06;
+}
+
+/* ── DETAIL PANEL ── */
+.detail-panel {
+  position: sticky;
+  top: 24px;
+  align-self: start;
+  border: 1px solid rgba(224, 242, 225, 0.1);
+  border-radius: 18px;
+  background: rgba(10, 18, 10, 0.65);
+  padding: 28px 26px 26px;
+  max-height: calc(100vh - 48px);
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.detail-default {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  color: rgba(224, 242, 225, 0.58);
+  font-size: 13px;
+  line-height: 1.65;
+}
+.detail-default h3 {
+  font-family: 'Cormorant Garamond', serif;
+  font-weight: 600;
+  font-size: 22px;
+  color: #eaf3dd;
+  line-height: 1.2;
+  margin-bottom: 2px;
+}
+.detail-default .plan-summary {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 11px;
+  line-height: 1.7;
+  color: rgba(224, 242, 225, 0.68);
+  padding: 14px 14px;
+  background: rgba(234, 198, 206, 0.04);
+  border: 1px solid rgba(234, 198, 206, 0.1);
+  border-radius: 8px;
+}
+.detail-default .plan-summary .plan-name {
+  display: block;
+  font-weight: 500;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  font-size: 9px;
+  color: #eac6ce;
+  margin-bottom: 8px;
+}
+
+.zoo-panel .zoo-climate {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 9.5px;
+  font-weight: 500;
+  letter-spacing: 0.26em;
+  text-transform: uppercase;
+  color: rgba(234, 198, 206, 0.8);
+  margin-bottom: 0;
+}
+.zoo-panel .zoo-name {
+  font-family: 'Cormorant Garamond', serif;
+  font-weight: 600;
+  font-size: 28px;
+  color: #eaf3dd;
+  line-height: 1.08;
+  letter-spacing: -0.005em;
+}
+.zoo-panel .zoo-loc {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 12px;
+  color: rgba(224, 242, 225, 0.48);
+  margin-top: 2px;
+  letter-spacing: 0.03em;
+}
+.zoo-panel .zoo-stats {
+  display: flex;
+  gap: 14px;
+  margin-top: 2px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid rgba(224, 242, 225, 0.08);
+}
+.stat {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 10px;
+  color: rgba(224, 242, 225, 0.45);
+  letter-spacing: 0.04em;
+}
+.stat b {
+  display: block;
+  font-size: 13px;
+  font-weight: 500;
+  color: rgba(234, 198, 206, 0.9);
+  margin-top: 2px;
+  letter-spacing: 0;
+}
+
+.zoo-role {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 16px;
+  font-style: italic;
+  font-weight: 400;
+  color: #eac6ce;
+  line-height: 1.35;
+  padding: 12px 14px;
+  background: rgba(234, 198, 206, 0.07);
+  border-left: 2px solid rgba(234, 198, 206, 0.6);
+  border-radius: 2px 8px 8px 2px;
+}
+
+.section-label {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 9.5px;
+  font-weight: 500;
+  letter-spacing: 0.26em;
+  text-transform: uppercase;
+  color: rgba(224, 242, 225, 0.5);
+  margin-bottom: -4px;
+}
+
+.zoo-species {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.zoo-species li {
+  list-style: none;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 12.5px;
+  color: rgba(224, 242, 225, 0.8);
+  line-height: 1.55;
+  padding-left: 14px;
+  position: relative;
+}
+.zoo-species li::before {
+  content: '';
+  position: absolute;
+  left: 0; top: 9px;
+  width: 5px; height: 1px;
+  background: rgba(234, 198, 206, 0.5);
+}
+
+.zoo-why {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 12.5px;
+  line-height: 1.65;
+  color: rgba(224, 242, 225, 0.7);
+}
+
+.zoo-panel { display: none; flex-direction: column; gap: 12px; }
+.zoo-panel.visible { display: flex; }
+.detail-default.hidden { display: none; }
+
+/* ── VIEW TABS (Continental / Atlanta) ── */
+.view-tabs {
+  max-width: 1400px;
+  margin: 4px auto 18px;
+  display: inline-flex;
+  gap: 4px;
+  padding: 4px;
+  border: 1px solid rgba(234, 198, 206, 0.18);
+  border-radius: 100px;
+  background: rgba(14, 24, 14, 0.45);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  width: fit-content;
+}
+.view-tab {
+  background: none; border: none; cursor: pointer;
+  padding: 9px 18px;
+  border-radius: 100px;
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 14px; font-style: italic;
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  color: rgba(224, 242, 225, 0.5);
+  transition: all 0.25s ease;
+  white-space: nowrap;
+}
+.view-tab:hover { color: rgba(224, 242, 225, 0.9); }
+.view-tab.active {
+  background: rgba(234, 198, 206, 0.18);
+  color: #eaf3dd;
+  font-style: normal;
+  font-weight: 600;
+}
+.view { display: none; }
+.view.active { display: block; }
+.view-header {
+  max-width: 1400px;
+  margin: 0 auto;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+/* ── ATLANTA ZONES ── */
+.atlanta-zone {
+  cursor: pointer;
+  transition: opacity 0.2s ease, filter 0.2s ease;
+  opacity: 0.85;
+}
+.atlanta-zone:hover { opacity: 1; filter: brightness(1.2); }
+.atlanta-zone.selected {
+  opacity: 1;
+  filter: brightness(1.3) drop-shadow(0 0 8px rgba(234, 198, 206, 0.6));
+}
+.zone-label {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  fill: rgba(255, 255, 255, 0.92);
+  pointer-events: none;
+  text-shadow: 0 0 6px rgba(0, 0, 0, 0.75);
+}
+.zone-sublabel {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 8.5px;
+  letter-spacing: 0.22em;
+  fill: rgba(255, 255, 255, 0.55);
+  pointer-events: none;
+  text-transform: uppercase;
+}
+
+.atlanta-intro {
+  font-family: 'Cormorant Garamond', serif;
+  font-style: italic;
+  font-size: 16px;
+  color: rgba(224, 242, 225, 0.55);
+  margin-bottom: 16px;
+  line-height: 1.5;
+  max-width: 720px;
+}
+.north-arrow {
+  font-family: 'DM Sans', sans-serif;
+  fill: rgba(224, 242, 225, 0.35);
+  font-size: 10px;
+  letter-spacing: 0.2em;
+}
+
+.zone-stats {
+  display: flex;
+  gap: 14px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid rgba(224, 242, 225, 0.08);
+  flex-wrap: wrap;
+}
+.zone-current {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 11px;
+  line-height: 1.6;
+  color: rgba(224, 242, 225, 0.55);
+  padding: 10px 12px;
+  background: rgba(255, 255, 255, 0.02);
+  border-left: 2px solid rgba(224, 242, 225, 0.14);
+  border-radius: 2px 6px 6px 2px;
+}
+.zone-current b {
+  display: block;
+  font-size: 9px;
+  font-weight: 500;
+  letter-spacing: 0.26em;
+  text-transform: uppercase;
+  color: rgba(224, 242, 225, 0.4);
+  margin-bottom: 4px;
+}
+.atlanta-panel { display: none; flex-direction: column; gap: 12px; }
+.atlanta-panel.visible { display: flex; }
+.atlanta-default { display: flex; flex-direction: column; gap: 14px; }
+.atlanta-default.hidden { display: none; }
+
+/* ── GORILLA NETWORK TABLE ── */
+.gorilla-network {
+  max-width: 1400px;
+  margin: 48px auto 0;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+.gorilla-network .eyebrow { color: rgba(234, 198, 206, 0.7); }
+.gorilla-network .section-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-weight: 600;
+  font-size: clamp(24px, 3vw, 36px);
+  line-height: 1.1;
+  color: #eaf3dd;
+}
+.gorilla-network .section-lede {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 13px;
+  line-height: 1.7;
+  color: rgba(224, 242, 225, 0.62);
+  max-width: 820px;
+}
+.gorilla-grid {
+  border: 1px solid rgba(224, 242, 225, 0.1);
+  border-radius: 16px;
+  overflow: hidden;
+  background: rgba(10, 18, 10, 0.4);
+  display: grid;
+  grid-template-columns: 1.4fr 1.1fr 0.5fr 0.55fr 0.55fr 0.55fr 0.55fr;
+  font-size: 12px;
+  min-width: 0;
+}
+.gg-cell {
+  padding: 12px 14px;
+  border-bottom: 1px solid rgba(224, 242, 225, 0.06);
+  border-right: 1px solid rgba(224, 242, 225, 0.06);
+  line-height: 1.45;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  min-width: 0;
+}
+.gg-cell:nth-child(7n) { border-right: none; }
+.gg-cell.head {
+  background: rgba(234, 198, 206, 0.04);
+  font-family: 'DM Sans', sans-serif;
+  font-size: 9.5px;
+  font-weight: 500;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: #eac6ce;
+  padding: 14px 14px;
+}
+.gg-cell.zoo {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 16px;
+  color: #eaf3dd;
+  font-weight: 600;
+}
+.gg-cell .climate-tag {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 10px;
+  color: rgba(224, 242, 225, 0.45);
+  letter-spacing: 0.04em;
+  margin-top: 2px;
+  font-weight: 400;
+}
+.gg-cell.count {
+  text-align: center;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 14.5px;
+  font-weight: 500;
+  color: rgba(224, 242, 225, 0.85);
+  align-items: center;
+}
+.gg-cell.count.primary { color: #eac6ce; font-weight: 600; }
+.gg-cell.count.zero { color: rgba(224, 242, 225, 0.22); }
+.gg-cell.count.zero::before { content: '—'; }
+.gg-cell.count small {
+  display: block;
+  font-size: 9px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  font-weight: 500;
+  color: rgba(234, 198, 206, 0.7);
+  margin-top: 2px;
+}
+.gg-cell.totals {
+  background: rgba(234, 198, 206, 0.06);
+  font-family: 'DM Sans', sans-serif;
+  font-size: 10px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: rgba(234, 198, 206, 0.75);
+  font-weight: 500;
+}
+.gg-cell.totals.count {
+  font-size: 16px;
+  font-weight: 600;
+  letter-spacing: 0;
+  color: #eaf3dd;
+  text-transform: none;
+}
+.network-footnote {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 11.5px;
+  color: rgba(224, 242, 225, 0.45);
+  line-height: 1.65;
+  padding: 14px 16px;
+  background: rgba(234, 198, 206, 0.03);
+  border-left: 2px solid rgba(234, 198, 206, 0.3);
+  border-radius: 2px 8px 8px 2px;
+}
+.network-footnote b {
+  color: rgba(234, 198, 206, 0.8);
+  font-weight: 500;
+}
+
+@media (max-width: 900px) {
+  .gorilla-grid {
+    grid-template-columns: 1fr 1fr 1fr;
+    font-size: 11.5px;
+  }
+  .gg-cell.head { padding: 10px 10px; font-size: 9px; }
+  .gg-cell { padding: 10px 12px; }
+  .gg-cell:nth-child(7n) { border-right: 1px solid rgba(224, 242, 225, 0.06); }
+  .gg-cell:nth-child(3n) { border-right: none; }
+  /* show only zoo + today + hybrid on small screens */
+  .gg-cell:nth-child(7n+2), .gg-cell:nth-child(7n+3),
+  .gg-cell:nth-child(7n+5), .gg-cell:nth-child(7n+6) { display: none; }
+}
+
+/* ── DEEP DIVE ── */
+.deep-dive {
+  max-width: 1400px;
+  margin: 80px auto 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 22px;
+}
+.dive-intro {
+  grid-column: 1 / -1;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 4px;
+}
+.dive-intro .page-title { font-size: clamp(24px, 3vw, 36px); }
+.dive-card {
+  border: 1px solid rgba(224, 242, 225, 0.1);
+  border-radius: 16px;
+  padding: 26px 28px 28px;
+  background: rgba(10, 18, 10, 0.4);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.dive-card h3 {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 24px;
+  font-weight: 600;
+  color: #eaf3dd;
+  line-height: 1.15;
+  margin-bottom: 4px;
+}
+.dive-card .kicker {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 9.5px;
+  font-weight: 500;
+  letter-spacing: 0.26em;
+  text-transform: uppercase;
+  color: #eac6ce;
+}
+.dive-card p, .dive-card li {
+  font-size: 12.5px;
+  line-height: 1.7;
+  color: rgba(224, 242, 225, 0.72);
+}
+.dive-card ul { padding-left: 16px; margin: 4px 0; }
+.dive-card li { margin-bottom: 4px; }
+.dive-card p + p { margin-top: 4px; }
+.dive-verdict {
+  margin-top: 6px;
+  padding: 12px 14px;
+  background: rgba(234, 198, 206, 0.06);
+  border-left: 2px solid rgba(234, 198, 206, 0.5);
+  font-family: 'Cormorant Garamond', serif;
+  font-style: italic;
+  font-size: 14.5px;
+  line-height: 1.45;
+  color: #eac6ce;
+  border-radius: 2px 6px 6px 2px;
+}
+
+/* ── TRADEOFFS TABLE ── */
+.tradeoff-grid {
+  grid-column: 1 / -1;
+  border: 1px solid rgba(224, 242, 225, 0.1);
+  border-radius: 16px;
+  overflow: hidden;
+  background: rgba(10, 18, 10, 0.4);
+  display: grid;
+  grid-template-columns: 160px repeat(3, 1fr);
+  font-size: 12px;
+}
+.tg-cell {
+  padding: 14px 16px;
+  border-bottom: 1px solid rgba(224, 242, 225, 0.06);
+  border-right: 1px solid rgba(224, 242, 225, 0.06);
+  line-height: 1.55;
+}
+.tg-cell:nth-child(4n) { border-right: none; }
+.tg-cell.head {
+  background: rgba(234, 198, 206, 0.04);
+  font-family: 'DM Sans', sans-serif;
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: #eac6ce;
+}
+.tg-cell.row-head {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 10.5px;
+  font-weight: 500;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: rgba(224, 242, 225, 0.55);
+  background: rgba(234, 198, 206, 0.03);
+}
+
+/* ── BACK NAV ── */
+.nav-back {
+  position: fixed;
+  top: 24px; left: 28px;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  background: rgba(20, 34, 22, 0.6);
+  backdrop-filter: blur(14px) saturate(1.2);
+  -webkit-backdrop-filter: blur(14px) saturate(1.2);
+  border: 1px solid rgba(224, 242, 225, 0.12);
+  border-radius: 100px;
+  padding: 9px 18px 9px 14px;
+  cursor: pointer;
+  color: rgba(224, 242, 225, 0.75);
+  font-family: 'DM Sans', sans-serif;
+  font-size: 10px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  text-decoration: none;
+  transition: all 0.25s ease;
+  z-index: 100;
+}
+.nav-back:hover {
+  background: rgba(30, 48, 32, 0.8);
+  color: rgba(234, 198, 206, 1);
+  border-color: rgba(234, 198, 206, 0.4);
+}
+.nav-back-arrow {
+  display: inline-block; width: 16px; height: 1px;
+  background: currentColor; position: relative; flex-shrink: 0;
+}
+.nav-back-arrow::before {
+  content: '';
+  position: absolute;
+  left: 0; top: -3px;
+  width: 6px; height: 6px;
+  border-left: 1px solid currentColor;
+  border-bottom: 1px solid currentColor;
+  transform: rotate(45deg);
+}
+
+/* ── MOBILE ── */
+@media (max-width: 980px) {
+  body { padding: 96px 18px 60px; }
+  .nav-back { left: 16px; top: 16px; }
+  .layout {
+    grid-template-columns: 1fr;
+    gap: 18px;
+  }
+  .detail-panel {
+    position: static;
+    max-height: none;
+  }
+  .map-card { min-height: 420px; padding: 16px 16px 14px; }
+  .deep-dive { margin-top: 48px; }
+  .tradeoff-grid {
+    grid-template-columns: 1fr;
+    font-size: 11.5px;
+  }
+  .tg-cell { border-right: none; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+</style>
+</head>
+<body>
+
+<a class="nav-back" href="experiments.html">
+  <span class="nav-back-arrow" aria-hidden="true"></span>
+  Experiments
+</a>
+
+<header class="page-header">
+  <span class="eyebrow">Speculative Ideation · Future Zoo</span>
+  <h1 class="page-title">Redistributing the AZA</h1>
+  <p class="page-lede">
+    A thought experiment: if every AZA-accredited nonprofit zoo pooled its animals tomorrow &mdash; no new land, no new facilities, only the footprints we already have &mdash; and resettled every species by the climate, acreage, and social structure it actually needs, what would the map of North America look like? Three plans. Toggle between them and click any zoo to read its new role and the reasoning behind the move.
+  </p>
+  <div class="plan-toggle" role="tablist" aria-label="Redistribution plan">
+    <button class="plan-btn active" data-plan="sanctuary" role="tab" aria-selected="true">Species Sanctuaries</button>
+    <button class="plan-btn" data-plan="biome" role="tab" aria-selected="false">Biome Microbiomes</button>
+    <button class="plan-btn" data-plan="hybrid" role="tab" aria-selected="false">Hybrid Network</button>
+  </div>
+</header>
+
+<div class="view-tabs" role="tablist" aria-label="Map view">
+  <button class="view-tab active" data-view="continental" role="tab" aria-selected="true">Continental Map</button>
+  <button class="view-tab" data-view="atlanta" role="tab" aria-selected="false">Zoo Atlanta — Zoom In</button>
+</div>
+
+<div class="view view-continental active" data-view="continental">
+<div class="layout">
+  <!-- ══════════ MAP ══════════ -->
+  <section class="map-card" aria-label="Redistribution map">
+    <div class="map-title">Continental Climate Map</div>
+    <div class="map-subtitle" id="map-subtitle">Plan A &mdash; each species consolidates into 1&ndash;3 dedicated sanctuaries.</div>
+
+    <svg class="map-svg" viewBox="0 0 1000 560" preserveAspectRatio="xMidYMid meet" role="img" aria-label="Stylized map of US zoo redistribution by climate zone">
+      <defs>
+        <filter id="softblur" x="-20%" y="-20%" width="140%" height="140%">
+          <feGaussianBlur stdDeviation="14"/>
+        </filter>
+        <radialGradient id="glow" cx="50%" cy="50%" r="50%">
+          <stop offset="0%" stop-color="#eac6ce" stop-opacity="0.6"/>
+          <stop offset="100%" stop-color="#eac6ce" stop-opacity="0"/>
+        </radialGradient>
+      </defs>
+
+      <!-- Climate zones as soft blurred shapes -->
+      <g filter="url(#softblur)" opacity="0.72">
+        <!-- Pacific Temperate Rainforest -->
+        <ellipse cx="110" cy="140" rx="90" ry="110" fill="#4a7a6b"/>
+        <!-- Mediterranean CA -->
+        <ellipse cx="110" cy="305" rx="75" ry="95" fill="#9aa35e"/>
+        <!-- Hot Arid Desert -->
+        <ellipse cx="270" cy="340" rx="140" ry="85" fill="#c68c5a"/>
+        <!-- High Altitude Rockies -->
+        <ellipse cx="310" cy="210" rx="75" ry="90" fill="#8892a0"/>
+        <!-- Great Plains -->
+        <ellipse cx="470" cy="255" rx="115" ry="70" fill="#b5a56e"/>
+        <!-- Cold Temperate / Great Lakes -->
+        <ellipse cx="610" cy="170" rx="160" ry="90" fill="#6b8a9a"/>
+        <!-- Northeast Temperate -->
+        <ellipse cx="800" cy="175" rx="95" ry="85" fill="#7c9a7a"/>
+        <!-- Warm Temperate Mid-South -->
+        <ellipse cx="585" cy="320" rx="130" ry="75" fill="#a8b378"/>
+        <!-- Humid Subtropical SE -->
+        <ellipse cx="710" cy="390" rx="130" ry="85" fill="#8aae78"/>
+        <!-- Texas warm -->
+        <ellipse cx="460" cy="400" rx="85" ry="65" fill="#b8935c"/>
+        <!-- Tropical Florida -->
+        <ellipse cx="790" cy="490" rx="60" ry="55" fill="#5fa66a"/>
+        <!-- Gulf Coast humid -->
+        <ellipse cx="560" cy="440" rx="55" ry="40" fill="#7fae6e"/>
+      </g>
+
+      <!-- Climate zone labels -->
+      <g font-family="DM Sans" font-size="9" font-weight="500" letter-spacing="0.22em" fill="rgba(224,242,225,0.3)" text-transform="uppercase">
+        <text x="110" y="55" text-anchor="middle">PACIFIC RAINFOREST</text>
+        <text x="110" y="225" text-anchor="middle">MEDITERRANEAN</text>
+        <text x="270" y="418" text-anchor="middle">HOT ARID DESERT</text>
+        <text x="310" y="125" text-anchor="middle">HIGH ALTITUDE</text>
+        <text x="470" y="200" text-anchor="middle">GREAT PLAINS</text>
+        <text x="610" y="85" text-anchor="middle">COLD TEMPERATE</text>
+        <text x="800" y="95" text-anchor="middle">NORTHEAST</text>
+        <text x="585" y="390" text-anchor="middle">WARM TEMPERATE</text>
+        <text x="710" y="470" text-anchor="middle">HUMID SUBTROPICAL</text>
+        <text x="460" y="460" text-anchor="middle">TEXAS WARM</text>
+        <text x="820" y="535" text-anchor="middle">TROPICAL</text>
+      </g>
+
+      <!-- Zoo dots container (populated by JS) -->
+      <g id="zoo-nodes"></g>
+    </svg>
+
+    <div class="climate-legend">
+      <div class="legend-item"><span class="legend-swatch" style="background:#4a7a6b"></span>Pacific Rainforest</div>
+      <div class="legend-item"><span class="legend-swatch" style="background:#9aa35e"></span>Mediterranean</div>
+      <div class="legend-item"><span class="legend-swatch" style="background:#c68c5a"></span>Hot Arid Desert</div>
+      <div class="legend-item"><span class="legend-swatch" style="background:#8892a0"></span>High Altitude</div>
+      <div class="legend-item"><span class="legend-swatch" style="background:#6b8a9a"></span>Cold Temperate</div>
+      <div class="legend-item"><span class="legend-swatch" style="background:#7c9a7a"></span>Northeast</div>
+      <div class="legend-item"><span class="legend-swatch" style="background:#a8b378"></span>Warm Temperate</div>
+      <div class="legend-item"><span class="legend-swatch" style="background:#8aae78"></span>Humid Subtropical</div>
+      <div class="legend-item"><span class="legend-swatch" style="background:#b8935c"></span>Texas Warm</div>
+      <div class="legend-item"><span class="legend-swatch" style="background:#5fa66a"></span>Tropical</div>
+    </div>
+  </section>
+
+  <!-- ══════════ DETAIL PANEL ══════════ -->
+  <aside class="detail-panel" aria-live="polite">
+    <div class="detail-default" id="panel-default">
+      <div>
+        <span class="eyebrow">The Premise</span>
+      </div>
+      <h3 id="default-title">Species Sanctuaries</h3>
+      <p id="default-intro">
+        Consolidate each charismatic species into 1&ndash;3 dedicated sites chosen for climate, existing infrastructure, and depth of program. Elephants to three sanctuaries. Bonobos to Cincinnati. Orangutans to Indianapolis. Polar bears to Detroit.
+      </p>
+      <div class="plan-summary">
+        <span class="plan-name">What this plan optimizes for</span>
+        <span id="default-optimize">Welfare depth, genetic management, and species-level expertise. Every facility keeping that species has the budget, staff, and acreage to do it well — because nothing else competes for those resources on site.</span>
+      </div>
+      <div class="plan-summary">
+        <span class="plan-name">What it trades away</span>
+        <span id="default-tradeoff">Public exposure to variety. A family visit to the Bronx would no longer include an elephant, a rhino, or an orangutan. Some small zoos become native-species conservation centers instead of collections.</span>
+      </div>
+      <p style="font-size:11.5px; color:rgba(224,242,225,0.45); line-height:1.65; margin-top:4px;">
+        &rarr; Click any zoo on the map to see its specific role in this plan.
+      </p>
+    </div>
+
+    <div class="zoo-panel" id="panel-zoo">
+      <span class="zoo-climate" id="zp-climate"></span>
+      <div>
+        <div class="zoo-name" id="zp-name"></div>
+        <div class="zoo-loc" id="zp-loc"></div>
+      </div>
+      <div class="zoo-stats" id="zp-stats"></div>
+      <div class="zoo-role" id="zp-role"></div>
+      <div>
+        <div class="section-label">Housed Species</div>
+        <ul class="zoo-species" id="zp-species"></ul>
+      </div>
+      <div>
+        <div class="section-label">Why Here</div>
+        <p class="zoo-why" id="zp-why"></p>
+      </div>
+    </div>
+  </aside>
+</div>
+</div><!-- /view-continental -->
+
+<!-- ══════════ ATLANTA VIEW ══════════ -->
+<div class="view view-atlanta" data-view="atlanta">
+<div class="layout">
+  <section class="map-card" aria-label="Zoo Atlanta reimagined">
+    <div class="map-title">Zoo Atlanta · 40 acres, Reimagined</div>
+    <div class="map-subtitle" id="atlanta-subtitle">What this zoo becomes when gorillas stop competing with elephants, pandas, and penguins for its 40 acres.</div>
+
+    <svg class="map-svg" viewBox="0 0 900 560" preserveAspectRatio="xMidYMid meet" role="img" aria-label="Zoo Atlanta reimagined plan view">
+      <defs>
+        <pattern id="forestdots" x="0" y="0" width="14" height="14" patternUnits="userSpaceOnUse">
+          <circle cx="7" cy="7" r="0.8" fill="rgba(255,255,255,0.05)"/>
+        </pattern>
+        <filter id="zone-shadow" x="-5%" y="-5%" width="110%" height="110%">
+          <feGaussianBlur stdDeviation="2"/>
+        </filter>
+      </defs>
+
+      <!-- ground -->
+      <rect x="0" y="0" width="900" height="560" fill="#14201a"/>
+      <rect x="0" y="0" width="900" height="560" fill="url(#forestdots)"/>
+
+      <!-- north arrow -->
+      <g transform="translate(860,40)">
+        <circle cx="0" cy="0" r="18" fill="none" stroke="rgba(224,242,225,0.18)" stroke-width="0.6"/>
+        <path d="M0,-10 L4,6 L0,2 L-4,6 Z" fill="rgba(234,198,206,0.7)"/>
+        <text class="north-arrow" x="0" y="-22" text-anchor="middle">N</text>
+      </g>
+
+      <!-- winding visitor path (decorative) -->
+      <path d="M 450,118 C 420,180 250,200 240,340 C 230,450 500,430 560,490"
+            fill="none" stroke="rgba(255,255,255,0.08)" stroke-width="10" stroke-linecap="round"/>
+      <path d="M 450,118 C 420,180 250,200 240,340 C 230,450 500,430 560,490"
+            fill="none" stroke="rgba(234,198,206,0.22)" stroke-width="1" stroke-dasharray="3 6"/>
+
+      <!-- zones container (populated by JS) -->
+      <g id="atlanta-zones"></g>
+
+      <!-- scale note -->
+      <g transform="translate(50,540)">
+        <line x1="0" y1="0" x2="50" y2="0" stroke="rgba(224,242,225,0.3)" stroke-width="1"/>
+        <text x="56" y="4" class="north-arrow">~ 5 ACRES</text>
+      </g>
+    </svg>
+
+    <div class="climate-legend" style="grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));">
+      <div class="legend-item"><span class="legend-swatch" style="background:#7a8b92"></span>Research &amp; Entry</div>
+      <div class="legend-item"><span class="legend-swatch" style="background:#4a6b4e"></span>Gorilla Family Forest</div>
+      <div class="legend-item"><span class="legend-swatch" style="background:#5a7a5e"></span>Gorilla Bachelor Wood</div>
+      <div class="legend-item"><span class="legend-swatch" style="background:#6d8a5a"></span>Congo Canopy</div>
+      <div class="legend-item"><span class="legend-swatch" style="background:#7a6a4a"></span>Forest Floor Community</div>
+      <div class="legend-item"><span class="legend-swatch" style="background:#4a7086"></span>Congo River &amp; Herpetology</div>
+      <div class="legend-item"><span class="legend-swatch" style="background:#b89968"></span>Children's Congo</div>
+      <div class="legend-item"><span class="legend-swatch" style="background:#9a8a5a"></span>Field Station &amp; Rehab</div>
+    </div>
+  </section>
+
+  <aside class="detail-panel" aria-live="polite">
+    <div class="atlanta-default" id="atlanta-panel-default">
+      <div><span class="eyebrow">Why Atlanta</span></div>
+      <h3 style="font-family:'Cormorant Garamond',serif; font-weight:600; font-size:26px; color:#eaf3dd; line-height:1.1;">The Gorilla anchor, not the only gorilla site.</h3>
+      <p style="font-size:13px; line-height:1.7; color:rgba(224,242,225,0.72);">
+        Zoo Atlanta already runs the largest western lowland gorilla program in North America — about 20 individuals across four family troops and a bachelor group, with decades of behavioral research. Its 40 acres aren't enough to be a great zoo at everything, but they are more than enough to be the <em>best</em> zoo at one thing.
+      </p>
+      <p style="font-size:13px; line-height:1.7; color:rgba(224,242,225,0.72);">
+        Atlanta cannot hold all ~350 AZA gorillas. It can hold the largest single population — around 30&ndash;35 under hybrid logic &mdash; and anchor a distributed network of climate-matched satellites. Giraffes, lions, elephants, pandas, and plains animals leave Atlanta entirely, freeing the footprint for gorillas plus the Congo Basin species they would share a forest with.
+      </p>
+      <div class="plan-summary">
+        <span class="plan-name">Current plan</span>
+        <span id="atlanta-plan-summary">Hybrid — Atlanta ~32 gorillas as the primary site; ~170 more distributed across 6 satellites.</span>
+      </div>
+      <p style="font-size:11.5px; color:rgba(224,242,225,0.45); line-height:1.65;">
+        &rarr; Click any zone on the plan to see its current use and what it becomes. Scroll down to see the full gorilla network and how populations shift.
+      </p>
+    </div>
+
+    <div class="atlanta-panel" id="atlanta-zone-panel">
+      <span class="zoo-climate" id="az-kicker"></span>
+      <div>
+        <div class="zoo-name" id="az-name"></div>
+        <div class="zoo-loc" id="az-acres"></div>
+      </div>
+      <div class="zone-current" id="az-current"></div>
+      <div class="zoo-role" id="az-role"></div>
+      <div>
+        <div class="section-label">What It Holds</div>
+        <ul class="zoo-species" id="az-species"></ul>
+      </div>
+      <div>
+        <div class="section-label">Why It Changes</div>
+        <p class="zoo-why" id="az-why"></p>
+      </div>
+    </div>
+  </aside>
+</div>
+
+<section class="gorilla-network" aria-labelledby="gorilla-network-heading">
+  <span class="eyebrow">The Full Picture</span>
+  <h2 class="section-title" id="gorilla-network-heading">Where the gorillas actually go</h2>
+  <p class="section-lede">
+    AZA currently holds approximately <b>350 western lowland gorillas</b> across ~50 institutions &mdash; most programs with five or fewer individuals. Atlanta's 40 acres can anchor a network, but cannot replace it. Here is how a realistic redistribution looks across the climate-suitable sites. Counts are approximate; ellipses mean the site is phased out in that plan.
+  </p>
+
+  <div class="gorilla-grid">
+    <div class="gg-cell head">Zoo · Climate Match</div>
+    <div class="gg-cell head">Role in Plan</div>
+    <div class="gg-cell head">Today</div>
+    <div class="gg-cell head">Sanctuary</div>
+    <div class="gg-cell head">Biome</div>
+    <div class="gg-cell head">Hybrid</div>
+    <div class="gg-cell head">Change</div>
+
+    <!-- Atlanta -->
+    <div class="gg-cell zoo">Zoo Atlanta<span class="climate-tag">Warm humid · 40 ac</span></div>
+    <div class="gg-cell">Primary gorilla anchor across all plans; largest single population.</div>
+    <div class="gg-cell count">20</div>
+    <div class="gg-cell count primary">28<small>PRIMARY</small></div>
+    <div class="gg-cell count">20</div>
+    <div class="gg-cell count primary">26<small>PRIMARY</small></div>
+    <div class="gg-cell count">+6 to +8</div>
+
+    <!-- Bronx -->
+    <div class="gg-cell zoo">Bronx Zoo<span class="climate-tag">Temp. (indoor) · 265 ac</span></div>
+    <div class="gg-cell">Congo Gorilla Forest exists already; WCS field conservation muscle.</div>
+    <div class="gg-cell count">17</div>
+    <div class="gg-cell count primary">25<small>PRIMARY</small></div>
+    <div class="gg-cell count">18</div>
+    <div class="gg-cell count">22</div>
+    <div class="gg-cell count">+5 to +8</div>
+
+    <!-- San Diego -->
+    <div class="gg-cell zoo">San Diego + Safari Park<span class="climate-tag">Mediterranean · 1,900 ac</span></div>
+    <div class="gg-cell">Genetic reservoir; Safari Park acreage + SD climate match.</div>
+    <div class="gg-cell count">14</div>
+    <div class="gg-cell count primary">25<small>PRIMARY</small></div>
+    <div class="gg-cell count">16</div>
+    <div class="gg-cell count">20</div>
+    <div class="gg-cell count">+6 to +11</div>
+
+    <!-- Disney AK -->
+    <div class="gg-cell zoo">Disney's Animal Kingdom<span class="climate-tag">Subtropical · 580 ac</span></div>
+    <div class="gg-cell">Subtropical climate + savanna-walk infrastructure retrofits well.</div>
+    <div class="gg-cell count">10</div>
+    <div class="gg-cell count zero"></div>
+    <div class="gg-cell count">20</div>
+    <div class="gg-cell count">20</div>
+    <div class="gg-cell count">+10 / phased</div>
+
+    <!-- Cincinnati -->
+    <div class="gg-cell zoo">Cincinnati Zoo<span class="climate-tag">Temp. indoor · 75 ac</span></div>
+    <div class="gg-cell">Secondary; Bonobo primary means shared primate expertise and facilities.</div>
+    <div class="gg-cell count">13</div>
+    <div class="gg-cell count zero"></div>
+    <div class="gg-cell count">12</div>
+    <div class="gg-cell count">14</div>
+    <div class="gg-cell count">±1 / phased</div>
+
+    <!-- Jacksonville -->
+    <div class="gg-cell zoo">Jacksonville Zoo<span class="climate-tag">Warm humid · 117 ac</span></div>
+    <div class="gg-cell">Existing African forest exhibit + Gulf-humid climate.</div>
+    <div class="gg-cell count">9</div>
+    <div class="gg-cell count zero"></div>
+    <div class="gg-cell count">12</div>
+    <div class="gg-cell count">14</div>
+    <div class="gg-cell count">+3 to +5 / phased</div>
+
+    <!-- Houston -->
+    <div class="gg-cell zoo">Houston Zoo<span class="climate-tag">Gulf humid · 55 ac</span></div>
+    <div class="gg-cell">Not currently a gorilla zoo, but climate is one of the best matches in AZA.</div>
+    <div class="gg-cell count zero"></div>
+    <div class="gg-cell count zero"></div>
+    <div class="gg-cell count">14</div>
+    <div class="gg-cell count">12</div>
+    <div class="gg-cell count">+12 to +14 / —</div>
+
+    <!-- Dallas -->
+    <div class="gg-cell zoo">Dallas Zoo<span class="climate-tag">Warm · 106 ac</span></div>
+    <div class="gg-cell">Existing bachelor-group expertise; warm Texas summers work.</div>
+    <div class="gg-cell count">13</div>
+    <div class="gg-cell count zero"></div>
+    <div class="gg-cell count">10</div>
+    <div class="gg-cell count">12</div>
+    <div class="gg-cell count">±2 / phased</div>
+
+    <!-- Columbus -->
+    <div class="gg-cell zoo">Columbus Zoo<span class="climate-tag">Cold temp. indoor · 580 ac</span></div>
+    <div class="gg-cell">Strong existing program but cold-climate; indoor-reliant welfare.</div>
+    <div class="gg-cell count">16</div>
+    <div class="gg-cell count zero"></div>
+    <div class="gg-cell count zero"></div>
+    <div class="gg-cell count">14</div>
+    <div class="gg-cell count">−2 / phased</div>
+
+    <!-- Memphis -->
+    <div class="gg-cell zoo">Memphis Zoo<span class="climate-tag">Warm humid · 76 ac</span></div>
+    <div class="gg-cell">Good climate match; small existing program.</div>
+    <div class="gg-cell count">8</div>
+    <div class="gg-cell count zero"></div>
+    <div class="gg-cell count">8</div>
+    <div class="gg-cell count">10</div>
+    <div class="gg-cell count">+2 / phased</div>
+
+    <!-- Phased -->
+    <div class="gg-cell zoo">Others (~25 small programs)<span class="climate-tag">Cold/cool climates, ≤6 gorillas each</span></div>
+    <div class="gg-cell">Phased out over ~15 years — no new intake, aging transferred to primary sites as troop structure allows.</div>
+    <div class="gg-cell count">~180</div>
+    <div class="gg-cell count zero"></div>
+    <div class="gg-cell count zero"></div>
+    <div class="gg-cell count zero"></div>
+    <div class="gg-cell count">− all</div>
+
+    <!-- Totals -->
+    <div class="gg-cell totals">Total AZA gorillas</div>
+    <div class="gg-cell totals">Distributed across 3–8 sites depending on plan</div>
+    <div class="gg-cell totals count">~300</div>
+    <div class="gg-cell totals count">~78</div>
+    <div class="gg-cell totals count">~130</div>
+    <div class="gg-cell totals count">~164</div>
+    <div class="gg-cell totals count">−55% to −74%</div>
+  </div>
+
+  <p class="network-footnote">
+    <b>The honest tradeoff.</b> None of these plans preserves the current ~300–350 zoo-held gorilla population on current AZA footprints. Welfare-first logic consolidates populations to climate-matched sites with deeper programs per individual — and accepts that roughly half to three-quarters of current zoo-held gorillas transition out over ~15 years. That transition is via natural aging, bachelor-group consolidation at primary sites, partnerships with range-country semi-wild reserves (outside AZA), and a slowdown in captive breeding at phased-out sites. The same arithmetic applies to elephants (<em>~100 AZA → ~40 at three reserves</em>) and polar bears (<em>~60 AZA → ~25 at four cold-climate sites</em>). The species decline is not a bug of the plan; it is a feature — the alternative is continuing to hold thinly-distributed welfare-compromised populations at dozens of under-resourced sites.
+  </p>
+</section>
+
+</div><!-- /view-atlanta -->
+
+<!-- ══════════ DEEP DIVE ══════════ -->
+<section class="deep-dive">
+  <div class="dive-intro">
+    <span class="eyebrow">Going Deeper</span>
+    <h2 class="page-title">The species that broke every plan</h2>
+    <p class="page-lede" style="margin-top:4px;">
+      Three tests push every model to its limit: great apes (social complexity), elephants (sheer space), and polar bears (thermodynamics). Here's how each plan handles them, and which plan wins for each.
+    </p>
+  </div>
+
+  <article class="dive-card">
+    <span class="kicker">Great Apes</span>
+    <h3>Distributed, not consolidated — but only just enough.</h3>
+    <p>Gorillas, orangutans, bonobos, and chimps each have different answers, and the answer is never <em>one site</em>.</p>
+    <ul>
+      <li><b>Bonobos &rarr; 1&ndash;2 sites (~100 individuals).</b> Cincinnati dominant (~60), one humid satellite (Audubon or Jacksonville, ~15&ndash;25). Bonobos are already rare in AZA &mdash; concentration is safe.</li>
+      <li><b>Gorillas &rarr; 6&ndash;8 sites (~164 under hybrid, from current ~300).</b> Atlanta primary (~26), satellites at Bronx, SD Safari Park, Disney AK, Cincinnati, Jacksonville, Dallas, Memphis. Silverback family structure means males fight &mdash; bachelor groups need separate homes. Population contracts by ~45% over ~15 years.</li>
+      <li><b>Orangutans &rarr; 3 sites (~80 from current ~175).</b> Indianapolis primary (purpose-built canopy center), plus Denver and San Diego. Bornean and Sumatran on different sites &mdash; they must not interbreed.</li>
+      <li><b>Chimps &rarr; 3 sites (~150 from current ~260).</b> Lincoln Park Chicago primary (deepest research program), plus Kansas City and North Carolina. Troop fission-fusion behavior only works with 20+ individuals &mdash; fewer sites, bigger troops.</li>
+    </ul>
+    <div class="dive-verdict">
+      Great apes resist species-sanctuary logic. Their genetics and social structure punish single-site plans. Hybrid wins: a primary center that holds the expertise, and 2&ndash;4 satellites that hold the genetic diversity and the family groups the primary can't.
+    </div>
+  </article>
+
+  <article class="dive-card">
+    <span class="kicker">Elephants</span>
+    <h3>Three reserves or none at all.</h3>
+    <p>Wild African elephants walk 25+ miles a day across family herds of 10&ndash;20. No urban zoo can approximate this. In AZA's current footprint, only a handful of sites have even the wrong order of magnitude of space.</p>
+    <ul>
+      <li><b>North Carolina Zoo (~2,600 ac)</b> &mdash; family herds of African savanna elephants. Climate is humid subtropical, close enough for nine months.</li>
+      <li><b>San Diego Zoo Safari Park (~1,800 ac)</b> &mdash; Mediterranean climate, existing mixed-herd savanna infrastructure, rhino co-grazing already in place.</li>
+      <li><b>The Wilds, OH (~9,000 ac)</b> &mdash; pasture-scale, but cold. Becomes the Asian elephant site rather than African: matches Himalayan foothill seasonality.</li>
+    </ul>
+    <p>Every other AZA elephant exhibit closes. Individuals are absorbed into family groups at the three reserves &mdash; no solitary elephants, no more "pair of two" exhibits. The 30+ zoos that currently hold 1&ndash;3 elephants lose them entirely.</p>
+    <div class="dive-verdict">
+      This is the clearest case for species-sanctuary logic. Elephants have already lost the public-facing variety fight; welfare research has made consolidation unavoidable. The plan doesn't create the change &mdash; it just finishes it.
+    </div>
+  </article>
+
+  <article class="dive-card">
+    <span class="kicker">Polar Bears</span>
+    <h3>Consolidate north, not distribute widely.</h3>
+    <p>Polar bears require sustained sub-freezing enrichment, deep pools, shaded pack-ice analog, and are increasingly viewed as the species AZA's warmer sites should stop holding. Roughly half of current AZA polar bear sites sit in climates that force constant refrigeration and thermal stress.</p>
+    <ul>
+      <li><b>Detroit Zoo</b> &mdash; primary. Already runs the largest polar bear habitat in the US (the Arctic Ring of Life). Climate matches eight months of the year.</li>
+      <li><b>Minnesota Zoo, Como (St. Paul), Pittsburgh</b> &mdash; secondary, each holding a small family unit or bachelor pair.</li>
+      <li><b>Assiniboine Park Zoo (Winnipeg)</b> &mdash; affiliate hub for Arctic rehabilitation, climate-best.</li>
+    </ul>
+    <p>Warm-climate polar bears (Texas, Florida, southern California) are consolidated north. Their habitats are repurposed for species native to those climates &mdash; often native reptiles or amphibian breeding facilities.</p>
+    <div class="dive-verdict">
+      Polar bears prove the climate rule: you can't simulate the Arctic in Houston, no matter the budget. Species-sanctuary wins cleanly here.
+    </div>
+  </article>
+
+  <article class="dive-card">
+    <span class="kicker">Sanctuary vs Microbiome</span>
+    <h3>They answer different questions.</h3>
+    <p><b>Sanctuaries</b> ask: what does this species need to flourish? One answer, many sites compete to offer it.</p>
+    <p><b>Microbiomes</b> ask: what does this ecosystem need to function? The species list follows &mdash; predator, prey, scavenger, pollinator, plant.</p>
+    <p>Microbiome thinking is richer for visitors and for cognition: primates with predator cues, prey with predator cues, birds with the insects they eat nearby. It's how Houston already designs its Pantanal and how South African reserves operate.</p>
+    <p>But microbiome logic breaks on large-bodied specialists. An African savanna microbiome in a 200-acre zoo still doesn't have enough space for an elephant herd. The ecosystem is right; the scale isn't.</p>
+    <div class="dive-verdict">
+      Microbiomes for cognitive enrichment. Sanctuaries for the species whose needs can't be met inside any 200-acre polygon. Every serious plan is a mix.
+    </div>
+  </article>
+
+  <!-- tradeoffs grid -->
+  <div class="tradeoff-grid">
+    <div class="tg-cell head"></div>
+    <div class="tg-cell head">Species Sanctuaries</div>
+    <div class="tg-cell head">Biome Microbiomes</div>
+    <div class="tg-cell head">Hybrid Network</div>
+
+    <div class="tg-cell row-head">Best at</div>
+    <div class="tg-cell">Welfare depth, genetic management, specialist expertise per species.</div>
+    <div class="tg-cell">Ecological realism, cognitive enrichment, educational coherence per visit.</div>
+    <div class="tg-cell">Welfare for megafauna plus ecological richness for the rest.</div>
+
+    <div class="tg-cell row-head">Worst at</div>
+    <div class="tg-cell">Visit-day variety; ecological context (animals isolated from their communities).</div>
+    <div class="tg-cell">Megafauna &mdash; elephants, rhinos, great whales still exceed any single biome's footprint.</div>
+    <div class="tg-cell">Complexity of governance and transfers. The hardest plan to implement.</div>
+
+    <div class="tg-cell row-head">Who visits what</div>
+    <div class="tg-cell">Destination zoos: travel to see one species, not a collection.</div>
+    <div class="tg-cell">Each zoo a "world" &mdash; Amazon day, Savanna day, Boreal day.</div>
+    <div class="tg-cell">Tiered: reserves are destinations, biomes are day trips, urban centers are neighborhood.</div>
+
+    <div class="tg-cell row-head">Small urban zoos</div>
+    <div class="tg-cell">Pivot to native species, amphibians, SSP breeding labs.</div>
+    <div class="tg-cell">Host one micro-biome well &mdash; usually native or a small tropical slice.</div>
+    <div class="tg-cell">Become tier-3 "conservation centers" &mdash; native wildlife, research, rehab, kids.</div>
+
+    <div class="tg-cell row-head">Aquariums</div>
+    <div class="tg-cell">Unchanged &mdash; already species-specialized by saltwater infrastructure.</div>
+    <div class="tg-cell">Each becomes a single ocean: kelp forest, coral reef, Gulf, North Atlantic, polar.</div>
+    <div class="tg-cell">Aquariums form their own parallel marine network across plans.</div>
+
+    <div class="tg-cell row-head">Genetic risk</div>
+    <div class="tg-cell">Concentration risk: disease or disaster at one site threatens a species.</div>
+    <div class="tg-cell">Well-distributed; every biome holds its own micro-population.</div>
+    <div class="tg-cell">Mitigated: primary + satellites keep populations geographically split.</div>
+
+    <div class="tg-cell row-head">Verdict</div>
+    <div class="tg-cell">Right answer for elephants, polar bears, and a few others.</div>
+    <div class="tg-cell">Right answer for medium-bodied species that benefit from community.</div>
+    <div class="tg-cell">The only plan that survives contact with all the constraints.</div>
+  </div>
+</section>
+
+<script>
+'use strict';
+
+/* ═══════════════════ DATA ═══════════════════ */
+const ZOOS = [
+  // PNW
+  { id:'woodland', name:'Woodland Park Zoo', city:'Seattle, WA', x:95, y:125, climate:'Pacific Rainforest', climateColor:'#4a7a6b', acres:92,
+    plans:{
+      sanctuary:{ role:'Northwest Native Mammal Sanctuary', species:['Grizzly bear','Gray wolf','Canada lynx','Mountain goat','Bald eagle'], why:'Consolidates all AZA Pacific Northwest native species here. Seattle\'s Douglas fir understory already grows around the enclosures — no artificial habitat needed.'},
+      biome:{ role:'Pacific Temperate Rainforest Biome', species:['Roosevelt elk','Black bear','Fisher','Cougar','Coastal wolf','Marbled murrelet','Salmonid streams'], why:'The entire forest reconstructs itself: canopy, understory, salmon run, predator guild. Seattle\'s climate is doing the work.'},
+      hybrid:{ role:'Tier-2 Biome Hub · Pacific Rainforest', species:['Roosevelt elk','Fisher','Cougar','Coastal wolf','Bald eagle','Native amphibians'], why:'Biome-focused with a secondary role as Pacific NW SSP breeding partner for species that need the climate match.'}
+    }},
+  { id:'oregon', name:'Oregon Zoo', city:'Portland, OR', x:80, y:160, climate:'Pacific Rainforest', climateColor:'#4a7a6b', acres:64,
+    plans:{
+      sanctuary:{ role:'California Condor Breeding Center', species:['California condor (primary)','Oregon silverspot butterfly','Western pond turtle'], why:'Oregon Zoo already runs the largest condor recovery program; consolidate the rest here alongside native invertebrate recovery.'},
+      biome:{ role:'Cascade Mountain Biome', species:['Mountain goat','Cougar','Fisher','Great gray owl','Cascades frog'], why:'Cascade-range species in matching climate, mountain-to-valley gradient possible on site.'},
+      hybrid:{ role:'Tier-2 Biome Hub + Condor Recovery', species:['California condor','Cascade predators','Native amphibian breeding lab'], why:'Split role — field-facing condor program plus Cascade biome for visitors.'}
+    }},
+  { id:'pointdef', name:'Point Defiance', city:'Tacoma, WA', x:125, y:155, climate:'Pacific Rainforest', climateColor:'#4a7a6b', acres:29,
+    plans:{
+      sanctuary:{ role:'Pacific Marine Mammal Sanctuary', species:['Sea otter (primary US herd)','Harbor seal','Tufted puffin','Northern sea lion'], why:'Saltwater access plus PNW climate makes Point Defiance the single best US site for cold-water Pacific marine mammals. Other AZA otters consolidate here.'},
+      biome:{ role:'Pacific Coastal Biome', species:['Sea otter','Harbor seal','Tufted puffin','Kelp forest','Giant Pacific octopus','Pacific salmonids'], why:'Kelp forest to rocky shore to tidepool — the entire Pacific coastal ecosystem at one site.'},
+      hybrid:{ role:'Tier-2 Marine Hub · Pacific Cold Coast', species:['Sea otter','Tufted puffin','Kelp forest','Octopus','Coastal wolf'], why:'Marine-biome specialty with PNW terrestrial edge species; aquarium-zoo hybrid is the template.'}
+    }},
+
+  // California
+  { id:'sfzoo', name:'San Francisco Zoo', city:'San Francisco, CA', x:105, y:260, climate:'Mediterranean', climateColor:'#9aa35e', acres:100,
+    plans:{
+      sanctuary:{ role:'Cool-Climate Penguin Sanctuary', species:['African (Humboldt) penguin','Magellanic penguin','Snow leopard (cool-loving)'], why:'SF\'s fog-cooled summers match Humboldt Current coasts and subantarctic lattitudes better than any other US city — the penguins already thrive here.'},
+      biome:{ role:'Western Cape / South African Fynbos Biome', species:['African penguin','Meerkat','Caracal','Rock hyrax','Cape vulture'], why:'SF\'s Mediterranean climate is one of only five on Earth — it mirrors the Western Cape.'},
+      hybrid:{ role:'Tier-2 Biome Hub · Fynbos / Cool Coast', species:['African penguin','Meerkat','Caracal','Rock hyrax'], why:'Biome-matched Western Cape specialty with Humboldt-current marine edge.'}
+    }},
+  { id:'oakland', name:'Oakland Zoo', city:'Oakland, CA', x:115, y:285, climate:'Mediterranean', climateColor:'#9aa35e', acres:100,
+    plans:{
+      sanctuary:{ role:'California Native Wildlife Sanctuary', species:['California grizzly analog (black bear)','Mountain lion','California condor (satellite)','Tule elk','Jaguar (border)'], why:'Already the only AZA zoo with a dedicated California Trail at this scale. Expand to absorb all CA native species statewide.'},
+      biome:{ role:'California Chaparral Biome', species:['Mountain lion','Tule elk','Bobcat','Golden eagle','Mule deer','Rattlesnake'], why:'Hillside footprint lets the chaparral ecosystem reconstruct with oak savanna transitioning to coastal scrub.'},
+      hybrid:{ role:'Tier-2 Biome Hub · California Chaparral', species:['Mountain lion','Tule elk','California condor','Bobcat'], why:'Already running this playbook — just absorb the other CA native programs into it.'}
+    }},
+  { id:'lazoo', name:'Los Angeles Zoo', city:'Los Angeles, CA', x:145, y:335, climate:'Mediterranean', climateColor:'#9aa35e', acres:133,
+    plans:{
+      sanctuary:{ role:'Mediterranean Basin Sanctuary', species:['Barbary macaque','Iberian lynx (breeding)','Spanish imperial eagle','Griffon vulture'], why:'Southern California summers and winters mirror Mediterranean Basin climate — species suffer in any colder AZA site.'},
+      biome:{ role:'Mediterranean Basin Biome', species:['Barbary macaque','Mouflon','Iberian lynx','Scrub jay'], why:'Chaparral meets olive-grove scrub — the five Mediterranean climates of the world converge in LA\'s hills.'},
+      hybrid:{ role:'Tier-3 Urban Conservation Center', species:['Local LA wildlife','Mediterranean species','Education + rehab focus'], why:'Urban footprint, vast visitor volume — becomes a conservation education flagship rather than a collection zoo.'}
+    }},
+
+  // Desert SW
+  { id:'livingdesert', name:'The Living Desert', city:'Palm Desert, CA', x:190, y:340, climate:'Hot Arid Desert', climateColor:'#c68c5a', acres:1200,
+    plans:{
+      sanctuary:{ role:'Desert Specialist Sanctuary', species:['Arabian oryx','Fennec fox','Sand cat','Addra gazelle','Slender-horned gazelle'], why:'Only AZA zoo purpose-built for desert species at 1,200 acres. All AZA Old World desert ungulates consolidate here.'},
+      biome:{ role:'Sonoran–Arabian Desert Biome', species:['Bighorn sheep','Fennec','Sand cat','Arabian oryx','Horned viper','Roadrunner'], why:'Cross-continental desert biome works because Sonoran and Arabian ecosystems already share climate structure.'},
+      hybrid:{ role:'Tier-2 Biome Hub · Global Desert', species:['Sonoran natives','Old World desert ungulates','Desert reptiles'], why:'The anchor desert site; other SW zoos specialize into native-only or border-region programs.'}
+    }},
+  { id:'phoenix', name:'Phoenix Zoo', city:'Phoenix, AZ', x:245, y:355, climate:'Hot Arid Desert', climateColor:'#c68c5a', acres:125,
+    plans:{
+      sanctuary:{ role:'African Savanna Arid-Edge Sanctuary', species:['Masai giraffe','Grevy\'s zebra','Cheetah','Addax'], why:'Phoenix already runs Arabian oryx recovery. Consolidate arid-African ungulates here where summer heat matches dry-season Serengeti.'},
+      biome:{ role:'Sonoran Desert Biome · Native Focus', species:['Mexican gray wolf','Javelina','Coatimundi','Gila monster','Desert tortoise','Harris\'s hawk'], why:'Native Sonoran ecosystem in its actual climate — outdoor exhibits exist without artificial climate control.'},
+      hybrid:{ role:'Tier-3 Native Desert Center + Recovery', species:['Mexican gray wolf','Desert tortoise','Native reptiles'], why:'Field-facing recovery programs for the American Southwest.'}
+    }},
+  { id:'reidpark', name:'Reid Park Zoo', city:'Tucson, AZ', x:280, y:385, climate:'Hot Arid Desert', climateColor:'#c68c5a', acres:24,
+    plans:{
+      sanctuary:{ role:'Ocelot & Jaguarundi Border Sanctuary', species:['Ocelot','Jaguarundi','Border species breeding'], why:'US-Mexico border climate zone. Absorbs all AZA border-cat programs for field release potential.'},
+      biome:{ role:'Sonoran–Chihuahuan Transition Biome', species:['Jaguar','Ocelot','Javelina','Coatimundi'], why:'Tucson sits on the exact transition between two desert ecosystems; the zoo represents the seam.'},
+      hybrid:{ role:'Tier-3 Native Border Conservation', species:['Ocelot','Jaguarundi','Native reptiles'], why:'Community-scale zoo, border-region specialization.'}
+    }},
+  { id:'abq', name:'ABQ BioPark', city:'Albuquerque, NM', x:335, y:320, climate:'Hot Arid Desert', climateColor:'#c68c5a', acres:64,
+    plans:{
+      sanctuary:{ role:'Asian Steppe Sanctuary', species:['Przewalski\'s horse (satellite)','Snow leopard','Asian pika','Steppe eagle'], why:'Chihuahuan high desert climate is a near-mirror of Central Asian steppe — summers hot, winters cold and dry, same elevation range.'},
+      biome:{ role:'Chihuahuan / Central Asian Steppe Biome', species:['Mongolian wild horse','Bactrian camel','Argali sheep','Saiga','Steppe eagle'], why:'Two high-desert steppes on two continents share a climate signature. Combine them.'},
+      hybrid:{ role:'Tier-2 Biome Hub · Steppe', species:['Bactrian camel','Argali','Mongolian horse'], why:'Steppe-specialization site; the only AZA facility whose climate honestly matches Central Asia.'}
+    }},
+
+  // High altitude
+  { id:'denver', name:'Denver Zoo', city:'Denver, CO', x:310, y:200, climate:'High Altitude', climateColor:'#8892a0', acres:84,
+    plans:{
+      sanctuary:{ role:'Himalayan / Andean Sanctuary', species:['Tibetan yak','Himalayan tahr','Markhor','Andean bear'], why:'Denver\'s 5,280 ft elevation is the only AZA site with genuinely thin air. Tahr and markhor breed better here.'},
+      biome:{ role:'High Mountain Biome', species:['Himalayan tahr','Markhor','Bighorn sheep','Golden eagle','Pika'], why:'Alpine grassland above treeline — a biome no sea-level zoo can fake.'},
+      hybrid:{ role:'Tier-2 Biome Hub · High Altitude', species:['Markhor','Tahr','Yak','Andean bear','Alpine birds'], why:'Altitude is the biome — consolidate all AZA high-elevation specialists here.'}
+    }},
+  { id:'cheyenne', name:'Cheyenne Mountain Zoo', city:'Colorado Springs, CO', x:330, y:230, climate:'High Altitude', climateColor:'#8892a0', acres:140,
+    plans:{
+      sanctuary:{ role:'Giraffe & Mountain Tapir Sanctuary', species:['Giraffe (largest AZA herd)','Mountain tapir','Andean condor'], why:'Cheyenne already runs the largest giraffe herd in AZA and the only mountain tapir program in the US. Consolidate.'},
+      biome:{ role:'Andean Cloud Forest Biome', species:['Mountain tapir','Andean bear','Andean condor','Cock-of-the-rock','Spectacled owl'], why:'6,800 ft elevation + hillside footprint = cloud forest microclimate. Almost unique in AZA.'},
+      hybrid:{ role:'Tier-1 Megafauna Reserve · Mountain', species:['Giraffe (primary herd)','Mountain tapir','Andean bear'], why:'Hillside footprint and altitude make Cheyenne the only reasonable giraffe consolidation site in the West — Tier-1 alongside NC and SD Safari.'}
+    }},
+
+  // Northern Rockies + High Plains
+  { id:'utahhogle', name:'Utah\'s Hogle Zoo', city:'Salt Lake City, UT', x:265, y:195, climate:'High Altitude', climateColor:'#8892a0', acres:42,
+    plans:{
+      sanctuary:{ role:'Great Basin Native Sanctuary', species:['Pronghorn','Bison','Sage grouse','Prairie dog'], why:'Native Great Basin species in their actual ecosystem — minimal artificial habitat.'},
+      biome:{ role:'Great Basin Sagebrush Biome', species:['Pronghorn','Sage grouse','Prairie dog','Kit fox','Burrowing owl'], why:'Steppe-sagebrush biome matches northern Utah native ecology.'},
+      hybrid:{ role:'Tier-3 Native Great Basin Center', species:['Pronghorn','Sage grouse','Prairie dog'], why:'Field-facing Great Basin recovery programs.'}
+    }},
+
+  // Cold Temperate / Great Lakes
+  { id:'minnesota', name:'Minnesota Zoo', city:'Apple Valley, MN', x:500, y:145, climate:'Cold Temperate', climateColor:'#6b8a9a', acres:485,
+    plans:{
+      sanctuary:{ role:'Boreal Mammal Sanctuary', species:['Moose','Wolverine','Muskox','Gray wolf','Lynx'], why:'Minnesota winters hit -20°F. The climate is doing the work — moose and wolverine can\'t be kept honestly anywhere warmer.'},
+      biome:{ role:'Boreal Forest & Taiga Biome', species:['Moose','Timber wolf','Lynx','Wolverine','Boreal owl','Fisher'], why:'The taiga reconstructs with its actual seasonality. Winter is not staged.'},
+      hybrid:{ role:'Tier-2 Biome Hub · Boreal', species:['Moose','Wolverine','Lynx','Timber wolf','Snowy owl'], why:'Boreal-specialization hub for North American cold-forest species.'}
+    }},
+  { id:'como', name:'Como Zoo', city:'St. Paul, MN', x:520, y:138, climate:'Cold Temperate', climateColor:'#6b8a9a', acres:17,
+    plans:{
+      sanctuary:{ role:'Reindeer & Arctic Fox Sanctuary', species:['Reindeer','Arctic fox','Snowy owl'], why:'Small urban footprint + deep winter = ideal for small-bodied arctic species.'},
+      biome:{ role:'Tundra Micro-Biome', species:['Arctic fox','Reindeer','Snowy owl','Arctic hare','Ptarmigan'], why:'A tight, walkable tundra biome — scale to footprint.'},
+      hybrid:{ role:'Tier-3 Urban Boreal Satellite', species:['Arctic fox','Reindeer','Snowy owl'], why:'Small-footprint cold-climate satellite for Minnesota Zoo\'s larger program.'}
+    }},
+  { id:'detroit', name:'Detroit Zoo', city:'Royal Oak, MI', x:620, y:155, climate:'Cold Temperate', climateColor:'#6b8a9a', acres:125,
+    plans:{
+      sanctuary:{ role:'Polar Bear National Sanctuary', species:['Polar bear (primary US herd)','Arctic fox','King penguin','Gentoo penguin'], why:'Detroit already has the US\'s largest polar bear habitat (Arctic Ring of Life, 4 acres). All warm-climate AZA polar bears consolidate here or to Minnesota.'},
+      biome:{ role:'Arctic & Subantarctic Biome', species:['Polar bear','Arctic fox','King penguin','Harbor seal','Snowy owl'], why:'The polar biome — both hemispheres, unified by cold.'},
+      hybrid:{ role:'Tier-1 Arctic Reserve', species:['Polar bear','Arctic fox','King penguin','Snowy owl'], why:'Arctic is its own megafauna tier — Detroit is the national anchor.'}
+    }},
+  { id:'lincolnpark', name:'Lincoln Park Zoo', city:'Chicago, IL', x:565, y:195, climate:'Cold Temperate', climateColor:'#6b8a9a', acres:35,
+    plans:{
+      sanctuary:{ role:'Chimpanzee Primary Center', species:['Chimpanzee (large troops, 40+ individuals)','Research program'], why:'Lincoln Park runs the Fisher Center — the deepest chimpanzee behavior research program in AZA. All AZA chimps centralize here.'},
+      biome:{ role:'Temperate Oak Savanna Biome', species:['Native Midwest species','Restored prairie edge','Chimp satellite group'], why:'Urban footprint pivots to native prairie-oak habitat with a chimp research annex.'},
+      hybrid:{ role:'Tier-2 Primate Research Hub + Urban Conservation', species:['Chimpanzee (primary research troop)','Native Midwest species'], why:'Research centrality is the reason to keep chimps here; surrounding space becomes native.'}
+    }},
+  { id:'cleveland', name:'Cleveland Metroparks Zoo', city:'Cleveland, OH', x:635, y:185, climate:'Cold Temperate', climateColor:'#6b8a9a', acres:183,
+    plans:{
+      sanctuary:{ role:'Asian Highlands Cat Sanctuary', species:['Snow leopard','Pallas\'s cat','Red panda','Takin'], why:'Cleveland\'s Asian Highlands is already the flagship exhibit for these species. Climate mirrors Himalayan foothills in winter.'},
+      biome:{ role:'Himalayan Foothill Biome', species:['Snow leopard','Red panda','Takin','Pallas\'s cat','Himalayan monal'], why:'Entire Asian Highland ecosystem in one walk-through.'},
+      hybrid:{ role:'Tier-2 Biome Hub · Asian Highlands', species:['Snow leopard','Red panda','Takin','Gorilla satellite'], why:'Asian Highland biome plus satellite gorilla family (cold-tolerant lineage).'}
+    }},
+  { id:'pittsburgh', name:'Pittsburgh Zoo & PPG Aquarium', city:'Pittsburgh, PA', x:680, y:195, climate:'Cold Temperate', climateColor:'#6b8a9a', acres:77,
+    plans:{
+      sanctuary:{ role:'Russian Far East Sanctuary', species:['Amur tiger','Amur leopard','Asiatic black bear'], why:'Pittsburgh\'s climate mirrors the Russian Far East — cold dry winters, humid summers. Amur species breed here without struggle.'},
+      biome:{ role:'Russian Far East / Korean Peninsula Biome', species:['Amur tiger','Amur leopard','Asiatic black bear','Manchurian crane','Red-crowned crane'], why:'A biome almost nowhere else in AZA can climate-honestly replicate.'},
+      hybrid:{ role:'Tier-2 Biome Hub · Amur Ecosystem', species:['Amur tiger','Amur leopard','Red-crowned crane'], why:'Critical climate match for the world\'s rarest cats.'}
+    }},
+
+  // Ohio Valley / Midwest
+  { id:'cincinnati', name:'Cincinnati Zoo', city:'Cincinnati, OH', x:605, y:235, climate:'Warm Temperate', climateColor:'#a8b378', acres:75,
+    plans:{
+      sanctuary:{ role:'Bonobo Global Center', species:['Bonobo (primary ~60 individuals)','Sumatran rhino (legacy)','Lowland gorilla satellite'], why:'Cincinnati already runs the world\'s most successful bonobo breeding program. All AZA bonobos here.'},
+      biome:{ role:'Congo Basin Rainforest Biome', species:['Bonobo','Okapi','Mandrill','Forest elephant (research)','African grey parrot'], why:'Indoor climate control lets Cincinnati hold a Congo-humidity exhibit year-round.'},
+      hybrid:{ role:'Tier-1 Primate Reserve · Bonobo', species:['Bonobo (global center)','Okapi','Mandrill'], why:'Bonobos are rare enough in AZA that one primary site is safe. Cincinnati has the expertise.'}
+    }},
+  { id:'columbus', name:'Columbus Zoo', city:'Powell, OH', x:625, y:220, climate:'Warm Temperate', climateColor:'#a8b378', acres:580,
+    plans:{
+      sanctuary:{ role:'Manatee Rehab + Large Ungulate', species:['Florida manatee (rehab)','Asian elephant (pair)','Cheetah breeding'], why:'Columbus runs a major manatee rehab partnership plus has The Wilds as affiliate — already a network site.'},
+      biome:{ role:'Indoor Tropical + Temperate Mix', species:['Manatee','Asian primates','Cheetah (outdoor)','Tropical birds'], why:'Indoor tropical infrastructure combined with outdoor temperate range.'},
+      hybrid:{ role:'Tier-1 Network Anchor (with The Wilds)', species:['Manatee rehab','Cheetah','Asian elephant herd (via The Wilds)'], why:'Columbus + The Wilds function as a coupled network already — keep that coupling as a tier-1 anchor.'}
+    }},
+  { id:'thewilds', name:'The Wilds', city:'Cumberland, OH', x:660, y:240, climate:'Warm Temperate', climateColor:'#a8b378', acres:9154,
+    plans:{
+      sanctuary:{ role:'Rare Ungulate Pasture Sanctuary', species:['Przewalski\'s horse (national herd)','Père David\'s deer','Scimitar oryx','Sichuan takin','Bactrian camel'], why:'9,154 acres. Nothing else in AZA is even close. All pasture-scale AZA ungulates consolidate here.'},
+      biome:{ role:'Asian Steppe & Temperate Grassland Biome', species:['Przewalski\'s horse','Bactrian camel','Père David\'s deer','Takin','Saiga','Steppe eagle'], why:'Pasture-scale grassland matching Central Asian climate exactly.'},
+      hybrid:{ role:'Tier-1 Megafauna Reserve · Asian Ungulates + Asian Elephant', species:['Przewalski\'s horse','Bactrian camel','Père David\'s deer','Asian elephant (national herd)'], why:'Only AZA site with true pasture scale. Asian elephants move here from warmer zoos that can\'t give them space.'}
+    }},
+  { id:'indianapolis', name:'Indianapolis Zoo', city:'Indianapolis, IN', x:580, y:240, climate:'Warm Temperate', climateColor:'#a8b378', acres:64,
+    plans:{
+      sanctuary:{ role:'Orangutan Primary Center', species:['Bornean orangutan (primary)','Sumatran orangutan (separate enclosure)','Elephant (legacy)'], why:'Indianapolis built the Simon Skjodt International Orangutan Center — purpose-designed canopy infrastructure nothing else in AZA matches.'},
+      biome:{ role:'Southeast Asian Rainforest Biome', species:['Orangutan','Sun bear','Binturong','Hornbill','Clouded leopard'], why:'The SE Asian rainforest, anchored by the canopy center.'},
+      hybrid:{ role:'Tier-1 Primate Reserve · Orangutan', species:['Bornean orangutan','Sumatran orangutan (separate)','Sun bear'], why:'The canopy center is a fixed asset — orangutans cannot be centered anywhere else without recreating it.'}
+    }},
+  { id:'stlouis', name:'Saint Louis Zoo', city:'St. Louis, MO', x:520, y:270, climate:'Warm Temperate', climateColor:'#a8b378', acres:90,
+    plans:{
+      sanctuary:{ role:'North American Freshwater Sanctuary', species:['River otter','Beaver','Muskrat','Alligator snapping turtle','Hellbender'], why:'Mississippi River proximity and existing freshwater expertise — centralize all NA freshwater species here.'},
+      biome:{ role:'Mississippi River Basin Biome', species:['River otter','Beaver','Alligator','Native fish','Wood duck','Hellbender'], why:'The continent\'s largest river ecosystem reconstructed in its watershed.'},
+      hybrid:{ role:'Tier-2 Biome Hub · Mississippi Freshwater', species:['River otter','Beaver','Hellbender','Alligator'], why:'Freshwater biome anchor for the interior US.'}
+    }},
+
+  // Northeast Temperate
+  { id:'bronx', name:'Bronx Zoo', city:'New York, NY', x:810, y:170, climate:'Northeast', climateColor:'#7c9a7a', acres:265,
+    plans:{
+      sanctuary:{ role:'Conservation Breeding Spine', species:['Endangered small vertebrates (multi-species)','Field conservation R&D'], why:'WCS already runs the largest field conservation program in AZA. Bronx becomes the research-and-breeding spine, not a viewing zoo. Large charismatic species move to climate-matched sites.'},
+      biome:{ role:'Eastern Deciduous Forest Biome', species:['Black bear','Fisher','Bobcat','Timber rattlesnake','Eastern box turtle','Native birds'], why:'The most authentic eastern deciduous forest in the US zoo network.'},
+      hybrid:{ role:'Tier-1 Research & Breeding Anchor + Primate Satellite', species:['SSP breeding labs','Eastern forest species','Gorilla satellite family group'], why:'WCS field-science muscle makes Bronx the research anchor; keeps a small gorilla family group as part of the distributed gorilla network.'}
+    }},
+  { id:'philly', name:'Philadelphia Zoo', city:'Philadelphia, PA', x:790, y:200, climate:'Northeast', climateColor:'#7c9a7a', acres:42,
+    plans:{
+      sanctuary:{ role:'Small Primate & Cat Trail Sanctuary', species:['Golden lion tamarin','Francois\' langur','Amur leopard satellite'], why:'Zoo360 animal trail infrastructure — unique in AZA — is worth building around. Small arboreal species specialize here.'},
+      biome:{ role:'Mid-Atlantic Urban Biome', species:['Golden lion tamarin','Native mid-Atlantic species','Pollinator habitat'], why:'Small footprint means small-bodied biome — pollinators and understory species.'},
+      hybrid:{ role:'Tier-3 Urban Conservation Center', species:['Zoo360 small primates','Native pollinators','Education focus'], why:'Urban historic footprint becomes an education-first conservation center.'}
+    }},
+  { id:'marylandzoo', name:'Maryland Zoo', city:'Baltimore, MD', x:780, y:215, climate:'Northeast', climateColor:'#7c9a7a', acres:135,
+    plans:{
+      sanctuary:{ role:'African Penguin Sanctuary', species:['African (Humboldt) penguin (primary colony)','Chimpanzee satellite'], why:'Maryland Zoo runs the largest African penguin colony in North America.'},
+      biome:{ role:'Chesapeake / African Coast Dual Biome', species:['African penguin','Chesapeake native species','African plains satellite'], why:'Native Chesapeake edge plus African coast for the penguin colony.'},
+      hybrid:{ role:'Tier-3 Mid-Atlantic Conservation Center', species:['African penguin colony','Chesapeake natives'], why:'Native mid-Atlantic focus plus the penguin colony as a specialty.'}
+    }},
+
+  // Warm Temperate South
+  { id:'atlanta', name:'Zoo Atlanta', city:'Atlanta, GA', x:685, y:330, climate:'Humid Subtropical', climateColor:'#8aae78', acres:40,
+    plans:{
+      sanctuary:{ role:'Western Lowland Gorilla Primary Center', species:['Western lowland gorilla (largest US program, 40+)','Giant panda legacy'], why:'Zoo Atlanta runs the largest gorilla program in North America. Warm humid climate matches Congo basin better than northern zoos.'},
+      biome:{ role:'Central African Rainforest Biome', species:['Gorilla','Mandrill','Okapi','Forest buffalo','African grey parrot'], why:'Climate match plus existing gorilla expertise makes Atlanta the central African forest anchor.'},
+      hybrid:{ role:'Tier-1 Primate Reserve · Gorilla', species:['Western lowland gorilla (primary, 40+)','Mandrill','Forest buffalo'], why:'Primary gorilla center; family groups distributed to Bronx, Cleveland, SD as satellites for genetic diversity.'}
+    }},
+  { id:'ncstate', name:'North Carolina Zoo', city:'Asheboro, NC', x:755, y:295, climate:'Humid Subtropical', climateColor:'#8aae78', acres:2600,
+    plans:{
+      sanctuary:{ role:'National Elephant Sanctuary', species:['African savanna elephant (national family herds)','White rhino','Giraffe','Chimpanzee (large troop)'], why:'2,600 developed acres with another 1,800 in reserve. The only AZA site where multi-generational elephant family herds are physically possible.'},
+      biome:{ role:'African Savanna Biome', species:['African elephant','White rhino','Giraffe','Zebra','Ostrich','Lion pride','Cheetah','Wildebeest'], why:'North Carolina\'s climate matches Serengeti nine months a year. Acreage matches savanna logic. Already designed for this.'},
+      hybrid:{ role:'Tier-1 Megafauna Reserve · African Savanna', species:['African elephant herds','White rhino','Giraffe','Chimpanzee (large troop)'], why:'The anchor African savanna site — acreage and climate together make this the unambiguous elephant national reserve.'}
+    }},
+  { id:'nashville', name:'Nashville Zoo', city:'Nashville, TN', x:570, y:305, climate:'Warm Temperate', climateColor:'#a8b378', acres:188,
+    plans:{
+      sanctuary:{ role:'Clouded Leopard Breeding Center', species:['Clouded leopard (largest US program)','Bush dog','Giant anteater'], why:'Nashville runs the largest clouded leopard program in the western hemisphere.'},
+      biome:{ role:'SE Asian Mid-Elevation Forest Biome', species:['Clouded leopard','Binturong','Hornbill','Dhole'], why:'Warm temperate climate matches clouded leopard\'s actual highland range.'},
+      hybrid:{ role:'Tier-2 Biome Hub · Neotropical + SE Asian Cats', species:['Clouded leopard','Giant anteater','Bush dog'], why:'Cat-specialist biome crossing continents by shared ecology.'}
+    }},
+
+  // Texas
+  { id:'fortworth', name:'Fort Worth Zoo', city:'Fort Worth, TX', x:440, y:390, climate:'Texas Warm', climateColor:'#b8935c', acres:74,
+    plans:{
+      sanctuary:{ role:'Asian Rhino & Tiger Sanctuary', species:['Indian rhino','Sumatran rhino (legacy)','Malayan tiger','Asian one-horned rhino'], why:'Fort Worth leads AZA Asian rhino breeding; consolidate all Asian rhinos here.'},
+      biome:{ role:'Indian Subcontinent Biome', species:['Indian rhino','Malayan tiger','Gharial','Sarus crane'], why:'Hot humid summers match monsoon India.'},
+      hybrid:{ role:'Tier-1 Megafauna Reserve · Asian Rhino', species:['Indian rhino','Malayan tiger','Gharial'], why:'Asian rhinos need their own anchor; Fort Worth has the expertise and climate.'}
+    }},
+  { id:'houston', name:'Houston Zoo', city:'Houston, TX', x:480, y:430, climate:'Texas Warm', climateColor:'#b8935c', acres:55,
+    plans:{
+      sanctuary:{ role:'Neotropical Cat Sanctuary', species:['Jaguar','Ocelot','Margay','Harpy eagle'], why:'Houston\'s Pantanal exhibit is already the template. Humid Gulf climate matches Amazonia nine months.'},
+      biome:{ role:'Amazonian / Pantanal Biome', species:['Jaguar','Tapir','Giant anteater','Capybara','Harpy eagle','Caiman','Arapaima'], why:'Existing Pantanal exhibit is the closest AZA replica of a neotropical wetland ecosystem. Expand it.'},
+      hybrid:{ role:'Tier-2 Biome Hub · Neotropics', species:['Jaguar','Tapir','Harpy eagle','Giant anteater'], why:'Neotropical rainforest anchor — climate is the match.'}
+    }},
+
+  // Gulf / Florida
+  { id:'audubon', name:'Audubon Zoo', city:'New Orleans, LA', x:545, y:450, climate:'Texas Warm', climateColor:'#b8935c', acres:58,
+    plans:{
+      sanctuary:{ role:'Louisiana Swamp + Congo Basin Satellite', species:['American alligator','Louisiana swamp species','Okapi','Bonobo satellite'], why:'NOLA humidity mirrors central African basin; existing Louisiana Swamp exhibit is authentic.'},
+      biome:{ role:'Louisiana Swamp Biome', species:['Alligator','Nutria','Anhinga','Swamp species','Cypress wetland'], why:'A native wetland biome in its own climate.'},
+      hybrid:{ role:'Tier-2 Biome Hub · Southern Wetland', species:['Alligator','Swamp species','Louisiana natives'], why:'Gulf wetland specialization.'}
+    }},
+  { id:'lowry', name:'ZooTampa at Lowry Park', city:'Tampa, FL', x:785, y:475, climate:'Tropical', climateColor:'#5fa66a', acres:56,
+    plans:{
+      sanctuary:{ role:'Manatee Critical Care Hospital', species:['Florida manatee (only AZA manatee hospital)','Marine rehab'], why:'The only AZA facility with a manatee critical-care hospital. All AZA manatee rehab consolidates here.'},
+      biome:{ role:'Florida Wetland Biome', species:['Manatee','Alligator','Wood stork','Florida panther','Mangrove species'], why:'Native Florida wetland in its actual ecology.'},
+      hybrid:{ role:'Tier-1 Marine Rehab Anchor · Florida', species:['Manatee hospital','Native wetland species'], why:'Critical-care infrastructure is the anchor; nothing else in AZA duplicates it.'}
+    }},
+  { id:'miami', name:'Zoo Miami', city:'Miami, FL', x:825, y:505, climate:'Tropical', climateColor:'#5fa66a', acres:750,
+    plans:{
+      sanctuary:{ role:'Tropical Asia Sanctuary', species:['Komodo dragon','Sumatran tiger','Indian rhino (satellite)','Gharial'], why:'Miami is the only AZA climate that\'s actually tropical — monsoon-humid year-round. Asian tropics thrive here.'},
+      biome:{ role:'Tropical Asian Monsoon Biome', species:['Komodo dragon','Sumatran tiger','Gharial','Malayan tapir','Tropical birds'], why:'The only AZA location where tropical Asia can be kept honestly outdoors.'},
+      hybrid:{ role:'Tier-1 Tropical Biome Anchor', species:['Komodo dragon','Sumatran tiger','Gharial','Tropical species'], why:'Tropical Asia anchor; Miami\'s climate is the asset no other site has.'}
+    }},
+  { id:'disney', name:'Disney\'s Animal Kingdom', city:'Lake Buena Vista, FL', x:795, y:465, climate:'Humid Subtropical', climateColor:'#8aae78', acres:580,
+    plans:{
+      sanctuary:{ role:'African Savanna Satellite', species:['Giraffe','Zebra','Wildebeest','Mixed antelope herd'], why:'580 acres with existing African savanna simulation — serves as NC Zoo\'s southern satellite.'},
+      biome:{ role:'African Savanna Biome (Secondary)', species:['Giraffe','Zebra','Wildebeest','Kudu','Waterbuck','Ostrich'], why:'Large-herd savanna simulation already operates here — expand ecology, stay the course.'},
+      hybrid:{ role:'Tier-1 Megafauna Satellite · Savanna', species:['Mixed savanna herd','Giraffe','Zebra'], why:'Secondary savanna site; supports NC\'s primary herd with a warmer-winter wintering ground.'}
+    }},
+
+  // Aquariums (simplified)
+  { id:'monterey', name:'Monterey Bay Aquarium', city:'Monterey, CA', x:90, y:245, climate:'Pacific Rainforest', climateColor:'#4a7a6b', acres:0,
+    plans:{
+      sanctuary:{ role:'California Current Marine Sanctuary', species:['Sea otter','Great white shark (research)','Kelp forest fish','Leatherback sea turtle research'], why:'Already the world-class California Current institution. Unchanged.'},
+      biome:{ role:'Pacific Cold-Current Biome', species:['Kelp forest','Sea otter','Tuna school','Jellyfish','Leatherback'], why:'The full California Current ecosystem in situ.'},
+      hybrid:{ role:'Tier-1 Marine Anchor · Pacific Cold', species:['Kelp forest','Sea otter','Open ocean fish'], why:'Pacific marine spine — saltwater infrastructure cannot be replicated elsewhere.'}
+    }},
+  { id:'shedd', name:'Shedd Aquarium', city:'Chicago, IL', x:560, y:205, climate:'Cold Temperate', climateColor:'#6b8a9a', acres:0,
+    plans:{
+      sanctuary:{ role:'Freshwater Specialist Sanctuary', species:['Great Lakes fish','Amazon river fish','Beluga sturgeon'], why:'Freshwater aquarium scale unique in North America.'},
+      biome:{ role:'Global Freshwater Biome', species:['Great Lakes','Amazon','African Rift Valley','Asian rivers — stitched'], why:'Freshwater ecosystems of the world as a single narrative.'},
+      hybrid:{ role:'Tier-1 Marine Anchor · Freshwater', species:['Great Lakes','Amazon','Asian rivers'], why:'Freshwater spine of the aquarium network.'}
+    }},
+  { id:'georgia', name:'Georgia Aquarium', city:'Atlanta, GA', x:700, y:340, climate:'Humid Subtropical', climateColor:'#8aae78', acres:0,
+    plans:{
+      sanctuary:{ role:'Whale Shark & Manta Sanctuary', species:['Whale shark','Manta ray','Beluga whale','Bottlenose dolphin'], why:'Only AZA facility with whale shark infrastructure. Keeps its mega-tank specialization.'},
+      biome:{ role:'Tropical Ocean Biome', species:['Whale shark','Manta','Reef fish','Sharks','Rays'], why:'Warm-ocean biome, scale set by the Ocean Voyager tank.'},
+      hybrid:{ role:'Tier-1 Marine Anchor · Tropical Ocean', species:['Whale shark','Manta','Beluga'], why:'Tropical ocean mega-anchor.'}
+    }},
+  { id:'newengland', name:'New England Aquarium', city:'Boston, MA', x:845, y:150, climate:'Northeast', climateColor:'#7c9a7a', acres:0,
+    plans:{
+      sanctuary:{ role:'North Atlantic Sanctuary', species:['Atlantic harbor seal','North Atlantic right whale (research)','Cold-water reef fish','Penguin colony'], why:'North Atlantic specialization by geography — saltwater, cold, Atlantic.'},
+      biome:{ role:'Gulf of Maine Biome', species:['Harbor seal','Atlantic cod','Giant octopus','Cold-water coral'], why:'The Gulf of Maine as a complete biome — predator to reef.'},
+      hybrid:{ role:'Tier-1 Marine Anchor · North Atlantic', species:['Harbor seal','Atlantic cold-water species','Right whale research'], why:'Atlantic marine spine.'}
+    }}
+];
+
+/* Plan-level summaries for the default panel */
+const PLAN_INTRO = {
+  sanctuary: {
+    title:'Species Sanctuaries',
+    intro:'Consolidate each charismatic species into 1–3 dedicated sites chosen for climate, existing infrastructure, and depth of program. Elephants to three sanctuaries. Bonobos to Cincinnati. Orangutans to Indianapolis. Polar bears to Detroit.',
+    optimize:'Welfare depth, genetic management, and species-level expertise. Every facility keeping that species has the budget, staff, and acreage to do it well — because nothing else competes for those resources on site.',
+    tradeoff:'Public exposure to variety. A family visit to the Bronx would no longer include an elephant, a rhino, or an orangutan. Some small zoos become native-species conservation centers instead of collections.',
+    mapSub:'Plan A — each species consolidates into 1–3 dedicated sanctuaries.'
+  },
+  biome: {
+    title:'Biome Microbiomes',
+    intro:'Each zoo becomes a fully realized single-biome ecosystem. Houston holds the Amazon. Minnesota holds the taiga. Phoenix holds the Sonoran. Predator, prey, bird, plant, soil — the whole functional community, not a species list.',
+    optimize:'Ecological realism, behavioral enrichment, and educational coherence. Visitors experience a living ecosystem instead of a collection. Species see predators, prey, and conspecifics they would actually encounter in the wild.',
+    tradeoff:'Megafauna that exceed any 200-acre biome — elephants, rhinos, orcas — don\'t fit. Even in a perfect Serengeti replica, an elephant family herd needs more space than a zoo can offer.',
+    mapSub:'Plan B — each zoo becomes a single, fully functioning biome.'
+  },
+  hybrid: {
+    title:'Hybrid Network',
+    intro:'Three tiers. Megafauna reserves for the species that need acreage beyond any single zoo. Biome hubs for communities that function at zoo scale. Urban conservation centers for native species, SSP breeding, and education.',
+    optimize:'Every other plan\'s strengths, without forcing a single logic onto species that resist it. Elephants get sanctuaries. Jaguars get Pantanals. Urban zoos get native ecosystems and research roles.',
+    tradeoff:'Governance complexity. Transfers between tiers, genetic coordination across primary-plus-satellite structures, and funding models that don\'t yet exist in AZA\'s current form.',
+    mapSub:'Plan C (recommended) — three tiers: megafauna reserves, biome hubs, urban conservation centers.'
+  }
+};
+
+/* ═══════════════════ RENDER ═══════════════════ */
+let currentPlan = 'sanctuary';
+let selectedZooId = null;
+
+const nodesLayer = document.getElementById('zoo-nodes');
+const mapSubtitle = document.getElementById('map-subtitle');
+const panelDefault = document.getElementById('panel-default');
+const panelZoo = document.getElementById('panel-zoo');
+
+function renderNodes() {
+  nodesLayer.innerHTML = '';
+  ZOOS.forEach(z => {
+    const g = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+    g.setAttribute('class', 'zoo-node');
+    g.setAttribute('transform', `translate(${z.x}, ${z.y})`);
+
+    // determine dot size by plan role tier
+    const role = z.plans[currentPlan].role;
+    let r = 4.2;
+    if (/Tier-1|Primary|Global Center|National/i.test(role)) r = 6.2;
+    else if (/Tier-2|Hub|Anchor/i.test(role)) r = 5;
+    else r = 4;
+
+    const c = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+    c.setAttribute('cx', 0);
+    c.setAttribute('cy', 0);
+    c.setAttribute('r', r);
+    c.setAttribute('fill', z.climateColor);
+    c.setAttribute('stroke', '#eac6ce');
+    c.setAttribute('stroke-width', '1');
+    c.setAttribute('class', 'zoo-dot');
+    if (z.id === selectedZooId) c.classList.add('selected');
+    c.setAttribute('data-id', z.id);
+
+    const title = document.createElementNS('http://www.w3.org/2000/svg', 'title');
+    title.textContent = `${z.name} — ${role}`;
+    c.appendChild(title);
+
+    // label
+    const label = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+    label.setAttribute('class', 'zoo-label');
+    label.setAttribute('x', r + 4);
+    label.setAttribute('y', 3);
+    label.textContent = z.name.replace(/ (Zoo|Aquarium|Zoological.*|BioPark| Zoo &.*)$/, '');
+    g.appendChild(c);
+    g.appendChild(label);
+
+    c.addEventListener('click', () => selectZoo(z.id));
+    c.addEventListener('keydown', e => {
+      if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); selectZoo(z.id); }
+    });
+    c.setAttribute('tabindex', '0');
+    c.setAttribute('role', 'button');
+    c.setAttribute('aria-label', z.name);
+
+    nodesLayer.appendChild(g);
+  });
+}
+
+function selectZoo(id) {
+  selectedZooId = id;
+  renderNodes();
+  renderPanel();
+}
+
+function renderPanel() {
+  if (!selectedZooId) {
+    panelDefault.classList.remove('hidden');
+    panelZoo.classList.remove('visible');
+    const p = PLAN_INTRO[currentPlan];
+    document.getElementById('default-title').textContent = p.title;
+    document.getElementById('default-intro').textContent = p.intro;
+    document.getElementById('default-optimize').textContent = p.optimize;
+    document.getElementById('default-tradeoff').textContent = p.tradeoff;
+    return;
+  }
+  const z = ZOOS.find(x => x.id === selectedZooId);
+  if (!z) return;
+  const plan = z.plans[currentPlan];
+  panelDefault.classList.add('hidden');
+  panelZoo.classList.add('visible');
+
+  document.getElementById('zp-climate').textContent = z.climate;
+  document.getElementById('zp-name').textContent = z.name;
+  document.getElementById('zp-loc').textContent = z.city;
+  const stats = document.getElementById('zp-stats');
+  stats.innerHTML = '';
+  if (z.acres > 0) {
+    stats.innerHTML += `<div class="stat">Acres<b>${z.acres.toLocaleString()}</b></div>`;
+  } else {
+    stats.innerHTML += `<div class="stat">Type<b>Aquarium</b></div>`;
+  }
+  stats.innerHTML += `<div class="stat">Plan<b>${PLAN_INTRO[currentPlan].title}</b></div>`;
+
+  document.getElementById('zp-role').textContent = plan.role;
+  const ul = document.getElementById('zp-species');
+  ul.innerHTML = plan.species.map(s => `<li>${s}</li>`).join('');
+  document.getElementById('zp-why').textContent = plan.why;
+}
+
+function setPlan(plan) {
+  currentPlan = plan;
+  document.querySelectorAll('.plan-btn').forEach(b => {
+    const active = b.dataset.plan === plan;
+    b.classList.toggle('active', active);
+    b.setAttribute('aria-selected', active);
+  });
+  mapSubtitle.textContent = PLAN_INTRO[plan].mapSub;
+  renderNodes();
+  renderPanel();
+}
+
+document.querySelectorAll('.plan-btn').forEach(b => {
+  b.addEventListener('click', () => setPlan(b.dataset.plan));
+});
+
+renderNodes();
+renderPanel();
+
+/* ═══════════════════ ATLANTA ZOOM ═══════════════════ */
+const ATLANTA_ZONES = [
+  { id:'entry', name:'Research & Entry', acres:'~3 acres',
+    color:'#7a8b92',
+    path:'M 60,30 Q 40,30 40,55 L 40,90 Q 40,110 65,110 L 835,110 Q 860,110 860,90 L 860,55 Q 860,30 835,30 Z',
+    labelX:450, labelY:75, subLabel:'NORTHERN GATEWAY',
+    currentUse:'Main admissions, membership desk, Flamingo Plaza, Outback Station, event plaza.',
+    plans:{
+      sanctuary:{ role:'Gorilla Research Entry & Genetics Lab', species:['Visitor orientation','SSP genetics lab','Quarantine intake','Cardiac research (gorilla primary cause of death)'], why:'Sanctuary logic puts welfare first. The entry is no longer a retail plaza — it becomes a working lab. Visitors see gorilla genetics in progress, then walk into the reserve.'},
+      biome:{ role:'Congo Basin Interpretive Theater', species:['Indoor orientation film','Live micro-canopy display','Education classrooms','Field research gallery'], why:'Biome logic makes the entry a narrative threshold. Visitors learn what a Congo rainforest sounds like, smells like, and how it functions — before they walk into one.'},
+      hybrid:{ role:'Field Conservation HQ + Visitor Orientation', species:['AZA Congo Basin field partnership HQ','Indoor orientation','Research offices','Gorilla rescue intake'], why:'Atlanta anchors AZA\'s Congo basin field conservation. The entry doubles as field office and visitor threshold — every visitor learns the gorillas inside have wild cousins this zoo directly supports.'}
+    }
+  },
+  { id:'family-forest', name:'Gorilla Family Forest', acres:'~12 acres',
+    color:'#4a6b4e',
+    path:'M 55,130 Q 55,125 65,125 L 405,125 Q 415,125 415,135 L 415,275 Q 415,340 355,340 L 65,340 Q 55,340 55,330 Z',
+    labelX:235, labelY:225, subLabel:'FOUR FAMILY TROOPS',
+    currentUse:'Ford African Rainforest — core gorilla habitat (three family groups, ~15 gorillas on ~3 acres).',
+    plans:{
+      sanctuary:{ role:'Gorilla Sanctuary Core · Families', species:['4 family troops (~28 gorillas)','Rotational habitat system','Full-canopy overstory','Extensive browse production'], why:'Atlanta holds the largest single population; Bronx and San Diego Safari Park hold the other two primary troops. Rotational access lets each Atlanta troop use the full forest across the week — not a single enclosure, but a gorilla landscape.'},
+      biome:{ role:'Central African Rainforest · Primate Stratum', species:['3 gorilla family troops (~20 gorillas)','Mandrill co-habitation trial','Colobus monkey canopy','Red river hog','Forest birds'], why:'Biome logic puts the gorilla inside its ecosystem. Mandrills and colobus share the canopy; red river hogs till the understory. The gorilla is one species in a community, not the exhibit itself.'},
+      hybrid:{ role:'Gorilla Primary Reserve · Families', species:['4 family troops (~26 gorillas)','Canopy corridor to Bachelor Wood','Forest floor mandrill satellite','Research observation blinds'], why:'Primary gorilla center with light biome integration. Families get dedicated territory; adjacent mandrill and canopy species provide ecological enrichment without crowding gorilla needs.'}
+    }
+  },
+  { id:'bachelor-wood', name:'Gorilla Bachelor Wood', acres:'~7 acres',
+    color:'#5a7a5e',
+    path:'M 55,360 L 405,360 L 405,520 L 55,520 Z',
+    labelX:230, labelY:445, subLabel:'YOUNG MALE GROUPS',
+    currentUse:'Outdoor exhibits (clouded leopard, Komodo, kangaroo) — scattered small habitats.',
+    plans:{
+      sanctuary:{ role:'Bachelor Group Habitat', species:['8–12 adolescent & adult male gorillas','Separate sight-lines from family forest','Bachelor-specific enrichment'], why:'Young silverbacks must leave natal families. Sanctuary logic means every AZA bachelor has a permanent home — not a rotating stopover between zoos that need their space.'},
+      biome:{ role:'Lowland Forest Edge Biome', species:['Bachelor gorilla group','Forest buffalo','Sitatunga (wetland antelope)','Black duiker'], why:'Bachelor gorillas in the wild roam edge habitat; biome logic reconstructs that edge with forest ungulates sharing the understory.'},
+      hybrid:{ role:'Bachelor Group + Forest Edge Satellite', species:['Bachelor gorilla group (6–8 males)','Forest buffalo','Red river hog','Understory birds'], why:'Keeps bachelor gorillas visible as a permanent group rather than rotating through the primary forest. Forest-edge species share the space as biome enrichment.'}
+    }
+  },
+  { id:'canopy', name:'Congo Canopy', acres:'~5 acres',
+    color:'#6d8a5a',
+    path:'M 435,130 L 635,130 L 635,340 L 435,340 Z',
+    labelX:535, labelY:225, subLabel:'UPPER FOREST',
+    currentUse:'Asian Forest — red panda, clouded leopard, orangutan (until transfer).',
+    plans:{
+      sanctuary:{ role:'Mandrill Primary Center', species:['Large mandrill troop (30+)','Drill breeding (rare in AZA)','Research viewing'], why:'Sanctuary logic centralizes mandrill expertise at Atlanta, using the vertical Asian Forest infrastructure retrofitted for African cercopithecines.'},
+      biome:{ role:'Central African Canopy Stratum', species:['Mandrill','Black-and-white colobus','Great blue turaco','Hornbill','African grey parrot'], why:'The forest canopy as its own biome — every species that lives above 10 meters in a Congo forest, in its own walk-through aviary of a zone.'},
+      hybrid:{ role:'African Primate Canopy + Aviary', species:['Mandrill troop','Colobus','Hornbill','African grey','Drill (breeding pair)'], why:'Canopy species grouped together; complements the gorilla forest below. Asian Forest infrastructure repurposes neatly — rainforest logic is similar enough.'}
+    }
+  },
+  { id:'forest-floor', name:'Forest Floor Community', acres:'~5 acres',
+    color:'#7a6a4a',
+    path:'M 655,130 L 855,130 L 855,340 L 655,340 Z',
+    labelX:755, labelY:225, subLabel:'UNGULATES & MEGAFAUNA',
+    currentUse:'African Plains — giraffe, zebra, ostrich, warthog (savanna animals on too little land).',
+    plans:{
+      sanctuary:{ role:'Okapi Primary Center', species:['Okapi family group (4–6)','Dwarf forest buffalo','Bongo (eastern)','SSP okapi breeding'], why:'Okapis are forest-floor-specialist giraffids that need humidity and shade — the opposite of what savanna animals need. Atlanta\'s warm humid climate suits okapis, while its acreage finally suits their solitary nature.'},
+      biome:{ role:'Forest Floor Biome', species:['Okapi','Bongo','Forest elephant (small group, 2–3)','Forest buffalo','Aardvark','Giant pangolin (if import possible)'], why:'The Congo forest floor reconstructed — large-bodied browsers that never see sun, rooting mammals, and the ground-level ecosystem that gorillas forage in.'},
+      hybrid:{ role:'Okapi + Forest Ungulate Satellite', species:['Okapi (national center)','Bongo','Forest buffalo','Red river hog'], why:'Atlanta becomes the AZA okapi primary. Forest ungulates share the zone as biome context. Savanna animals — giraffe, zebra — move to NC where they have the acreage and climate for herd behavior.'}
+    }
+  },
+  { id:'river', name:'Congo River & Herpetology', acres:'~4 acres',
+    color:'#4a7086',
+    path:'M 435,360 Q 530,345 655,360 L 655,520 L 435,520 Z',
+    labelX:545, labelY:445, subLabel:'WATER & SCALES',
+    currentUse:'Scaly Slimy Spectacular — reptile and amphibian halls, plus legacy panda habitat.',
+    plans:{
+      sanctuary:{ role:'African Herpetology Specialty', species:['Gaboon viper','African rock python','Goliath frog','West African dwarf crocodile','Cape clawed frog breeding'], why:'Atlanta\'s existing reptile strength consolidates toward African species only — the collection narrows, the depth increases.'},
+      biome:{ role:'Congo River Biome', species:['West African dwarf crocodile','Goliath tigerfish','Mudskipper','Arapaima (African forest river analog)','Otter shrew','Hippopotamus (satellite)'], why:'A working Congo river margin — predator fish, crocodilians, frogs, water shrews — the whole aquatic-edge ecosystem adjacent to the forest.'},
+      hybrid:{ role:'Congo River Margin + Herpetology', species:['Dwarf crocodile','Goliath frog','Gaboon viper','African rock python','River fish'], why:'Riparian biome slice with African reptile depth. Wraps the forest story — gorillas come down from trees to drink here.'}
+    }
+  },
+  { id:'children', name:"Children's Congo", acres:'~2 acres',
+    color:'#b89968',
+    path:'M 680,360 L 855,360 L 855,440 L 680,440 Z',
+    labelX:767, labelY:400, subLabel:'YOUNG VISITORS',
+    currentUse:"Children's Zoo — petting area, playground, small farm animals.",
+    plans:{
+      sanctuary:{ role:'Gorilla Life-Cycle Education', species:['Film & oral storytelling','Infant care viewing (through glass)','Gorilla family tree walls'], why:'Sanctuary reframes the children\'s area around a single narrative: how gorilla families live. No petting — replaced by interpretive depth.'},
+      biome:{ role:'Village-Edge Biodiversity Walk', species:['Pollinator garden (African endemic plants)','Small invertebrates','Pangolin viewing','Bee interpretive'], why:'Biome logic scales small — the zone becomes a kid-height slice of Congo village-edge ecology: pollinators, small mammals, the species children can actually observe.'},
+      hybrid:{ role:"Children's Congo Discovery", species:['Small primate viewing (tamarins)','Pollinator garden','Invertebrate gallery','Sensory forest walk'], why:'Keeps a child-focused zone but with Congo-relevant species. Families get the approachable experience; the narrative still ties to the rest of the zoo.'}
+    }
+  },
+  { id:'field-station', name:'Field Station & Rehab', acres:'~2 acres',
+    color:'#9a8a5a',
+    path:'M 680,455 L 855,455 L 855,520 L 680,520 Z',
+    labelX:767, labelY:490, subLabel:'BEHIND THE SCENES',
+    currentUse:'Back-of-house — veterinary, food prep, staff areas (closed to public).',
+    plans:{
+      sanctuary:{ role:'Gorilla Veterinary & Quarantine Hospital', species:['Gorilla-specific surgical suite','Cardiac imaging','Dental unit','Quarantine for transfers'], why:'Consolidating every AZA gorilla in Atlanta means Atlanta must become the gorilla hospital. Veterinary infrastructure scales to match.'},
+      biome:{ role:'Field Research & Training Center', species:['Partner research residencies','Congo field staff training','SSP coordination offices','Specimen archive'], why:'The biome plan demands a research HQ — partnerships with DRC, Gabon, Rwanda, Cameroon are hosted here for training and exchange.'},
+      hybrid:{ role:'Vet Hospital + Field Partnership Office', species:['Gorilla veterinary','Congo field partnerships','Staff training residency','Press & education media'], why:'Hybrid needs both: a hospital for the primary gorilla herd, and a field office for the Congo partnerships that make the rest make sense.'}
+    }
+  }
+];
+
+const ATLANTA_SUBTITLES = {
+  sanctuary: 'Plan A — Atlanta becomes the AZA Gorilla National Sanctuary. Almost everything on these 40 acres serves one species.',
+  biome: 'Plan B — Atlanta becomes a functioning Central African Rainforest. Gorillas are the ecosystem\'s flagship, not the only species.',
+  hybrid: 'Plan C (recommended) — Gorilla primary center with a Congo microbiome wrapped around it. Mixed logic; every zone earns its place.'
+};
+
+let selectedZoneId = null;
+const zonesLayer = document.getElementById('atlanta-zones');
+const atlantaSubtitle = document.getElementById('atlanta-subtitle');
+const atlantaDefault = document.getElementById('atlanta-panel-default');
+const atlantaPanel = document.getElementById('atlanta-zone-panel');
+
+function renderZones() {
+  if (!zonesLayer) return;
+  zonesLayer.innerHTML = '';
+  ATLANTA_ZONES.forEach(z => {
+    const g = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+    const p = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+    p.setAttribute('d', z.path);
+    p.setAttribute('fill', z.color);
+    p.setAttribute('stroke', z.id === selectedZoneId ? '#eac6ce' : 'rgba(255,255,255,0.22)');
+    p.setAttribute('stroke-width', z.id === selectedZoneId ? '2' : '1');
+    p.setAttribute('class', 'atlanta-zone');
+    if (z.id === selectedZoneId) p.classList.add('selected');
+    p.setAttribute('tabindex', '0');
+    p.setAttribute('role', 'button');
+    p.setAttribute('aria-label', z.name);
+
+    const title = document.createElementNS('http://www.w3.org/2000/svg', 'title');
+    title.textContent = `${z.name} — ${z.plans[currentPlan].role}`;
+    p.appendChild(title);
+
+    p.addEventListener('click', () => selectZone(z.id));
+    p.addEventListener('keydown', e => {
+      if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); selectZone(z.id); }
+    });
+
+    const sub = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+    sub.setAttribute('x', z.labelX);
+    sub.setAttribute('y', z.labelY - 14);
+    sub.setAttribute('text-anchor', 'middle');
+    sub.setAttribute('class', 'zone-sublabel');
+    sub.textContent = z.subLabel;
+
+    const label = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+    label.setAttribute('x', z.labelX);
+    label.setAttribute('y', z.labelY);
+    label.setAttribute('text-anchor', 'middle');
+    label.setAttribute('class', 'zone-label');
+    label.textContent = z.name;
+
+    const acres = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+    acres.setAttribute('x', z.labelX);
+    acres.setAttribute('y', z.labelY + 14);
+    acres.setAttribute('text-anchor', 'middle');
+    acres.setAttribute('class', 'zone-sublabel');
+    acres.textContent = z.acres;
+
+    g.appendChild(p);
+    g.appendChild(sub);
+    g.appendChild(label);
+    g.appendChild(acres);
+    zonesLayer.appendChild(g);
+  });
+}
+
+function selectZone(id) {
+  selectedZoneId = id;
+  renderZones();
+  renderAtlantaPanel();
+}
+
+function renderAtlantaPanel() {
+  if (!atlantaPanel) return;
+  if (!selectedZoneId) {
+    atlantaDefault.classList.remove('hidden');
+    atlantaPanel.classList.remove('visible');
+    document.getElementById('atlanta-plan-summary').textContent =
+      currentPlan === 'sanctuary' ? 'Sanctuary — Atlanta ~28 gorillas as the primary site; Bronx (~25) and SD Safari Park (~25) hold the other two primary troops. Smaller programs phase out over ~15 years.' :
+      currentPlan === 'biome' ? 'Biome — ~20 gorillas at Atlanta as the primate stratum of its Congo biome; gorilla family troops distributed across 7 other biome sites totaling ~120 gorillas.' :
+      'Hybrid — Atlanta ~26 gorillas as the primary site; ~165 more distributed across 7 climate-matched satellites.';
+    return;
+  }
+  const z = ATLANTA_ZONES.find(x => x.id === selectedZoneId);
+  if (!z) return;
+  const plan = z.plans[currentPlan];
+  atlantaDefault.classList.add('hidden');
+  atlantaPanel.classList.add('visible');
+
+  document.getElementById('az-kicker').textContent = z.subLabel;
+  document.getElementById('az-name').textContent = z.name;
+  document.getElementById('az-acres').textContent = z.acres;
+  document.getElementById('az-current').innerHTML = `<b>Today</b>${z.currentUse}`;
+  document.getElementById('az-role').textContent = plan.role;
+  const ul = document.getElementById('az-species');
+  ul.innerHTML = plan.species.map(s => `<li>${s}</li>`).join('');
+  document.getElementById('az-why').textContent = plan.why;
+}
+
+/* view switching */
+function setView(view) {
+  document.querySelectorAll('.view-tab').forEach(b => {
+    const active = b.dataset.view === view;
+    b.classList.toggle('active', active);
+    b.setAttribute('aria-selected', active);
+  });
+  document.querySelectorAll('.view').forEach(v => {
+    v.classList.toggle('active', v.dataset.view === view);
+  });
+}
+document.querySelectorAll('.view-tab').forEach(b => {
+  b.addEventListener('click', () => setView(b.dataset.view));
+});
+
+/* Plan toggle also refreshes Atlanta if visible */
+const _origSetPlan = setPlan;
+setPlan = function(plan) {
+  _origSetPlan(plan);
+  if (atlantaSubtitle) atlantaSubtitle.textContent = ATLANTA_SUBTITLES[plan];
+  renderZones();
+  renderAtlantaPanel();
+};
+
+renderZones();
+renderAtlantaPanel();
+if (atlantaSubtitle) atlantaSubtitle.textContent = ATLANTA_SUBTITLES[currentPlan];
+
+requestAnimationFrame(() => {
+  requestAnimationFrame(() => document.body.classList.add('visible'));
+});
+</script>
+
+</body>
+</html>

@@ -1,0 +1,1126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Shelf — Studio</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400;1,600&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html, body {
+  width: 100%; min-height: 100%;
+  background-color: #0b1c26;
+  font-family: 'DM Sans', sans-serif;
+  color: rgba(230,215,185,0.86);
+}
+body {
+  min-height: 100vh;
+  padding: 28px 28px 56px;
+  opacity: 0;
+  transition: opacity 0.55s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  position: relative;
+}
+body.visible { opacity: 1; }
+
+body::before {
+  content: '';
+  position: fixed; inset: 0;
+  background-color: #0b1c26;
+  background-image:
+    radial-gradient(ellipse 70% 60% at 50% 40%, rgba(28,46,58,0.5) 0%, rgba(8,16,22,0.95) 80%);
+  z-index: -3;
+}
+body::after {
+  content: '';
+  position: fixed; inset: 0;
+  background:
+    radial-gradient(ellipse 70% 55% at 50% 45%, rgba(215,175,115,0.04) 0%, transparent 80%),
+    repeating-linear-gradient(90deg, transparent 0, transparent 3px, rgba(215,175,115,0.012) 3px, rgba(215,175,115,0.012) 4px),
+    repeating-linear-gradient(0deg, transparent 0, transparent 3px, rgba(215,175,115,0.012) 3px, rgba(215,175,115,0.012) 4px);
+  mix-blend-mode: screen;
+  pointer-events: none;
+  z-index: -2;
+}
+
+#page-exit {
+  position: fixed; inset: 0;
+  background: #0b1c26;
+  opacity: 0; pointer-events: none;
+  transition: opacity 0.35s ease;
+  z-index: 9999;
+}
+#page-exit.active { opacity: 1; }
+#page-enter {
+  position: fixed; inset: 0;
+  background: #0b1c26;
+  opacity: 1; pointer-events: none;
+  transition: opacity 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  z-index: 9998;
+}
+#page-enter.gone { opacity: 0; pointer-events: none; }
+
+.skip-link {
+  position: absolute; left: -9999px; top: auto;
+  width: 1px; height: 1px; overflow: hidden;
+  font-family: 'DM Sans', sans-serif; font-size: 12px;
+  color: #be9b5a; background: rgba(11,28,38,0.95);
+  padding: 10px 18px; border-radius: 6px; z-index: 200;
+  text-decoration: none;
+}
+.skip-link:focus { position: fixed; left: 16px; top: 16px; width: auto; height: auto; }
+
+.back-link {
+  position: fixed;
+  top: 24px; left: 28px;
+  display: inline-flex; align-items: center; gap: 10px;
+  background: rgba(20,34,44,0.55);
+  backdrop-filter: blur(14px) saturate(1.2);
+  -webkit-backdrop-filter: blur(14px) saturate(1.2);
+  border: 1px solid rgba(190,155,90,0.3);
+  border-radius: 100px;
+  padding: 9px 18px 9px 14px;
+  cursor: pointer;
+  color: rgba(220,195,160,0.8);
+  font-family: 'DM Sans', sans-serif;
+  font-size: 10px; font-weight: 400;
+  letter-spacing: 0.22em; text-transform: uppercase;
+  transition: background 0.25s ease, color 0.25s ease, border-color 0.25s ease;
+  z-index: 120;
+}
+.back-link:hover {
+  background: rgba(30,48,60,0.75);
+  color: rgba(245,225,195,1);
+  border-color: rgba(220,190,130,0.6);
+}
+.back-arrow {
+  display: inline-block; width: 16px; height: 1px;
+  background: currentColor; position: relative; flex-shrink: 0;
+}
+.back-arrow::before {
+  content: ''; position: absolute;
+  left: 0; top: -3px; width: 6px; height: 6px;
+  border-left: 1px solid currentColor;
+  border-bottom: 1px solid currentColor;
+  transform: rotate(45deg);
+}
+
+/* ══════════ FRAME ══════════ */
+.shelf-frame {
+  position: relative;
+  max-width: 1200px;
+  margin: 80px auto 0;
+  padding: 56px 60px 56px;
+  border: 1px solid rgba(190,155,90,0.42);
+  box-shadow:
+    inset 0 0 0 9px rgba(190,155,90,0.16),
+    inset 0 0 60px rgba(0,0,0,0.3);
+  background: linear-gradient(to bottom, rgba(25,40,50,0.3) 0%, rgba(18,32,42,0.2) 100%);
+}
+.frame-ticks { position: absolute; inset: 12px; pointer-events: none; }
+.frame-ticks::before, .frame-ticks::after {
+  content: '';
+  position: absolute;
+  background-image: repeating-linear-gradient(
+    90deg,
+    rgba(190,155,90,0.32) 0, rgba(190,155,90,0.32) 1px,
+    transparent 1px, transparent 40px);
+}
+.frame-ticks::before { top: -4px; left: 40px; right: 40px; height: 6px; }
+.frame-ticks::after  { bottom: -4px; left: 40px; right: 40px; height: 6px; }
+.frame-ticks .vtick {
+  position: absolute;
+  background-image: repeating-linear-gradient(
+    0deg,
+    rgba(190,155,90,0.32) 0, rgba(190,155,90,0.32) 1px,
+    transparent 1px, transparent 40px);
+}
+.frame-ticks .vtick.l { left: -4px; top: 40px; bottom: 40px; width: 6px; }
+.frame-ticks .vtick.r { right: -4px; top: 40px; bottom: 40px; width: 6px; }
+
+.corner {
+  position: absolute;
+  width: 42px; height: 42px;
+  color: rgba(220,185,125,0.5);
+  pointer-events: none;
+}
+.corner.tl { top: 0; left: 0; }
+.corner.tr { top: 0; right: 0; transform: scaleX(-1); }
+.corner.bl { bottom: 0; left: 0; transform: scaleY(-1); }
+.corner.br { bottom: 0; right: 0; transform: scale(-1, -1); }
+
+/* ══════════ HEADER ══════════ */
+.shelf-header {
+  text-align: center;
+  margin: 0 auto 36px;
+  max-width: 720px;
+  padding: 8px 24px 22px;
+  border-bottom: 1px dotted rgba(220,185,125,0.25);
+}
+.shelf-eyebrow {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 9px; font-weight: 300;
+  letter-spacing: 0.42em; text-transform: uppercase;
+  color: rgba(220,185,125,0.85);
+  margin-bottom: 12px;
+}
+.shelf-eyebrow::before, .shelf-eyebrow::after {
+  content: '✦'; opacity: 0.55; margin: 0 10px;
+  font-size: 7px; vertical-align: 2px;
+}
+.shelf-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(38px, 5vw, 56px);
+  font-weight: 600; font-style: italic;
+  color: rgba(245,228,200,0.96);
+  line-height: 1.05; margin-bottom: 14px;
+  text-shadow: 0 1px 0 rgba(0,0,0,0.35), 0 2px 22px rgba(0,0,0,0.45);
+}
+.shelf-sub {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 13px; font-weight: 300;
+  color: rgba(210,190,155,0.82);
+  max-width: 560px; margin: 0 auto;
+  line-height: 1.7;
+  letter-spacing: 0.01em;
+}
+
+/* ══════════ VIEWS ══════════ */
+.shelf-views > section { display: none; }
+.shelf-views > section.active { display: block; }
+
+/* SHELF */
+.shelf-sections { display: flex; flex-direction: column; gap: 44px; }
+.shelf-section { display: flex; flex-direction: column; gap: 18px; }
+.shelf-section-head {
+  display: flex; flex-direction: column; gap: 4px;
+  padding-left: 4px;
+}
+.shelf-section-eyebrow {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 9px; font-weight: 400;
+  letter-spacing: 0.42em; text-transform: uppercase;
+  color: rgba(220,185,125,0.85);
+}
+.shelf-section-blurb {
+  font-family: 'Cormorant Garamond', serif;
+  font-style: italic; font-size: 13.5px;
+  color: rgba(210,190,155,0.62);
+  letter-spacing: 0.01em;
+}
+.shelf-rows { display: flex; flex-direction: column; gap: 36px; }
+.shelf-row {
+  display: flex; align-items: flex-end; gap: 4px;
+  padding: 0 0 14px;
+  border-bottom: 2px solid rgba(120,90,55,0.55);
+  box-shadow: inset 0 -10px 18px -10px rgba(0,0,0,0.4);
+  flex-wrap: wrap;
+}
+.shelf-row-empty { min-height: 220px; }
+.shelf-empty-hint {
+  font-family: 'Cormorant Garamond', serif;
+  font-style: italic; font-size: 13px;
+  color: rgba(210,190,155,0.5);
+  padding-left: 4px;
+}
+
+.spine {
+  position: relative;
+  width: var(--w, 38px);
+  height: var(--h, 240px);
+  background:
+    linear-gradient(90deg,
+      rgba(0,0,0,0.22) 0%,
+      rgba(0,0,0,0.05) 8%,
+      rgba(255,255,255,0.07) 14%,
+      rgba(255,255,255,0) 25%,
+      rgba(0,0,0,0) 70%,
+      rgba(0,0,0,0.18) 90%,
+      rgba(0,0,0,0.4) 100%),
+    var(--c, #5a2a26);
+  border: 1px solid rgba(0,0,0,0.45);
+  border-top: 1px solid rgba(255,255,255,0.10);
+  cursor: pointer;
+  display: flex; flex-direction: column;
+  align-items: center;
+  padding: 14px 4px 14px;
+  transition: transform 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94),
+              filter 0.3s ease,
+              box-shadow 0.3s ease;
+  flex-shrink: 0;
+}
+.spine:hover, .spine:focus-visible {
+  transform: translateY(-14px);
+  filter: brightness(1.15);
+  box-shadow: 0 16px 24px rgba(0,0,0,0.55);
+  outline: none; z-index: 2;
+}
+.spine-title {
+  writing-mode: vertical-rl;
+  font-family: 'Cormorant Garamond', serif;
+  font-style: italic; font-weight: 600;
+  font-size: 13px;
+  color: rgba(245,228,200,0.95);
+  letter-spacing: 0.05em; line-height: 1.15;
+  white-space: nowrap; text-overflow: ellipsis;
+  overflow: hidden;
+  max-height: calc(100% - 60px);
+  text-shadow: 0 1px 0 rgba(0,0,0,0.4);
+}
+.spine-author {
+  writing-mode: vertical-rl;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 7.5px; font-weight: 400;
+  color: rgba(245,228,200,0.55);
+  letter-spacing: 0.18em; text-transform: uppercase;
+  margin-top: 10px;
+  white-space: nowrap; text-overflow: ellipsis;
+  overflow: hidden; max-height: 80px;
+}
+
+.spine-add {
+  position: relative;
+  width: 56px; height: 240px;
+  background: rgba(220,185,125,0.04);
+  border: 1px dashed rgba(220,185,125,0.45);
+  cursor: pointer;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  gap: 12px;
+  color: rgba(220,185,125,0.7);
+  padding: 12px 4px;
+  flex-shrink: 0;
+  transition: background 0.25s ease, border-color 0.25s ease, color 0.25s ease;
+}
+.spine-add:hover {
+  background: rgba(220,185,125,0.1);
+  border-color: rgba(245,210,150,0.85);
+  color: rgba(255,235,195,0.95);
+}
+.spine-add-icon {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 32px; line-height: 1; font-style: italic;
+}
+.spine-add-label {
+  writing-mode: vertical-rl;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 8px;
+  letter-spacing: 0.32em; text-transform: uppercase;
+}
+
+/* SHELF FOOTER STATS */
+.shelf-stats {
+  margin-top: 36px;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 0;
+  border-top: 1px dotted rgba(220,185,125,0.22);
+  border-bottom: 1px dotted rgba(220,185,125,0.22);
+  padding: 18px 0;
+}
+.stat {
+  text-align: center;
+  border-right: 1px dotted rgba(220,185,125,0.18);
+  padding: 0 18px;
+}
+.stat:last-child { border-right: none; }
+.stat-num {
+  font-family: 'Cormorant Garamond', serif;
+  font-style: italic; font-weight: 600;
+  font-size: 24px;
+  color: rgba(245,228,200,0.96);
+  line-height: 1.1;
+  margin-bottom: 4px;
+}
+.stat-label {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 8px; font-weight: 400;
+  letter-spacing: 0.32em; text-transform: uppercase;
+  color: rgba(220,185,125,0.7);
+}
+
+.shelf-foot-note {
+  margin-top: 18px;
+  text-align: center;
+  font-family: 'Cormorant Garamond', serif;
+  font-style: italic; font-size: 12px;
+  color: rgba(210,185,140,0.55);
+}
+
+/* BOOKPLATE */
+.bookplate-back {
+  display: inline-flex; align-items: center; gap: 8px;
+  background: none; border: none; cursor: pointer;
+  color: rgba(220,195,160,0.75);
+  font-family: 'DM Sans', sans-serif;
+  font-size: 9px; font-weight: 400;
+  letter-spacing: 0.28em; text-transform: uppercase;
+  padding: 6px 0; margin-bottom: 22px;
+  transition: color 0.25s ease;
+}
+.bookplate-back:hover { color: rgba(255,235,195,1); }
+
+.bookplate-card {
+  background: linear-gradient(180deg, rgba(245,228,200,0.04) 0%, rgba(220,185,125,0.02) 100%);
+  border: 1px solid rgba(220,185,125,0.32);
+  padding: 40px 44px 36px;
+  position: relative;
+  max-width: 680px; margin: 0 auto;
+}
+.bookplate-card::before {
+  content: ''; position: absolute; inset: 6px;
+  border: 1px dotted rgba(220,185,125,0.22);
+  pointer-events: none;
+}
+.bookplate-eyebrow {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 8px; font-weight: 300;
+  letter-spacing: 0.42em; text-transform: uppercase;
+  color: rgba(220,185,125,0.7);
+  margin-bottom: 10px;
+}
+.bookplate-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 32px; font-weight: 600; font-style: italic;
+  color: rgba(245,228,200,0.96);
+  line-height: 1.1; margin-bottom: 6px;
+}
+.bookplate-author {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 17px; font-style: italic; font-weight: 400;
+  color: rgba(220,185,125,0.85);
+  margin-bottom: 22px;
+}
+.bookplate-meta {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 9.5px; font-weight: 300;
+  letter-spacing: 0.22em; text-transform: uppercase;
+  color: rgba(210,190,155,0.6);
+  margin-bottom: 18px;
+}
+.bookplate-note {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 17px; font-style: italic;
+  color: rgba(230,215,185,0.92);
+  line-height: 1.55;
+  padding-left: 18px;
+  border-left: 2px solid rgba(220,185,125,0.4);
+}
+.bookplate-divider {
+  height: 1px;
+  background: repeating-linear-gradient(90deg, rgba(220,185,125,0.4) 0, rgba(220,185,125,0.4) 4px, transparent 4px, transparent 8px);
+  margin: 28px 0 22px;
+}
+.bookplate-margin-title {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 9px; font-weight: 400;
+  letter-spacing: 0.42em; text-transform: uppercase;
+  color: rgba(220,185,125,0.78);
+  margin-bottom: 14px;
+}
+.bookplate-margins {
+  display: flex; flex-direction: column; gap: 16px;
+  margin-bottom: 22px;
+}
+.margin-note { display: flex; gap: 12px; align-items: flex-start; }
+.margin-initials {
+  flex-shrink: 0;
+  width: 30px; height: 30px;
+  border: 1px solid rgba(220,185,125,0.45);
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-family: 'Cormorant Garamond', serif;
+  font-style: italic; font-size: 11px;
+  color: rgba(220,185,125,0.85);
+}
+.margin-text {
+  font-family: 'Cormorant Garamond', serif;
+  font-style: italic; font-size: 14px;
+  color: rgba(225,210,180,0.88);
+  line-height: 1.5; flex: 1;
+}
+.margin-meta {
+  display: block;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 8px; font-style: normal;
+  letter-spacing: 0.24em; text-transform: uppercase;
+  color: rgba(210,185,140,0.5);
+  margin-top: 4px;
+}
+.margin-empty {
+  font-family: 'Cormorant Garamond', serif;
+  font-style: italic; font-size: 13px;
+  color: rgba(210,190,155,0.5);
+}
+
+.margin-form-label, .add-field-label {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 9px; font-weight: 400;
+  letter-spacing: 0.42em; text-transform: uppercase;
+  color: rgba(220,185,125,0.78);
+  margin-bottom: 8px; display: block;
+}
+.add-field-label .opt {
+  opacity: 0.45; font-weight: 300; letter-spacing: 0.16em;
+  text-transform: none; font-style: italic;
+}
+.margin-input, .add-input {
+  width: 100%;
+  background: rgba(8,16,22,0.5);
+  border: 1px solid rgba(220,185,125,0.28);
+  color: rgba(240,225,195,0.95);
+  font-family: 'Cormorant Garamond', serif;
+  font-style: italic; font-size: 14px;
+  padding: 10px 14px;
+  transition: border-color 0.25s ease, background 0.25s ease;
+}
+.margin-input { resize: vertical; min-height: 64px; }
+textarea.add-input { resize: vertical; min-height: 80px; }
+.margin-input:focus, .add-input:focus {
+  outline: none;
+  border-color: rgba(245,210,150,0.7);
+  background: rgba(8,16,22,0.7);
+}
+
+.bookplate-actions {
+  display: flex; gap: 12px; align-items: center; flex-wrap: wrap;
+  margin-top: 18px;
+}
+.bookplate-btn {
+  background: rgba(20,34,44,0.55);
+  border: 1px solid rgba(190,155,90,0.4);
+  color: rgba(220,195,160,0.9);
+  padding: 10px 18px;
+  cursor: pointer;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 9px; font-weight: 400;
+  letter-spacing: 0.32em; text-transform: uppercase;
+  transition: background 0.25s ease, color 0.25s ease, border-color 0.25s ease;
+}
+.bookplate-btn:hover {
+  background: rgba(30,48,60,0.85);
+  color: rgba(255,235,195,1);
+  border-color: rgba(220,190,130,0.7);
+}
+.bookplate-btn.primary {
+  background: rgba(220,185,125,0.85);
+  color: rgba(11,28,38,0.95);
+  border-color: rgba(220,185,125,0.85);
+}
+.bookplate-btn.primary:hover {
+  background: rgba(245,210,150,1); color: rgba(11,28,38,1);
+}
+
+/* STUDIO CRUMB — subtle return-to-studio footer link inside bookplate */
+.studio-crumb {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  margin: 36px auto 6px;
+  background: none; border: none; padding: 8px 10px;
+  cursor: pointer;
+  color: rgba(210,195,172,0.72);
+  transition: color 0.3s ease;
+  user-select: none;
+}
+.studio-crumb:hover { color: rgba(245,228,200,0.95); }
+@keyframes bookFloat {
+  0%, 100% { transform: translateY(0); }
+  50%       { transform: translateY(-2px); }
+}
+.crumb-book {
+  transform-box: fill-box;
+  transform-origin: 50% 50%;
+  animation: bookFloat 3.4s ease-in-out infinite;
+}
+.crumb-text {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 8px; font-weight: 400;
+  letter-spacing: 0.36em;
+  text-transform: uppercase;
+}
+
+.add-form-fields {
+  display: flex; flex-direction: column; gap: 18px;
+  margin-top: 22px;
+}
+.add-field-row { display: flex; gap: 14px; }
+.add-field-row > * { flex: 1; min-width: 0; }
+
+.wordmark {
+  position: fixed;
+  bottom: 18px; left: 24px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 10px; font-weight: 300;
+  letter-spacing: 0.22em;
+  color: rgba(210,185,140,0.22);
+  pointer-events: none;
+  z-index: 10;
+}
+
+@media (max-width: 1100px) {
+  .shelf-frame { padding: 44px 36px; }
+}
+@media (max-width: 760px) {
+  body { padding: 16px; }
+  .shelf-frame { padding: 36px 18px; }
+  .shelf-header { margin-bottom: 24px; padding: 6px 8px 18px; }
+  .shelf-row { gap: 3px; }
+  .bookplate-card { padding: 24px 22px 22px; }
+  .bookplate-title { font-size: 26px; }
+  .add-field-row { flex-direction: column; }
+  .shelf-stats { grid-template-columns: 1fr; }
+  .stat { border-right: none; border-bottom: 1px dotted rgba(220,185,125,0.18); padding: 12px 0; }
+  .stat:last-child { border-bottom: none; }
+  .back-link { top: 12px; left: 12px; }
+}
+
+:focus-visible { outline: 2px solid rgba(220,185,125,0.7); outline-offset: 3px; }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+</style>
+</head>
+<body>
+
+<a href="#main-content" class="skip-link">Skip to content</a>
+<div id="page-exit" aria-hidden="true"></div>
+<div id="page-enter" aria-hidden="true"></div>
+<div class="wordmark" aria-hidden="true">Amber Grey</div>
+
+<button class="back-link" aria-label="Back to the studio" id="backLink">
+  <span class="back-arrow" aria-hidden="true"></span>
+  <span id="backText">Studio</span>
+</button>
+
+<main id="main-content">
+<div class="shelf-frame">
+
+  <div class="frame-ticks" aria-hidden="true">
+    <span class="vtick l"></span>
+    <span class="vtick r"></span>
+  </div>
+
+  <svg class="corner tl" viewBox="0 0 42 42" aria-hidden="true">
+    <path d="M2 40 V9 Q2 2 9 2 H40" stroke="currentColor" stroke-width="1" fill="none"/>
+    <path d="M7 40 V13 Q7 7 13 7 H40" stroke="currentColor" stroke-width="0.6" fill="none" opacity="0.6"/>
+    <circle cx="9" cy="9" r="2.2" fill="none" stroke="currentColor" stroke-width="0.8"/>
+    <circle cx="9" cy="9" r="1" fill="currentColor"/>
+  </svg>
+  <svg class="corner tr" viewBox="0 0 42 42" aria-hidden="true">
+    <path d="M2 40 V9 Q2 2 9 2 H40" stroke="currentColor" stroke-width="1" fill="none"/>
+    <path d="M7 40 V13 Q7 7 13 7 H40" stroke="currentColor" stroke-width="0.6" fill="none" opacity="0.6"/>
+    <circle cx="9" cy="9" r="2.2" fill="none" stroke="currentColor" stroke-width="0.8"/>
+    <circle cx="9" cy="9" r="1" fill="currentColor"/>
+  </svg>
+  <svg class="corner bl" viewBox="0 0 42 42" aria-hidden="true">
+    <path d="M2 40 V9 Q2 2 9 2 H40" stroke="currentColor" stroke-width="1" fill="none"/>
+    <path d="M7 40 V13 Q7 7 13 7 H40" stroke="currentColor" stroke-width="0.6" fill="none" opacity="0.6"/>
+    <circle cx="9" cy="9" r="2.2" fill="none" stroke="currentColor" stroke-width="0.8"/>
+    <circle cx="9" cy="9" r="1" fill="currentColor"/>
+  </svg>
+  <svg class="corner br" viewBox="0 0 42 42" aria-hidden="true">
+    <path d="M2 40 V9 Q2 2 9 2 H40" stroke="currentColor" stroke-width="1" fill="none"/>
+    <path d="M7 40 V13 Q7 7 13 7 H40" stroke="currentColor" stroke-width="0.6" fill="none" opacity="0.6"/>
+    <circle cx="9" cy="9" r="2.2" fill="none" stroke="currentColor" stroke-width="0.8"/>
+    <circle cx="9" cy="9" r="1" fill="currentColor"/>
+  </svg>
+
+  <header class="shelf-header">
+    <div class="shelf-eyebrow">A Quiet Library</div>
+    <h1 class="shelf-title">The Shelf</h1>
+    <p class="shelf-sub">Books left here by visitors to the studio. Pull one out to read why it stayed with someone — and leave a margin note if you've read it too.</p>
+  </header>
+
+  <div class="shelf-views">
+    <section id="shelfView" class="active" aria-label="Bookshelf"></section>
+    <section id="bookplateView" aria-label="Book details"></section>
+    <section id="addView" aria-label="Add a book to the shelf">
+      <button class="bookplate-back" type="button" data-cancel-add>
+        <span class="back-arrow" aria-hidden="true"></span>
+        Back to the shelf
+      </button>
+      <div class="bookplate-card">
+        <div class="bookplate-eyebrow">A new addition</div>
+        <h3 class="bookplate-title">Place a book on the shelf</h3>
+        <p class="bookplate-author">Leave a book that stayed with you.</p>
+        <form class="add-form-fields" id="addForm" novalidate>
+          <div class="add-field-row">
+            <div>
+              <label class="add-field-label" for="newTitle">Title</label>
+              <input class="add-input" id="newTitle" type="text" required maxlength="120" autocomplete="off">
+            </div>
+            <div>
+              <label class="add-field-label" for="newAuthor">Author</label>
+              <input class="add-input" id="newAuthor" type="text" required maxlength="80" autocomplete="off">
+            </div>
+          </div>
+          <div class="add-field-row">
+            <div>
+              <label class="add-field-label" for="newName">Your first name <span class="opt">(optional)</span></label>
+              <input class="add-input" id="newName" type="text" maxlength="40" placeholder="Anonymous traveler" autocomplete="off">
+            </div>
+            <div>
+              <label class="add-field-label" for="newCity">Where from <span class="opt">(optional)</span></label>
+              <input class="add-input" id="newCity" type="text" maxlength="60" autocomplete="off">
+            </div>
+          </div>
+          <div>
+            <label class="add-field-label" for="newNote">Why this book?</label>
+            <textarea class="add-input" id="newNote" required maxlength="280" placeholder="A line on what it gave you. Two sentences are plenty."></textarea>
+          </div>
+          <div class="bookplate-actions">
+            <button class="bookplate-btn primary" type="submit">Place on the shelf</button>
+            <button class="bookplate-btn" type="button" data-cancel-add>Cancel</button>
+          </div>
+        </form>
+      </div>
+    </section>
+  </div>
+
+</div>
+</main>
+
+<script>
+'use strict';
+
+function navigateTo(url) {
+  const exit = document.getElementById('page-exit');
+  document.body.style.transition = 'opacity 0.3s ease';
+  document.body.style.opacity = '0.4';
+  setTimeout(() => { exit.classList.add('active'); }, 140);
+  setTimeout(() => { window.location.href = url; }, 420);
+}
+
+let backMode = 'studio';
+const backLinkEl = document.getElementById('backLink');
+const backTextEl = document.getElementById('backText');
+function setBackMode(mode) {
+  backMode = mode;
+  if (mode === 'shelf') {
+    backTextEl.textContent = 'Back to the shelf';
+    backLinkEl.setAttribute('aria-label', 'Back to the shelf');
+  } else {
+    backTextEl.textContent = 'Studio';
+    backLinkEl.setAttribute('aria-label', 'Back to the studio');
+  }
+}
+backLinkEl.addEventListener('click', () => {
+  if (backMode === 'shelf') showShelfView();
+  else navigateTo('index.html');
+});
+
+requestAnimationFrame(() => {
+  requestAnimationFrame(() => {
+    document.getElementById('page-enter').classList.add('gone');
+    document.body.classList.add('visible');
+  });
+});
+
+window.addEventListener('pageshow', function(e) {
+  if (e.persisted) {
+    const x = document.getElementById('page-exit');
+    if (x) x.classList.remove('active');
+    document.body.style.opacity = '';
+    document.body.classList.add('visible');
+  }
+});
+
+/* ══════════════════════════════════════════════════════════════ */
+/*                         THE SHELF                              */
+/* ══════════════════════════════════════════════════════════════ */
+
+const SHELF_ORDER = ['making', 'beyondhuman', 'innerworlds', 'humanpatterns', 'awestory', 'visitors'];
+const SHELF_LABELS = {
+  making:        'Design & Systems Thinking',
+  beyondhuman:   'Beyond Human — Ecology, Animals, Systems',
+  innerworlds:   'Inner Worlds',
+  humanpatterns: 'Human Patterns',
+  awestory:      'Awe & Story',
+  visitors:      'Left by Visitors'
+};
+const SHELF_BLURBS = {
+  making:        'Design, structure, interaction — how things are built.',
+  beyondhuman:   'Non-human systems, conservation, ecology.',
+  innerworlds:   'Belief, awareness, internal systems.',
+  humanpatterns: 'How humans think, feel, and organize.',
+  awestory:      'Myth, fiction, image — the strangeness of the world.',
+  visitors:      'Books left here by visitors to the studio.'
+};
+const SHELF_NOTE = {
+  making:        'On Amber\'s shelf — leave a margin note if it has shaped your work.',
+  beyondhuman:   'On Amber\'s shelf — leave a margin note if it has changed how you see them.',
+  innerworlds:   'On Amber\'s shelf — leave a margin note if it has spoken to you.',
+  humanpatterns: 'On Amber\'s shelf — leave a margin note if it has illuminated something.',
+  awestory:      'On Amber\'s shelf — leave a margin note if it has stayed with you.'
+};
+
+const RAW_BOOKS = {
+  making: [
+    ['The Principles of Beautiful Web Design', 'Jason Beaird'],
+    ['The Designer\'s Guide to Global Color Combinations', 'Leslie Cabarga'],
+    ['Design Thinking', 'Nigel Cross'],
+    ['How Artifacts Afford', 'Jenny L. Davis'],
+    ['HTML & CSS: Design and Build Websites', 'Jon Duckett'],
+    ['Design Like Apple', 'John Edson'],
+    ['Articulating Design Decisions', 'Tom Greever'],
+    ['Made to Stick', 'Chip Heath & Dan Heath'],
+    ['Thinking, Fast and Slow', 'Daniel Kahneman'],
+    ['Show Your Work', 'Austin Kleon'],
+    ['Steal Like an Artist', 'Austin Kleon'],
+    ['User Friendly', 'Cliff Kuang & Robert Fabricant'],
+    ['Responsive Web Design', 'Ethan Marcotte'],
+    ['The Design of Everyday Things', 'Don Norman'],
+    ['The Design Studio Method', 'Brian Sullivan'],
+    ['Cues', 'Vanessa Van Edwards'],
+    ['Leonardo\'s Notebooks', 'Leonardo da Vinci'],
+    ['Designing for Behavior Change', 'Stephen Wendel'],
+    ['Design for How People Think', 'John Whalen'],
+    ['Laws of UX', 'Jon Yablonski'],
+  ],
+  beyondhuman: [
+    ['Gorilla Tactics: How to Save a Species', 'Greg Cummings'],
+    ['Vampyroteuthis Infernalis', 'Flusser & Bec'],
+    ['Gorillas in the Mist', 'Dian Fossey'],
+    ['Scientific Foundations of Zoos and Aquariums', 'Michael Hutchins et al.'],
+    ['The Zoologist\'s Guide to the Galaxy', 'Arik Kershenbaum'],
+    ['How Forests Think', 'Eduardo Kohn'],
+    ['The Sixth Extinction', 'Elizabeth Kolbert'],
+    ['Wild Animals in Captivity', 'Rob Laidlaw'],
+    ['A Sand County Almanac', 'Aldo Leopold'],
+    ['The Accidental Universe', 'Alan Lightman'],
+    ['Last Child in the Woods', 'Richard Louv'],
+    ['Our Wild Calling', 'Richard Louv'],
+    ['Vitamin N', 'Richard Louv'],
+    ['Visions Underground', 'Manno'],
+    ['Woman in the Mists', 'Farley Mowat'],
+    ['Ethics on the Ark', 'Bryan G. Norton et al.'],
+    ['Moon Garden', 'Osofsky'],
+    ['The Case for Animal Rights', 'Tom Regan'],
+    ['Urban Recycling and the Search for Sustainable Community Development', 'Weinberg, Pellow & Schnaiberg'],
+    ['The Hidden Life of Trees', 'Peter Wohlleben'],
+  ],
+  innerworlds: [
+    ['Bharat', 'Aggerwal'],
+    ['The Wisdom of Zen', 'Anne Bancroft'],
+    ['All Religions are Not the Same', 'Sanjay Dixit'],
+    ['A Course in Miracles', 'Foundation for Inner Peace'],
+    ['The Gospel of Judas', 'Rodolphe Kasser et al.'],
+    ['The Gnostic Scriptures', 'Bentley Layton'],
+    ['The Gospel of Mary Magdalene', 'Leloup'],
+    ['Journey of Souls', 'Michael Newton'],
+    ['Karma', 'Sadhguru'],
+    ['Lives of the Master', 'Glenn Sanderfur'],
+    ['Wonderland: The Zen of Alice', 'Daniel Silberberg'],
+    ['The Untethered Soul', 'Michael A. Singer'],
+    ['Materialism and the Task of Anthroposophy', 'Rudolf Steiner'],
+    ['A New Earth', 'Eckhart Tolle'],
+    ['Bhagavad Gita', 'traditional'],
+    ['The Tibetan Book of the Dead', 'traditional'],
+    ['Tao: The Watercourse Way', 'Alan Watts'],
+    ['The Way of Zen', 'Alan Watts'],
+    ['Integral Meditation', 'Ken Wilber'],
+    ['Kosmic Consciousness', 'Ken Wilber'],
+    ['The Theory of Everything', 'Ken Wilber'],
+    ['The Yoga of Jesus', 'Paramahansa Yogananda'],
+  ],
+  humanpatterns: [
+    ['The Act of Will', 'Roberto Assagioli'],
+    ['Psychosynthesis', 'Roberto Assagioli'],
+    ['Dare to Lead', 'Brené Brown'],
+    ['The Hero with a Thousand Faces', 'Joseph Campbell'],
+    ['The Legacy of Mesoamerica', 'Carmack, Gasco & Gossen'],
+    ['Manufacturing Consent', 'Noam Chomsky'],
+    ['Bitch', 'Lucy Cooke'],
+    ['Invisible Women', 'Caroline Criado Perez'],
+    ['Emotional Agility', 'Susan David'],
+    ['The Invisible Pyramid', 'Loren Eiseley'],
+    ['Your Inner Fish', 'Loren Eiseley'],
+    ['It Wasn\'t Your Fault', 'Beverly Engel'],
+    ['The Psychopath Inside', 'James Fallon'],
+    ['What We May Be', 'Ferrucci'],
+    ['Mothers Who Can\'t Love', 'Susan Forward'],
+    ['Discipline and Punish: The Birth of the Prison (1975)', 'Michel Foucault'],
+    ['The Future of an Illusion', 'Sigmund Freud'],
+    ['The Dawn of Everything', 'David Graeber & David Wengrow'],
+    ['The Righteous Mind', 'Jonathan Haidt'],
+    ['The Hidden Beauty of Emotional Instability', 'Loatman'],
+    ['Women Who Ruled', 'Merrell'],
+    ['The Sociopath Next Door', 'Martha Stout'],
+    ['Confessions of a Sociopath', 'M.E. Thomas'],
+    ['The Body Keeps the Score', 'Bessel van der Kolk'],
+  ],
+  awestory: [
+    ['Jane Austen Collection', 'Jane Austen'],
+    ['Peter Pan', 'J. M. Barrie'],
+    ['The Wizard of Oz Collection', 'L. Frank Baum'],
+    ['Nightsong', 'Berk & Long'],
+    ['The Plucker', 'Brom'],
+    ['The Boy Who Spoke to the Earth', 'Burkard & McClellan'],
+    ['Piranesi', 'Susanna Clarke'],
+    ['The Hunger Games Series', 'Suzanne Collins'],
+    ['House of Leaves', 'Danielewski'],
+    ['The Neverending Story', 'Michael Ende'],
+    ['Faeries', 'Brian Froud & Alan Lee'],
+    ['The Midnight Library', 'Matt Haig'],
+    ['The Odyssey', 'Homer'],
+    ['The Resurrectionist', 'Hudspeth'],
+    ['A Wrinkle in Time', 'Madeleine L\'Engle'],
+    ['Life of Pi', 'Yann Martel'],
+    ['Dreaming in Pictures – The Photography of Lewis Carroll', 'Nickel'],
+    ['His Dark Materials Series', 'Philip Pullman'],
+    ['Divergent Series', 'Veronica Roth'],
+    ['Harry Potter Series', 'J.K. Rowling'],
+    ['Frankenstein', 'Mary Shelley'],
+    ['Walden, or Life in the Woods', 'Henry David Thoreau'],
+    ['The Lord of the Rings Series', 'J.R.R. Tolkien'],
+    ['Project Hail Mary', 'Andy Weir'],
+  ]
+};
+
+const PALETTES = {
+  making:        ['#2c4a52', '#1f3548', '#2a2a2a', '#4a4a26', '#1a3528', '#5a4a26', '#2d4538', '#8a6a2a'],
+  beyondhuman:   ['#2d4538', '#4a4a26', '#3a3a26', '#5a4a26', '#4a3a1a', '#2c4a52', '#6b5532', '#4a3a26'],
+  innerworlds:   ['#1f3548', '#3a2a4a', '#4a2a4a', '#5a2a26', '#4a1f2e', '#2c4a52', '#3a3a5a', '#1e3a2e'],
+  humanpatterns: ['#5a2a26', '#4a2a26', '#6b3a26', '#2a3a1a', '#3a3a3a', '#4a4a26', '#8a6a2a', '#2c4a52'],
+  awestory:      ['#4a2a4a', '#5a2a26', '#1f3548', '#2c4a52', '#3a2a4a', '#1e3a2e', '#6b3a26', '#2a2a2a']
+};
+
+const HEIGHTS = [240, 268, 226, 254, 244, 272, 234, 260, 248, 222, 256, 238, 264, 250, 230];
+const WIDTHS  = [36, 40, 32, 44, 38, 42, 30, 46, 34, 38, 32, 40, 36, 42, 30];
+
+const SAMPLE_BOOKS = (() => {
+  const out = []; let id = 100;
+  SHELF_ORDER.forEach(cat => {
+    if (cat === 'visitors') return;
+    const list = RAW_BOOKS[cat] || [];
+    const palette = PALETTES[cat] || PALETTES.making;
+    list.forEach(([title, author], i) => {
+      out.push({
+        id: ++id,
+        category: cat,
+        title, author,
+        addedBy: 'Amber',
+        city: 'Fort Worth',
+        date: 'On the shelf',
+        note: SHELF_NOTE[cat] || 'On Amber\'s shelf.',
+        color: palette[i % palette.length],
+        height: HEIGHTS[i % HEIGHTS.length],
+        width:  WIDTHS[i % WIDTHS.length],
+        margins: []
+      });
+    });
+  });
+  return out;
+})();
+
+const SPINE_PALETTE = ['#5a2a26','#2d4538','#1f3548','#4a4a26','#8a6a2a','#2c4a52','#4a1f2e','#1e3a2e','#4a2a4a'];
+const ADDED_KEY = 'amber-shelf-added';
+
+function loadAdded() {
+  try { return JSON.parse(localStorage.getItem(ADDED_KEY) || '[]'); } catch { return []; }
+}
+function saveAdded(list) {
+  localStorage.setItem(ADDED_KEY, JSON.stringify(list));
+}
+
+let shelfBooks = SAMPLE_BOOKS.concat(loadAdded());
+
+function escapeHtml(s) {
+  return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+
+function showView(id) {
+  document.querySelectorAll('.shelf-views > section').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+function showShelfView() { setBackMode('studio'); showView('shelfView'); }
+function showBookplateView(bookId) {
+  const book = shelfBooks.find(b => b.id === bookId);
+  if (!book) return;
+  renderBookplate(book);
+  setBackMode('shelf');
+  showView('bookplateView');
+}
+function showAddView() {
+  setBackMode('studio');
+  showView('addView');
+  setTimeout(() => document.getElementById('newTitle').focus(), 50);
+}
+
+function makeSpine(b) {
+  const spine = document.createElement('button');
+  spine.className = 'spine';
+  spine.type = 'button';
+  spine.style.setProperty('--c', b.color);
+  spine.style.setProperty('--h', b.height + 'px');
+  spine.style.setProperty('--w', b.width + 'px');
+  spine.setAttribute('aria-label', `${b.title} by ${b.author}`);
+  spine.innerHTML = `
+    <span class="spine-title">${escapeHtml(b.title)}</span>
+    <span class="spine-author">${escapeHtml(b.author)}</span>
+  `;
+  spine.addEventListener('click', () => showBookplateView(b.id));
+  return spine;
+}
+function makeAddSlot() {
+  const add = document.createElement('button');
+  add.className = 'spine-add';
+  add.type = 'button';
+  add.setAttribute('aria-label', 'Add a book to the shelf');
+  add.innerHTML = `<span class="spine-add-icon" aria-hidden="true">+</span><span class="spine-add-label">Add a Book</span>`;
+  add.addEventListener('click', showAddView);
+  return add;
+}
+
+function renderShelf() {
+  const view = document.getElementById('shelfView');
+  view.innerHTML = '';
+
+  const grouped = {};
+  shelfBooks.forEach(b => {
+    const cat = b.category || 'visitors';
+    (grouped[cat] = grouped[cat] || []).push(b);
+  });
+
+  const wrap = document.createElement('div');
+  wrap.className = 'shelf-rows';
+
+  SHELF_ORDER.forEach(cat => {
+    const books = grouped[cat] || [];
+    const isVisitors = cat === 'visitors';
+    if (!books.length && !isVisitors) return;
+
+    const head = document.createElement('div');
+    head.className = 'shelf-section-head';
+    head.innerHTML = `
+      <div class="shelf-section-eyebrow">${escapeHtml(SHELF_LABELS[cat] || '')}</div>
+      <div class="shelf-section-blurb">${escapeHtml(SHELF_BLURBS[cat] || '')}</div>
+    `;
+    wrap.appendChild(head);
+
+    const row = document.createElement('div');
+    row.className = 'shelf-row';
+    books.forEach(b => row.appendChild(makeSpine(b)));
+    if (isVisitors) row.appendChild(makeAddSlot());
+    wrap.appendChild(row);
+  });
+
+  view.appendChild(wrap);
+
+  const stats = document.createElement('div');
+  stats.className = 'shelf-stats';
+  const addedCount = loadAdded().length;
+  stats.innerHTML = `
+    <div class="stat"><div class="stat-num">${shelfBooks.length}</div><div class="stat-label">Books on the shelf</div></div>
+    <div class="stat"><div class="stat-num">${addedCount}</div><div class="stat-label">Added by you</div></div>
+  `;
+  view.appendChild(stats);
+}
+
+function renderBookplate(book) {
+  const view = document.getElementById('bookplateView');
+  const cityLine = book.city
+    ? `${escapeHtml(book.addedBy)} from ${escapeHtml(book.city)} · ${escapeHtml(book.date)}`
+    : `${escapeHtml(book.addedBy)} · ${escapeHtml(book.date)}`;
+  const margins = book.margins || [];
+  const marginsHtml = margins.length
+    ? margins.map(m => `
+        <div class="margin-note">
+          <span class="margin-initials" aria-hidden="true">${escapeHtml(m.initials)}</span>
+          <div class="margin-text">"${escapeHtml(m.text)}"<span class="margin-meta">${escapeHtml(m.date)}</span></div>
+        </div>`).join('')
+    : `<div class="margin-empty">No margin notes yet. Be the first.</div>`;
+
+  view.innerHTML = `
+    <article class="bookplate-card">
+      <div class="bookplate-eyebrow">From the shelf</div>
+      <h2 class="bookplate-title">${escapeHtml(book.title)}</h2>
+      <div class="bookplate-author">${escapeHtml(book.author)}</div>
+      <div class="bookplate-meta">Added by ${cityLine}</div>
+      <p class="bookplate-note">${escapeHtml(book.note)}</p>
+      <div class="bookplate-divider" aria-hidden="true"></div>
+      <div class="bookplate-margin-title">Margin notes</div>
+      <div class="bookplate-margins">${marginsHtml}</div>
+      <form class="margin-form" id="marginForm" novalidate>
+        <label class="margin-form-label" for="marginInput">Leave a margin note</label>
+        <textarea class="margin-input" id="marginInput" placeholder="A short thought, a line you remembered, what it gave you…" maxlength="240"></textarea>
+        <div class="bookplate-actions">
+          <button class="bookplate-btn primary" type="submit">Pin it to the margin</button>
+        </div>
+      </form>
+      <button class="studio-crumb" type="button" id="crumbStudio" aria-label="Return to the studio">
+        <svg width="22" height="30" viewBox="0 0 22 30" fill="none" aria-hidden="true" xmlns="http://www.w3.org/2000/svg">
+          <path class="crumb-book" d="M3 6 L11 4 L19 6 L19 22 L11 20 L3 22 Z" stroke="currentColor" stroke-width="0.75" fill="none" stroke-linejoin="round"/>
+          <line x1="11" y1="4" x2="11" y2="20" stroke="currentColor" stroke-width="0.5"/>
+          <line x1="5" y1="10" x2="9.5" y2="9.3" stroke="currentColor" stroke-width="0.35" opacity="0.55"/>
+          <line x1="5" y1="13" x2="9.5" y2="12.3" stroke="currentColor" stroke-width="0.35" opacity="0.55"/>
+          <line x1="5" y1="16" x2="9.5" y2="15.3" stroke="currentColor" stroke-width="0.35" opacity="0.55"/>
+          <line x1="12.5" y1="9.3" x2="17" y2="10" stroke="currentColor" stroke-width="0.35" opacity="0.55"/>
+          <line x1="12.5" y1="12.3" x2="17" y2="13" stroke="currentColor" stroke-width="0.35" opacity="0.55"/>
+          <line x1="12.5" y1="15.3" x2="17" y2="16" stroke="currentColor" stroke-width="0.35" opacity="0.55"/>
+          <path d="M2 26 L20 26" stroke="currentColor" stroke-width="0.5" stroke-linecap="round" opacity="0.45"/>
+          <path d="M1 29 L21 29" stroke="currentColor" stroke-width="0.45" stroke-linecap="round" opacity="0.35"/>
+        </svg>
+        <span class="crumb-text">Studio</span>
+      </button>
+    </article>
+  `;
+  document.getElementById('marginForm').addEventListener('submit', (e) => {
+    e.preventDefault();
+    const ta = document.getElementById('marginInput');
+    const text = ta.value.trim();
+    if (!text) return;
+    book.margins = book.margins || [];
+    book.margins.push({ initials: 'YOU', text, date: 'Just now' });
+    renderBookplate(book);
+  });
+  document.getElementById('crumbStudio').addEventListener('click', () => navigateTo('index.html'));
+}
+
+function setupAddForm() {
+  document.querySelectorAll('[data-cancel-add]').forEach(btn => btn.addEventListener('click', showShelfView));
+  document.getElementById('addForm').addEventListener('submit', (e) => {
+    e.preventDefault();
+    const title = document.getElementById('newTitle').value.trim();
+    const author = document.getElementById('newAuthor').value.trim();
+    const name = document.getElementById('newName').value.trim() || 'Anonymous';
+    const city = document.getElementById('newCity').value.trim();
+    const note = document.getElementById('newNote').value.trim();
+    if (!title || !author || !note) return;
+    const newBook = {
+      id: Date.now(),
+      category: 'visitors',
+      title, author,
+      addedBy: name, city,
+      date: 'Just now',
+      note,
+      color: SPINE_PALETTE[Math.floor(Math.random() * SPINE_PALETTE.length)],
+      height: 220 + Math.floor(Math.random() * 60),
+      width: 32 + Math.floor(Math.random() * 16),
+      margins: []
+    };
+    shelfBooks.push(newBook);
+    const added = loadAdded();
+    added.push(newBook);
+    saveAdded(added);
+    e.target.reset();
+    renderShelf();
+    showShelfView();
+  });
+}
+
+renderShelf();
+setupAddForm();
+</script>
+
+</body>
+</html>
