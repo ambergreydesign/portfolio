@@ -1,0 +1,510 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Amber Grey — For Be My Eyes</title>
+<meta name="description" content="A tailored introduction for the Be My Eyes team — three projects most relevant to your work with the BLV community.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,600;1,400;1,500&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --accent:         #f6c343;
+  --accent-dim:     rgba(246, 195, 67, 0.10);
+  --accent-border:  rgba(246, 195, 67, 0.28);
+  --accent-glow:    rgba(246, 195, 67, 0.14);
+
+  --bg:          #060810;
+  --bg-alt:      #090c18;
+  --text:        #dde6f4;
+  --text-muted:  #8594ad;
+  --text-dim:    rgba(120, 145, 180, 0.45);
+  --ice:         #c4d8f0;
+  --amber:       #d4a576;
+  --border:      rgba(255, 255, 255, 0.07);
+  --warm:        rgba(212, 165, 118, 0.82);
+  --warm-bright: rgba(212, 165, 118, 1);
+}
+
+html { background: var(--bg); scroll-behavior: smooth; }
+body {
+  font-family: 'DM Sans', sans-serif;
+  color: var(--text);
+  overflow-x: hidden;
+  opacity: 0;
+  transition: opacity 0.55s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+body.visible { opacity: 1; }
+
+#page-exit {
+  position: fixed; inset: 0;
+  background: #060810;
+  opacity: 0; pointer-events: none;
+  transition: opacity 0.28s ease-in;
+  z-index: 9999;
+}
+#page-exit.active { opacity: 1; }
+
+.nav-back {
+  position: fixed;
+  top: 28px; left: 32px;
+  display: inline-flex; align-items: center; gap: 10px;
+  background: rgba(255,255,255,0.06);
+  backdrop-filter: blur(14px) saturate(1.2);
+  -webkit-backdrop-filter: blur(14px) saturate(1.2);
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 100px;
+  padding: 9px 18px 9px 14px;
+  cursor: pointer;
+  color: rgba(200,185,165,0.75);
+  font-family: 'DM Sans', sans-serif;
+  font-size: 10px; font-weight: 400;
+  letter-spacing: 0.22em; text-transform: uppercase;
+  transition: background 0.25s ease, color 0.25s ease, border-color 0.25s ease;
+  z-index: 200;
+  text-decoration: none;
+}
+.nav-back:hover { background: rgba(255,255,255,0.11); color: rgba(200,185,165,1); border-color: rgba(255,255,255,0.18); }
+.nav-back-arrow { display: inline-block; width: 16px; height: 1px; background: currentColor; position: relative; flex-shrink: 0; }
+.nav-back-arrow::before { content: ''; position: absolute; left: 0; top: -3px; width: 6px; height: 6px; border-left: 1px solid currentColor; border-bottom: 1px solid currentColor; transform: rotate(45deg); }
+
+.wordmark { position: fixed; bottom: 24px; left: 21px; font-size: 13px; font-weight: 300; letter-spacing: 0.2em; color: rgba(210,195,172,0.14); pointer-events: none; z-index: 10; }
+
+.motes-canvas { position: fixed; inset: 0; pointer-events: none; z-index: 0; overflow: hidden; }
+.mote {
+  position: absolute;
+  width: 2px; height: 2px;
+  border-radius: 50%;
+  background: var(--accent-glow);
+  animation: moteFloat linear infinite;
+}
+@keyframes moteFloat {
+  0%   { transform: translateY(0) translateX(0); opacity: 0; }
+  10%  { opacity: 1; }
+  90%  { opacity: 1; }
+  100% { transform: translateY(-100vh) translateX(40px); opacity: 0; }
+}
+
+.hero {
+  min-height: 100svh;
+  display: flex; flex-direction: column; justify-content: center; align-items: center;
+  padding: 80px 40px;
+  position: relative;
+  text-align: center;
+}
+.hero::before {
+  content: ''; position: absolute; inset: 0; pointer-events: none;
+  background:
+    radial-gradient(ellipse 60% 50% at 30% 60%, var(--accent-glow) 0%, transparent 60%),
+    radial-gradient(ellipse 50% 45% at 70% 40%, rgba(139,135,200,0.04) 0%, transparent 55%),
+    radial-gradient(ellipse 80% 35% at 50% 100%, rgba(12,25,70,0.35) 0%, transparent 45%);
+}
+.hero-content { position: relative; z-index: 1; max-width: 760px; }
+
+.hero-eyebrow {
+  font-size: 10px; font-weight: 500;
+  letter-spacing: 0.32em; text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 36px;
+  opacity: 0; transform: translateY(16px);
+  animation: fadeUp 0.7s 0.3s cubic-bezier(0.25,0.46,0.45,0.94) forwards;
+}
+.hero-greeting {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(28px, 3vw, 40px);
+  font-weight: 300; font-style: italic; line-height: 1.1;
+  color: rgba(200,185,165,0.45);
+  margin-bottom: 12px;
+  opacity: 0; transform: translateY(20px);
+  animation: fadeUp 0.8s 0.4s cubic-bezier(0.25,0.46,0.45,0.94) forwards;
+}
+.hero-hook {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(32px, 4.2vw, 56px);
+  font-weight: 500; line-height: 1.18;
+  color: var(--ice);
+  margin-bottom: 40px;
+  opacity: 0; transform: translateY(20px);
+  animation: fadeUp 0.9s 0.55s cubic-bezier(0.25,0.46,0.45,0.94) forwards;
+  letter-spacing: -0.005em;
+}
+.hero-hook em { font-style: italic; color: var(--amber); font-weight: 500; }
+.hero-line {
+  width: 48px; height: 1px;
+  background: var(--accent); opacity: 0.45;
+  margin: 0 auto 28px;
+  opacity: 0;
+  animation: fadeUp 0.6s 0.75s cubic-bezier(0.25,0.46,0.45,0.94) forwards;
+}
+.hero-signature {
+  font-family: 'Cormorant Garamond', serif;
+  font-style: italic; font-weight: 400;
+  font-size: 17px; color: var(--warm);
+  opacity: 0; transform: translateY(16px);
+  animation: fadeUp 0.7s 0.9s cubic-bezier(0.25,0.46,0.45,0.94) forwards;
+}
+
+.scroll-hint {
+  position: absolute; bottom: 40px; left: 50%; transform: translateX(-50%);
+  display: flex; flex-direction: column; align-items: center;
+  opacity: 0; animation: fadeUp 0.6s 1.2s cubic-bezier(0.25,0.46,0.45,0.94) forwards;
+}
+.scroll-firefly {
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: var(--amber);
+  box-shadow: 0 0 10px rgba(212,165,118,0.6);
+  animation: scrollPulse 2.4s ease-in-out infinite;
+}
+@keyframes scrollPulse {
+  0%, 100% { transform: translateY(0); opacity: 0.7; }
+  50%      { transform: translateY(10px); opacity: 1; }
+}
+@keyframes fadeUp { to { opacity: 1; transform: translateY(0); } }
+
+.section { padding: 120px 40px; position: relative; }
+.section.alt { background: var(--bg-alt); }
+.section-inner { max-width: 980px; margin: 0 auto; position: relative; }
+.section-label {
+  font-size: 10px; font-weight: 500;
+  letter-spacing: 0.32em; text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 20px;
+}
+.section-heading {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(36px, 4vw, 52px);
+  font-weight: 400; line-height: 1.15;
+  color: var(--ice);
+  margin-bottom: 32px;
+  letter-spacing: -0.005em;
+}
+
+.opening-body {
+  font-size: 18px; font-weight: 300;
+  line-height: 1.85; letter-spacing: 0.01em;
+  color: var(--warm);
+  max-width: 680px;
+}
+.opening-body em { font-style: normal; color: var(--warm-bright); font-weight: 400; }
+
+.cases {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 40px;
+  margin-top: 48px;
+}
+@media (min-width: 860px) {
+  .cases { grid-template-columns: 1fr 1fr 1fr; gap: 28px; }
+}
+
+.case-card {
+  display: flex; flex-direction: column;
+  background: rgba(255,255,255,0.015);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  overflow: hidden;
+  text-decoration: none;
+  color: inherit;
+  transition: border-color 0.3s ease, transform 0.3s ease, background 0.3s ease;
+}
+.case-card:hover {
+  border-color: var(--accent-border);
+  background: var(--accent-dim);
+  transform: translateY(-3px);
+}
+.case-card-img {
+  width: 100%;
+  aspect-ratio: 1200 / 630;
+  background: #0a0f1e center/cover no-repeat;
+  border-bottom: 1px solid var(--border);
+}
+.case-card-body { padding: 26px 24px 28px; flex: 1; display: flex; flex-direction: column; }
+.case-card-number {
+  font-size: 10px; font-weight: 500;
+  letter-spacing: 0.32em; text-transform: uppercase;
+  color: var(--text-dim);
+  margin-bottom: 14px;
+}
+.case-card-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 26px; font-weight: 500;
+  color: var(--ice);
+  margin-bottom: 14px;
+  letter-spacing: -0.005em;
+  line-height: 1.2;
+}
+.case-card-blurb {
+  font-size: 14px; font-weight: 300;
+  line-height: 1.7;
+  color: var(--text-muted);
+  margin-bottom: 22px;
+  flex: 1;
+}
+.case-card-cta {
+  font-size: 10px; font-weight: 500;
+  letter-spacing: 0.24em; text-transform: uppercase;
+  color: var(--accent);
+  display: inline-flex; align-items: center; gap: 8px;
+}
+.case-card-cta::after {
+  content: '→';
+  transition: transform 0.25s ease;
+}
+.case-card:hover .case-card-cta::after { transform: translateX(4px); }
+
+.about-mini {
+  display: flex; align-items: center; gap: 20px;
+  padding: 28px 32px;
+  background: rgba(255,255,255,0.02);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  max-width: 680px;
+}
+.about-mini-portrait {
+  flex-shrink: 0;
+  width: 72px; height: 72px;
+  border-radius: 50%;
+  overflow: hidden;
+  border: 1px solid var(--accent-border);
+}
+.about-mini-portrait img { width: 100%; height: 100%; object-fit: cover; object-position: center 20%; }
+.about-mini-body { flex: 1; font-size: 14px; line-height: 1.7; color: var(--text-muted); font-weight: 300; }
+.about-mini-body strong { color: var(--ice); font-weight: 500; }
+.about-mini-link {
+  color: var(--accent); text-decoration: none;
+  font-size: 10px; font-weight: 500;
+  letter-spacing: 0.24em; text-transform: uppercase;
+  display: inline-flex; align-items: center; gap: 6px;
+  margin-top: 10px;
+}
+.about-mini-link::after { content: '→'; transition: transform 0.25s ease; }
+.about-mini-link:hover::after { transform: translateX(4px); }
+
+.closing {
+  padding: 140px 40px 160px;
+  text-align: center;
+  position: relative;
+}
+.closing::before {
+  content: ''; position: absolute; inset: 0; pointer-events: none;
+  background: radial-gradient(ellipse 55% 55% at 50% 50%, var(--accent-glow) 0%, transparent 65%);
+}
+.closing-inner { position: relative; z-index: 1; max-width: 640px; margin: 0 auto; }
+.closing-heading {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(32px, 3.6vw, 46px);
+  font-weight: 400; line-height: 1.22;
+  color: var(--ice);
+  margin-bottom: 28px;
+  letter-spacing: -0.005em;
+}
+.closing-body {
+  font-size: 16px; font-weight: 300;
+  line-height: 1.85;
+  color: var(--warm);
+  margin-bottom: 40px;
+}
+.closing-body em { font-style: normal; color: var(--warm-bright); font-weight: 400; }
+
+.contact-row {
+  display: flex; gap: 16px; justify-content: center; flex-wrap: wrap;
+  margin-top: 32px;
+}
+.contact-btn {
+  display: inline-flex; align-items: center; gap: 10px;
+  padding: 14px 26px;
+  background: var(--accent-dim);
+  border: 1px solid var(--accent-border);
+  border-radius: 100px;
+  color: var(--ice);
+  font-size: 11px; font-weight: 500;
+  letter-spacing: 0.22em; text-transform: uppercase;
+  text-decoration: none;
+  transition: background 0.25s ease, border-color 0.25s ease, transform 0.25s ease;
+}
+.contact-btn:hover {
+  background: rgba(246,195,67,0.18);
+  border-color: var(--accent);
+  transform: translateY(-2px);
+}
+.contact-btn.primary {
+  background: var(--accent);
+  color: var(--bg);
+  border-color: var(--accent);
+}
+.contact-btn.primary:hover { filter: brightness(1.08); }
+
+.contact-ask {
+  font-family: 'Cormorant Garamond', serif;
+  font-style: italic;
+  font-size: 20px; font-weight: 400;
+  color: var(--warm-bright);
+  margin-bottom: 24px;
+}
+
+.closing-signoff {
+  font-family: 'Cormorant Garamond', serif;
+  font-style: italic; font-weight: 400;
+  font-size: 20px;
+  color: var(--warm-bright);
+  margin-top: 20px;
+}
+
+@media (max-width: 640px) {
+  .section { padding: 80px 24px; }
+  .hero { padding: 80px 24px; }
+  .closing { padding: 100px 24px 120px; }
+  .about-mini { flex-direction: column; text-align: center; padding: 24px; }
+  .nav-back { top: 18px; left: 18px; }
+}
+</style>
+</head>
+<body>
+
+<div id="page-exit"></div>
+
+<a href="../../index.html" class="nav-back" id="backBtn" aria-label="Back to portfolio">
+  <span class="nav-back-arrow" aria-hidden="true"></span>
+  <span>Portfolio</span>
+</a>
+
+<div class="motes-canvas" id="motes" aria-hidden="true"></div>
+
+<div class="wordmark">AMBER GREY</div>
+
+<main>
+
+<section class="hero" aria-label="Introduction">
+  <div class="hero-content">
+    <div class="hero-eyebrow">For the Be My Eyes team</div>
+    <div class="hero-greeting">Hi —</div>
+    <h1 class="hero-hook">
+      You're building the connection between volunteers, AI, and the BLV community. I've spent the last year researching <em>how that ecosystem actually works</em> — and where the gaps live.
+    </h1>
+    <div class="hero-line"></div>
+    <div class="hero-signature">— Amber Grey</div>
+  </div>
+  <div class="scroll-hint" aria-hidden="true">
+    <span class="scroll-firefly"></span>
+  </div>
+</section>
+
+<section class="section alt" aria-label="A short introduction">
+  <div class="section-inner">
+    <div class="section-label">A short introduction</div>
+    <h2 class="section-heading">Why I'm writing</h2>
+    <p class="opening-body">
+      I'm a UX researcher trained in <em>systems thinking and mixed-method field research</em>. My work with Glidance mapped the Blind and Low Vision support ecosystem from the ground up — the tools people actually use, the workarounds they invent, and the support gaps no one's funding. I think it's directly relevant to what Be My Eyes is navigating now, as the product grows beyond volunteer-powered calls and into AI-mediated assistance.
+    </p>
+  </div>
+</section>
+
+<section class="section" aria-label="Relevant work">
+  <div class="section-inner">
+    <div class="section-label">Three projects</div>
+    <h2 class="section-heading">Most relevant to your work</h2>
+
+    <div class="cases">
+      <a class="case-card" href="../../glidance-case-study.html">
+        <div class="case-card-img" style="background-image: url('../../social-cards/glidance.png');"></div>
+        <div class="case-card-body">
+          <div class="case-card-number">Project 01</div>
+          <div class="case-card-title">Glidance — BLV Ecosystem Mapping</div>
+          <p class="case-card-blurb">The closest match — systems-level research on the same community you serve, surfacing previously unrecognized user segments and gaps in support access.</p>
+          <span class="case-card-cta">Read the case study</span>
+        </div>
+      </a>
+
+      <a class="case-card" href="../../dayli-case-study.html">
+        <div class="case-card-img" style="background-image: url('../../social-cards/dailylivinglabs.png');"></div>
+        <div class="case-card-body">
+          <div class="case-card-number">Project 02</div>
+          <div class="case-card-title">Dayli — AI Research System</div>
+          <p class="case-card-blurb">A custom AI-powered system for qualitative synthesis. Directly applicable to how Be My Eyes' AI-call data could surface behavioral patterns at scale.</p>
+          <span class="case-card-cta">Read the case study</span>
+        </div>
+      </a>
+
+      <a class="case-card" href="../../rewilded-case-study.html">
+        <div class="case-card-img" style="background-image: url('../../social-cards/rewilded.png');"></div>
+        <div class="case-card-body">
+          <div class="case-card-number">Project 03</div>
+          <div class="case-card-title">Rewilded — Trust &amp; Transparency Indices</div>
+          <p class="case-card-blurb">Original frameworks for evaluating institutional behavior, trust, and transparency — useful for the questions AI-mediated assistance is raising right now.</p>
+          <span class="case-card-cta">Read the case study</span>
+        </div>
+      </a>
+    </div>
+  </div>
+</section>
+
+<section class="section alt" aria-label="About Amber">
+  <div class="section-inner">
+    <div class="section-label">Who I am</div>
+    <h2 class="section-heading">A quick context</h2>
+    <div class="about-mini">
+      <div class="about-mini-portrait">
+        <img src="../../A Images/Amber Grey 3.webp" alt="Amber Grey">
+      </div>
+      <div class="about-mini-body">
+        <strong>UX researcher + interaction designer</strong> based in Fort Worth, TX. Master of Arts in Interaction Design, University of North Texas. Mixed-method field research, AI-assisted synthesis, systems thinking — with a focus on complex, real-world environments.
+        <br>
+        <a class="about-mini-link" href="../../about-me.html">More about me</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="closing" aria-label="Closing">
+  <div class="closing-inner">
+    <p class="contact-ask">"Want to talk? Twenty minutes is all I need."</p>
+    <h2 class="closing-heading">Let's talk</h2>
+    <p class="closing-body">
+      I'd be glad to walk your team through the Glidance findings — especially the <em>underserved BLV segments</em> we found that aren't being reached by the current assistive-tech landscape. I think there's a real conversation to be had about what that means for where Be My Eyes goes next.
+    </p>
+    <div class="contact-row">
+      <a class="contact-btn primary" href="mailto:amber@amber.design?subject=Hello%20from%20Be%20My%20Eyes">Email me</a>
+      <a class="contact-btn" href="../../A Resume/AMBER GREY_UX Research | Interaction Design.pdf" target="_blank" download>Resume</a>
+    </div>
+    <div class="closing-signoff">— Amber</div>
+  </div>
+</section>
+
+</main>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+  requestAnimationFrame(() => document.body.classList.add('visible'));
+
+  const canvas = document.getElementById('motes');
+  if (canvas) {
+    const count = window.innerWidth < 640 ? 14 : 28;
+    for (let i = 0; i < count; i++) {
+      const m = document.createElement('div');
+      m.className = 'mote';
+      m.style.left  = Math.random() * 100 + '%';
+      m.style.top   = (100 + Math.random() * 20) + '%';
+      m.style.animationDuration = (14 + Math.random() * 16) + 's';
+      m.style.animationDelay    = (Math.random() * 12) + 's';
+      m.style.opacity = (0.3 + Math.random() * 0.5).toFixed(2);
+      canvas.appendChild(m);
+    }
+  }
+
+  const back = document.getElementById('backBtn');
+  if (back) {
+    back.addEventListener('click', function(e) {
+      e.preventDefault();
+      document.getElementById('page-exit').classList.add('active');
+      setTimeout(() => { window.location.href = this.href; }, 320);
+    });
+  }
+});
+</script>
+
+</body>
+</html>
