@@ -119,13 +119,14 @@ html, body {
 /* ── LEFT PANEL: CANVAS ── */
 #canvasPanel {
   flex: 1; position: relative;
-  padding: 58px 0 24px 0;
+  padding: 58px 48px 24px 48px;
   overflow: hidden;
   display: flex; align-items: flex-start; justify-content: center;
 }
 #canvasArea {
   position: relative;
-  width: 580px; height: 580px;
+  width: 100%; max-width: 580px;
+  aspect-ratio: 1 / 1;
   border: 1px solid rgba(200, 190, 220, 0.25);
   border-radius: 16px;
   background: #ffffff;
