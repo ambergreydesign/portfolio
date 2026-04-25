@@ -1,0 +1,1345 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Crate — Studio</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400;1,600&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html, body {
+  width: 100%; min-height: 100%;
+  background-color: #0b1c26;
+  font-family: 'DM Sans', sans-serif;
+  color: rgba(230,215,185,0.86);
+}
+body {
+  min-height: 100vh;
+  padding: 28px 28px 56px;
+  opacity: 0;
+  transition: opacity 0.55s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  position: relative;
+}
+body.visible { opacity: 1; }
+
+body::before {
+  content: '';
+  position: fixed; inset: 0;
+  background-color: #0b1c26;
+  background-image: radial-gradient(ellipse 70% 60% at 50% 40%, rgba(28,46,58,0.5) 0%, rgba(8,16,22,0.95) 80%);
+  z-index: -3;
+}
+body::after {
+  content: '';
+  position: fixed; inset: 0;
+  background:
+    radial-gradient(ellipse 70% 55% at 50% 45%, rgba(215,175,115,0.04) 0%, transparent 80%),
+    repeating-linear-gradient(90deg, transparent 0, transparent 3px, rgba(215,175,115,0.012) 3px, rgba(215,175,115,0.012) 4px),
+    repeating-linear-gradient(0deg, transparent 0, transparent 3px, rgba(215,175,115,0.012) 3px, rgba(215,175,115,0.012) 4px);
+  mix-blend-mode: screen;
+  pointer-events: none;
+  z-index: -2;
+}
+
+/* Page transitions */
+#page-exit {
+  position: fixed; inset: 0;
+  background: #0b1c26;
+  opacity: 0; pointer-events: none;
+  transition: opacity 0.35s ease;
+  z-index: 9999;
+}
+#page-exit.active { opacity: 1; }
+#page-enter {
+  position: fixed; inset: 0;
+  background: #0b1c26;
+  opacity: 1; pointer-events: none;
+  transition: opacity 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  z-index: 9998;
+}
+#page-enter.gone { opacity: 0; pointer-events: none; }
+
+/* Accessibility */
+.skip-link {
+  position: absolute; left: -9999px; top: auto;
+  width: 1px; height: 1px; overflow: hidden;
+  font-family: 'DM Sans', sans-serif; font-size: 12px;
+  color: #be9b5a; background: rgba(11,28,38,0.95);
+  padding: 10px 18px; border-radius: 6px; z-index: 200;
+  text-decoration: none;
+}
+.skip-link:focus { position: fixed; left: 16px; top: 16px; width: auto; height: auto; }
+
+/* Back button */
+.back-link {
+  position: fixed;
+  top: 24px; left: 28px;
+  display: inline-flex; align-items: center; gap: 10px;
+  background: rgba(20,34,44,0.55);
+  backdrop-filter: blur(14px) saturate(1.2);
+  -webkit-backdrop-filter: blur(14px) saturate(1.2);
+  border: 1px solid rgba(190,155,90,0.3);
+  border-radius: 100px;
+  padding: 9px 18px 9px 14px;
+  cursor: pointer;
+  color: rgba(220,195,160,0.8);
+  font-family: 'DM Sans', sans-serif;
+  font-size: 10px; font-weight: 400;
+  letter-spacing: 0.22em; text-transform: uppercase;
+  transition: background 0.25s ease, color 0.25s ease, border-color 0.25s ease;
+  z-index: 500;
+}
+.back-link:hover {
+  background: rgba(30,48,60,0.75);
+  color: rgba(245,225,195,1);
+  border-color: rgba(220,190,130,0.6);
+}
+.back-arrow {
+  width: 14px; height: 14px; flex-shrink: 0;
+  border-left: 1.5px solid currentColor;
+  border-bottom: 1.5px solid currentColor;
+  transform: rotate(45deg) translateY(-1px);
+  display: block;
+}
+
+/* Frame */
+.crate-frame {
+  position: relative;
+  max-width: 1080px;
+  margin: 0 auto;
+  padding: 48px 42px 44px;
+  color: rgba(190,155,100,0.45);
+}
+.corner {
+  position: absolute;
+  width: 42px; height: 42px;
+  color: rgba(190,155,100,0.45);
+}
+.corner.tl { top: 0; left: 0; }
+.corner.tr { top: 0; right: 0; transform: scaleX(-1); }
+.corner.bl { bottom: 0; left: 0; transform: scaleY(-1); }
+.corner.br { bottom: 0; right: 0; transform: scale(-1); }
+.frame-ticks { position: absolute; inset: 0; pointer-events: none; }
+.vtick {
+  position: absolute; top: 0;
+  width: 1px; height: 18px;
+  background: rgba(190,155,100,0.4); opacity: 0.7;
+}
+.vtick.l { left: 21px; }
+.vtick.r { right: 21px; }
+
+/* Header */
+.crate-header {
+  border-bottom: 1px dotted rgba(220,185,125,0.22);
+  padding: 0 2px 24px;
+  margin-bottom: 38px;
+}
+.crate-eyebrow {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 9px; font-weight: 400;
+  letter-spacing: 0.42em; text-transform: uppercase;
+  color: rgba(220,185,125,0.55);
+  margin-bottom: 6px;
+}
+.crate-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 42px; font-weight: 400;
+  color: rgba(245,228,200,0.97);
+  line-height: 1.0;
+  margin-bottom: 12px;
+}
+.crate-sub {
+  font-family: 'Cormorant Garamond', serif;
+  font-style: italic; font-size: 16px;
+  color: rgba(210,190,155,0.6);
+  max-width: 520px; line-height: 1.65;
+}
+
+/* Views */
+.crate-views > section { display: none; }
+.crate-views > section.active { display: block; }
+
+/* Genre sections */
+.genre-rows { display: flex; flex-direction: column; gap: 40px; }
+.genre-head { margin-bottom: 12px; padding: 0 2px; }
+.genre-eyebrow {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 9px; font-weight: 400;
+  letter-spacing: 0.42em; text-transform: uppercase;
+  color: rgba(220,185,125,0.85);
+  margin-bottom: 3px;
+}
+.genre-blurb {
+  font-family: 'Cormorant Garamond', serif;
+  font-style: italic; font-size: 13.5px;
+  color: rgba(210,190,155,0.55);
+}
+
+/* Crate row */
+.crate-row {
+  display: flex;
+  align-items: flex-end;
+  gap: 5px;
+  padding: 0 0 14px;
+  border-bottom: 2px solid rgba(120,90,55,0.55);
+  box-shadow: inset 0 -10px 18px -10px rgba(0,0,0,0.4);
+  flex-wrap: wrap;
+  overflow: visible;
+}
+.crate-row-empty { min-height: 180px; }
+.crate-empty-hint {
+  font-family: 'Cormorant Garamond', serif;
+  font-style: italic; font-size: 13px;
+  color: rgba(210,190,155,0.5);
+  padding-left: 4px;
+  align-self: flex-end;
+  padding-bottom: 4px;
+}
+
+/* ═══════════════════════════════════════════ */
+/* SLEEVE — square LP cover face               */
+/* ═══════════════════════════════════════════ */
+.sleeve {
+  position: relative;
+  width: 120px;
+  height: var(--h, 120px);
+  background:
+    linear-gradient(180deg, rgba(0,0,0,0) 55%, rgba(0,0,0,0.5) 100%),
+    var(--c, #1a2030);
+  border: 1px solid rgba(255,255,255,0.05);
+  border-bottom: 1px solid rgba(0,0,0,0.5);
+  cursor: pointer;
+  display: flex; flex-direction: column;
+  justify-content: flex-end;
+  transform-origin: bottom center;
+  transition:
+    transform 0.26s cubic-bezier(0.34, 1.28, 0.64, 1),
+    filter 0.26s ease,
+    box-shadow 0.26s ease;
+  flex-shrink: 0;
+  overflow: hidden;
+  appearance: none;
+  -webkit-appearance: none;
+  box-shadow: 2px 2px 8px rgba(0,0,0,0.5);
+}
+.sleeve:focus-visible {
+  outline: 2px solid rgba(220,185,125,0.7);
+  outline-offset: 2px;
+  z-index: 3;
+}
+
+/* Mini vinyl disc graphic on the cover face */
+.sleeve::before {
+  content: '';
+  position: absolute;
+  top: 37%; left: 50%;
+  transform: translate(-50%, -50%);
+  width: 66px; height: 66px;
+  border-radius: 50%;
+  background: radial-gradient(circle at center,
+    var(--c) 0%, var(--c) 7.5%,
+    var(--lc, #b88c46) 8%, var(--lc, #b88c46) 26%,
+    #0c0c0c 26.5%, #181818 40%,
+    #0f0f0f 40.5%, #181818 55%,
+    #0c0c0c 55.5%, #181818 70%,
+    #0f0f0f 70.5%, #0d0d0d 100%
+  );
+  box-shadow: 0 0 0 1px rgba(255,255,255,0.04), 0 2px 8px rgba(0,0,0,0.6);
+  pointer-events: none;
+}
+
+/* Fan states — JS-driven */
+.sleeve.is-hovered {
+  transform: translateY(-16px);
+  filter: brightness(1.18);
+  box-shadow: 0 16px 28px rgba(0,0,0,0.65);
+  z-index: 2;
+}
+.sleeve.fan-l1 { transform: translateX(-5px) rotate(-3.5deg); }
+.sleeve.fan-l2 { transform: translateX(-2px) rotate(-1.2deg); }
+.sleeve.fan-r1 { transform: translateX(5px)  rotate(3.5deg); }
+.sleeve.fan-r2 { transform: translateX(2px)  rotate(1.2deg); }
+
+/* Text label strip at sleeve bottom */
+.sleeve-info {
+  position: relative; z-index: 1;
+  padding: 5px 7px 7px;
+  display: flex; flex-direction: column; gap: 1px;
+}
+.sleeve-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-style: italic;
+  font-size: 9px;
+  color: rgba(245,228,200,0.9);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  line-height: 1.2;
+}
+.sleeve-artist {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 7px; font-weight: 400;
+  letter-spacing: 0.08em;
+  color: rgba(220,185,125,0.6);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Add slot */
+.sleeve-add {
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  gap: 6px;
+  width: 120px; height: 120px;
+  background: transparent;
+  border: 1.5px dashed rgba(220,185,125,0.2);
+  cursor: pointer; flex-shrink: 0;
+  color: rgba(220,185,125,0.4);
+  appearance: none;
+  transition: background 0.25s ease, border-color 0.25s ease, color 0.25s ease;
+}
+.sleeve-add:hover {
+  background: rgba(220,185,125,0.05);
+  border-color: rgba(220,185,125,0.45);
+  color: rgba(245,210,150,0.85);
+}
+.sleeve-add-icon {
+  font-size: 18px; font-weight: 300; line-height: 1;
+}
+.sleeve-add-label {
+  font-size: 7px; font-weight: 400;
+  letter-spacing: 0.28em; text-transform: uppercase;
+  text-align: center;
+}
+
+/* ═══════════════════════════════════════════ */
+/* LINER VIEW (detail)                         */
+/* ═══════════════════════════════════════════ */
+
+.liner-card {
+  background: linear-gradient(180deg, rgba(245,228,200,0.038) 0%, rgba(220,185,125,0.018) 100%);
+  border: 1px solid rgba(220,185,125,0.13);
+  border-radius: 8px;
+  padding: 36px 40px;
+  display: grid;
+  grid-template-columns: 270px 1fr;
+  gap: 48px;
+  align-items: start;
+}
+
+/* Disc column */
+.disc-col {
+  display: flex; flex-direction: column;
+  align-items: center; gap: 20px;
+}
+
+/* Turntable scene */
+.turntable-scene {
+  position: relative;
+  width: 260px; height: 260px;
+  flex-shrink: 0;
+  overflow: visible;
+}
+.tt-platter {
+  position: absolute;
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  width: 234px; height: 234px;
+  border-radius: 50%;
+  background: radial-gradient(circle at center,
+    #1d1b17 0%,
+    #131210 28%,
+    #0e0d0b 55%,
+    #090807 100%
+  );
+  box-shadow:
+    0 0 0 1px rgba(255,255,255,0.025),
+    0 14px 56px rgba(0,0,0,0.96),
+    inset 0 0 28px rgba(0,0,0,0.65);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.vinyl-disc {
+  width: 200px; height: 200px;
+  border-radius: 50%;
+  background:
+    repeating-radial-gradient(
+      circle at center,
+      #0b0b0b 0px, #191919 0.8px, #0f0f0f 1.6px, #0b0b0b 2.4px
+    );
+  animation: vinylSpin 3.8s linear infinite;
+  animation-play-state: paused;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.75), inset 0 0 0 1px rgba(255,255,255,0.03);
+  position: relative;
+  flex-shrink: 0;
+}
+.vinyl-disc.is-playing {
+  animation-play-state: running;
+}
+@keyframes vinylSpin {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+/* Label ring */
+.vinyl-disc::after {
+  content: '';
+  position: absolute;
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  width: 66px; height: 66px;
+  border-radius: 50%;
+  background: var(--lc, #b88c46);
+  box-shadow: 0 0 0 1px rgba(255,255,255,0.07), inset 0 1px 0 rgba(255,255,255,0.1);
+}
+.vinyl-hole {
+  position: absolute;
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  width: 10px; height: 10px;
+  border-radius: 50%;
+  background: #0b0b0b;
+  z-index: 2;
+  pointer-events: none;
+}
+/* Tonearm SVG overlay */
+.tt-arm-svg {
+  position: absolute;
+  top: 0; left: 0;
+  width: 260px; height: 260px;
+  pointer-events: none;
+  overflow: visible;
+}
+
+/* Liner text column */
+.liner-eyebrow {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 9px; font-weight: 400;
+  letter-spacing: 0.42em; text-transform: uppercase;
+  color: rgba(220,185,125,0.5);
+  margin-bottom: 8px;
+}
+.liner-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 32px; font-weight: 400;
+  color: rgba(245,228,200,0.97);
+  line-height: 1.1;
+  margin-bottom: 4px;
+}
+.liner-artist {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 15px; font-weight: 300;
+  color: rgba(220,185,125,0.75);
+  margin-bottom: 3px;
+}
+.liner-year {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 11px; font-weight: 300;
+  color: rgba(200,175,135,0.38);
+  margin-bottom: 22px;
+}
+.liner-note {
+  font-family: 'Cormorant Garamond', serif;
+  font-style: italic; font-size: 15.5px;
+  color: rgba(210,188,155,0.78);
+  line-height: 1.75;
+  border-left: 2px solid rgba(220,185,125,0.18);
+  padding-left: 16px;
+  margin-bottom: 8px;
+}
+.liner-meta {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 10.5px; font-weight: 300;
+  color: rgba(200,175,135,0.38);
+  margin-bottom: 30px;
+}
+
+/* Needle drops */
+.drops-section {
+  border-top: 1px dotted rgba(220,185,125,0.16);
+  padding-top: 22px;
+}
+.drops-label {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 9px; font-weight: 400;
+  letter-spacing: 0.42em; text-transform: uppercase;
+  color: rgba(220,185,125,0.42);
+  margin-bottom: 14px;
+}
+.drop-item {
+  display: flex; gap: 12px;
+  margin-bottom: 12px; align-items: flex-start;
+}
+.drop-avatar {
+  width: 28px; height: 28px; border-radius: 50%;
+  background: rgba(220,185,125,0.08);
+  border: 1px solid rgba(220,185,125,0.22);
+  display: flex; align-items: center; justify-content: center;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 9px; font-weight: 500;
+  color: rgba(220,185,125,0.75);
+  flex-shrink: 0;
+  letter-spacing: 0.05em;
+}
+.drop-body { flex: 1; min-width: 0; }
+.drop-text {
+  font-family: 'Cormorant Garamond', serif;
+  font-style: italic; font-size: 14px;
+  color: rgba(210,185,150,0.72);
+  line-height: 1.6;
+  margin-bottom: 2px;
+}
+.drop-text::before { content: '\201C'; }
+.drop-text::after  { content: '\201D'; }
+.drop-meta {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 10px; font-weight: 300;
+  color: rgba(200,175,135,0.32);
+}
+.drops-empty {
+  font-family: 'Cormorant Garamond', serif;
+  font-style: italic; font-size: 13.5px;
+  color: rgba(200,175,135,0.38);
+  margin-bottom: 16px;
+}
+
+/* Needle drop form */
+.drop-form {
+  margin-top: 16px;
+  padding-top: 16px;
+  border-top: 1px solid rgba(220,185,125,0.08);
+  display: flex; flex-direction: column; gap: 10px;
+}
+.drop-form-row { display: flex; gap: 10px; }
+.drop-form-row > div { flex: 1; min-width: 0; }
+.drop-field-label {
+  display: block;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 8px; font-weight: 400;
+  letter-spacing: 0.3em; text-transform: uppercase;
+  color: rgba(220,185,125,0.42);
+  margin-bottom: 5px;
+}
+.drop-input {
+  width: 100%;
+  background: rgba(255,255,255,0.032);
+  border: 1px solid rgba(220,185,125,0.16);
+  border-radius: 4px;
+  padding: 9px 12px;
+  color: rgba(245,228,200,0.85);
+  font-family: 'DM Sans', sans-serif;
+  font-size: 12.5px; font-weight: 300;
+  outline: none;
+  transition: border-color 0.2s ease, background 0.2s ease;
+  resize: vertical;
+}
+.drop-input:focus {
+  border-color: rgba(220,185,125,0.48);
+  background: rgba(255,255,255,0.055);
+}
+.drop-input::placeholder { color: rgba(200,175,135,0.32); }
+
+/* Buttons */
+.liner-actions {
+  display: flex; gap: 12px; flex-wrap: wrap;
+  margin-top: 16px;
+}
+.liner-btn {
+  display: inline-flex; align-items: center; justify-content: center;
+  padding: 9px 20px;
+  border: 1px solid rgba(220,185,125,0.32);
+  border-radius: 5px;
+  background: transparent;
+  color: rgba(220,185,125,0.78);
+  font-family: 'DM Sans', sans-serif;
+  font-size: 9px; font-weight: 500;
+  letter-spacing: 0.28em; text-transform: uppercase;
+  cursor: pointer;
+  transition: background 0.25s ease, color 0.25s ease, border-color 0.25s ease;
+}
+.liner-btn:hover {
+  background: rgba(30,48,60,0.85);
+  color: rgba(255,235,195,1);
+  border-color: rgba(220,190,130,0.65);
+}
+.liner-btn.primary {
+  background: rgba(220,185,125,0.12);
+  color: rgba(245,215,155,0.95);
+  border-color: rgba(220,185,125,0.5);
+}
+.liner-btn.primary:hover {
+  background: rgba(220,185,125,0.92);
+  color: rgba(11,28,38,1);
+}
+
+/* ═══════════════════════════════════════════ */
+/* ADD VIEW                                    */
+/* ═══════════════════════════════════════════ */
+.add-back {
+  display: inline-flex; align-items: center; gap: 8px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 10px; font-weight: 400;
+  letter-spacing: 0.22em; text-transform: uppercase;
+  color: rgba(220,195,160,0.65);
+  cursor: pointer; background: none; border: none;
+  padding: 4px 0; margin-bottom: 28px;
+  transition: color 0.25s ease;
+}
+.add-back:hover { color: rgba(245,225,195,1); }
+
+.add-card {
+  background: linear-gradient(180deg, rgba(245,228,200,0.038) 0%, rgba(220,185,125,0.018) 100%);
+  border: 1px solid rgba(220,185,125,0.13);
+  border-radius: 8px;
+  padding: 36px 40px;
+  max-width: 560px;
+}
+.add-eyebrow {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 9px; font-weight: 400;
+  letter-spacing: 0.42em; text-transform: uppercase;
+  color: rgba(220,185,125,0.5);
+  margin-bottom: 8px;
+}
+.add-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 26px; font-weight: 400;
+  color: rgba(245,228,200,0.95);
+  margin-bottom: 5px;
+}
+.add-sub {
+  font-family: 'Cormorant Garamond', serif;
+  font-style: italic; font-size: 14px;
+  color: rgba(200,175,135,0.52);
+  margin-bottom: 26px;
+}
+.add-fields { display: flex; flex-direction: column; gap: 16px; }
+.add-field-row { display: flex; gap: 12px; }
+.add-field-row > div { flex: 1; min-width: 0; }
+.add-label {
+  display: block;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 8px; font-weight: 400;
+  letter-spacing: 0.3em; text-transform: uppercase;
+  color: rgba(220,185,125,0.42);
+  margin-bottom: 5px;
+}
+.opt { opacity: 0.6; font-style: italic; letter-spacing: 0; }
+.add-input {
+  width: 100%;
+  background: rgba(255,255,255,0.032);
+  border: 1px solid rgba(220,185,125,0.16);
+  border-radius: 4px;
+  padding: 9px 12px;
+  color: rgba(245,228,200,0.85);
+  font-family: 'DM Sans', sans-serif;
+  font-size: 13px; font-weight: 300;
+  outline: none;
+  transition: border-color 0.2s ease, background 0.2s ease;
+  resize: vertical;
+}
+.add-input:focus {
+  border-color: rgba(220,185,125,0.48);
+  background: rgba(255,255,255,0.055);
+}
+.add-input::placeholder { color: rgba(200,175,135,0.32); }
+.add-actions { display: flex; gap: 12px; margin-top: 22px; }
+
+/* Now Spinning section */
+.now-spinning-block { margin-bottom: 44px; }
+.now-spinning-eyebrow { color: rgba(220,185,125,1) !important; }
+
+.sleeve.is-featured {
+  box-shadow: 0 0 0 2px rgba(220,185,125,0.45), 2px 2px 8px rgba(0,0,0,0.5);
+  animation: sleeveGlow 2.4s ease-in-out infinite;
+}
+@keyframes sleeveGlow {
+  0%, 100% { box-shadow: 0 0 0 2px rgba(220,185,125,0.3), 0 0 14px rgba(220,185,125,0.08); }
+  50%       { box-shadow: 0 0 0 2px rgba(220,185,125,0.65), 0 0 22px rgba(220,185,125,0.18); }
+}
+
+/* Embedded player in liner view */
+.player-section {
+  margin-bottom: 24px;
+  padding-bottom: 24px;
+  border-bottom: 1px dotted rgba(220,185,125,0.16);
+}
+.player-label {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 9px; font-weight: 400;
+  letter-spacing: 0.42em; text-transform: uppercase;
+  color: rgba(220,185,125,0.42);
+  margin-bottom: 10px;
+}
+.player-section iframe {
+  display: block;
+  border-radius: 8px;
+  width: 100%;
+}
+.spotify-link {
+  display: inline-flex; align-items: center; gap: 7px;
+  padding: 8px 14px;
+  background: rgba(30,215,96,0.08);
+  border: 1px solid rgba(30,215,96,0.22);
+  border-radius: 100px;
+  color: rgba(30,215,96,0.75);
+  font-family: 'DM Sans', sans-serif;
+  font-size: 9px; font-weight: 400;
+  letter-spacing: 0.28em; text-transform: uppercase;
+  text-decoration: none;
+  transition: background 0.2s, border-color 0.2s, color 0.2s;
+}
+.spotify-link:hover {
+  background: rgba(30,215,96,0.15);
+  border-color: rgba(30,215,96,0.45);
+  color: rgba(30,215,96,1);
+}
+}
+
+/* Stats */
+.crate-stats {
+  display: grid; grid-template-columns: repeat(2, 1fr);
+  margin-top: 44px;
+  border: 1px solid rgba(220,185,125,0.1);
+  border-radius: 6px; overflow: hidden;
+}
+.stat {
+  padding: 16px 22px;
+  border-right: 1px solid rgba(220,185,125,0.1);
+}
+.stat:last-child { border-right: none; }
+.stat-num {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 28px; font-weight: 400;
+  color: rgba(245,228,200,0.88);
+  line-height: 1; margin-bottom: 4px;
+}
+.stat-lbl {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 9px; font-weight: 400;
+  letter-spacing: 0.22em; text-transform: uppercase;
+  color: rgba(220,185,125,0.38);
+}
+
+.wordmark {
+  position: fixed; bottom: 18px; left: 24px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 10px; font-weight: 300;
+  letter-spacing: 0.22em;
+  color: rgba(210,185,140,0.22);
+  pointer-events: none; z-index: 10;
+}
+
+/* Responsive */
+@media (max-width: 860px) {
+  .liner-card {
+    grid-template-columns: 1fr;
+    padding: 26px 24px;
+    gap: 28px;
+  }
+  .disc-col { flex-direction: row; align-items: center; gap: 22px; }
+  .crate-frame { padding: 44px 22px 40px; }
+}
+@media (max-width: 580px) {
+  body { padding: 12px 12px 44px; }
+  .crate-frame { padding: 36px 10px 30px; }
+  .add-field-row { flex-direction: column; }
+  .add-card { padding: 24px 20px; }
+  .liner-card { padding: 22px 18px; }
+  .drop-form-row { flex-direction: column; }
+  .crate-title { font-size: 34px; }
+}
+
+:focus-visible { outline: 2px solid rgba(220,185,125,0.7); outline-offset: 3px; }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+</style>
+<script src="https://open.spotify.com/embed/iframe-api/v1" async></script>
+</head>
+<body>
+
+<a href="#main-content" class="skip-link">Skip to content</a>
+<div id="page-exit" aria-hidden="true"></div>
+<div id="page-enter" aria-hidden="true"></div>
+<div class="wordmark" aria-hidden="true">Amber Grey</div>
+
+<button class="back-link" id="backLink" aria-label="Back to the studio">
+  <span class="back-arrow" aria-hidden="true"></span>
+  <span id="backText">Studio</span>
+</button>
+
+<main id="main-content">
+<div class="crate-frame">
+
+  <div class="frame-ticks" aria-hidden="true">
+    <span class="vtick l"></span>
+    <span class="vtick r"></span>
+  </div>
+
+  <svg class="corner tl" viewBox="0 0 42 42" aria-hidden="true">
+    <path d="M2 40 V9 Q2 2 9 2 H40" stroke="currentColor" stroke-width="1" fill="none"/>
+    <path d="M7 40 V13 Q7 7 13 7 H40" stroke="currentColor" stroke-width="0.6" fill="none" opacity="0.6"/>
+    <circle cx="9" cy="9" r="2.2" fill="none" stroke="currentColor" stroke-width="0.8"/>
+    <circle cx="9" cy="9" r="1" fill="currentColor"/>
+  </svg>
+  <svg class="corner tr" viewBox="0 0 42 42" aria-hidden="true">
+    <path d="M2 40 V9 Q2 2 9 2 H40" stroke="currentColor" stroke-width="1" fill="none"/>
+    <path d="M7 40 V13 Q7 7 13 7 H40" stroke="currentColor" stroke-width="0.6" fill="none" opacity="0.6"/>
+    <circle cx="9" cy="9" r="2.2" fill="none" stroke="currentColor" stroke-width="0.8"/>
+    <circle cx="9" cy="9" r="1" fill="currentColor"/>
+  </svg>
+  <svg class="corner bl" viewBox="0 0 42 42" aria-hidden="true">
+    <path d="M2 40 V9 Q2 2 9 2 H40" stroke="currentColor" stroke-width="1" fill="none"/>
+    <path d="M7 40 V13 Q7 7 13 7 H40" stroke="currentColor" stroke-width="0.6" fill="none" opacity="0.6"/>
+    <circle cx="9" cy="9" r="2.2" fill="none" stroke="currentColor" stroke-width="0.8"/>
+    <circle cx="9" cy="9" r="1" fill="currentColor"/>
+  </svg>
+  <svg class="corner br" viewBox="0 0 42 42" aria-hidden="true">
+    <path d="M2 40 V9 Q2 2 9 2 H40" stroke="currentColor" stroke-width="1" fill="none"/>
+    <path d="M7 40 V13 Q7 7 13 7 H40" stroke="currentColor" stroke-width="0.6" fill="none" opacity="0.6"/>
+    <circle cx="9" cy="9" r="2.2" fill="none" stroke="currentColor" stroke-width="0.8"/>
+    <circle cx="9" cy="9" r="1" fill="currentColor"/>
+  </svg>
+
+  <header class="crate-header">
+    <div class="crate-eyebrow">A Quiet Collection</div>
+    <h1 class="crate-title">The Crate</h1>
+    <p class="crate-sub">Records left here by visitors to the studio. Pull one out to hear why it stayed with someone — and leave a needle drop if it's in yours too.</p>
+  </header>
+
+  <div class="crate-views">
+    <section id="crateView"  class="active" aria-label="Record crate"></section>
+    <section id="linerView"  aria-label="Record liner notes"></section>
+    <section id="addView"    aria-label="Drop a record in the crate"></section>
+  </div>
+
+</div>
+</main>
+
+<script>
+'use strict';
+
+/* ─────────────────────────────────────────── */
+/* NAVIGATION                                  */
+/* ─────────────────────────────────────────── */
+function navigateTo(url) {
+  document.body.style.transition = 'opacity 0.3s ease';
+  document.body.style.opacity = '0.4';
+  setTimeout(() => document.getElementById('page-exit').classList.add('active'), 140);
+  setTimeout(() => { window.location.href = url; }, 420);
+}
+
+let backMode = 'studio';
+const backLinkEl = document.getElementById('backLink');
+const backTextEl = document.getElementById('backText');
+
+function setBackMode(mode) {
+  backMode = mode;
+  backTextEl.textContent = mode === 'crate' ? 'Back to the crate' : 'Studio';
+  backLinkEl.setAttribute('aria-label', mode === 'crate' ? 'Back to the crate' : 'Back to the studio');
+}
+backLinkEl.addEventListener('click', () => {
+  if (backMode === 'crate') showCrateView();
+  else navigateTo('index.html');
+});
+
+requestAnimationFrame(() => requestAnimationFrame(() => {
+  document.getElementById('page-enter').classList.add('gone');
+  document.body.classList.add('visible');
+}));
+window.addEventListener('pageshow', e => {
+  if (e.persisted) {
+    const x = document.getElementById('page-exit');
+    if (x) x.classList.remove('active');
+    document.body.style.opacity = '';
+    document.body.classList.add('visible');
+  }
+});
+
+/* ─────────────────────────────────────────── */
+/* DATA                                        */
+/* ─────────────────────────────────────────── */
+
+/* ── Update these two fields each week ──────
+   spotifyUrl: open Spotify → Share → Copy Link
+   swap the track ID in the embed URL below    */
+const NOW_SPINNING = {
+  id: 999,
+  title: 'Mr. Blue Sky',
+  artist: 'Electric Light Orchestra',
+  year: 1977,
+  c: '#0b1428', lc: '#d4a820',
+  h: 122,
+  addedBy: 'Amber', city: 'Fort Worth', date: 'Right now',
+  note: 'This one always makes me smile.',
+  embedUrl: 'https://open.spotify.com/embed/track/2RlgNHKcydI9sayD2Df2xp?utm_source=generator&theme=0'
+};
+
+const GENRES = [
+  {
+    id: 'classic-rock',
+    label: '70s Classic Rock',
+    blurb: 'The greatest decade of music, so far.',
+    records: [
+      { id:1001, title:'Carry On Wayward Son', artist:'Kansas', year:1976, c:'#1c140a', lc:'#c08030', h:122, addedBy:'Amber', city:'Fort Worth', date:'On the shelf', note:'The intro riff still hits like a wall. Every single time.', embedUrl:'https://open.spotify.com/embed/track/4DMKwE2E2iYDKY01C335Uw?utm_source=generator&theme=0' },
+      { id:1002, title:'Magic Man', artist:'Heart', year:1976, c:'#1e0c10', lc:'#904050', h:120, addedBy:'Amber', city:'Fort Worth', date:'On the shelf', note:'Ann Wilson\'s voice is the whole argument.', embedUrl:'https://open.spotify.com/embed/track/3vXqCzfBSihMOcxbsNmI85?utm_source=generator&theme=0' },
+      { id:1003, title:'Deacon Blues', artist:'Steely Dan', year:1977, c:'#0c1018', lc:'#4a6090', h:124, addedBy:'Amber', city:'Fort Worth', date:'On the shelf', note:'A song about choosing to be a loser. It makes losing sound beautiful.', embedUrl:'https://open.spotify.com/embed/track/7Hx2EA4wGaxtsiZCVVLV1i?utm_source=generator&theme=0' },
+      { id:1004, title:'Second Hand News', artist:'Fleetwood Mac', year:1977, c:'#141618', lc:'#8090a0', h:121, addedBy:'Amber', city:'Fort Worth', date:'On the shelf', note:'Rumours is the perfect album and this is how you open it.', embedUrl:'https://open.spotify.com/embed/track/1YSqoDlCU6HYVYVb4MwExM?utm_source=generator&theme=0' },
+      { id:1005, title:'Rocky Mountain Way', artist:'Joe Walsh', year:1973, c:'#1a1004', lc:'#b87030', h:122, addedBy:'Amber', city:'Fort Worth', date:'On the shelf', note:'Talk box and swagger. Pure 70s.', embedUrl:'https://open.spotify.com/embed/track/2XHjFJVXYlEzoDvN82h8s5?utm_source=generator&theme=0' },
+      { id:1006, title:'Lovin\', Touchin\', Squeezin\'', artist:'Journey', year:1979, c:'#0a0e1a', lc:'#3a5080', h:123, addedBy:'Amber', city:'Fort Worth', date:'On the shelf', note:'Pre-radio Journey. Different band entirely.', embedUrl:'https://open.spotify.com/embed/track/0VQ0n5gMgJLNixG8BfWBT5?utm_source=generator&theme=0' },
+      { id:1007, title:'Bicycle Race', artist:'Queen', year:1978, c:'#10080e', lc:'#8a4090', h:120, addedBy:'Amber', city:'Fort Worth', date:'On the shelf', note:'Freddie Mercury arguing with himself about pop culture for four minutes.', embedUrl:'https://open.spotify.com/embed/track/3lUx27TOwV2nAiKwnYYXxe?utm_source=generator&theme=0' },
+      { id:1008, title:'A Horse With No Name', artist:'America', year:1971, c:'#1a1408', lc:'#a08040', h:122, addedBy:'Amber', city:'Fort Worth', date:'On the shelf', note:'Sounds like heat and space. Produced by George Martin.', embedUrl:'https://open.spotify.com/embed/track/54eZmuggBFJbV7k248bTTt?utm_source=generator&theme=0' },
+      { id:1009, title:'Time for Me to Fly', artist:'REO Speedwagon', year:1978, c:'#180a06', lc:'#903820', h:121, addedBy:'Amber', city:'Fort Worth', date:'On the shelf', note:'The cleanest heartbreak song in the genre.', embedUrl:'https://open.spotify.com/embed/track/4Y11eYkQQbrG5eSbQdSOMi?utm_source=generator&theme=0' },
+      { id:1010, title:'Green River', artist:'Creedence Clearwater Revival', year:1969, c:'#0e1006', lc:'#506030', h:123, addedBy:'Amber', city:'Fort Worth', date:'On the shelf', note:'CCR made three minutes sound like a whole summer afternoon.', embedUrl:'https://open.spotify.com/embed/track/11DjZQEZ69EXLo77HVj6yW?utm_source=generator&theme=0' },
+      { id:1011, title:'The Long and Winding Road', artist:'The Beatles', year:1970, c:'#1a1606', lc:'#c0a040', h:122, addedBy:'Amber', city:'Fort Worth', date:'On the shelf', note:'The last thing they ever released. It earned the weight.', embedUrl:'https://open.spotify.com/embed/track/2rG2c14sIgzyIRdbw3edaL?utm_source=generator&theme=0' },
+    ]
+  },
+  {
+    id: 'pop-rb',
+    label: 'Pop & R&B',
+    blurb: 'Songs that know exactly what they are.',
+    records: [
+      { id:2001, title:'Kiss It Better', artist:'Rihanna', year:2016, c:'#1a0810', lc:'#802848', h:122, addedBy:'Amber', city:'Fort Worth', date:'On the shelf', note:'Seven years between albums and she came back with this.', embedUrl:'https://open.spotify.com/embed/track/0UHB9METy4VCXNgkcGqHqS?utm_source=generator&theme=0' },
+      { id:2002, title:'Been Like This', artist:'Doja Cat', year:2023, c:'#10060e', lc:'#783060', h:120, addedBy:'Amber', city:'Fort Worth', date:'On the shelf', note:'Her best mode: unbothered and precise.', embedUrl:'https://open.spotify.com/embed/track/7y3xU9vEC1s8DSuuoSYKih?utm_source=generator&theme=0' },
+      { id:2003, title:'Anxiety', artist:'Megan Thee Stallion', year:2024, c:'#081414', lc:'#204858', h:124, addedBy:'Amber', city:'Fort Worth', date:'On the shelf', note:'The rap verse at the end is the whole point.', embedUrl:'https://open.spotify.com/embed/track/6Ve9MNsl8OFg6rHd227bYh?utm_source=generator&theme=0' },
+      { id:2004, title:'2 On', artist:'Tinashe', year:2014, c:'#10081a', lc:'#482878', h:121, addedBy:'Amber', city:'Fort Worth', date:'On the shelf', note:'Should have been inescapable. Was just ahead of its time.', embedUrl:'https://open.spotify.com/embed/track/3jVtllWS5CFFWLQng8sKsr?utm_source=generator&theme=0' },
+      { id:2005, title:'All For Me', artist:'Mariah the Scientist', year:2021, c:'#180c0a', lc:'#984848', h:122, addedBy:'Amber', city:'Fort Worth', date:'On the shelf', note:'The quietest flex in R&B right now.', embedUrl:'https://open.spotify.com/embed/track/7vIDhgD7WWTMpvgJebImoN?utm_source=generator&theme=0' },
+      { id:2006, title:'Snooze', artist:'SZA', year:2022, c:'#0c1008', lc:'#305028', h:120, addedBy:'Amber', city:'Fort Worth', date:'On the shelf', note:'The production on this is a masterclass in doing less.', embedUrl:'https://open.spotify.com/embed/track/4iZ4pt7kvcaH6Yo8UoZ4s2?utm_source=generator&theme=0' },
+      { id:2007, title:'Escapism', artist:'RAYE', year:2022, c:'#060c18', lc:'#183870', h:123, addedBy:'Amber', city:'Fort Worth', date:'On the shelf', note:'UK girl went and made the bravest pop song of the year.', embedUrl:'https://open.spotify.com/embed/track/2VOZniNxFIDl8ydLltrMNb?utm_source=generator&theme=0' },
+      { id:2008, title:'Consume', artist:'Chase Atlantic, Goon Des Garcons', year:2018, c:'#0c0a12', lc:'#3a2858', h:121, addedBy:'Amber', city:'Fort Worth', date:'On the shelf', note:'Dark pop that actually commits to being dark.', embedUrl:'https://open.spotify.com/embed/track/0X2bh8NVQ8svDQIn2AdCbW?utm_source=generator&theme=0' },
+      { id:2009, title:'Take Our Time', artist:'TLC', year:1999, c:'#1a0808', lc:'#702828', h:122, addedBy:'Amber', city:'Fort Worth', date:'On the shelf', note:'Deep cut. Fanmail at its most unhurried.', embedUrl:'https://open.spotify.com/embed/track/1N0s2KdApLZr7YvKgIEQkW?utm_source=generator&theme=0' },
+      { id:2010, title:'imgonnagetyouback', artist:'Taylor Swift', year:2024, c:'#14100c', lc:'#b08040', h:120, addedBy:'Amber', city:'Fort Worth', date:'On the shelf', note:'The fun version of a revenge song. She earned the right to make it.', embedUrl:'https://open.spotify.com/embed/track/1kcwpPDQnqEqmezzXdJTCP?utm_source=generator&theme=0' },
+      { id:2011, title:'Dress On', artist:'Justin Timberlake feat. Timbaland', year:2024, c:'#080808', lc:'#303048', h:124, addedBy:'Amber', city:'Fort Worth', date:'On the shelf', note:'Timbaland still the best in the business.', embedUrl:'https://open.spotify.com/embed/track/3HaW1TqoBUrTwEYmtguKTa?utm_source=generator&theme=0' },
+      { id:2012, title:'Formation', artist:'Beyoncé', year:2016, c:'#180606', lc:'#882020', h:122, addedBy:'Amber', city:'Fort Worth', date:'On the shelf', note:'The Super Bowl announcement that doubled as a thesis statement.', embedUrl:'https://open.spotify.com/embed/track/6g0Orsxv6glTJCt4cHsRsQ?utm_source=generator&theme=0' },
+    ]
+  },
+  {
+    id: 'rock-alt',
+    label: 'Rock & Alt',
+    blurb: 'Loud where it needs to be. Quiet when that\'s harder.',
+    records: [
+      { id:3001, title:'Euclid', artist:'Sleep Token', year:2023, c:'#0e0e0e', lc:'#585858', h:122, addedBy:'Amber', city:'Fort Worth', date:'On the shelf', note:'The build in this song is one of the best in modern rock.', embedUrl:'https://open.spotify.com/embed/track/3hZIvVYZWsuFpdWdXQFgKx?utm_source=generator&theme=0' },
+      { id:3002, title:'Interlude (The Erised Remix)', artist:'Enter Shikari', year:2019, c:'#080e10', lc:'#204040', h:120, addedBy:'Amber', city:'Fort Worth', date:'On the shelf', note:'Enter Shikari remixing themselves and winning.', embedUrl:'https://open.spotify.com/embed/track/4l6Dx6PRq29ZMm8IArR6XP?utm_source=generator&theme=0' },
+      { id:3003, title:'Without Me', artist:'Dayseeker', year:2022, c:'#10080e', lc:'#402040', h:124, addedBy:'Amber', city:'Fort Worth', date:'On the shelf', note:'Post-hardcore that hits like a confession.', embedUrl:'https://open.spotify.com/embed/track/1d46ed3h4U9ws3YsvUOMon?utm_source=generator&theme=0' },
+      { id:3004, title:'Outside', artist:'breakkaway', year:2023, c:'#0c0e10', lc:'#384858', h:121, addedBy:'Amber', city:'Fort Worth', date:'On the shelf', note:'Found this one on a late-night scroll. Stayed.', embedUrl:'https://open.spotify.com/embed/track/5w4XPMyvehdEJdtU4ZU67B?utm_source=generator&theme=0' },
+      { id:3005, title:'FLUORIDEINTHEHARDSELTZER', artist:'Bilmuri, Jon Mess, Dayseeker', year:2021, c:'#0c0c0c', lc:'#383030', h:122, addedBy:'Amber', city:'Fort Worth', date:'On the shelf', note:'The song name is the bit. The song itself is serious.', embedUrl:'https://open.spotify.com/embed/track/58NXzeA8zItIXVswwmfZC7?utm_source=generator&theme=0' },
+      { id:3006, title:'Her Monologue', artist:'Issues feat. Snow Tha Product', year:2016, c:'#080c0e', lc:'#1c3840', h:120, addedBy:'Amber', city:'Fort Worth', date:'On the shelf', note:'Snow\'s verse changes the whole song.', embedUrl:'https://open.spotify.com/embed/track/7E88ANfwQMR7lD7xoYuJI9?utm_source=generator&theme=0' },
+      { id:3007, title:'Bloodbath', artist:'Polyphia feat. Chino Moreno', year:2022, c:'#0a0c0a', lc:'#203018', h:123, addedBy:'Amber', city:'Fort Worth', date:'On the shelf', note:'Tim Henson and Chino Moreno in the same room.', embedUrl:'https://open.spotify.com/embed/track/2IMHE3XJcsqTIbSGOIY6Jy?utm_source=generator&theme=0' },
+      { id:3008, title:'Feeding the Gods', artist:'Wind Walkers', year:2023, c:'#080c08', lc:'#1a3020', h:121, addedBy:'Amber', city:'Fort Worth', date:'On the shelf', note:'Heavy and cinematic. Every riff earns its place.', embedUrl:'https://open.spotify.com/embed/track/7BjldKkYK4xq15kANIHhPT?utm_source=generator&theme=0' },
+      { id:3009, title:'Ocean Floor', artist:'Nothing More', year:2019, c:'#080810', lc:'#1c1c38', h:122, addedBy:'Amber', city:'Fort Worth', date:'On the shelf', note:'The kind of song that makes you feel caught out.', embedUrl:'https://open.spotify.com/embed/track/5mYdjPOAnUONj6PoXE6fNn?utm_source=generator&theme=0' },
+      { id:3010, title:'Cherry Waves', artist:'Deftones', year:2006, c:'#060c10', lc:'#1a3048', h:120, addedBy:'Amber', city:'Fort Worth', date:'On the shelf', note:'Saturday Night Wrist is underrated. This song proves it.', embedUrl:'https://open.spotify.com/embed/track/70L6nHORQsblY813yNqUR3?utm_source=generator&theme=0' },
+      { id:3011, title:'Parabola', artist:'Tool', year:2001, c:'#0a060e', lc:'#30186a', h:124, addedBy:'Amber', city:'Fort Worth', date:'On the shelf', note:'Second half of Parabol. The release is worth the wait every time.', embedUrl:'https://open.spotify.com/embed/track/1vxu8vMNshg5J8z3oA7QJZ?utm_source=generator&theme=0' },
+      { id:3012, title:'Rose', artist:'A Perfect Circle', year:2018, c:'#0e0608', lc:'#3a1818', h:122, addedBy:'Amber', city:'Fort Worth', date:'On the shelf', note:'Eat the Elephant is the album nobody expected. This is why.', embedUrl:'https://open.spotify.com/embed/track/7BTFFvz45srmeZUQQDfE1A?utm_source=generator&theme=0' },
+    ]
+  },
+  {
+    id: 'visitors',
+    label: 'Left by Visitors',
+    blurb: 'Records dropped in the crate by people who passed through.',
+    records: []
+  }
+];
+
+const VISITOR_COLORS = [
+  { c:'#1a1420', lc:'#5a4070' }, { c:'#141e14', lc:'#3a5a30' },
+  { c:'#201414', lc:'#6a3020' }, { c:'#141a20', lc:'#304060' },
+  { c:'#1a180a', lc:'#604820' }, { c:'#0e1414', lc:'#305040' },
+];
+
+const ADDED_KEY = 'amber-crate-added';
+const DROPS_KEY = 'amber-crate-drops';
+
+function loadAdded() {
+  try { return JSON.parse(localStorage.getItem(ADDED_KEY) || '[]'); } catch { return []; }
+}
+function saveAdded(list) { localStorage.setItem(ADDED_KEY, JSON.stringify(list)); }
+function loadDrops() {
+  try { return JSON.parse(localStorage.getItem(DROPS_KEY) || '{}'); } catch { return {}; }
+}
+function saveDrops(map) { localStorage.setItem(DROPS_KEY, JSON.stringify(map)); }
+
+function escapeHtml(s) {
+  return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+
+/* ─────────────────────────────────────────── */
+/* VIEW MANAGEMENT                             */
+/* ─────────────────────────────────────────── */
+function showView(id) {
+  document.querySelectorAll('.crate-views > section').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+function showCrateView() { setBackMode('studio'); showView('crateView'); }
+function showLinerView(rec) { setBackMode('crate'); renderLiner(rec); showView('linerView'); }
+function showAddView()  { setBackMode('crate'); renderAddView(); showView('addView'); setTimeout(() => document.getElementById('newTitle').focus(), 50); }
+
+/* ─────────────────────────────────────────── */
+/* FAN MECHANIC                                */
+/* ─────────────────────────────────────────── */
+function applyFan(hoveredEl) {
+  const row = hoveredEl.closest('.crate-row');
+  if (!row) return;
+  const sleeves = Array.from(row.querySelectorAll('.sleeve'));
+  const idx = sleeves.indexOf(hoveredEl);
+  sleeves.forEach((s, i) => {
+    s.classList.remove('is-hovered', 'fan-l1', 'fan-l2', 'fan-r1', 'fan-r2');
+    const d = i - idx;
+    if      (d === 0)  s.classList.add('is-hovered');
+    else if (d === -1) s.classList.add('fan-l1');
+    else if (d === -2) s.classList.add('fan-l2');
+    else if (d === 1)  s.classList.add('fan-r1');
+    else if (d === 2)  s.classList.add('fan-r2');
+  });
+}
+function clearFan(el) {
+  const row = el.closest('.crate-row');
+  if (!row) return;
+  row.querySelectorAll('.sleeve').forEach(s =>
+    s.classList.remove('is-hovered', 'fan-l1', 'fan-l2', 'fan-r1', 'fan-r2')
+  );
+}
+
+/* ─────────────────────────────────────────── */
+/* RENDER CRATE                                */
+/* ─────────────────────────────────────────── */
+function makeSleeve(rec) {
+  const btn = document.createElement('button');
+  btn.className = 'sleeve';
+  btn.type = 'button';
+  btn.style.setProperty('--c', rec.c);
+  btn.style.setProperty('--lc', rec.lc);
+  btn.style.setProperty('--h', rec.h + 'px');
+  btn.setAttribute('aria-label', `${rec.title} by ${rec.artist}`);
+
+  const info = document.createElement('span');
+  info.className = 'sleeve-info';
+  info.setAttribute('aria-hidden', 'true');
+
+  const titleEl = document.createElement('span');
+  titleEl.className = 'sleeve-title';
+  titleEl.textContent = rec.title;
+
+  const artistEl = document.createElement('span');
+  artistEl.className = 'sleeve-artist';
+  artistEl.textContent = rec.artist;
+
+  info.appendChild(titleEl);
+  info.appendChild(artistEl);
+  btn.appendChild(info);
+
+  btn.addEventListener('mouseenter', () => applyFan(btn));
+  btn.addEventListener('mouseleave', () => clearFan(btn));
+  btn.addEventListener('click', () => showLinerView(rec));
+
+  return btn;
+}
+
+function makeAddSlot() {
+  const btn = document.createElement('button');
+  btn.className = 'sleeve-add';
+  btn.type = 'button';
+  btn.setAttribute('aria-label', 'Drop a record in the crate');
+  btn.innerHTML = `<span class="sleeve-add-icon" aria-hidden="true">+</span><span class="sleeve-add-label">Drop a Record</span>`;
+  btn.addEventListener('click', showAddView);
+  return btn;
+}
+
+function renderCrate() {
+  const view = document.getElementById('crateView');
+  view.innerHTML = '';
+  const added = loadAdded();
+
+  // Now Spinning block
+  const nsBlock = document.createElement('div');
+  nsBlock.className = 'now-spinning-block';
+  const nsHead = document.createElement('div');
+  nsHead.className = 'genre-head';
+  nsHead.innerHTML = `<div class="genre-eyebrow now-spinning-eyebrow">Now Spinning</div><div class="genre-blurb">Whatever's on. Changes with the mood.</div>`;
+  const nsRow = document.createElement('div');
+  nsRow.className = 'crate-row';
+  const nsSleeve = makeSleeve(NOW_SPINNING);
+  nsSleeve.classList.add('is-featured');
+  nsRow.appendChild(nsSleeve);
+  nsBlock.appendChild(nsHead);
+  nsBlock.appendChild(nsRow);
+  view.appendChild(nsBlock);
+
+  const wrap = document.createElement('div');
+  wrap.className = 'genre-rows';
+
+  const genresOrdered = [...GENRES.filter(g => g.id === 'visitors'), ...GENRES.filter(g => g.id !== 'visitors')];
+  genresOrdered.forEach(g => {
+    const isVisitors = g.id === 'visitors';
+    const records = isVisitors ? added : g.records;
+    if (!records.length && !isVisitors) return;
+
+    const block = document.createElement('div');
+    block.className = 'genre-block';
+
+    const head = document.createElement('div');
+    head.className = 'genre-head';
+    head.innerHTML = `<div class="genre-eyebrow">${escapeHtml(g.label)}</div><div class="genre-blurb">${escapeHtml(g.blurb)}</div>`;
+
+    const row = document.createElement('div');
+    row.className = 'crate-row' + (!records.length ? ' crate-row-empty' : '');
+    row.setAttribute('aria-label', g.label);
+
+    if (!records.length && isVisitors) {
+      const hint = document.createElement('span');
+      hint.className = 'crate-empty-hint';
+      hint.textContent = 'No records yet. Be the first to leave one.';
+      row.appendChild(hint);
+    }
+    records.forEach(rec => row.appendChild(makeSleeve(rec)));
+    if (isVisitors) row.appendChild(makeAddSlot());
+
+    block.appendChild(head);
+    block.appendChild(row);
+    wrap.appendChild(block);
+  });
+
+  view.appendChild(wrap);
+
+  const baseCount = GENRES.reduce((n, g) => n + (g.id !== 'visitors' ? g.records.length : 0), 0);
+  const total = baseCount + added.length;
+  const stats = document.createElement('div');
+  stats.className = 'crate-stats';
+  stats.innerHTML = `
+    <div class="stat"><div class="stat-num">${total}</div><div class="stat-lbl">Records in the crate</div></div>
+    <div class="stat"><div class="stat-num">${added.length}</div><div class="stat-lbl">Added by you</div></div>
+  `;
+  view.appendChild(stats);
+}
+
+/* ─────────────────────────────────────────── */
+/* RENDER LINER (detail view)                  */
+/* ─────────────────────────────────────────── */
+function renderLiner(rec) {
+  const view = document.getElementById('linerView');
+  const dropsMap = loadDrops();
+  const drops = dropsMap[rec.id] || [];
+
+  const cityLine = rec.city
+    ? `${escapeHtml(rec.addedBy)} from ${escapeHtml(rec.city)} · ${escapeHtml(rec.date)}`
+    : `${escapeHtml(rec.addedBy)} · ${escapeHtml(rec.date)}`;
+  const spotifySearchUrl = 'https://open.spotify.com/search/' + encodeURIComponent(rec.title + ' ' + rec.artist);
+
+  const dropsHtml = drops.length
+    ? drops.map(d => `
+        <div class="drop-item">
+          <span class="drop-avatar" aria-hidden="true">${escapeHtml(d.initials)}</span>
+          <div class="drop-body">
+            <div class="drop-text">${escapeHtml(d.text)}</div>
+            <div class="drop-meta">${escapeHtml(d.date)}</div>
+          </div>
+        </div>`).join('')
+    : `<p class="drops-empty">No needle drops yet. Leave yours.</p>`;
+
+  view.innerHTML = `
+    <div class="liner-card" style="--lc:${rec.lc};">
+      <div class="disc-col">
+        <div class="turntable-scene" aria-hidden="true">
+          <div class="tt-platter">
+            <div class="vinyl-disc" style="--lc:${rec.lc};" id="vinylDisc"></div>
+            <div class="vinyl-hole"></div>
+          </div>
+          <svg class="tt-arm-svg" viewBox="0 0 260 260" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <linearGradient id="armGrad" x1="1" y1="0" x2="0" y2="1">
+                <stop offset="0%" stop-color="#d4b870"/>
+                <stop offset="100%" stop-color="#a07838"/>
+              </linearGradient>
+            </defs>
+            <!-- pivot housing -->
+            <circle cx="246" cy="32" r="12" fill="#1e1a12" stroke="rgba(190,155,70,0.35)" stroke-width="1.5"/>
+            <circle cx="246" cy="32" r="6.5" fill="#0e0c08"/>
+            <!-- counter weight (opposite side of arm from needle) -->
+            <rect x="251" y="9" width="15" height="26" rx="5" fill="#1a160e" stroke="rgba(160,130,55,0.18)" stroke-width="0.5"/>
+            <!-- arm body -->
+            <line x1="246" y1="32" x2="172" y2="68" stroke="url(#armGrad)" stroke-width="4" stroke-linecap="round"/>
+            <!-- headshell kink -->
+            <line x1="172" y1="68" x2="161" y2="83" stroke="#b89848" stroke-width="4.5" stroke-linecap="round"/>
+            <!-- cartridge body -->
+            <rect x="156" y="81" width="12" height="7" rx="2" fill="#262018" stroke="rgba(190,155,70,0.2)" stroke-width="0.5"/>
+            <!-- stylus needle -->
+            <line x1="162" y1="86" x2="159" y2="99" stroke="#9a9080" stroke-width="1.5" stroke-linecap="round"/>
+            <circle cx="159" cy="100" r="2.4" fill="#6a6055"/>
+          </svg>
+        </div>
+      </div>
+      <div class="liner-col">
+        <div class="liner-eyebrow">From the crate</div>
+        <h2 class="liner-title">${escapeHtml(rec.title)}</h2>
+        <div class="liner-artist">${escapeHtml(rec.artist)}</div>
+        <div class="liner-year">${rec.year}</div>
+        <p class="liner-note">${escapeHtml(rec.note)}</p>
+        <div class="liner-meta">Left by ${cityLine}</div>
+        <div class="player-section">
+          <div class="player-label">Listen</div>
+          ${rec.embedUrl ? `<div id="spotify-player-slot" data-embed="${rec.embedUrl}" style="min-height:80px;border-radius:8px;overflow:hidden;margin-bottom:12px;"></div>` : ''}
+          <a class="spotify-link" href="${spotifySearchUrl}" target="_blank" rel="noopener noreferrer">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 0C5.4 0 0 5.4 0 12s5.4 12 12 12 12-5.4 12-12S18.66 0 12 0zm5.521 17.34c-.24.359-.66.48-1.021.24-2.82-1.74-6.36-2.101-10.561-1.141-.418.122-.779-.179-.899-.539-.12-.421.18-.78.54-.9 4.56-1.021 8.52-.6 11.64 1.32.42.18.479.659.301 1.02zm1.44-3.3c-.301.42-.841.6-1.262.3-3.239-1.98-8.159-2.58-11.939-1.38-.479.12-1.02-.12-1.14-.6-.12-.48.12-1.021.6-1.141C9.6 9.9 15 10.561 18.72 12.84c.361.181.54.78.241 1.2zm.12-3.36C15.24 8.4 8.82 8.16 5.16 9.301c-.6.179-1.2-.181-1.38-.721-.18-.601.18-1.2.72-1.381 4.26-1.26 11.28-1.02 15.721 1.621.539.3.719 1.02.419 1.56-.299.421-1.02.599-1.559.3z"/></svg>
+            Open in Spotify
+          </a>
+        </div>
+        <div class="drops-section">
+          <div class="drops-label">Needle drops</div>
+          <div id="dropsList">${dropsHtml}</div>
+          <form class="drop-form" id="dropForm" novalidate>
+            <div class="drop-form-row">
+              <div>
+                <label class="drop-field-label" for="dropInitials">Your initials</label>
+                <input class="drop-input" id="dropInitials" type="text" maxlength="3" placeholder="e.g. AG" autocomplete="off">
+              </div>
+              <div style="flex:3;">
+                <label class="drop-field-label" for="dropText">What does this song make you think of?</label>
+                <input class="drop-input" id="dropText" type="text" maxlength="180" placeholder="A line is enough." autocomplete="off">
+              </div>
+            </div>
+            <div class="liner-actions">
+              <button class="liner-btn primary" type="submit">Drop the needle</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  `;
+
+  if (rec.embedUrl) trySetupSpotifyPlayer();
+
+  document.getElementById('dropForm').addEventListener('submit', e => {
+    e.preventDefault();
+    const initials = (document.getElementById('dropInitials').value.trim().toUpperCase() || '—').slice(0, 3);
+    const text = document.getElementById('dropText').value.trim();
+    if (!text) return;
+    const map = loadDrops();
+    map[rec.id] = map[rec.id] || [];
+    map[rec.id].push({ initials, text, date: 'Just now' });
+    saveDrops(map);
+    renderLiner(rec);
+  });
+}
+
+/* ─────────────────────────────────────────── */
+/* RENDER ADD VIEW                             */
+/* ─────────────────────────────────────────── */
+function renderAddView() {
+  const view = document.getElementById('addView');
+  view.innerHTML = `
+    <button class="add-back" id="addBackBtn" aria-label="Back to the crate">
+      <span class="back-arrow" aria-hidden="true"></span>
+      Back to the crate
+    </button>
+    <div class="add-card">
+      <div class="add-eyebrow">A new addition</div>
+      <h2 class="add-title">Drop a record in the crate</h2>
+      <p class="add-sub">Leave a record that has stayed with you.</p>
+      <form class="add-fields" id="addForm" novalidate>
+        <div class="add-field-row">
+          <div>
+            <label class="add-label" for="newTitle">Title</label>
+            <input class="add-input" id="newTitle" type="text" required maxlength="120" autocomplete="off">
+          </div>
+          <div>
+            <label class="add-label" for="newArtist">Artist</label>
+            <input class="add-input" id="newArtist" type="text" required maxlength="80" autocomplete="off">
+          </div>
+        </div>
+        <div class="add-field-row">
+          <div>
+            <label class="add-label" for="newName">Your first name <span class="opt">(optional)</span></label>
+            <input class="add-input" id="newName" type="text" maxlength="40" placeholder="Anonymous listener" autocomplete="off">
+          </div>
+          <div>
+            <label class="add-label" for="newCity">Where from <span class="opt">(optional)</span></label>
+            <input class="add-input" id="newCity" type="text" maxlength="60" autocomplete="off">
+          </div>
+        </div>
+        <div>
+          <label class="add-label" for="newNote">Why this record?</label>
+          <textarea class="add-input" id="newNote" required maxlength="280" rows="3" placeholder="A line on what it gave you. Two sentences are plenty."></textarea>
+        </div>
+        <div class="add-actions">
+          <button class="liner-btn primary" type="submit">Place it in the crate</button>
+          <button class="liner-btn" type="button" id="addCancelBtn">Cancel</button>
+        </div>
+      </form>
+    </div>
+  `;
+
+  document.getElementById('addBackBtn').addEventListener('click', showCrateView);
+  document.getElementById('addCancelBtn').addEventListener('click', showCrateView);
+  document.getElementById('addForm').addEventListener('submit', e => {
+    e.preventDefault();
+    const title  = document.getElementById('newTitle').value.trim();
+    const artist = document.getElementById('newArtist').value.trim();
+    const name   = document.getElementById('newName').value.trim() || 'Anonymous';
+    const city   = document.getElementById('newCity').value.trim();
+    const note   = document.getElementById('newNote').value.trim();
+    if (!title || !artist || !note) return;
+    const palette = VISITOR_COLORS[Math.floor(Math.random() * VISITOR_COLORS.length)];
+    const newRec = {
+      id: Date.now(),
+      title, artist,
+      year: new Date().getFullYear(),
+      c: palette.c, lc: palette.lc,
+      h: 160 + Math.floor(Math.random() * 14),
+      w: 64 + Math.floor(Math.random() * 6),
+      addedBy: name, city,
+      date: 'Just now',
+      note
+    };
+    const added = loadAdded();
+    added.push(newRec);
+    saveAdded(added);
+    renderCrate();
+    showCrateView();
+  });
+}
+
+/* ─────────────────────────────────────────── */
+/* SPOTIFY SPIN-ON-PLAY                        */
+/* ─────────────────────────────────────────── */
+let _spotifyAPI = null;
+let _spotifyCtrl = null;
+
+window.onSpotifyIframeApiReady = function(IFrameAPI) {
+  _spotifyAPI = IFrameAPI;
+  trySetupSpotifyPlayer();
+};
+
+function trySetupSpotifyPlayer() {
+  const slot = document.getElementById('spotify-player-slot');
+  if (!slot || !_spotifyAPI) return;
+  const embedUrl = slot.dataset.embed;
+  const match = embedUrl.match(/track\/([a-zA-Z0-9]+)/);
+  if (!match) return;
+  const uri = 'spotify:track:' + match[1];
+  if (_spotifyCtrl) { try { _spotifyCtrl.destroy(); } catch(e) {} _spotifyCtrl = null; }
+  slot.innerHTML = '';
+  _spotifyAPI.createController(slot, { uri }, ctrl => {
+    _spotifyCtrl = ctrl;
+    ctrl.addListener('playback_update', e => {
+      const disc = document.getElementById('vinylDisc');
+      if (disc) disc.classList.toggle('is-playing', e.data.isPaused === false);
+    });
+  });
+}
+
+/* ─────────────────────────────────────────── */
+/* INIT                                        */
+/* ─────────────────────────────────────────── */
+renderCrate();
+</script>
+</body>
+</html>
