@@ -925,13 +925,15 @@ button.l3-close:focus {
    Layers live inside #scene, sit above the photo but below
    interactive zones, and never capture pointer events.
    ══════════════════════════════════════════════════════════════ */
-#time-tint,
-#stars {
+#time-tint {
   position: absolute;
   inset: 0;
   pointer-events: none;
   overflow: hidden;
   z-index: 1;
+  mix-blend-mode: soft-light;
+  opacity: 0;
+  transition: opacity 2.4s ease 0.6s, background 4s ease;
 }
 /* #weather-fx is constrained to the window pane — position set by JS
    from the #window-region anchor inside the SVG overlay. */
@@ -941,29 +943,9 @@ button.l3-close:focus {
   overflow: hidden;
   z-index: 1;
   left: 0; top: 0; width: 0; height: 0;
-}
-#time-tint {
-  mix-blend-mode: soft-light;
   opacity: 0;
-  transition: opacity 2.4s ease 0.6s, background 4s ease;
+  transition: opacity 2s ease;
 }
-#stars {
-  opacity: 0;
-  transition: opacity 2.5s ease;
-}
-#stars .star {
-  position: absolute;
-  border-radius: 50%;
-  background: rgba(240,232,210,0.9);
-  filter: blur(0.35px);
-  animation: star-twinkle var(--d,4s) ease-in-out infinite var(--delay,0s);
-  will-change: opacity;
-}
-@keyframes star-twinkle {
-  0%, 100% { opacity: var(--min, 0.15); }
-  50%      { opacity: var(--max, 0.85); }
-}
-#weather-fx { opacity: 0; transition: opacity 2s ease; }
 #weather-fx.on { opacity: 1; }
 
 /* Lamp glows / night-mask / window-darken were workarounds for a single
@@ -1017,8 +999,8 @@ button.l3-close:focus {
 
 @media (prefers-reduced-motion: reduce) {
   #time-tint { transition: background 4s ease; }
-  .rain-streak, .snow-flake, .fog-band, #stars .star { animation: none !important; }
-  #weather-fx, #stars { transition: none; }
+  .rain-streak, .snow-flake, .fog-band { animation: none !important; }
+  #weather-fx { transition: none; }
 }
 
 /* ── ZOOM FIX ── */
@@ -1088,9 +1070,8 @@ html.firefly-on * { cursor: none !important; }
   <!-- ── LAYER 1: VIGNETTE ── -->
   <div id="vignette"></div>
 
-  <!-- ── AMBIENT: subtle time-of-day color wash + night stars + window weather FX ── -->
+  <!-- ── AMBIENT: subtle time-of-day color wash + window weather FX ── -->
   <div id="time-tint" aria-hidden="true"></div>
-  <div id="stars" aria-hidden="true"></div>
   <div id="weather-fx" aria-hidden="true"></div>
 
   <!-- ── LAYER 2: SVG INTERACTION OVERLAY ──
@@ -2020,6 +2001,9 @@ function setContra(i) {
   const COUNT = 38;
 
   document.querySelectorAll('.zone-group').forEach(group => {
+    // Library (Shelf) and Vinyl (Crate) have their own custom cursors
+    // and shouldn't sparkle — those zones aren't prototype landings.
+    if (group.classList.contains('library-zone') || group.classList.contains('vinyl-zone')) return;
     const hit = group.querySelector('.zone-hit');
     if (!hit) return;
     const x = parseFloat(hit.getAttribute('x'));
@@ -2060,9 +2044,8 @@ function setContra(i) {
 (function(){
   const STUDIO = { lat: 32.7555, lon: -97.3308 };
   const tintEl  = document.getElementById('time-tint');
-  const starsEl = document.getElementById('stars');
   const fxEl    = document.getElementById('weather-fx');
-  if (!tintEl || !starsEl || !fxEl) return;
+  if (!tintEl || !fxEl) return;
 
   // Each phase maps to one of the four photo variants (day | dawn | dusk | night).
   // The matching photo fades in via CSS rule body.phase-* .studio-photo--*.
@@ -2119,36 +2102,10 @@ function setContra(i) {
     tintEl.style.background = p.bg;
     tintEl.style.opacity = p.op;
     tintEl.style.mixBlendMode = p.blend || 'soft-light';
-    const isNight = phaseKey === 'deepNight' || phaseKey === 'lateNight' || phaseKey === 'twilight';
-    starsEl.style.opacity = isNight ? 1 : 0;
     // Swap the studio photo to match the time of day.
     const imgKey = PHASE_TO_IMAGE[phaseKey] || 'day';
     document.body.classList.remove('phase-day','phase-dawn','phase-dusk','phase-night');
     document.body.classList.add('phase-' + imgKey);
-  }
-
-  // Stars spawn once; their container opacity handles show/hide.
-  function spawnStars() {
-    if (starsEl.children.length) return;
-    const N = reduced ? 40 : 85;
-    const frag = document.createDocumentFragment();
-    for (let i = 0; i < N; i++) {
-      const s = document.createElement('span');
-      s.className = 'star';
-      const sz = 1 + Math.random() * 1.8;
-      const min = 0.08 + Math.random() * 0.2;
-      s.style.cssText = [
-        `left:${Math.random()*100}%`,
-        `top:${Math.random()*62}%`,
-        `width:${sz}px`, `height:${sz}px`,
-        `--d:${2.2 + Math.random()*4.5}s`,
-        `--delay:${(-Math.random()*6).toFixed(2)}s`,
-        `--min:${min}`,
-        `--max:${(min + 0.45 + Math.random()*0.35).toFixed(2)}`
-      ].join(';');
-      frag.appendChild(s);
-    }
-    starsEl.appendChild(frag);
   }
 
   function clearFX() { while (fxEl.firstChild) fxEl.removeChild(fxEl.firstChild); }
@@ -2282,7 +2239,6 @@ function setContra(i) {
     fxEl.style.height = a.height + 'px';
   }
 
-  spawnStars();
   // Set the phase image class synchronously so the right photo starts
   // fading in before paint, instead of flashing the day photo first.
   tick();
@@ -2332,13 +2288,25 @@ function initFireflyTrail() {
 
   const particles = [];
   const MAX_PARTICLES = 140;
-  const mouse = { x: -200, y: -200, prevX: -200, prevY: -200, hasMoved: false, inside: false };
+  const mouse = { x: -200, y: -200, prevX: -200, prevY: -200, hasMoved: false, inside: false, overPrototype: false };
   let lastSwarm = 0;
+
+  // Trail sparkles only spawn while the cursor is over a prototype zone.
+  // The main firefly dot still follows the cursor everywhere so it always
+  // serves as the visible cursor. Library/crate are excluded.
+  const PROTOTYPE_ZONES = new Set(['perspective', 'experiments', 'systems', 'sensemaking', 'interaction']);
+  function checkOverPrototypeZone(x, y) {
+    const el = document.elementFromPoint(x, y);
+    if (!el) return false;
+    const zone = el.closest('.zone-group');
+    return !!(zone && PROTOTYPE_ZONES.has(zone.dataset.zone));
+  }
 
   window.addEventListener('mousemove', (e) => {
     if (!mouse.hasMoved) { mouse.prevX = e.clientX; mouse.prevY = e.clientY; }
     mouse.x = e.clientX; mouse.y = e.clientY;
     mouse.inside = true; mouse.hasMoved = true;
+    mouse.overPrototype = checkOverPrototypeZone(e.clientX, e.clientY);
   }, { passive: true });
   document.addEventListener('mouseleave', () => { mouse.inside = false; });
   document.addEventListener('mouseenter', () => { mouse.inside = true; });
@@ -2361,7 +2329,7 @@ function initFireflyTrail() {
     const dt = Math.min(40, now - last);
     last = now;
 
-    if (mouse.inside && mouse.hasMoved) {
+    if (mouse.inside && mouse.hasMoved && mouse.overPrototype) {
       const dx = mouse.x - mouse.prevX;
       const dy = mouse.y - mouse.prevY;
       const speed = Math.hypot(dx, dy);
@@ -2401,7 +2369,10 @@ function initFireflyTrail() {
           });
         }
       }
-
+    }
+    // Always keep the trailing prevX/prevY in sync so trail interpolation
+    // doesn't snap when the cursor re-enters a prototype zone.
+    if (mouse.inside && mouse.hasMoved) {
       mouse.prevX = mouse.x; mouse.prevY = mouse.y;
     }
 
